@@ -186,6 +186,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
+/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
+
 
 
 const commentModal = `
@@ -196,7 +198,7 @@ const commentModal = `
             </ul>
             
             <h2 class="comment__title">Ваш комментарий</h2>
-            <textarea class="comments__yours" name="comment" id="comments__yours"></textarea>    
+            <textarea class="comments__yours main__input" name="comment" id="comments__yours"></textarea>    
         </div>
    </div>
 `;
@@ -210,9 +212,12 @@ const deleteComments = () => {
 };
 const drawComments = (list, comments) => {
   comments.forEach(comment => {
-    list.insertAdjacentHTML('beforeend', `
-            <li class="comments-list__item">${comment}</li>
-        `);
+    let comm = comment.split(" ");
+    if (comm.length >= 4 && comm[3] !== "") {
+      list.insertAdjacentHTML('afterbegin', `
+                <li class="comments-list__item">${comment}</li>
+            `);
+    }
   });
 };
 const triggerCommentsModal = e => {
@@ -230,10 +235,13 @@ const triggerCommentsModal = e => {
     const btn = document.querySelector(".comment__button");
     if (btn === null && e.target.value !== "") {
       commentElem.insertAdjacentHTML('afterend', `
-                <button class="comment__button" >Сохранить</button>    
+                <button class="main__button comment__button" >Сохранить</button>    
             `);
       document.querySelector(".comment__button").addEventListener("click", ev => {
-        const value = e.target.value;
+        let value = e.target.value;
+        let today = new Date(Date.now()).toISOString();
+        today = today.substring(0, today.length - 8);
+        value = `${today} ${_table__WEBPACK_IMPORTED_MODULE_2__.user.name} ${value}`;
         commentsArr.push(value);
         newCommentsArr.push(value);
         comments.value = commentsArr.join(".-.");
@@ -249,9 +257,11 @@ const triggerCommentsModal = e => {
           parent.classList.add("table-form--upd");
         }
         setTimeout(() => {
-          ev.target.textContent = 'Сохранить';
+          ev.target.remove();
         }, 1000);
       });
+    } else if (e.target.value === "") {
+      document.querySelector(".comment__button").remove();
     }
   });
 };
@@ -271,7 +281,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "inWork": () => (/* binding */ inWork),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-let appAddr = "http://192.168.1.230:8181";
+let appAddr = "http://172.20.10.7:8181";
 let inWork = false;
 const userInf = JSON.parse(sessionStorage.getItem("user"));
 let state = {
@@ -512,8 +522,10 @@ __webpack_require__.r(__webpack_exports__);
 const drawManagers = (target, managers, manager) => {
   const block = document.querySelector(target);
   managers.forEach(man => {
+    let name = man.name.split(" ");
+    name = name[0][0] + name[1][0];
     block.insertAdjacentHTML('beforeend', `
-             <option ${manager === man ? "selected" : ""} value="${man}">${man}</option>
+             <option ${manager === man.name ? "selected" : ""} value="${man.name}">${name}</option>
         `);
   });
 };
@@ -541,8 +553,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawDeadlineP.js");
 /* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
 /* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
-/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-
 
 
 
@@ -552,7 +562,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const table = document.querySelector(".main-table");
-const drawOrders = (d, data) => {
+const drawOrders = async (d, data, users) => {
   (0,_tableFilters__WEBPACK_IMPORTED_MODULE_1__.controlFiltersReset)();
   let uniqueFileNames = [];
   if (d.files !== null) {
@@ -568,11 +578,6 @@ const drawOrders = (d, data) => {
     });
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
-  let managers = [];
-  (0,_getData__WEBPACK_IMPORTED_MODULE_8__.getData)("users/get-users").then(res => {
-    managers = res.data.filter(user => user.group === "менеджер");
-    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_7__.drawManagers)(".table-m-select", managers, d.m);
-  });
   const pData = [1, 2, 3, 4, 5, 6, 7, 30];
   const groupper = _domain__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_6__.state.techCheck ? "" : "readonly";
   table.insertAdjacentHTML(`afterbegin`, `
@@ -734,7 +739,7 @@ const drawOrders = (d, data) => {
                     </li>
                     
                     <li class="table-body_cell table__comment">
-                        <input class="table__data click-chose table__data--ro" tabindex="-1"
+                        <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
                             value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
@@ -749,6 +754,7 @@ const drawOrders = (d, data) => {
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_4__.triggerCommentsModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)("#db_id", _routesModal__WEBPACK_IMPORTED_MODULE_3__.showRoutesIssued);
   (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_5__.drawDeadlineP)(".table-p-select", d.p, pData);
+  (0,_drawManagers__WEBPACK_IMPORTED_MODULE_7__.drawManagers)(".table-m-select", users, d.m);
   const jsonRoute = document.querySelector("input[name='routes_json']");
   const routesWrapper = document.querySelector(".table-routes__wrapper");
   const routesIssuedWrapper = document.querySelector(".table-routes__issued");
@@ -922,7 +928,7 @@ const orderHTML = `
                     </li>
                     
                     <li class="table-body_cell table__comment">
-                        <input class="table__data click-chose table__data--ro" tabindex="-1"
+                        <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
                             value="" 
@@ -974,6 +980,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
 /* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
 /* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
+
+
 
 
 
@@ -989,24 +999,26 @@ const getOrders = () => {
     const materials = [];
     (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
     deleteOrders();
-    data.data.forEach(d => {
-      _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders = data.data;
-      _domain__WEBPACK_IMPORTED_MODULE_2__.state.filteredOrders = _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
-      searchedOrders = _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
-      nums.push(d.number);
-      clients.push(d.client);
-      materials.push(d.material);
-      (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(d, data);
-    });
-    (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilters)([...new Set(nums)], [...new Set(clients)], [...new Set(materials)]);
+    (0,_getData__WEBPACK_IMPORTED_MODULE_4__.getData)("users/get-users").then(res => {
+      data.data.forEach(d => {
+        _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders = data.data;
+        _domain__WEBPACK_IMPORTED_MODULE_2__.state.filteredOrders = _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
+        searchedOrders = _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
+        nums.push(d.number);
+        clients.push(d.client);
+        materials.push(d.material);
+        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(d, data, res.data.filter(user => user.group === "менеджер"));
+      });
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilters)([...new Set(nums)], [...new Set(clients)], [...new Set(materials)]);
 
-    // if (document.querySelector(".orders__total") === null) {
-    //     document.querySelector(".main__header").insertAdjacentHTML("beforeend", `
-    //      <h3 class="orders__total">Всего в работе ${data.data.length}</h3>
-    //     `)
-    // }
-    (0,_bindListeners__WEBPACK_IMPORTED_MODULE_3__.bindOrdersListeners)();
-    (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
+      // if (document.querySelector(".orders__total") === null) {
+      //     document.querySelector(".main__header").insertAdjacentHTML("beforeend", `
+      //      <h3 class="orders__total">Всего в работе ${data.data.length}</h3>
+      //     `)
+      // }
+      (0,_bindListeners__WEBPACK_IMPORTED_MODULE_3__.bindOrdersListeners)();
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
+    });
   });
 };
 const deleteOrders = () => {
@@ -1057,6 +1069,10 @@ const routeModal = `
                         <select disabled class="clickable route__select main__button main__select route__select--plot" name="plot" id="route__plot">
                             <option selected disabled>Выберите участок</option>
                         </select>
+                        
+                        <select disabled class="hidden__input" id="plot-connection">
+                        </select>
+                        
                         <label class="route__label" for="route__user">Оператор</label>
                         <select disabled class="route__select main__button main__select route__select--user" name="user" id="route__user">
                             <option selected disabled>Выберите оператора</option>
@@ -1072,14 +1088,16 @@ const routeModal = `
                 
                 <div class="route__section start-route">
                     <input 
+                    readonly
                     type="text"
                     placeholder="Время начала"
-                    onfocus="(this.type='datetime-local')"
-                    onblur="(this.type='text')"
                     class="route__input main__button main__input start-route__time"
                     name="start_time" 
                     disabled
                     id="start-route__time">
+                    
+<!--                    onfocus="(this.type='datetime-local')"
+                    onblur="(this.type='text')"-->
                     
                     <button disabled type="button" class="route__btn main__button start-route__btn">Начал</button>
                 </div>
@@ -1283,103 +1301,7 @@ const triggerRoutesModal = e => {
   const issuedToday = modalElem.querySelector("#route-issued__today");
   const reportBtn = modalElem.querySelector(".report-sub--route__btn");
   const startTime = document.querySelector(".start-route__time");
-  console.log(_domain__WEBPACK_IMPORTED_MODULE_2__.state);
-  if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
-    activateNextStage("start-route__time");
-    activateNextStage("route__select--plot");
-    modQ.removeAttribute("readonly");
-    modQ.style.cursor = 'text';
-  }
-  if (info) {
-    const quantity = routeInfo["quantity"];
-    issued.value = routeInfo["issued"];
-    const plot = routeInfo["plot"];
-    const user = routeInfo["user"];
-    const start = routeInfo["start_time"];
-    const end = routeInfo["end_time"];
-    const otk = routeInfo["otk_time"];
-    const errT = routeInfo["error_time"];
-    const errM = routeInfo["error_msg"];
-    let comments = routeInfo["comments"];
-    drawSelect(plot, user);
-    activateNextStage("route__select--user");
-    activateNextStage("route__select--user");
-    disableBtn("route__select--plot");
-    if (!start) {
-      activateNextStage("start-route__btn");
-    } else {
-      activateNextStage("end-route__btn");
-    }
-    startTime.value = start;
-    document.querySelector("#end-route__time").value = end;
-    document.querySelector("#otk-route__time").value = otk;
-    document.querySelector("#error-route__msg").value = errT;
-    document.querySelector("#error__time").value = errM;
-    if (comments) {
-      comments = comments.map(c => `${c["date"]}    ${c["value"]}`);
-      comments = comments.join("---");
-      logsData.value = comments;
-      comments = comments.split("---");
-      comments = comments.filter(c => c.includes("Сдал"));
-      modalElem.querySelector("#issued__all").value = comments.join("---");
-    }
-    console.log(issued.value);
-    activateNextStage("section-finish__sub");
-    activateNextStage("section-finish__cancel");
-    if (quantity) {
-      modQ.value = quantity;
-    }
-    if (end) {
-      activateNextStage("otk-route__btn");
-      disableBtn("end-route__btn");
-    }
-    if (errT) {}
-    issuedToday.classList.add("text-input");
-    issuedToday.removeAttribute("disabled");
-  } else {
-    modQ.value = currentOrder.querySelector("input[name='quantity']").value;
-    drawSelect();
-  }
-  const dbID = currentOrder.querySelector("#db_id").value;
-  const num = currentOrder.querySelector("#number").value;
-  const routeForm = modalElem.querySelector(".route__config");
-  modalElem.querySelector(".modal-header__db").textContent = "№" + dbID;
-  modalElem.querySelector(".modal-header__number").textContent = "№ заказа " + num;
-  const routePlot = document.querySelector("#route__plot");
-  routePlot.addEventListener("change", () => {
-    activateNextStage("route__select--user");
-  });
-  const routeUser = document.querySelector(".route__select--user");
-  routeUser.addEventListener("change", () => {
-    activateNextStage("start-route__btn");
-    activateNextStage("section-finish__sub");
-  });
-  drawLogs(logsData);
-  const startBtn = routeForm.querySelector(".start-route__btn");
-  startBtn.addEventListener("click", () => {
-    setDateToInput("start-route__time");
-    activateNextStage("end-route__btn");
-    activateNextStage("section-finish__sub");
-    activateNextStage("section-finish__cancel");
-    disableBtn("start-route__btn");
-    disableBtn("route__select--plot");
-    addLog(routeUser.value, '"Начал"', "#route__comments");
-    issuedToday.classList.add("text-input");
-    issuedToday.removeAttribute("disabled");
-  });
-  const endBTn = routeForm.querySelector(".end-route__btn");
-  endBTn.addEventListener("click", () => {
-    setDateToInput("end-route__time");
-    activateNextStage("otk-route__btn");
-    disableBtn("end-route__btn");
-    addLog(routeUser.value, '"Закончил"', "#route__comments");
-  });
-  const otkBtn = routeForm.querySelector(".otk-route__btn");
-  otkBtn.addEventListener("click", () => {
-    setDateToInput("otk-route__time");
-    disableBtn("otk-route__btn");
-    addLog(routeUser.value, '"Прошел ОТК"', "#route__comments");
-  });
+  const endTime = document.querySelector(".end-route__time");
   const errInput = document.querySelector("#error-route__msg");
   errInput.addEventListener("input", e => {
     activateOnInput(e, "error-route__btn");
@@ -1393,13 +1315,20 @@ const triggerRoutesModal = e => {
     errInput.classList.add("hidden__input");
     errTime.classList.remove("hidden__input");
   };
+  const routeForm = modalElem.querySelector(".route__config");
   const errBtn = routeForm.querySelector(".error-route__btn");
   errBtn.addEventListener("click", () => {
+    let name = "";
+    if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+      name = _table__WEBPACK_IMPORTED_MODULE_4__.user.name;
+    }
+    let logMsg = "ОШИБКА " + document.querySelector("#error-route__msg").value;
+    addLog(name, logMsg, "#route__comments");
     setDateToInput("error__time");
     activateNextStage("error__time");
-    errInput.classList.add("hidden__input");
-    errTime.classList.remove("hidden__input");
-    errTime.addEventListener("focus", errTimeHandler);
+    // errInput.classList.add("hidden__input")
+    // errTime.classList.remove("hidden__input")
+    // errTime.addEventListener("focus", errTimeHandler)
     errInput.classList.remove("text-input");
     errInput.classList.add("clickable");
     errInput.addEventListener("focus", errInputHandler);
@@ -1422,9 +1351,134 @@ const triggerRoutesModal = e => {
     errBtn.classList.remove("hidden__input");
     disableBtn("error-route__close");
   });
+  if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+    activateNextStage("start-route__time");
+    activateNextStage("route__select--plot");
+    modQ.removeAttribute("readonly");
+    modQ.style.cursor = 'text';
+    endTime.addEventListener("click", e => {
+      e.target.value = "";
+      activateNextStage("end-route__btn");
+      disableBtn("otk-route__btn");
+    });
+    startTime.addEventListener("click", e => {
+      e.target.value = "";
+      activateNextStage("start-route__btn");
+      endTime.value = "";
+      disableBtn("end-route__btn");
+    });
+  }
+  if (info) {
+    const quantity = routeInfo["quantity"];
+    issued.value = routeInfo["issued"];
+    const plot = routeInfo["plot"];
+    const user = routeInfo["user"];
+    const start = routeInfo["start_time"];
+    const end = routeInfo["end_time"];
+    const otk = routeInfo["otk_time"];
+    const errT = routeInfo["error_time"];
+    const errM = routeInfo["error_msg"];
+    let comments = routeInfo["comments"];
+    drawPlots(plot);
+    drawUsers(null, user);
+    activateNextStage("route__select--user");
+    activateNextStage("route__select--user");
+    disableBtn("route__select--plot");
+    if (!start) {
+      activateNextStage("start-route__btn");
+    } else {
+      activateNextStage("end-route__btn");
+    }
+    startTime.value = start;
+    document.querySelector("#end-route__time").value = end;
+    document.querySelector("#otk-route__time").value = otk;
+    document.querySelector("#error-route__msg").value = errM;
+    document.querySelector("#error__time").value = errT;
+    if (comments) {
+      comments = comments.map(c => `${c["date"]}    ${c["value"]}`);
+      comments = comments.join("---");
+      logsData.value = comments;
+      comments = comments.split("---");
+      comments = comments.filter(c => c.includes("За смену"));
+      modalElem.querySelector("#issued__all").value = comments.join("---");
+    }
+    console.log(issued.value);
+    activateNextStage("section-finish__sub");
+    activateNextStage("section-finish__cancel");
+    if (quantity) {
+      modQ.value = quantity;
+    }
+    if (end) {
+      disableBtn("end-route__btn");
+      if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+        activateNextStage("otk-route__btn");
+      }
+    }
+    if (errM) {
+      errInput.classList.remove("hidden__input");
+      errTime.classList.add("hidden__input");
+      if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+        errCloseBtn.classList.remove("hidden__input");
+        errBtn.classList.add("hidden__input");
+      }
+    }
+    issuedToday.classList.add("text-input");
+    issuedToday.removeAttribute("disabled");
+  } else {
+    modQ.value = currentOrder.querySelector("input[name='quantity']").value;
+    drawPlots();
+  }
+  const dbID = currentOrder.querySelector("#db_id").value;
+  const num = currentOrder.querySelector("#number").value;
+  modalElem.querySelector(".modal-header__db").textContent = "№" + dbID;
+  modalElem.querySelector(".modal-header__number").textContent = "№ заказа " + num;
+  const routePlot = document.querySelector("#route__plot");
+  routePlot.addEventListener("change", e => {
+    const connector = document.querySelector("#plot-connection");
+    let plotName = "";
+    connector.querySelectorAll("option").forEach(conn => {
+      if (e.target.value === conn.value) {
+        plotName = conn.textContent;
+      }
+    });
+    drawUsers(plotName, null);
+  });
+  const routeUser = document.querySelector(".route__select--user");
+  routeUser.addEventListener("change", () => {
+    activateNextStage("start-route__btn");
+    activateNextStage("section-finish__sub");
+  });
+  drawLogs(logsData);
+  const startBtn = routeForm.querySelector(".start-route__btn");
+  startBtn.addEventListener("click", () => {
+    setDateToInput("start-route__time");
+    activateNextStage("end-route__btn");
+    activateNextStage("section-finish__sub");
+    activateNextStage("section-finish__cancel");
+    disableBtn("start-route__btn");
+    disableBtn("route__select--plot");
+    addLog(routeUser.value, '"Начал"', "#route__comments");
+    issuedToday.classList.add("text-input");
+    issuedToday.removeAttribute("disabled");
+  });
+  const endBTn = routeForm.querySelector(".end-route__btn");
+  endBTn.addEventListener("click", () => {
+    setDateToInput("end-route__time");
+    if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+      activateNextStage("otk-route__btn");
+    }
+    disableBtn("end-route__btn");
+    addLog(routeUser.value, '"Закончил"', "#route__comments");
+  });
+  const otkBtn = routeForm.querySelector(".otk-route__btn");
+  otkBtn.addEventListener("click", () => {
+    setDateToInput("otk-route__time");
+    disableBtn("otk-route__btn");
+    addLog(routeUser.value, '"Прошел ОТК"', "#route__comments");
+  });
   reportBtn.addEventListener("click", () => {
     issued.value = String(Number(issued.value) + Number(issuedToday.value));
-    let logMsg = addLog(routeUser.value, `"Сдал ${issuedToday.value}"`, "#route__comments");
+    let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, "#route__comments");
     saveData(logMsg, "#issued_report");
     issuedToday.value = "";
   });
@@ -1483,24 +1537,37 @@ const createReportObj = data => {
   }));
   return res;
 };
-const drawSelect = (plotI, userI) => {
-  const usersResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)("users/get-all-operators");
-  usersResp.then(users => {
-    users.data.forEach(user => {
-      const usersSelect = document.querySelector("#route__user");
-      usersSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(userI) === String(user.name) ? "selected" : ""} value="${user.name}">${user.name}</option>
-            `);
-    });
-  });
+const drawPlots = async plotI => {
   const plotsResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)("filters/get-all");
   plotsResp.then(plots => {
     const plotsSelect = document.querySelector("#route__plot");
+    const plotsConnection = document.querySelector("#plot-connection");
     plots.data.forEach(plot => {
       plotsSelect.insertAdjacentHTML('beforeend', `
                 <option ${String(plotI) === String(plot.name) ? "selected" : ""} value="${plot.name}">${plot.name.toUpperCase()}</option>
             `);
+      plotsConnection.insertAdjacentHTML('beforeend', `
+                <option value="${plot.name}">${plot.plot}</option>
+            `);
     });
+  });
+};
+const drawUsers = (plotName, userI) => {
+  const usersResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)("users/get-all-operators");
+  usersResp.then(users => {
+    if (plotName) {
+      users.data = users.data.filter(u => u.plot === plotName);
+    }
+    users.data.forEach(user => {
+      const usersSelect = document.querySelector("#route__user");
+      usersSelect.querySelectorAll("option").forEach(elem => {
+        elem.remove();
+      });
+      usersSelect.insertAdjacentHTML('beforeend', `
+                <option ${String(userI) === String(user.name) ? "selected" : ""} value="${user.name}">${user.name}</option>
+            `);
+    });
+    activateNextStage("route__select--user");
   });
 };
 
@@ -1865,14 +1932,17 @@ const bindTableFilters = () => {
     label.classList.remove("hidden__input");
   };
   numsTableFilter.addEventListener("change", e => {
+    setChosenFilter(e);
     showFilter(e);
     filterOrders("number", e.target.value);
   });
   clientsTableFilter.addEventListener("change", e => {
+    setChosenFilter(e);
     showFilter(e);
     filterOrders("client", e.target.value);
   });
   materialsTableFilter.addEventListener("change", e => {
+    setChosenFilter(e);
     showFilter(e);
     filterOrders("material", e.target.value);
   });
@@ -1909,6 +1979,10 @@ const controlFiltersReset = () => {
       resetBtn.remove();
     }
   }
+};
+const setChosenFilter = e => {
+  const lab = e.target.parentNode.querySelector("label");
+  lab.style.textDecoration = "underline";
 };
 
 /***/ }),
@@ -11151,7 +11225,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  overflow-x: scroll;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  margin-bottom: 25px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-right: 1px solid black;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__cell:first-child {\n  border-left: 1px solid black;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n}\n.table__data--current {\n  color: #13d9d9;\n  font-size: 16px;\n}\n.table__db {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__m {\n  min-width: 32px;\n  max-width: 32px;\n}\n.table__endtime {\n  min-width: 120px;\n  max-width: 120px;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:first-child {\n  border-left: 1px solid black;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  border-bottom: 1px solid black;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    overflow-x: scroll;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-right: 1px solid black;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      font-size: 16px;\n    }\n  }\n\n  &__db {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__m {\n    min-width: 32px;\n    max-width: 32px;\n  }\n\n  &__endtime {\n    min-width: 120px;\n    max-width: 120px;\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      border-bottom: 1px solid black;\n    }\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      margin-bottom: 25px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input:not(:disabled) {\n    cursor: pointer;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  overflow-x: scroll;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  margin-bottom: 25px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-right: 1px solid black;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__cell:first-child {\n  border-left: 1px solid black;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n}\n.table__data--current {\n  color: #13d9d9;\n  font-size: 16px;\n}\n.table__db {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__m {\n  min-width: 32px;\n  max-width: 32px;\n}\n.table__endtime {\n  min-width: 120px;\n  max-width: 120px;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:first-child {\n  border-left: 1px solid black;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  border-bottom: 1px solid black;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    overflow-x: scroll;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-right: 1px solid black;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      font-size: 16px;\n    }\n  }\n\n  &__db {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__m {\n    min-width: 32px;\n    max-width: 32px;\n  }\n\n  &__endtime {\n    min-width: 120px;\n    max-width: 120px;\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      border-bottom: 1px solid black;\n    }\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      margin-bottom: 25px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input:not(:disabled) {\n    cursor: pointer;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

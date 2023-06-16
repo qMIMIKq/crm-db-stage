@@ -6,12 +6,11 @@ import {triggerCommentsModal} from "./commentsModal";
 import {drawDeadlineP} from "./drawDeadlineP";
 import {state} from "./domain";
 import {drawManagers} from "./drawManagers";
-import {getData} from "./getData";
 
 export const table = document.querySelector(".main-table")
 
 
-export const drawOrders = (d, data) => {
+export const drawOrders = async (d, data, users) => {
     controlFiltersReset()
     let uniqueFileNames = []
     if (d.files !== null) {
@@ -28,16 +27,9 @@ export const drawOrders = (d, data) => {
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
 
-    let managers = []
-    getData("users/get-users")
-        .then(res => {
-            managers = res.data.filter(user => user.group === "менеджер")
-            drawManagers(".table-m-select", managers, d.m)
-        })
 
     const pData = [1, 2, 3, 4, 5, 6, 7, 30]
     const groupper = state["adminCheck"] || state["techCheck"] ? "" : "readonly"
-
 
     table.insertAdjacentHTML(`afterbegin`, `
                 <form class="table-form table-form--old" method="POST">
@@ -198,7 +190,7 @@ export const drawOrders = (d, data) => {
                     </li>
                     
                     <li class="table-body_cell table__comment">
-                        <input class="table__data click-chose table__data--ro" tabindex="-1"
+                        <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
                             value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
@@ -213,6 +205,7 @@ export const drawOrders = (d, data) => {
     addTriggers(".table__comment", triggerCommentsModal)
     addTriggers("#db_id", showRoutesIssued)
     drawDeadlineP(".table-p-select", d.p, pData)
+    drawManagers(".table-m-select", users, d.m)
 
     const jsonRoute = document.querySelector("input[name='routes_json']")
     const routesWrapper = document.querySelector(".table-routes__wrapper")
@@ -392,7 +385,7 @@ export const orderHTML = `
                     </li>
                     
                     <li class="table-body_cell table__comment">
-                        <input class="table__data click-chose table__data--ro" tabindex="-1"
+                        <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
                             value="" 

@@ -19,6 +19,10 @@ const routeModal = `
                         <select disabled class="clickable route__select main__button main__select route__select--plot" name="plot" id="route__plot">
                             <option selected disabled>Выберите участок</option>
                         </select>
+                        
+                        <select disabled class="hidden__input" id="plot-connection">
+                        </select>
+                        
                         <label class="route__label" for="route__user">Оператор</label>
                         <select disabled class="route__select main__button main__select route__select--user" name="user" id="route__user">
                             <option selected disabled>Выберите оператора</option>
@@ -34,14 +38,16 @@ const routeModal = `
                 
                 <div class="route__section start-route">
                     <input 
+                    readonly
                     type="text"
                     placeholder="Время начала"
-                    onfocus="(this.type='datetime-local')"
-                    onblur="(this.type='text')"
                     class="route__input main__button main__input start-route__time"
                     name="start_time" 
                     disabled
                     id="start-route__time">
+                    
+<!--                    onfocus="(this.type='datetime-local')"
+                    onblur="(this.type='text')"-->
                     
                     <button disabled type="button" class="route__btn main__button start-route__btn">Начал</button>
                 </div>
@@ -228,13 +234,10 @@ export const showRoutesIssued = e => {
 }
 
 export const triggerRoutesModal = e => {
-
-
     const routeInput = e.target.parentNode.querySelector(".hidden__input")
     state["currentRoute"] = routeInput["name"]
 
     const modalElem = showModal(routeModal)
-
 
     let info = false
     let routeInfo = e.target.parentNode.querySelector(".hidden__input").value
@@ -253,121 +256,8 @@ export const triggerRoutesModal = e => {
     const issuedToday = modalElem.querySelector("#route-issued__today")
     const reportBtn = modalElem.querySelector(".report-sub--route__btn")
     const startTime = document.querySelector(".start-route__time")
+    const endTime = document.querySelector(".end-route__time")
 
-    console.log(state)
-
-    if (state["adminCheck"] || state["techCheck"]) {
-        activateNextStage("start-route__time")
-        activateNextStage("route__select--plot")
-        modQ.removeAttribute("readonly")
-        modQ.style.cursor = 'text'
-    }
-
-    if (info) {
-        const quantity = routeInfo["quantity"]
-        issued.value = routeInfo["issued"]
-        const plot = routeInfo["plot"]
-        const user = routeInfo["user"]
-        const start = routeInfo["start_time"]
-        const end = routeInfo["end_time"]
-        const otk = routeInfo["otk_time"]
-        const errT = routeInfo["error_time"]
-        const errM = routeInfo["error_msg"]
-        let comments = routeInfo["comments"]
-
-        drawSelect(plot, user)
-        activateNextStage("route__select--user")
-        activateNextStage("route__select--user")
-        disableBtn("route__select--plot")
-
-        if (!start) {
-            activateNextStage("start-route__btn")
-        } else {
-            activateNextStage("end-route__btn")
-        }
-
-        startTime.value = start
-        document.querySelector("#end-route__time").value = end
-        document.querySelector("#otk-route__time").value = otk
-        document.querySelector("#error-route__msg").value = errT
-        document.querySelector("#error__time").value = errM
-
-        if (comments) {
-            comments = comments.map(c => `${c["date"]}    ${c["value"]}`)
-            comments = comments.join("---")
-            logsData.value = comments
-
-            comments = comments.split("---")
-            comments = comments.filter(c => c.includes("Сдал"))
-            modalElem.querySelector("#issued__all").value = comments.join("---")
-        }
-
-        console.log(issued.value)
-
-        activateNextStage("section-finish__sub")
-        activateNextStage("section-finish__cancel")
-
-        if (quantity) {
-            modQ.value = quantity
-        }
-
-        if (end) {
-            activateNextStage("otk-route__btn")
-            disableBtn("end-route__btn")
-        }
-
-        if (errT) {
-
-        }
-
-        issuedToday.classList.add("text-input")
-        issuedToday.removeAttribute("disabled")
-    } else {
-        modQ.value = currentOrder.querySelector("input[name='quantity']").value
-        drawSelect()
-    }
-
-    const dbID = currentOrder.querySelector("#db_id").value
-    const num = currentOrder.querySelector("#number").value
-    const routeForm = modalElem.querySelector(".route__config")
-    modalElem.querySelector(".modal-header__db").textContent = "№" + dbID
-    modalElem.querySelector(".modal-header__number").textContent = "№ заказа " + num
-
-    const routePlot = document.querySelector("#route__plot")
-    routePlot.addEventListener("change", () => {
-        activateNextStage("route__select--user")
-    })
-    const routeUser = document.querySelector(".route__select--user")
-    routeUser.addEventListener("change", () => {
-        activateNextStage("start-route__btn")
-        activateNextStage("section-finish__sub")
-    })
-    drawLogs(logsData)
-    const startBtn = routeForm.querySelector(".start-route__btn")
-    startBtn.addEventListener("click", () => {
-        setDateToInput("start-route__time")
-        activateNextStage("end-route__btn")
-        activateNextStage("section-finish__sub")
-        activateNextStage("section-finish__cancel")
-        disableBtn("start-route__btn")
-        disableBtn("route__select--plot")
-        addLog(routeUser.value, '"Начал"', "#route__comments")
-        issuedToday.classList.add("text-input")
-        issuedToday.removeAttribute("disabled")
-    })
-    const endBTn = routeForm.querySelector(".end-route__btn")
-    endBTn.addEventListener("click", () => {
-        setDateToInput("end-route__time")
-        activateNextStage("otk-route__btn")
-        disableBtn("end-route__btn")
-        addLog(routeUser.value, '"Закончил"', "#route__comments")
-    })
-    const otkBtn = routeForm.querySelector(".otk-route__btn")
-    otkBtn.addEventListener("click", () => {
-        setDateToInput("otk-route__time")
-        disableBtn("otk-route__btn")
-        addLog(routeUser.value, '"Прошел ОТК"', "#route__comments")
-    })
     const errInput = document.querySelector("#error-route__msg")
     errInput.addEventListener("input", e => {
         activateOnInput(e, "error-route__btn")
@@ -381,13 +271,23 @@ export const triggerRoutesModal = e => {
         errInput.classList.add("hidden__input")
         errTime.classList.remove("hidden__input")
     }
+
+    const routeForm = modalElem.querySelector(".route__config")
+
     const errBtn = routeForm.querySelector(".error-route__btn")
     errBtn.addEventListener("click", () => {
+        let name = ""
+        if (state["adminCheck"] || state["techCheck"]) {
+            name = user.name
+        }
+        let logMsg = "ОШИБКА " + document.querySelector("#error-route__msg").value
+
+        addLog(name, logMsg, "#route__comments")
         setDateToInput("error__time")
         activateNextStage("error__time")
-        errInput.classList.add("hidden__input")
-        errTime.classList.remove("hidden__input")
-        errTime.addEventListener("focus", errTimeHandler)
+        // errInput.classList.add("hidden__input")
+        // errTime.classList.remove("hidden__input")
+        // errTime.addEventListener("focus", errTimeHandler)
         errInput.classList.remove("text-input")
         errInput.classList.add("clickable")
         errInput.addEventListener("focus", errInputHandler)
@@ -410,9 +310,156 @@ export const triggerRoutesModal = e => {
         errBtn.classList.remove("hidden__input")
         disableBtn("error-route__close")
     })
+
+
+    if (state["adminCheck"] || state["techCheck"]) {
+        activateNextStage("start-route__time")
+        activateNextStage("route__select--plot")
+        modQ.removeAttribute("readonly")
+        modQ.style.cursor = 'text'
+
+        endTime.addEventListener("click", e => {
+            e.target.value = ""
+            activateNextStage("end-route__btn")
+            disableBtn("otk-route__btn")
+        })
+
+        startTime.addEventListener("click", e => {
+            e.target.value = ""
+            activateNextStage("start-route__btn")
+            endTime.value = ""
+            disableBtn("end-route__btn")
+        })
+    }
+
+    if (info) {
+        const quantity = routeInfo["quantity"]
+        issued.value = routeInfo["issued"]
+        const plot = routeInfo["plot"]
+        const user = routeInfo["user"]
+        const start = routeInfo["start_time"]
+        const end = routeInfo["end_time"]
+        const otk = routeInfo["otk_time"]
+        const errT = routeInfo["error_time"]
+        const errM = routeInfo["error_msg"]
+        let comments = routeInfo["comments"]
+
+        drawPlots(plot)
+        drawUsers(null, user)
+        activateNextStage("route__select--user")
+        activateNextStage("route__select--user")
+        disableBtn("route__select--plot")
+
+        if (!start) {
+            activateNextStage("start-route__btn")
+        } else {
+            activateNextStage("end-route__btn")
+        }
+
+        startTime.value = start
+        document.querySelector("#end-route__time").value = end
+        document.querySelector("#otk-route__time").value = otk
+        document.querySelector("#error-route__msg").value = errM
+        document.querySelector("#error__time").value = errT
+
+        if (comments) {
+            comments = comments.map(c => `${c["date"]}    ${c["value"]}`)
+            comments = comments.join("---")
+            logsData.value = comments
+
+            comments = comments.split("---")
+            comments = comments.filter(c => c.includes("За смену"))
+            modalElem.querySelector("#issued__all").value = comments.join("---")
+        }
+
+        console.log(issued.value)
+
+        activateNextStage("section-finish__sub")
+        activateNextStage("section-finish__cancel")
+
+        if (quantity) {
+            modQ.value = quantity
+        }
+
+        if (end) {
+            disableBtn("end-route__btn")
+
+            if (state["adminCheck"] || state["techCheck"]) {
+                activateNextStage("otk-route__btn")
+            }
+        }
+
+        if (errM) {
+            errInput.classList.remove("hidden__input")
+            errTime.classList.add("hidden__input")
+
+            if (state["adminCheck"] || state["techCheck"]) {
+                errCloseBtn.classList.remove("hidden__input")
+                errBtn.classList.add("hidden__input")
+            }
+        }
+
+        issuedToday.classList.add("text-input")
+        issuedToday.removeAttribute("disabled")
+    } else {
+        modQ.value = currentOrder.querySelector("input[name='quantity']").value
+        drawPlots()
+    }
+
+    const dbID = currentOrder.querySelector("#db_id").value
+    const num = currentOrder.querySelector("#number").value
+    modalElem.querySelector(".modal-header__db").textContent = "№" + dbID
+    modalElem.querySelector(".modal-header__number").textContent = "№ заказа " + num
+
+    const routePlot = document.querySelector("#route__plot")
+    routePlot.addEventListener("change", e => {
+        const connector = document.querySelector("#plot-connection")
+        let plotName = ""
+        connector.querySelectorAll("option").forEach(conn => {
+            if (e.target.value === conn.value) {
+                plotName = conn.textContent
+            }
+        })
+
+        drawUsers(plotName, null)
+    })
+    const routeUser = document.querySelector(".route__select--user")
+    routeUser.addEventListener("change", () => {
+        activateNextStage("start-route__btn")
+        activateNextStage("section-finish__sub")
+    })
+    drawLogs(logsData)
+    const startBtn = routeForm.querySelector(".start-route__btn")
+    startBtn.addEventListener("click", () => {
+        setDateToInput("start-route__time")
+        activateNextStage("end-route__btn")
+        activateNextStage("section-finish__sub")
+        activateNextStage("section-finish__cancel")
+        disableBtn("start-route__btn")
+        disableBtn("route__select--plot")
+        addLog(routeUser.value, '"Начал"', "#route__comments")
+        issuedToday.classList.add("text-input")
+        issuedToday.removeAttribute("disabled")
+    })
+    const endBTn = routeForm.querySelector(".end-route__btn")
+    endBTn.addEventListener("click", () => {
+        setDateToInput("end-route__time")
+        if (state["adminCheck"] || state["techCheck"]) {
+            activateNextStage("otk-route__btn")
+        }
+        disableBtn("end-route__btn")
+        addLog(routeUser.value, '"Закончил"', "#route__comments")
+    })
+    const otkBtn = routeForm.querySelector(".otk-route__btn")
+    otkBtn.addEventListener("click", () => {
+        setDateToInput("otk-route__time")
+        disableBtn("otk-route__btn")
+        addLog(routeUser.value, '"Прошел ОТК"', "#route__comments")
+    })
+
     reportBtn.addEventListener("click", () => {
         issued.value = String(Number(issued.value) + Number(issuedToday.value))
-        let logMsg = addLog(routeUser.value, `"Сдал ${issuedToday.value}"`, "#route__comments")
+        let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, "#route__comments")
         saveData(logMsg, "#issued_report")
         issuedToday.value = ""
     })
@@ -479,24 +526,42 @@ const createReportObj = (data) => {
     return res
 }
 
-const drawSelect = (plotI, userI) => {
-    const usersResp = getData("users/get-all-operators")
-    usersResp.then(users => {
-        users.data.forEach(user => {
-            const usersSelect = document.querySelector("#route__user")
-            usersSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(userI) === String(user.name) ? "selected" : ""} value="${user.name}">${user.name}</option>
-            `)
-        })
-    })
-
+const drawPlots = async (plotI) => {
     const plotsResp = getData("filters/get-all")
     plotsResp.then(plots => {
         const plotsSelect = document.querySelector("#route__plot")
+        const plotsConnection = document.querySelector("#plot-connection")
+
         plots.data.forEach(plot => {
             plotsSelect.insertAdjacentHTML('beforeend', `
                 <option ${String(plotI) === String(plot.name) ? "selected" : ""} value="${plot.name}">${plot.name.toUpperCase()}</option>
             `)
+
+            plotsConnection.insertAdjacentHTML('beforeend', `
+                <option value="${plot.name}">${plot.plot}</option>
+            `)
         })
+    })
+}
+
+const drawUsers = (plotName, userI) => {
+    const usersResp = getData("users/get-all-operators")
+    usersResp.then(users => {
+        if (plotName) {
+            users.data = users.data.filter(u => u.plot === plotName)
+        }
+
+        users.data.forEach(user => {
+            const usersSelect = document.querySelector("#route__user")
+            usersSelect.querySelectorAll("option").forEach(elem => {
+                elem.remove()
+            })
+
+            usersSelect.insertAdjacentHTML('beforeend', `
+                <option ${String(userI) === String(user.name) ? "selected" : ""} value="${user.name}">${user.name}</option>
+            `)
+        })
+
+        activateNextStage("route__select--user")
     })
 }

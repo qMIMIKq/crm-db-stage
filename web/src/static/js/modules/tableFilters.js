@@ -59,14 +59,17 @@ export const bindTableFilters = () => {
         label.classList.remove("hidden__input")
     }
     numsTableFilter.addEventListener("change", e => {
+        setChosenFilter(e)
         showFilter(e)
         filterOrders("number", e.target.value)
     })
     clientsTableFilter.addEventListener("change", e => {
+        setChosenFilter(e)
         showFilter(e)
         filterOrders("client", e.target.value)
     })
     materialsTableFilter.addEventListener("change", e => {
+        setChosenFilter(e)
         showFilter(e)
         filterOrders("material", e.target.value)
     })
@@ -104,4 +107,9 @@ export const controlFiltersReset = () => {
             resetBtn.remove()
         }
     }
+}
+
+const setChosenFilter = e => {
+    const lab = e.target.parentNode.querySelector("label")
+    lab.style.textDecoration = "underline"
 }

@@ -7,7 +7,7 @@ import {state} from "../modules/domain";
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
 
-topFiltersHandler()
+// topFiltersHandler()
 getOrders()
 searchModule()
 

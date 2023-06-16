@@ -3,6 +3,7 @@
 @import "table_nav";
 @import "files_modal";
 @import "route_modal";
+@import "comments_modal";
 
 .main-table {
   &__header {
@@ -167,7 +168,8 @@
     max-width: 60px;
   }
 
-  &-p-select {
+  &-p-select,
+  &-m-select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;

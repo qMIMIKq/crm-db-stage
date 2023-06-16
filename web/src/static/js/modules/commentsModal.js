@@ -1,5 +1,6 @@
 import {drawSubmit} from "./submitControl";
 import {showModal} from "./showModal";
+import {user} from "../table";
 
 const commentModal = `
    <div id="modal" class="modal modal--comment bounceIn">
@@ -9,7 +10,7 @@ const commentModal = `
             </ul>
             
             <h2 class="comment__title">Ваш комментарий</h2>
-            <textarea class="comments__yours" name="comment" id="comments__yours"></textarea>    
+            <textarea class="comments__yours main__input" name="comment" id="comments__yours"></textarea>    
         </div>
    </div>
 `
@@ -25,9 +26,13 @@ const deleteComments = () => {
 
 const drawComments = (list, comments) => {
     comments.forEach(comment => {
-        list.insertAdjacentHTML('beforeend', `
-            <li class="comments-list__item">${comment}</li>
-        `)
+        let comm = comment.split(" ")
+
+        if (comm.length >= 4 && comm[3] !== "") {
+            list.insertAdjacentHTML('afterbegin', `
+                <li class="comments-list__item">${comment}</li>
+            `)
+        }
     })
 }
 
@@ -46,10 +51,15 @@ export const triggerCommentsModal = e => {
         const btn = document.querySelector(".comment__button")
         if (btn === null && e.target.value !== "") {
             commentElem.insertAdjacentHTML('afterend', `
-                <button class="comment__button" >Сохранить</button>    
+                <button class="main__button comment__button" >Сохранить</button>    
             `)
             document.querySelector(".comment__button").addEventListener("click", ev => {
-                const value = e.target.value
+                let value = e.target.value
+                let today = new Date(Date.now()).toISOString()
+                today = today.substring(0, today.length - 8)
+
+                value = `${today} ${user.name} ${value}`
+
                 commentsArr.push(value)
                 newCommentsArr.push(value)
                 comments.value = commentsArr.join(".-.")
@@ -65,9 +75,11 @@ export const triggerCommentsModal = e => {
                     parent.classList.add("table-form--upd")
                 }
                 setTimeout(() => {
-                    ev.target.textContent = 'Сохранить'
+                    ev.target.remove()
                 }, 1000)
             })
+        } else if (e.target.value === "") {
+            document.querySelector(".comment__button").remove()
         }
     })
 }
