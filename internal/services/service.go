@@ -50,7 +50,7 @@ func NewService(repos *repository.Repository) *Services {
 		Users:         NewUsersService(repos.Users),
 		Filters:       NewFiltersService(repos.Filters),
 		Plots:         NewPlotsService(repos.Plots),
-		Files:         NewFilesService(repos.Files),
-		Orders:        NewOrdersService(repos.Orders),
+		//Files:         NewFilesService(repos.Files),
+		Orders: NewOrdersService(repos.Orders),
 	}
 }

@@ -10,9 +10,9 @@ type FilesService struct {
 	repo repository.Files
 }
 
-func NewFilesService(repo repository.Files) *FilesService {
-	return &FilesService{repo: repo}
-}
+//func NewFilesService(repo repository.Files) *FilesService {
+//	return &FilesService{repo: repo}
+//}
 
 func (f *FilesService) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]string, error) {
 	return f.repo.SaveFiles(c, files)
