@@ -74,6 +74,16 @@ INSERT INTO users_rights (user_id, group_id, plot_id)
 VALUES (1, 1, 1);
 
 
+INSERT INTO users (user_name, login, password)
+VALUES ('Максим П', 'maxp', '61736461333132646173011c945f30ce2cbafc452f39840f025693339c42');
+INSERT INTO users_rights (user_id, group_id, plot_id)
+VALUES (1, 1, 1);
+
+INSERT INTO users (user_name, login, password)
+VALUES ('Руслан К', 'rusk', '61736461333132646173011c945f30ce2cbafc452f39840f025693339c42');
+INSERT INTO users_rights (user_id, group_id, plot_id)
+VALUES (1, 1, 1);
+
 CREATE table orders
 (
     order_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
