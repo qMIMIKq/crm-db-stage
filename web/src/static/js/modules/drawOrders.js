@@ -32,6 +32,7 @@ export const drawOrders = (d, data) => {
     getData("users/get-users")
         .then(res => {
             managers = res.data.filter(user => user.group === "менеджер")
+            drawManagers(".table-m-select", d.m, managers)
         })
 
     const pData = [1, 2, 3, 4, 5, 6, 7, 30]
@@ -212,7 +213,6 @@ export const drawOrders = (d, data) => {
     addTriggers(".table__comment", triggerCommentsModal)
     addTriggers("#db_id", showRoutesIssued)
     drawDeadlineP(".table-p-select", d.p, pData)
-    drawManagers(".table-m-select", d.m, managers)
 
     const jsonRoute = document.querySelector("input[name='routes_json']")
     const routesWrapper = document.querySelector(".table-routes__wrapper")
