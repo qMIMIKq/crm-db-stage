@@ -618,7 +618,7 @@ const drawOrders = (d, data) => {
                         value="${d.issued}">
                     </li>
                     <li class="table-body_cell table__m">
-                        <select ${groupper} class="table__data main__button" name="m" id="">
+                        <select ${groupper} class="table__data table-m-select main__button" name="m" id="">
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">
