@@ -3,7 +3,7 @@ export let inWork = false
 
 const userInf = JSON.parse(sessionStorage.getItem("user"))
 
-export let state = {
+let state = {
     "filtered": false,
     "inWork": false,
     "newOrders": false,
@@ -13,6 +13,11 @@ export let state = {
     "plots": [],
     "machines": [],
     "userInfo": {},
-    "adminCheck": userInf.group === 'супер-админ' || userInf.group === 'админ',
-    "techCheck": userInf.group === 'технолог'
 }
+
+if (userInf) {
+    state["adminCheck"] = userInf.group === 'супер-админ' || userInf.group === 'админ'
+    state["techCheck"] = userInf.group === 'технолог'
+}
+
+export {state}

@@ -73,6 +73,25 @@ VALUES ('Никита Б', 'nikitab', '61736461333132646173011c945f30ce2cbafc452
 INSERT INTO users_rights (user_id, group_id, plot_id)
 VALUES (1, 1, 1);
 
+
+CREATE table orders
+(
+    order_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    order_timestamp timestamp    default CURRENT_TIMESTAMP::timestamp,
+    order_number    varchar(255),
+    order_sample    varchar(255),
+    order_client    varchar(255),
+    order_name      varchar(255),
+    order_material  varchar(255),
+    order_quantity  varchar(255),
+    order_issued    varchar(255) default '0',
+    order_m         varchar(255),
+    order_endtime   varchar(255),
+    order_otk       varchar(255),
+    order_p         varchar(255),
+    completed       boolean      default false
+);
+
 CREATE TABLE routes
 (
     route_id       SERIAL UNIQUE PRIMARY KEY NOT NULL,
@@ -103,24 +122,6 @@ create table route_issued
     route_id  int references routes (route_id) on update cascade on delete cascade,
     date      varchar(255),
     value     varchar(255)
-);
-
-CREATE table orders
-(
-    order_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    order_timestamp timestamp    default CURRENT_TIMESTAMP::timestamp,
-    order_number    varchar(255),
-    order_sample    varchar(255),
-    order_client    varchar(255),
-    order_name      varchar(255),
-    order_material  varchar(255),
-    order_quantity  varchar(255),
-    order_issued    varchar(255) default '0',
-    order_m         varchar(255),
-    order_endtime   varchar(255),
-    order_otk       varchar(255),
-    order_p         varchar(255),
-    completed       boolean      default false
 );
 
 INSERT INTO orders (order_number,
