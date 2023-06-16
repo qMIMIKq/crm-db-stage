@@ -281,7 +281,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "inWork": () => (/* binding */ inWork),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-let appAddr = "http://172.20.10.7:8181";
+let appAddr = "http://192.168.1.230:8181";
 let inWork = false;
 const userInf = JSON.parse(sessionStorage.getItem("user"));
 let state = {
@@ -2133,7 +2133,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const user = JSON.parse(sessionStorage.getItem("user"));
-(0,_modules_topFilters__WEBPACK_IMPORTED_MODULE_3__.topFiltersHandler)();
+
+// topFiltersHandler()
 (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
 (0,_modules_search__WEBPACK_IMPORTED_MODULE_2__.searchModule)();
 const subBtn = document.querySelector(".header-button__add");

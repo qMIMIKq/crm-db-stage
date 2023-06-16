@@ -53,7 +53,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "inWork": () => (/* binding */ inWork),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-let appAddr = "http://172.20.10.7:8181";
+let appAddr = "http://192.168.1.230:8181";
 let inWork = false;
 const userInf = JSON.parse(sessionStorage.getItem("user"));
 let state = {
@@ -10485,7 +10485,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/domain */ "./web/src/static/js/modules/domain.js");
 
 
-const appAddr = "http://172.20.10.7:8181";
+const appAddr = "http://192.168.1.230/:8181";
 const loginForm = document.querySelector(".login-form");
 loginForm.addEventListener("submit", e => {
   e.preventDefault();
