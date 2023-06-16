@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><script defer src="../../static/js/login.js"></script></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{.Title}}</title>
+<body>
+<main>
+    <div class="container">
+        <form class="edit-user__form user-form login-form" method="post">
+            <h3 class="user-form__title">Форма входа</h3>
+            <div class="user-form__block">
+                <label class="user-form__label" for="name">Логин</label>
+                <input id="login" class="user-form__input user-form__name" name="login" type="text"
+                       value="" required>
+            </div>
+
+            <div class="user-form__block">
+                <label class="user-form__label" for="login">Пароль</label>
+                <input id="password" class="user-form__input user-form__login" name="password" type="password"
+                       value="" required>
+            </div>
+
+            <div class="user-form__block">
+                <button class="user-form__submit main__button" type="submit">Войти</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

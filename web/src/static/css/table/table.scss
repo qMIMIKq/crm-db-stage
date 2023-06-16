@@ -1,0 +1,249 @@
+@import "../main";
+@import "top_filters";
+@import "table_nav";
+@import "files_modal";
+@import "route_modal";
+
+.main-table {
+  &__header {
+    display: flex;
+    align-items: center;
+    //border: 1px solid black;
+    //border-top: none;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+}
+
+
+.table {
+  &__cell {
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: default;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+
+    &:first-child {
+      border-left: 1px solid black;
+    }
+  }
+
+  &-form {
+
+    input {
+      //color: $button_color;
+    }
+  }
+
+  &__use {
+    label {
+      cursor: pointer;
+      transition: color .3s;
+
+      &:hover {
+        color: $hover_aqua;
+        transition: color .3s;
+      }
+    }
+  }
+
+  &__data {
+    height: 28px;
+    width: 100%;
+    text-align: center;
+    border-radius: 1px;
+    border: none;
+    background: white;
+    color: black;
+    outline: 3.3px $button_color;
+
+    &--ro {
+      cursor: default;
+      outline: none;
+    }
+
+    &--chosen {
+      font-size: 15px;
+      background: $gray_bg;
+      color: $button_color;
+    }
+
+    &--opened {
+      height: 56px;
+      border-bottom: 1px solid black;
+    }
+
+    &--current {
+      color: $hover_aqua;
+      font-size: 16px;
+    }
+  }
+
+  &__db {
+    min-width: 70px;
+    max-width: 70px;
+  }
+
+  &__timestamp {
+    min-width: 80px;
+    max-width: 80px;
+  }
+
+  &__files {
+    min-width: 32px;
+    max-width: 32px;
+    position: relative;
+  }
+
+  &__number {
+    min-width: 80px;
+    max-width: 80px;
+  }
+
+  &__sample {
+    min-width: 60px;
+    max-width: 60px;
+  }
+
+  &__client {
+    min-width: 160px;
+    max-width: 160px;
+  }
+
+  &__name {
+    min-width: 260px;
+    max-width: 260px;
+  }
+
+  &__material {
+    min-width: 140px;
+    max-width: 140px;
+  }
+
+  &__quantity {
+    min-width: 70px;
+    max-width: 70px;
+  }
+
+  &__issued {
+    min-width: 70px;
+    max-width: 70px;
+
+    &--done {
+      color: green;
+      animation: issued-ready infinite 4s;
+    }
+  }
+
+  &__m {
+    min-width: 32px;
+    max-width: 32px;
+  }
+
+  &__endtime {
+    min-width: 120px;
+    max-width: 120px;
+  }
+
+  &__routes {
+    min-width: 400px;
+    max-width: 400px;
+  }
+
+  &-routes__issued {
+    //border-top: 1px solid black;
+  }
+
+  &__p {
+    min-width: 60px;
+    max-width: 60px;
+  }
+
+  &-p-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    cursor: pointer;
+  }
+
+  &__comment {
+    flex-grow: 1;
+    min-width: 200px;
+    max-width: 100%;
+  }
+
+  &-routes {
+    &__wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.files__ico {
+  width: 30px;
+  height: 20px;
+}
+
+.table-body {
+  &_cell {
+    max-height: 56px;
+    font-size: 16px;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+
+    &:first-child {
+      border-left: 1px solid black;
+    }
+
+    &--opened {
+      height: 56px;
+    }
+  }
+}
+
+@keyframes issued-ready {
+  0% {
+    background: white;
+    color: black;
+  }
+
+  50% {
+    background: green;
+    color: white;
+  }
+
+  100% {
+    background: white;
+    color: black;
+  }
+}
+
+.table__route {
+  &:first-child {
+    border-left: none;
+  }
+
+  &--issued {
+    border-top: none;
+    max-height: 28px;
+
+    &:first-child {
+      border-left: none;
+    }
+
+    input {
+      border-bottom: 1px solid black;
+    }
+  }
+}

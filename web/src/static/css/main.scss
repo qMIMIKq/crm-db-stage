@@ -1,0 +1,122 @@
+@import "var";
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.container {
+  padding: 0 15px;
+}
+
+ul {
+  list-style: none;
+}
+
+.hidden-input {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.hidden__input {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.main {
+  color: $button_color;
+  //border-left: 1px solid black;
+  //border-right: 1px solid black;
+
+  &__button {
+    height: 28px;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 5px;
+    background: white;
+    color: $button_color;
+    transition: color .3s;
+    cursor: pointer;
+    padding: 5px;
+
+    &:hover {
+      color: $hover_aqua;
+      transition: color .3s;
+    }
+  }
+
+  &__input {
+    padding: 5px;
+    cursor: text;
+    border: 1px solid black;
+    border-radius: 5px;
+    color: $button_color;
+  }
+
+  &-table__data {
+    width: 100%;
+    overflow-x: scroll;
+  }
+
+  &__select {
+    text-align: center !important;
+    width: 100%;
+  }
+}
+
+.success {
+  color: green !important;
+}
+
+.error {
+  color: red !important;
+}
+
+.click-chose,
+.click-select {
+  cursor: pointer !important;
+}
+
+a:active, /* активная/посещенная ссылка */
+a:hover, /* при наведении */
+a {
+  text-decoration: none;
+  color: #666;
+}
+
+select:disabled {
+  cursor: default;
+  background: none;
+  color: gray;
+
+  &:hover {
+    color: gray;
+  }
+}
+
+input:disabled {
+  cursor: default;
+}
+
+button:disabled {
+  cursor: default;
+  color: gray;
+
+  &:hover {
+    color: gray;
+  }
+}
+
+.select-user {
+  margin-bottom: 25px;
+  width: 100px;
+  align-self: center;
+}

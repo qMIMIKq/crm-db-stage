@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{.Title}}</title>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <nav class="header__nav nav">
+            <div class="nav__filters nav-filters">
+                {{if eq .User.Group "оператор"}}
+                    <select name="user" class="select-user main__button main__select">
+
+                    </select>
+                {{end}}
+
+                {{if eq .User.Group "супер-админ"}}
+                    <a class="admin-form__button" target="_blank" href="http://172.20.10.7:8192/panel">Перейти в
+                        админку</a>
+                {{end}}
+
+                <ul class="nav-filters__list nav-filters__plots"></ul>
+                <ul class="nav-filters__list nav-filters__filters"></ul>
+            </div>
+        </nav>
+    </header>
+    <main class="main">
+        <header class="main__header main-header">
+            <nav class="main-header__nav">
+                <h3 class="main-header__title">Журнал заказов</h3>
+                <button class="main__button main-header__button header-button__add">Добавить</button>
+            </nav>
+
+            <div class="main-header__search search">
+                <select name="search__target" class="main__button main__select" id="search__target">
+                    <option value="client">Клиент</option>
+                    <option value="number">№ Заказа</option>
+                    <option value="material">Материал</option>
+                </select>
+                <input type="text" class="search__input main__input" id="search__input">
+                <button class="search__button main__button">Поиск</button>
+            </div>
+        </header>
+
+        <div class="main-table__data">
+            <ul class="main-table__header">
+                <li class="table__cell table__db">№</li>
+                <li class="table__cell table__timestamp">Вход</li>
+                <li class="table__cell table__files">
+                    <svg data-v-fa445770="" xmlns="http://www.w3.org/2000/svg" class="files__ico h-5 w-5 mx-auto"
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path data-v-fa445770="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </li>
+                <li class="table__cell table__use table__number">
+                    <label for="numbers">№ заказа</label>
+                    <select class="table__filter main__button main__select hidden__input" name="все" id="numbers">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__sample">Шаблон</li>
+                <li class="table__cell table__use table__client">
+                    <label for="clients">Клиент</label>
+                    <select class="table__filter main__button main__select hidden__input" name="clients" id="clients">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__name">Наименование</li>
+                <li class="table__cell table__use table__material">
+                    <label for="materials">Материалы</label>
+                    <select class="table__filter main__button main__select hidden__input" name="materials"
+                            id="materials">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__quantity">Тираж</li>
+                <li class="table__cell table__issued">Выдано</li>
+                <li class="table__cell table__m">М</li>
+                <li class="table__cell table__endtime">Дата сдачи</li>
+                <li class="table__cell table__routes">Маршруты</li>
+                {{/*            <li class="table__cell table__otk">ОТК</li>*/}}
+                <li class="table__cell table__p">П</li>
+                <li class="table__cell table__comment">Коммент</li>
+            </ul>
+
+            <div class="main__table main-table">
+            </div>
+        </div>
+    </main>
+</div>
+
+
+</body>
+</html>

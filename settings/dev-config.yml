@@ -1,0 +1,12 @@
+---
+
+app_port: 8181
+salt: dasdfasffsdf
+
+db:
+  host: localhost
+  port: 5437
+  user: nik
+  password: '1325'
+  name: nik
+  sslmode: disable

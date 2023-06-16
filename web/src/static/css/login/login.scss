@@ -1,0 +1,65 @@
+@import "../main";
+@import "../var";
+
+.user-form {
+  margin: 150px auto;
+  width: 450px;
+
+  &__title {
+    color: white;
+    padding: 10px;
+    background-color: #79aec8;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+
+  &__block {
+    position: relative;
+    padding: 10px;
+    height: 44px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #447e9b;
+
+    &:nth-child(even) {
+      background: #f3efef;
+    }
+  }
+
+  &__input {
+    width: 200px;
+    border-radius: 5px;
+    color: #447e9b;
+    padding: 5px;
+    height: 28px;
+  }
+
+  &__label {
+    width: 200px;
+    margin-right: 50px;
+  }
+
+  &__submit {
+    font-size: 16px;
+    cursor: pointer;
+    height: 28px;
+    width: 100px;
+    background: white;
+    font-weight: 400;
+    color: #447e9b;
+    transition: color .3s;
+    position: absolute;
+    right: 10px;
+    border-radius: 5px;
+    text-align: center;
+
+    &:hover {
+      transition: color .3s;
+      color: $hover_aqua;
+    }
+  }
+}

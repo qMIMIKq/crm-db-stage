@@ -1,0 +1,327 @@
+package repository
+
+import (
+	"crm/internal/domain"
+	"fmt"
+	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
+	"strings"
+)
+
+type OrdersPG struct {
+	db *sqlx.DB
+}
+
+func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
+	query := fmt.Sprintf(`
+			UPDATE orders 
+				 SET order_number = $1 ,order_sample = $2, order_client = $3, order_name = $4,
+						 order_material = $5, order_quantity = $6, order_issued = $7, order_m = $8,
+						 order_endtime = $9, order_otk = $10, order_p = $11
+			WHERE order_id = $12
+	`)
+
+	fileQuery := fmt.Sprintf(`
+	  INSERT INTO files
+						(file_name, order_id)
+		 VALUES ($1, $2)
+	`)
+
+	getFilesQuery := fmt.Sprintf(`
+		SELECT file_name FROM files WHERE order_id = $1
+	`)
+
+	commentsQuery := fmt.Sprintf(`
+		INSERT INTO comments (comment_text, order_id)
+		VALUES ($1, $2)	
+	`)
+
+	var files []string
+
+	var err error
+	for _, order := range orders {
+		_, err = o.db.Exec(query, order.Number, order.Sample,
+			order.Client, order.Name, order.Material, order.Quantity,
+			order.Issued, order.M, order.EndTime, order.OTK,
+			order.P, order.ID)
+
+		err = o.db.Select(&files, getFilesQuery, order.ID)
+		for _, file := range order.Files {
+			if file != "" && !o.findFile(files, file) {
+				_, err = o.db.Exec(fileQuery, file, order.ID)
+			}
+		}
+
+		for _, comment := range order.Comments {
+			if comment != "" {
+				_, err = o.db.Exec(commentsQuery, comment, order.ID)
+			}
+		}
+
+		routesCheck := fmt.Sprintf(`
+				SELECT routeID, route_position FROM routes WHERE order_id = $1
+		`)
+
+		routesQuery := fmt.Sprintf(`
+			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
+													issued, start_time, end_time,
+													otk_time, error_time, error_value)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+			RETURNING route_id
+		`)
+
+		routeCommentsQuery := fmt.Sprintf(`
+			INSERT INTO route_comments (route_id, date, value) VALUES ($1, $2, $3)
+		`)
+
+		routeIssuedQuery := fmt.Sprintf(`
+			INSERT INTO route_issued (route_id, date, value) VALUES ($1, $2, $3)
+		`)
+
+		for name, route := range order.Routes {
+			var routeID int
+			routePos := strings.Split(name, "-")[1]
+
+			var dbRoutePos []domain.CheckRoute
+			err = o.db.Select(&dbRoutePos, routesCheck, order.ID)
+			log.Info().Caller().Interface("route pos id", dbRoutePos).Msgf("routePos is %v", dbRoutePos)
+
+			routesUpdateQuery := fmt.Sprintf(`
+				UPDATE routes SET worker = $1, plot_id = $2, quantity = $3,
+								issued = $4, start_time = $5, end_time = $6,
+								otk_time = $7, error_time = $8, error_value = $9
+			 WHERE order_id = $10 AND route_position = $11
+			`)
+
+			log.Info().Interface("route", route.OrderID).Msg("ROUTE")
+
+			if len(dbRoutePos) > 0 {
+				for _, check := range dbRoutePos {
+					if check.RoutePos == routePos {
+						log.Warn().Caller().Msg("MATCH")
+
+						_, err = o.db.Exec(routesUpdateQuery, route.User, route.Plot,
+							route.Quantity, route.Issued, route.StartTime,
+							route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, order.ID, routePos)
+
+						for _, comment := range route.Comments {
+							if len(comment.Date) > 0 {
+								_, err = o.db.Exec(routeCommentsQuery, check.RouteID, comment.Date, comment.Value)
+							}
+						}
+
+						for _, issued := range route.IssuedReport {
+							if len(issued.Date) > 0 {
+								_, err = o.db.Exec(routeIssuedQuery, check.RouteID, issued.Date, issued.Value)
+							}
+						}
+					}
+				}
+			} else {
+				err = o.db.QueryRow(routesQuery, order.ID,
+					routePos, route.User, route.Plot,
+					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg).Scan(&routeID)
+				log.Info().Msgf("id is %v", routeID)
+
+				for _, comment := range route.Comments {
+					if len(comment.Date) > 0 {
+						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
+					}
+				}
+
+				for _, issued := range route.IssuedReport {
+					if len(issued.Date) > 0 {
+						_, err = o.db.Exec(routeIssuedQuery, routeID, issued.Date, issued.Value)
+					}
+				}
+			}
+		}
+
+		//log.Info().Msgf("pos is %s", routePos)
+
+	}
+
+	return err
+}
+
+func (o OrdersPG) AddOrders(orders []*domain.Order) error {
+	orderQuery := fmt.Sprintf(`
+			INSERT INTO orders
+						 (order_number,order_sample,order_client,order_name,
+						 order_material, order_quantity, order_issued, order_m, order_endtime, order_otk, order_p)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+			RETURNING order_id
+	`)
+
+	fileQuery := fmt.Sprintf(`
+	  INSERT INTO files
+						(file_name, order_id)
+		 VALUES ($1, $2)
+	`)
+
+	getFilesQuery := fmt.Sprintf(`
+		SELECT file_name FROM files WHERE order_id = $1
+	`)
+
+	commentsQuery := fmt.Sprintf(`
+		INSERT INTO comments (comment_text, order_id)
+		VALUES ($1, $2)	
+	`)
+
+	routesQuery := fmt.Sprintf(`
+			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
+													issued, start_time, end_time,
+													otk_time, error_time, error_value)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+			RETURNING route_id
+		`)
+
+	routeCommentsQuery := fmt.Sprintf(`
+			INSERT INTO route_comments (route_id, date, value) VALUES ($1, $2, $3)
+		`)
+
+	routeIssuedQuery := fmt.Sprintf(`
+			INSERT INTO route_issued (route_id, date, value) VALUES ($1, $2, $3)
+		`)
+
+	var files []string
+
+	var err error
+	var id int
+	for _, order := range orders {
+		err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
+			order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P).Scan(&id)
+
+		err = o.db.Select(&files, getFilesQuery, id)
+		for _, file := range order.Files {
+			if file != "" && !o.findFile(files, file) {
+				_, err = o.db.Exec(fileQuery, file, id)
+			}
+		}
+
+		for _, comment := range order.Comments {
+			if comment != "" {
+				_, err = o.db.Exec(commentsQuery, comment, id)
+			}
+		}
+
+		var routeID int
+		for name, route := range order.Routes {
+			routePos := strings.Split(name, "-")[1]
+			err = o.db.QueryRow(routesQuery, id,
+				routePos, route.User, route.Plot,
+				route.Quantity, route.Issued, route.StartTime, route.OtkTime, route.EndTime, route.ErrorTime, route.ErrorMsg).Scan(&routeID)
+			log.Info().Msgf("id is %v", routeID)
+
+			for _, comment := range route.Comments {
+				if len(comment.Date) > 0 {
+					_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
+				}
+			}
+
+			for _, issued := range route.IssuedReport {
+				if len(issued.Date) > 0 {
+					_, err = o.db.Exec(routeIssuedQuery, routeID, issued.Date, issued.Value)
+				}
+			}
+		}
+
+	}
+
+	return err
+}
+
+func (o OrdersPG) findFile(files []string, file string) bool {
+	for _, f := range files {
+		if f == file {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
+	query := fmt.Sprintf(`
+		SELECT * FROM orders ORDER BY order_id ASC;
+	`)
+
+	queryFiles := fmt.Sprintf(`
+		SELECT file_name FROM files WHERE order_id = $1
+	`)
+
+	queryComments := fmt.Sprintf(`
+		SELECT comment_text FROM comments WHERE order_id = $1
+	`)
+
+	//query = fmt.Sprintf(`
+	//	SELECT u.user_name, g.group_name, g.group_id,
+	//         p.plot_name, p.plot_id
+	//    FROM users_rights ur
+	//         JOIN users u on u.user_id = ur.user_id
+	//         JOIN groups g on g.group_id = ur.group_id
+	//         JOIN plots p on p.plot_id = ur.plot_id
+	//    WHERE u.login = $1
+	//		  AND u.password = $2;
+	//`)
+
+	queryRoutes := fmt.Sprintf(`
+		SELECT r.route_position, r.issued, r.start_time, 
+					 r.end_time, r.otk_time, r.error_time,
+					 r.error_value, r.quantity, r.worker, r.plot_id, r.route_id
+      FROM routes r
+     WHERE order_id = $1
+	`)
+
+	queryRouteComments := fmt.Sprintf(`
+		SELECT date, value
+		  FROM route_comments
+		 WHERE route_id = $1
+	`)
+
+	queryRouteIssued := fmt.Sprintf(`
+		SELECT date, value
+		  FROM route_comments
+		 WHERE route_id = $1
+	`)
+
+	var err error
+
+	var orders []*domain.Order
+	err = o.db.Select(&orders, query)
+
+	var files []string
+	var comments []string
+	var routes []*domain.Route
+	for _, order := range orders {
+		err = o.db.Select(&files, queryFiles, order.ID)
+		for _, f := range files {
+			order.Files = append(order.Files, f)
+		}
+
+		err = o.db.Select(&comments, queryComments, order.ID)
+		for _, c := range comments {
+			order.Comments = append(order.Comments, c)
+		}
+
+		err = o.db.Select(&routes, queryRoutes, order.ID)
+
+		for _, route := range routes {
+			err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
+		}
+
+		for _, route := range routes {
+			err = o.db.Select(&route.IssuedReport, queryRouteIssued, route.RouteID)
+		}
+
+		for _, r := range routes {
+			order.DbRoutes = append(order.DbRoutes, r)
+		}
+	}
+
+	return orders, err
+}
+
+func NewOrdersPG(db *sqlx.DB) *OrdersPG {
+	return &OrdersPG{db: db}
+}

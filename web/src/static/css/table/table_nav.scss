@@ -1,0 +1,41 @@
+@import "../var";
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: $gray_bg;
+  border: 1px solid black;
+  border-bottom: none;
+  border-radius: 5px 5px 0px 0px;
+  padding: 10px 30px;
+  //margin-bottom: 30px;
+
+  &__title {
+    height: 34px;
+    color: $button_color;
+    margin-right: 20px;
+    font-size: 27px;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+  }
+
+  &__button {
+    &:not(:last-child) {
+      margin-right: 20px;
+    }
+  }
+}
+
+#search__target {
+  width: 120px !important;
+  margin-right: 5px;
+}
+
+#search__input {
+  height: 28px;
+  margin-right: 5px;
+}
