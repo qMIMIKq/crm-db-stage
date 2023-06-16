@@ -283,7 +283,8 @@ let state = {
   "currentRoute": null,
   "plots": [],
   "machines": [],
-  "userInfo": {}
+  "userInfo": {},
+  "filterTypes": []
 };
 if (userInf) {
   state["adminCheck"] = userInf.group === 'супер-админ' || userInf.group === 'админ';
@@ -497,6 +498,21 @@ const drawDeadlineP = (target, chosenDeadline, deadlines) => {
 
 /***/ }),
 
+/***/ "./web/src/static/js/modules/drawManagers.js":
+/*!***************************************************!*\
+  !*** ./web/src/static/js/modules/drawManagers.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "drawManagers": () => (/* binding */ drawManagers)
+/* harmony export */ });
+const drawManagers = () => {};
+
+/***/ }),
+
 /***/ "./web/src/static/js/modules/drawOrders.js":
 /*!*************************************************!*\
   !*** ./web/src/static/js/modules/drawOrders.js ***!
@@ -517,6 +533,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _commentsModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./commentsModal */ "./web/src/static/js/modules/commentsModal.js");
 /* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawDeadlineP.js");
 /* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
+/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
+
+
 
 
 
@@ -541,6 +561,7 @@ const drawOrders = (d, data) => {
     });
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
+  (0,_getData__WEBPACK_IMPORTED_MODULE_8__.getData)("users/get-users").then(res => console.log(res));
   const pData = [1, 2, 3, 4, 5, 6, 7, 30];
   const groupper = _domain__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_6__.state.techCheck ? "" : "readonly";
   table.insertAdjacentHTML(`afterbegin`, `
@@ -586,7 +607,8 @@ const drawOrders = (d, data) => {
                         value="${d.issued}">
                     </li>
                     <li class="table-body_cell table__m">
-                        <input ${groupper} class="table__data " name="m" type="text" value="${d.m}" tabindex="-1" autocomplete="off">
+                        <select ${groupper} class="table__data main__button" name="m" id="">
+                        </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data "
@@ -716,6 +738,7 @@ const drawOrders = (d, data) => {
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_4__.triggerCommentsModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)("#db_id", _routesModal__WEBPACK_IMPORTED_MODULE_3__.showRoutesIssued);
   (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_5__.drawDeadlineP)(".table-p-select", d.p, pData);
+  (0,_drawManagers__WEBPACK_IMPORTED_MODULE_7__.drawManagers)(".table-m-select", d.m);
   const jsonRoute = document.querySelector("input[name='routes_json']");
   const routesWrapper = document.querySelector(".table-routes__wrapper");
   const routesIssuedWrapper = document.querySelector(".table-routes__issued");
@@ -731,9 +754,6 @@ const drawOrders = (d, data) => {
       if (dataIssuedInput) {
         dataIssuedInput.value = route["issued"];
       }
-    });
-    routes.forEach(route => {
-      console.log(routesWrapper.querySelector(`input[name=route-${route.route_position}]`).value);
     });
   }
 };

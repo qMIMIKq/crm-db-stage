@@ -65,7 +65,8 @@ let state = {
   "currentRoute": null,
   "plots": [],
   "machines": [],
-  "userInfo": {}
+  "userInfo": {},
+  "filterTypes": []
 };
 if (userInf) {
   state["adminCheck"] = userInf.group === 'супер-админ' || userInf.group === 'админ';
