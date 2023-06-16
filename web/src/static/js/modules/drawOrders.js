@@ -28,8 +28,11 @@ export const drawOrders = (d, data) => {
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
 
+    let managers = []
     getData("users/get-users")
-        .then(res => console.log(res))
+        .then(res => {
+            managers = res.data.filter(user => user.group === "менеджер")
+        })
 
     const pData = [1, 2, 3, 4, 5, 6, 7, 30]
     const groupper = state["adminCheck"] || state["techCheck"] ? "" : "readonly"
@@ -209,7 +212,7 @@ export const drawOrders = (d, data) => {
     addTriggers(".table__comment", triggerCommentsModal)
     addTriggers("#db_id", showRoutesIssued)
     drawDeadlineP(".table-p-select", d.p, pData)
-    drawManagers(".table-m-select", d.m)
+    drawManagers(".table-m-select", d.m, managers)
 
     const jsonRoute = document.querySelector("input[name='routes_json']")
     const routesWrapper = document.querySelector(".table-routes__wrapper")
