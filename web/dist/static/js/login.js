@@ -10485,7 +10485,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/domain */ "./web/src/static/js/modules/domain.js");
 
 
-const appAddr = "http://192.168.1.230/:8181";
+const appAddr = "http://192.168.1.230:8181";
 const loginForm = document.querySelector(".login-form");
 loginForm.addEventListener("submit", e => {
   e.preventDefault();
