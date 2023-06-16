@@ -138,8 +138,8 @@ INSERT INTO orders (order_number,
                     order_sample,
                     order_client, order_name,
                     order_material, order_quantity,
-                    order_issued, order_m, order_endtime, order_otk, order_p)
-VALUES (1, '-', 'Тестовый Клиент', 'Тестовый заказ', 'Тестовый материал', '10000', '5', 'СШ', '2023-04-12', 'ОТК',
+                    order_issued, order_endtime, order_otk, order_p)
+VALUES (1, '-', 'Тестовый Клиент', 'Тестовый заказ', 'Тестовый материал', '10000', '5', '2023-04-12', 'ОТК',
         '1дн');
 
 create table files

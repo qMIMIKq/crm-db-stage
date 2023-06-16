@@ -13,6 +13,7 @@ let state = {
     "plots": [],
     "machines": [],
     "userInfo": {},
+    "filterTypes": []
 }
 
 if (userInf) {

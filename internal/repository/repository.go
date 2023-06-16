@@ -14,6 +14,7 @@ type Authorization interface {
 type Users interface {
 	GetUsers() ([]domain.UserInfo, error)
 	GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo, error)
+	GetUsersByGroup(group string) ([]domain.UserInfo, error)
 	GetOperators() ([]domain.UserInfo, error)
 }
 

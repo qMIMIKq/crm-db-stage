@@ -5,6 +5,8 @@ import {showRoutesIssued, triggerRoutesModal} from "./routesModal";
 import {triggerCommentsModal} from "./commentsModal";
 import {drawDeadlineP} from "./drawDeadlineP";
 import {state} from "./domain";
+import {drawManagers} from "./drawManagers";
+import {getData} from "./getData";
 
 export const table = document.querySelector(".main-table")
 
@@ -26,8 +28,10 @@ export const drawOrders = (d, data) => {
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
 
-    const pData = [1, 2, 3, 4, 5, 6, 7, 30]
+    getData("users/get-users")
+        .then(res => console.log(res))
 
+    const pData = [1, 2, 3, 4, 5, 6, 7, 30]
     const groupper = state["adminCheck"] || state["techCheck"] ? "" : "readonly"
 
 
@@ -74,7 +78,8 @@ export const drawOrders = (d, data) => {
                         value="${d.issued}">
                     </li>
                     <li class="table-body_cell table__m">
-                        <input ${groupper} class="table__data " name="m" type="text" value="${d.m}" tabindex="-1" autocomplete="off">
+                        <select ${groupper} class="table__data main__button" name="m" id="">
+                        </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data "
@@ -204,6 +209,7 @@ export const drawOrders = (d, data) => {
     addTriggers(".table__comment", triggerCommentsModal)
     addTriggers("#db_id", showRoutesIssued)
     drawDeadlineP(".table-p-select", d.p, pData)
+    drawManagers(".table-m-select", d.m)
 
     const jsonRoute = document.querySelector("input[name='routes_json']")
     const routesWrapper = document.querySelector(".table-routes__wrapper")
@@ -224,10 +230,6 @@ export const drawOrders = (d, data) => {
             if (dataIssuedInput) {
                 dataIssuedInput.value = route["issued"]
             }
-        })
-
-        routes.forEach(route => {
-            console.log(routesWrapper.querySelector(`input[name=route-${route.route_position}]`).value)
         })
     }
 }

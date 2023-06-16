@@ -63,7 +63,7 @@ func (u UsersPG) GetUsers() ([]domain.UserInfo, error) {
 	return users, err
 }
 
-func (u UsersPG) GetUsersByGroup(user domain.UserInfo) ([]domain.UserInfo, error) {
+func (u UsersPG) GetUsersByGroup(group string) ([]domain.UserInfo, error) {
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
@@ -76,7 +76,7 @@ func (u UsersPG) GetUsersByGroup(user domain.UserInfo) ([]domain.UserInfo, error
        ORDER BY u.user_name DESC;
   `)
 
-	err := u.db.Select(&users, query, user.Group)
+	err := u.db.Select(&users, query, group)
 	return users, err
 }
 
