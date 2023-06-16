@@ -571,7 +571,7 @@ const drawOrders = (d, data) => {
   let managers = [];
   (0,_getData__WEBPACK_IMPORTED_MODULE_8__.getData)("users/get-users").then(res => {
     managers = res.data.filter(user => user.group === "менеджер");
-    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_7__.drawManagers)(".table-m-select", d.m, managers);
+    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_7__.drawManagers)(".table-m-select", managers, d.m);
   });
   const pData = [1, 2, 3, 4, 5, 6, 7, 30];
   const groupper = _domain__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_6__.state.techCheck ? "" : "readonly";

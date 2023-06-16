@@ -32,7 +32,7 @@ export const drawOrders = (d, data) => {
     getData("users/get-users")
         .then(res => {
             managers = res.data.filter(user => user.group === "менеджер")
-            drawManagers(".table-m-select", d.m, managers)
+            drawManagers(".table-m-select", managers, d.m)
         })
 
     const pData = [1, 2, 3, 4, 5, 6, 7, 30]
