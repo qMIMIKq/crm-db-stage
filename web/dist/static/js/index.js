@@ -95,7 +95,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "bindOrdersListeners": () => (/* binding */ bindOrdersListeners)
 /* harmony export */ });
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 
 
 const bindOrdersListeners = () => {
@@ -143,26 +143,26 @@ const setChooseListeners = (label, listener, action, cls) => {
         switch (action) {
           case "add":
             if (!label.classList.contains("table__data--opened")) {
-              _domain__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
+              _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
               item.classList.add(cls);
             }
             break;
           case "show-current":
-            _domain__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
             e.target.classList.add(cls);
             break;
           case "toggle":
-            _domain__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
             item.classList.toggle(cls);
             break;
           default:
             if (cls === "table__data--current") {
-              _domain__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
+              _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
               item.classList.remove(cls);
               return;
             }
             if (!label.classList.contains("table__data--opened")) {
-              _domain__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
+              _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
               item.classList.remove(cls);
             }
         }
@@ -268,42 +268,6 @@ const triggerCommentsModal = e => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/domain.js":
-/*!*********************************************!*\
-  !*** ./web/src/static/js/modules/domain.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "appAddr": () => (/* binding */ appAddr),
-/* harmony export */   "inWork": () => (/* binding */ inWork),
-/* harmony export */   "state": () => (/* binding */ state)
-/* harmony export */ });
-let appAddr = "http://192.168.1.230:8181";
-let inWork = false;
-const userInf = JSON.parse(sessionStorage.getItem("user"));
-let state = {
-  "filtered": false,
-  "inWork": false,
-  "newOrders": false,
-  "orders": [],
-  "filteredOrders": [],
-  "currentRoute": null,
-  "plots": [],
-  "machines": [],
-  "userInfo": {},
-  "filterTypes": []
-};
-if (userInf) {
-  state["adminCheck"] = userInf.group === 'супер-админ' || userInf.group === 'админ';
-  state["techCheck"] = userInf.group === 'технолог';
-}
-
-
-/***/ }),
-
 /***/ "./web/src/static/js/modules/downloadFilesModal.js":
 /*!*********************************************************!*\
   !*** ./web/src/static/js/modules/downloadFilesModal.js ***!
@@ -317,7 +281,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "filesModal": () => (/* binding */ filesModal),
 /* harmony export */   "triggerFilesModal": () => (/* binding */ triggerFilesModal)
 /* harmony export */ });
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
 
@@ -342,7 +306,7 @@ const filesModal = `
         </div>
    </div>
 `;
-const DATA_SOURCE = `${_domain__WEBPACK_IMPORTED_MODULE_0__.appAddr}/assets/uploads/`;
+const DATA_SOURCE = `${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/assets/uploads/`;
 const deleteFiles = () => {
   const files = document.querySelectorAll(".data__file");
   if (files[0] !== null) {
@@ -356,7 +320,7 @@ const sendFiles = (files, filesInput) => {
   for (let file of files) {
     formData.append("files", file);
   }
-  fetch(`${_domain__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/files/save-files`, {
+  fetch(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/files/save-files`, {
     method: "POST",
     body: formData
   }).then(res => res.json()).then(data => {
@@ -454,8 +418,8 @@ const drawFiles = (modal, files) => {
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
                           <div class="data__file">
-                                <a target="_blank" class="link__preview" href="${_domain__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}">
-                                    <img class="file__preview" src="${_domain__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}" alt=>
+                                <a target="_blank" class="link__preview" href="${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}">
+                                    <img class="file__preview" src="${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}" alt=>
                                 </a>
                                 <a class="file__download" href="http://${file}" download>
                                      <svg data-v-42a4bff7 xmlns="http://www.w3.org/2000/svg" class="download-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -551,7 +515,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/routesModal.js");
 /* harmony import */ var _commentsModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./commentsModal */ "./web/src/static/js/modules/commentsModal.js");
 /* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawDeadlineP.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
 
 
@@ -579,7 +543,7 @@ const drawOrders = async (d, data, users) => {
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
   const pData = [1, 2, 3, 4, 5, 6, 7, 30];
-  const groupper = _domain__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_6__.state.techCheck ? "" : "readonly";
+  const groupper = _state__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_6__.state.techCheck ? "" : "readonly";
   table.insertAdjacentHTML(`afterbegin`, `
                 <form class="table-form table-form--old" method="POST">
                 <ul class="main-table__item">
@@ -624,6 +588,7 @@ const drawOrders = async (d, data, users) => {
                     </li>
                     <li class="table-body_cell table__m">
                         <select ${groupper} class="table__data table-m-select main__button" name="m" id="">
+                            <option disabled selected value="">М</option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">
@@ -952,10 +917,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "getData": () => (/* binding */ getData)
 /* harmony export */ });
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 
 const getData = async url => {
-  const resp = await fetch(`${_domain__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/${url}`);
+  const resp = await fetch(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/${url}`);
   if (!resp.ok) {
     console.log("beda");
   }
@@ -978,11 +943,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tableFilters */ "./web/src/static/js/modules/tableFilters.js");
 /* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 /* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
-
 
 
 
@@ -992,24 +955,46 @@ let searchedOrders = [];
 let updatedOrders = [];
 const getOrders = () => {
   // if (state["inWork"]) return
-  fetch(`${_domain__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
-    _domain__WEBPACK_IMPORTED_MODULE_2__.state.filtered = false;
+  fetch(`${_state__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
+    _state__WEBPACK_IMPORTED_MODULE_2__.state.filtered = false;
     const nums = [];
     const clients = [];
     const materials = [];
+    const names = [];
+    const quantity = [];
+    const issued = [];
+    const managers = [];
+    const deadlines = [];
     (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
     deleteOrders();
     (0,_getData__WEBPACK_IMPORTED_MODULE_4__.getData)("users/get-users").then(res => {
       data.data.forEach(d => {
-        _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders = data.data;
-        _domain__WEBPACK_IMPORTED_MODULE_2__.state.filteredOrders = _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
-        searchedOrders = _domain__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
+        _state__WEBPACK_IMPORTED_MODULE_2__.state.orders = data.data;
+        _state__WEBPACK_IMPORTED_MODULE_2__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
+        searchedOrders = _state__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
         nums.push(d.number);
         clients.push(d.client);
         materials.push(d.material);
-        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(d, data, res.data.filter(user => user.group === "менеджер"));
+        names.push(d.name);
+        quantity.push(d.quantity);
+        issued.push(d.issued);
+        managers.push(d.m);
+        deadlines.push(d.deadlines);
+        if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.filtered) {
+          _state__WEBPACK_IMPORTED_MODULE_2__.state.managers = res.data.filter(user => user.group === "менеджер");
+        }
+        // console.log(d)
+
+        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(d, data, _state__WEBPACK_IMPORTED_MODULE_2__.state.managers);
       });
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilters)([...new Set(nums)], [...new Set(clients)], [...new Set(materials)]);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(nums)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(clients)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(materials)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(names)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(quantity)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.quantityFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(issued)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.issuedFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(managers)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(deadlines)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
 
       // if (document.querySelector(".orders__total") === null) {
       //     document.querySelector(".main__header").insertAdjacentHTML("beforeend", `
@@ -1046,7 +1031,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
 /* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
 /* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
 
@@ -1283,7 +1268,7 @@ const showRoutesIssued = e => {
 };
 const triggerRoutesModal = e => {
   const routeInput = e.target.parentNode.querySelector(".hidden__input");
-  _domain__WEBPACK_IMPORTED_MODULE_2__.state.currentRoute = routeInput["name"];
+  _state__WEBPACK_IMPORTED_MODULE_2__.state.currentRoute = routeInput["name"];
   const modalElem = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(routeModal);
   let info = false;
   let routeInfo = e.target.parentNode.querySelector(".hidden__input").value;
@@ -1319,7 +1304,7 @@ const triggerRoutesModal = e => {
   const errBtn = routeForm.querySelector(".error-route__btn");
   errBtn.addEventListener("click", () => {
     let name = "";
-    if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+    if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
       name = _table__WEBPACK_IMPORTED_MODULE_4__.user.name;
     }
     let logMsg = "ОШИБКА " + document.querySelector("#error-route__msg").value;
@@ -1351,7 +1336,7 @@ const triggerRoutesModal = e => {
     errBtn.classList.remove("hidden__input");
     disableBtn("error-route__close");
   });
-  if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+  if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
     activateNextStage("start-route__time");
     activateNextStage("route__select--plot");
     modQ.removeAttribute("readonly");
@@ -1410,14 +1395,14 @@ const triggerRoutesModal = e => {
     }
     if (end) {
       disableBtn("end-route__btn");
-      if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+      if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
         activateNextStage("otk-route__btn");
       }
     }
     if (errM) {
       errInput.classList.remove("hidden__input");
       errTime.classList.add("hidden__input");
-      if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+      if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
         errCloseBtn.classList.remove("hidden__input");
         errBtn.classList.add("hidden__input");
       }
@@ -1464,7 +1449,7 @@ const triggerRoutesModal = e => {
   const endBTn = routeForm.querySelector(".end-route__btn");
   endBTn.addEventListener("click", () => {
     setDateToInput("end-route__time");
-    if (_domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+    if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
       activateNextStage("otk-route__btn");
     }
     disableBtn("end-route__btn");
@@ -1491,7 +1476,7 @@ const triggerRoutesModal = e => {
   });
   const commentBtn = document.querySelector(".send__comment");
   commentBtn.addEventListener("click", () => {
-    let name = _domain__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _domain__WEBPACK_IMPORTED_MODULE_2__.state.techCheck ? _table__WEBPACK_IMPORTED_MODULE_4__.user.name : routeUser.value !== 'Выберите оператора' ? routeUser.value : "Выберите оператора";
+    let name = _state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck ? _table__WEBPACK_IMPORTED_MODULE_4__.user.name : routeUser.value !== 'Выберите оператора' ? routeUser.value : "Выберите оператора";
     addLog(name, `"${document.querySelector("#section-logs__comment").value}"`, "#route__comments");
     document.querySelector("#section-logs__comment").value = "";
   });
@@ -1553,16 +1538,16 @@ const drawPlots = async plotI => {
   });
 };
 const drawUsers = (plotName, userI) => {
+  const usersSelect = document.querySelector("#route__user");
+  usersSelect.querySelectorAll("option").forEach(elem => {
+    if (!elem.hasAttribute("disabled")) elem.remove();
+  });
   const usersResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)("users/get-all-operators");
   usersResp.then(users => {
     if (plotName) {
       users.data = users.data.filter(u => u.plot === plotName);
     }
     users.data.forEach(user => {
-      const usersSelect = document.querySelector("#route__user");
-      usersSelect.querySelectorAll("option").forEach(elem => {
-        elem.remove();
-      });
       usersSelect.insertAdjacentHTML('beforeend', `
                 <option ${String(userI) === String(user.name) ? "selected" : ""} value="${user.name}">${user.name}</option>
             `);
@@ -1587,7 +1572,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
 /* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
 /* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 
 
 
@@ -1597,10 +1582,10 @@ const searchModule = () => {
   searchBtn.addEventListener("click", e => {
     const target = document.querySelector("#search__target").value;
     const text = document.querySelector("#search__input").value.toLowerCase();
-    _domain__WEBPACK_IMPORTED_MODULE_3__.state.filtered = true;
+    _state__WEBPACK_IMPORTED_MODULE_3__.state.filtered = true;
 
     // filtered = true
-    const newData = _domain__WEBPACK_IMPORTED_MODULE_3__.state.orders.filter(o => o[target].toLowerCase().includes(text));
+    const newData = _state__WEBPACK_IMPORTED_MODULE_3__.state.orders.filter(o => o[target].toLowerCase().includes(text));
     (0,_orders__WEBPACK_IMPORTED_MODULE_0__.deleteOrders)();
     newData.forEach(d => {
       (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(d, newData);
@@ -1670,6 +1655,42 @@ const showModal = modal => {
 
 /***/ }),
 
+/***/ "./web/src/static/js/modules/state.js":
+/*!********************************************!*\
+  !*** ./web/src/static/js/modules/state.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "appAddr": () => (/* binding */ appAddr),
+/* harmony export */   "inWork": () => (/* binding */ inWork),
+/* harmony export */   "state": () => (/* binding */ state)
+/* harmony export */ });
+let appAddr = "http://172.20.10.7:8181";
+let inWork = false;
+const userInf = JSON.parse(sessionStorage.getItem("user"));
+let state = {
+  "filtered": false,
+  "inWork": false,
+  "newOrders": false,
+  "orders": [],
+  "filteredOrders": [],
+  "currentRoute": null,
+  "plots": [],
+  "machines": [],
+  "userInfo": {},
+  "filterTypes": []
+};
+if (userInf) {
+  state["adminCheck"] = userInf.group === 'супер-админ' || userInf.group === 'админ';
+  state["techCheck"] = userInf.group === 'технолог';
+}
+
+
+/***/ }),
+
 /***/ "./web/src/static/js/modules/submitControl.js":
 /*!****************************************************!*\
   !*** ./web/src/static/js/modules/submitControl.js ***!
@@ -1694,7 +1715,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/routesModal.js");
 /* harmony import */ var _commentsModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./commentsModal */ "./web/src/static/js/modules/commentsModal.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 
 
 
@@ -1712,8 +1733,8 @@ const cancelButtonHTML = `
 `;
 const addOrder = document.querySelector(".header-button__add");
 const drawSubmit = () => {
-  _domain__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = true;
-  if (_domain__WEBPACK_IMPORTED_MODULE_8__.state.newOrders) {
+  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = true;
+  if (_state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders) {
     const sub = document.querySelector(".header-button__submit");
     const cancel = document.querySelector(".header-button__cancel");
     if (cancel === null) {
@@ -1731,10 +1752,10 @@ const deleteSubmitBtn = () => {
   if (btn !== null) {
     btn.remove();
   }
-  _domain__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
+  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
 };
 const cancelChange = e => {
-  _domain__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
+  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
   finallyForOrders(true);
 };
 const deleteCancelBtn = () => {
@@ -1772,6 +1793,7 @@ const showResult = status => {
 };
 addOrder.addEventListener("click", e => {
   drawSubmit();
+  console.log(_state__WEBPACK_IMPORTED_MODULE_8__.state.managers);
   _drawOrders__WEBPACK_IMPORTED_MODULE_2__.table.insertAdjacentHTML("afterbegin", _drawOrders__WEBPACK_IMPORTED_MODULE_2__.orderHTML);
   (0,_bindListeners__WEBPACK_IMPORTED_MODULE_1__.bindOrdersListeners)();
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(".table__files", _downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
@@ -1799,7 +1821,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "submitData": () => (/* binding */ submitData)
 /* harmony export */ });
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
 
 
@@ -1841,14 +1863,14 @@ function submitData() {
   const resNew = createRes(forms);
   const resUpd = createRes(formsUpd);
   if (resNew.length) {
-    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_domain__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/add`, "POST", JSON.stringify(resNew)).then(res => {
+    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/add`, "POST", JSON.stringify(resNew)).then(res => {
       if (res.ok) success = true;
     }).finally(() => {
       (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.finallyForOrders)(success);
     });
   }
   if (resUpd.length) {
-    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_domain__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/update`, "PUT", JSON.stringify(resUpd)).then(res => {
+    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/update`, "PUT", JSON.stringify(resUpd)).then(res => {
       if (res.ok) success = true;
     }).finally(() => {
       (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.finallyForOrders)(success);
@@ -1868,121 +1890,150 @@ function submitData() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "bindTableFilters": () => (/* binding */ bindTableFilters),
+/* harmony export */   "clientsFilter": () => (/* binding */ clientsFilter),
 /* harmony export */   "controlFiltersReset": () => (/* binding */ controlFiltersReset),
+/* harmony export */   "deadlineFilter": () => (/* binding */ deadlineFilter),
 /* harmony export */   "deleteTableFilters": () => (/* binding */ deleteTableFilters),
-/* harmony export */   "drawTableFilters": () => (/* binding */ drawTableFilters)
+/* harmony export */   "drawTableFilter": () => (/* binding */ drawTableFilter),
+/* harmony export */   "issuedFilter": () => (/* binding */ issuedFilter),
+/* harmony export */   "managerFilter": () => (/* binding */ managerFilter),
+/* harmony export */   "materialsFilter": () => (/* binding */ materialsFilter),
+/* harmony export */   "namesFilter": () => (/* binding */ namesFilter),
+/* harmony export */   "numsFilter": () => (/* binding */ numsFilter),
+/* harmony export */   "quantityFilter": () => (/* binding */ quantityFilter),
+/* harmony export */   "tableFiltersWrapper": () => (/* binding */ tableFiltersWrapper)
 /* harmony export */ });
 /* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
-/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
 
 
 
-const numbersFilter = document.querySelector("#numbers");
-const clientsFilter = document.querySelector("#clients");
-const materialsFilter = document.querySelector("#materials");
+const tableFiltersWrapper = document.querySelector('.main-table__header');
+const numsFilter = tableFiltersWrapper.querySelector('#numbers');
+const clientsFilter = tableFiltersWrapper.querySelector('#clients');
+const materialsFilter = tableFiltersWrapper.querySelector('#materials');
+const namesFilter = tableFiltersWrapper.querySelector("#name");
+const quantityFilter = tableFiltersWrapper.querySelector("#quantity");
+const issuedFilter = tableFiltersWrapper.querySelector("#issued");
+const managerFilter = tableFiltersWrapper.querySelector("#m");
+const deadlineFilter = tableFiltersWrapper.querySelector("#end_time");
 const deleteTableFilters = () => {
-  const filters = document.querySelectorAll(".table__filter--new");
+  const filters = document.querySelectorAll('.table__filter--new');
   if (filters[0] !== null) {
     filters.forEach(filter => filter.remove());
   }
 };
-const drawTableFilters = (numbers, clients, materials) => {
-  numbers.forEach(num => {
-    numbersFilter.insertAdjacentHTML('beforeend', `
-            <option class="table__filter--new" value="${num}">${num}</option>
-        `);
-  });
-  clients.forEach(client => {
-    clientsFilter.insertAdjacentHTML('beforeend', `
-            <option class="table__filter--new" value="${client}">${client}</option>
-        `);
-  });
-  materials.forEach(material => {
-    materialsFilter.insertAdjacentHTML('beforeend', `
-            <option class="table__filter--new" value="${material}">${material}</option>
+// export const drawTableFilters =
+//     (numbers, clients, materials, n) => {
+//         numbers.forEach(num => {
+//             numsFilter.insertAdjacentHTML('beforeend', `
+//             <option class='table__filter--new' value='${num}'>${num}</option>
+//         `)
+//         })
+//         clients.forEach(client => {
+//             clientsFilter.insertAdjacentHTML('beforeend', `
+//             <option class='table__filter--new' value='${client}'>${client}</option>
+//         `)
+//         })
+//         materials.forEach(material => {
+//             materialsFilter.insertAdjacentHTML('beforeend', `
+//             <option class='table__filter--new' value='${material}'>${material}</option>
+//         `)
+//         })
+//
+//     }
+
+const drawTableFilter = (data, target) => {
+  data.forEach(d => {
+    target.insertAdjacentHTML('beforeend', `
+            <option class='table__filter--new' value='${d}'>${d}</option>
         `);
   });
 };
 const bindTableFilters = () => {
-  const tableFilters = document.querySelectorAll(".table__filter");
-  const filterWrappers = document.querySelectorAll(".table__use label");
-  const numsTableFilter = document.querySelector("#numbers");
-  const clientsTableFilter = document.querySelector("#clients");
-  const materialsTableFilter = document.querySelector("#materials");
+  const tableFilters = document.querySelectorAll('.table__filter');
+  const filterWrappers = document.querySelectorAll('.table__use label');
   let allFilters = [];
   let currentFilters = [];
   filterWrappers.forEach(wrapper => {
-    wrapper.addEventListener("click", e => {
-      const select = wrapper.parentNode.querySelector("select");
-      wrapper.classList.add("hidden__input");
-      select.classList.remove("hidden__input");
+    wrapper.addEventListener('click', e => {
+      const select = wrapper.parentNode.querySelector('select');
+      wrapper.classList.add('hidden__input');
+      select.classList.remove('hidden__input');
     });
   });
   tableFilters.forEach(filter => {
-    filter.addEventListener("blur", e => {
+    filter.addEventListener('blur', e => {
       showFilter(e);
     });
   });
   const showFilter = e => {
     const target = e.target;
-    _domain__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
-    const label = target.parentNode.querySelector("label");
-    target.classList.add("hidden__input");
-    label.classList.remove("hidden__input");
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
+    const label = target.parentNode.querySelector('label');
+    target.classList.add('hidden__input');
+    label.classList.remove('hidden__input');
   };
-  numsTableFilter.addEventListener("change", e => {
-    setChosenFilter(e);
+  numsFilter.addEventListener('change', e => {
     showFilter(e);
-    filterOrders("number", e.target.value);
+    filterOrders('number', e.target.value);
+    setChosenFilter(e);
   });
-  clientsTableFilter.addEventListener("change", e => {
-    setChosenFilter(e);
+  clientsFilter.addEventListener('change', e => {
     showFilter(e);
-    filterOrders("client", e.target.value);
+    filterOrders('client', e.target.value);
+    setChosenFilter(e);
   });
-  materialsTableFilter.addEventListener("change", e => {
-    setChosenFilter(e);
+  materialsFilter.addEventListener('change', e => {
     showFilter(e);
-    filterOrders("material", e.target.value);
+    filterOrders('material', e.target.value);
+    setChosenFilter(e);
   });
   const filterOrders = (type, filter) => {
-    if (filter === "все") {
-      _domain__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+    if (filter === 'все') {
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
       (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
       return;
     }
-    _domain__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _domain__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o[type] === filter);
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o[type] === filter);
     (0,_orders__WEBPACK_IMPORTED_MODULE_0__.deleteOrders)();
-    _domain__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
-      (0,_drawOrders__WEBPACK_IMPORTED_MODULE_2__.drawOrders)(order, _domain__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders);
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
+      (0,_drawOrders__WEBPACK_IMPORTED_MODULE_2__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
     });
   };
 };
 const controlFiltersReset = () => {
-  if (_domain__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-    const nav = document.querySelector(".main-header__nav");
-    const resetBtn = nav.querySelector(".header-button__reset");
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+    const nav = document.querySelector('.main-header__nav');
+    const resetBtn = nav.querySelector('.header-button__reset');
     if (resetBtn === null) {
       nav.insertAdjacentHTML('beforeend', `
-                <button class="main__button main-header__button header-button__reset" tabindex="-1">Сбросить фильтры</button>
+                <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
             `);
     }
-    nav.querySelector(".header-button__reset").addEventListener("click", e => {
-      document.querySelector("#search__input").value = "";
-      _domain__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+    nav.querySelector('.header-button__reset').addEventListener('click', e => {
+      document.querySelector('#search__input').value = '';
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+      tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+        cell.style.textDecoration = 'none';
+      });
       (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
     });
   } else {
-    const resetBtn = document.querySelector(".header-button__reset");
+    const resetBtn = document.querySelector('.header-button__reset');
     if (resetBtn !== null) {
       resetBtn.remove();
     }
   }
 };
 const setChosenFilter = e => {
-  const lab = e.target.parentNode.querySelector("label");
-  lab.style.textDecoration = "underline";
+  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered);
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+    e.target.parentNode.querySelector('label').style.textDecoration = 'underline';
+  } else {
+    e.target.parentNode.querySelector('label').style.textDecoration = 'none';
+  }
 };
 
 /***/ }),
@@ -2126,20 +2177,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/orders */ "./web/src/static/js/modules/orders.js");
 /* harmony import */ var _modules_search__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/search */ "./web/src/static/js/modules/search.js");
 /* harmony import */ var _modules_topFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/topFilters */ "./web/src/static/js/modules/topFilters.js");
-/* harmony import */ var _modules_domain__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
 
 
 
 
 
 const user = JSON.parse(sessionStorage.getItem("user"));
-
-// topFiltersHandler()
+(0,_modules_topFilters__WEBPACK_IMPORTED_MODULE_3__.topFiltersHandler)();
 (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
 (0,_modules_search__WEBPACK_IMPORTED_MODULE_2__.searchModule)();
 const subBtn = document.querySelector(".header-button__add");
 const plotsFilters = document.querySelector(".nav-filters__plots");
-if (!(_modules_domain__WEBPACK_IMPORTED_MODULE_4__.state.adminCheck || _modules_domain__WEBPACK_IMPORTED_MODULE_4__.state.techCheck)) {
+if (!(_modules_state__WEBPACK_IMPORTED_MODULE_4__.state.adminCheck || _modules_state__WEBPACK_IMPORTED_MODULE_4__.state.techCheck)) {
   subBtn.classList.add("hidden__input");
   plotsFilters.classList.add("hidden__input");
 }

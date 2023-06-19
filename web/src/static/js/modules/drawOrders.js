@@ -4,7 +4,7 @@ import {addTriggers} from "./addTriggers";
 import {showRoutesIssued, triggerRoutesModal} from "./routesModal";
 import {triggerCommentsModal} from "./commentsModal";
 import {drawDeadlineP} from "./drawDeadlineP";
-import {state} from "./domain";
+import {state} from "./state";
 import {drawManagers} from "./drawManagers";
 
 export const table = document.querySelector(".main-table")
@@ -26,7 +26,6 @@ export const drawOrders = async (d, data, users) => {
         })
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
-
 
     const pData = [1, 2, 3, 4, 5, 6, 7, 30]
     const groupper = state["adminCheck"] || state["techCheck"] ? "" : "readonly"
@@ -75,6 +74,7 @@ export const drawOrders = async (d, data, users) => {
                     </li>
                     <li class="table-body_cell table__m">
                         <select ${groupper} class="table__data table-m-select main__button" name="m" id="">
+                            <option disabled selected value="">М</option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">

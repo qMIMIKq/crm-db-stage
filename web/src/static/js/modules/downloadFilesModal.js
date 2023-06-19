@@ -1,4 +1,4 @@
-import {appAddr} from "./domain";
+import {appAddr} from "./state";
 import {drawSubmit} from "./submitControl";
 import {showModal} from "./showModal";
 

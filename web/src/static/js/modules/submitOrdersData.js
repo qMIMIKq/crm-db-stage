@@ -1,5 +1,5 @@
 import {finallyForOrders} from "./submitControl";
-import {appAddr} from "./domain";
+import {appAddr} from "./state";
 import {sendData} from "./sendData";
 
 const createRes = forms => {

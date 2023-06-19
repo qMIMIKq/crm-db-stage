@@ -1,7 +1,7 @@
 import {deleteOrders} from "./orders";
 import {drawOrders} from "./drawOrders";
 import {bindOrdersListeners} from "./bindListeners";
-import {state} from "./domain";
+import {state} from "./state";
 
 export const searchModule = () => {
     const searchBtn = document.querySelector(".search__button")

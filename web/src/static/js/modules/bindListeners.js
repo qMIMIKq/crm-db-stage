@@ -1,5 +1,5 @@
 import {drawSubmit} from "./submitControl";
-import {state} from "./domain";
+import {state} from "./state";
 
 export const bindOrdersListeners = () => {
     document.querySelectorAll(".table__data").forEach(label => {

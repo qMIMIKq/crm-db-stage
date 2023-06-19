@@ -1,6 +1,6 @@
 import {showModal} from "./showModal";
 import {getData} from "./getData";
-import {state} from "./domain";
+import {state} from "./state";
 import {drawSubmit} from "./submitControl";
 import {user} from "../table";
 
@@ -545,6 +545,11 @@ const drawPlots = async (plotI) => {
 }
 
 const drawUsers = (plotName, userI) => {
+    const usersSelect = document.querySelector("#route__user")
+    usersSelect.querySelectorAll("option").forEach(elem => {
+        if (!elem.hasAttribute("disabled")) elem.remove()
+    })
+
     const usersResp = getData("users/get-all-operators")
     usersResp.then(users => {
         if (plotName) {
@@ -552,11 +557,6 @@ const drawUsers = (plotName, userI) => {
         }
 
         users.data.forEach(user => {
-            const usersSelect = document.querySelector("#route__user")
-            usersSelect.querySelectorAll("option").forEach(elem => {
-                elem.remove()
-            })
-
             usersSelect.insertAdjacentHTML('beforeend', `
                 <option ${String(userI) === String(user.name) ? "selected" : ""} value="${user.name}">${user.name}</option>
             `)

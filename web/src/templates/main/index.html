@@ -70,7 +70,12 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__name">Наименование</li>
+                <li class="table__cell table__use table__name">
+                    <label for="name">Наименование</label>
+                    <select class="table__filter main__button main__select hidden__input" name="name" id="name">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
                 <li class="table__cell table__use table__material">
                     <label for="materials">Материалы</label>
                     <select class="table__filter main__button main__select hidden__input" name="materials"
@@ -78,10 +83,34 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__quantity">Тираж</li>
-                <li class="table__cell table__issued">Выдано</li>
-                <li class="table__cell table__m">М</li>
-                <li class="table__cell table__endtime">Дата сдачи</li>
+                <li class="table__cell table__use table__quantity">
+                    <label for="quantity">Тираж</label>
+                    <select class="table__filter main__button main__select hidden__input" name="quantity"
+                            id="quantity">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__use table__issued">
+                    <label for="issued">Выдано</label>
+                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                            id="issued">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__use table__m">
+                    <label for="m">М</label>
+                    <select class="table__filter main__button main__select hidden__input" name="m"
+                            id="m">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__use table__endtime">
+                    <label for="end_time">Дата сдачи</label>
+                    <select class="table__filter main__button main__select hidden__input" name="end_time"
+                            id="end_time">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
                 <li class="table__cell table__routes">Маршруты</li>
                 {{/*            <li class="table__cell table__otk">ОТК</li>*/}}
                 <li class="table__cell table__p">П</li>

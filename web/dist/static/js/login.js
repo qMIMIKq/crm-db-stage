@@ -40,10 +40,10 @@ __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerat
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/domain.js":
-/*!*********************************************!*\
-  !*** ./web/src/static/js/modules/domain.js ***!
-  \*********************************************/
+/***/ "./web/src/static/js/modules/state.js":
+/*!********************************************!*\
+  !*** ./web/src/static/js/modules/state.js ***!
+  \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -53,7 +53,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "inWork": () => (/* binding */ inWork),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-let appAddr = "http://192.168.1.230:8181";
+let appAddr = "http://172.20.10.7:8181";
 let inWork = false;
 const userInf = JSON.parse(sessionStorage.getItem("user"));
 let state = {
@@ -10482,10 +10482,10 @@ _global["default"]._babelPolyfill = true;
   \******************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_login_login_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css/login/login.scss */ "./web/src/static/css/login/login.scss");
-/* harmony import */ var _modules_domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/domain */ "./web/src/static/js/modules/domain.js");
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
 
 
-const appAddr = "http://192.168.1.230:8181";
+const appAddr = "http://172.20.10.7:8181";
 const loginForm = document.querySelector(".login-form");
 loginForm.addEventListener("submit", e => {
   e.preventDefault();
@@ -10505,13 +10505,13 @@ loginForm.addEventListener("submit", e => {
     if (res.ok) {
       res.json().then(userInfo => {
         const data = JSON.parse(JSON.stringify(userInfo));
-        _modules_domain__WEBPACK_IMPORTED_MODULE_1__.state.userInfo = {
+        _modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo = {
           "name": data["data"].name,
           "group": data["data"].group,
           "plot": data["data"].plot
         };
-        sessionStorage.setItem("user", JSON.stringify(_modules_domain__WEBPACK_IMPORTED_MODULE_1__.state.userInfo));
-        console.log(_modules_domain__WEBPACK_IMPORTED_MODULE_1__.state.userInfo);
+        sessionStorage.setItem("user", JSON.stringify(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo));
+        console.log(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo);
         window.location.replace(`${appAddr}/main/table`);
       });
     } else if (errBlock === null) {

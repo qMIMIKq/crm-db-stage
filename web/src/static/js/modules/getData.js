@@ -1,4 +1,4 @@
-import {appAddr} from "./domain";
+import {appAddr} from "./state";
 
 export const getData = async url => {
     const resp = await fetch(`${appAddr}/api/${url}`)
