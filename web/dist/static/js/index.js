@@ -974,6 +974,7 @@ const getOrders = () => {
         searchedOrders = _state__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
         nums.push(d.number);
         clients.push(d.client);
+        console.log(d.material);
         materials.push(d.material);
         names.push(d.name);
         quantity.push(d.quantity);
