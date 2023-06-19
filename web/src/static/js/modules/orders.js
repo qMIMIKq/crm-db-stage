@@ -5,6 +5,7 @@ import {
     deleteTableFilters,
     drawTableFilter,
     issuedFilter,
+    managerFilter,
     materialsFilter,
     namesFilter,
     numsFilter,
@@ -64,7 +65,7 @@ export const getOrders = () => {
                 drawTableFilter([...new Set(names)], namesFilter)
                 drawTableFilter([...new Set(quantity)], quantityFilter)
                 drawTableFilter([...new Set(issued)], issuedFilter)
-                drawTableFilter([...new Set(managers)], materialsFilter)
+                drawTableFilter([...new Set(managers)], managerFilter)
                 drawTableFilter([...new Set(deadlines)], deadlineFilter)
 
                 // if (document.querySelector(".orders__total") === null) {
