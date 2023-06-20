@@ -69,16 +69,17 @@ export const getOrders = () => {
                 drawTableFilter([...new Set(managers)], managerFilter)
                 drawTableFilter([...new Set(deadlines)], deadlineFilter)
 
-                // if (document.querySelector('.orders__total') === null) {
-                //     document.querySelector('.main__header').insertAdjacentHTML('beforeend', `
-                //      <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
-                //     `)
-                // }
+                const totalOrders = document.querySelector('.orders__total')
+                if (totalOrders === null) {
+                    document.querySelector('.main').insertAdjacentHTML('beforeend', `
+                     <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
+                    `)
+                } else {
+                    totalOrders.textContent = `Всего в работе ${data.data.length}`
+                }
                 bindOrdersListeners()
                 bindTableFilters()
             })
-
-
     })
 
 }

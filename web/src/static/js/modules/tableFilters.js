@@ -87,6 +87,10 @@ const showFilter = e => {
 const filterOrders = (type, filter) => {
     if (filter === 'все') {
         state['filtered'] = false
+        tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+            cell.style.textDecoration = 'none'
+        })
+
         getOrders()
         return
     }
@@ -100,11 +104,14 @@ const filterOrders = (type, filter) => {
 
 
 const bindFilter = (elem, type) => {
-    elem.addEventListener('change', e => {
-        showFilter(e)
-        filterOrders(type, e.target.value)
-        setChosenFilter(e)
-    })
+    elem.removeEventListener('change', filterListener)
+    elem.addEventListener('change', filterListener)
+}
+
+const filterListener = (e) => {
+    showFilter(e)
+    filterOrders(e.target.parentNode.querySelector(".filter__type").value, e.target.value)
+    setChosenFilter(e)
 }
 
 export const controlFiltersReset = () => {
@@ -134,8 +141,6 @@ export const controlFiltersReset = () => {
 }
 
 const setChosenFilter = e => {
-    console.log(state['filtered'])
-
     if (state['filtered']) {
         e.target.parentNode.querySelector('label').style.textDecoration = 'underline'
     } else {

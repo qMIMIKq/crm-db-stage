@@ -33,6 +33,7 @@ ul {
 
 .main {
   color: $button_color;
+  margin-bottom: 15px;
   //border-left: 1px solid black;
   //border-right: 1px solid black;
 
@@ -63,7 +64,9 @@ ul {
 
   &-table__data {
     width: 100%;
-    overflow-x: scroll;
+    height: 500px;
+    overflow: scroll;
+    margin-bottom: 15px;
   }
 
   &__select {

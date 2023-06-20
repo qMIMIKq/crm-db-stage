@@ -4,7 +4,7 @@ app_port: 8181
 salt: dasdfasffsdf
 
 db:
-  host: localhost
+  host: 172.20.10.7
   port: 5437
   user: nik
   password: '1325'
