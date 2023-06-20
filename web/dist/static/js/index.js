@@ -2060,15 +2060,15 @@ const controlFiltersReset = () => {
       nav.insertAdjacentHTML('beforeend', `
                 <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
             `);
-    }
-    nav.querySelector('.header-button__reset').addEventListener('click', e => {
-      document.querySelector('#search__input').value = '';
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
-      tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
-        cell.style.textDecoration = 'none';
+      nav.querySelector('.header-button__reset').addEventListener('click', e => {
+        document.querySelector('#search__input').value = '';
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+        tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+          cell.style.textDecoration = 'none';
+        });
+        (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
       });
-      (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
-    });
+    }
   } else {
     const resetBtn = document.querySelector('.header-button__reset');
     if (resetBtn !== null) {
