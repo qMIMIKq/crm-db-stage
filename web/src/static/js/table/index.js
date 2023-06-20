@@ -6,8 +6,7 @@ import {state} from "../modules/state";
 
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
-
-topFiltersHandler()
+// topFiltersHandler()
 getOrders()
 searchModule()
 

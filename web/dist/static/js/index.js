@@ -1707,14 +1707,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "appAddr": () => (/* binding */ appAddr),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-<<<<<<< HEAD
 let appAddr = "http://192.168.1.230:8181";
-let inWork = false;
 const userInf = JSON.parse(sessionStorage.getItem("user"));
-=======
-let appAddr = 'http://192.168.1.230:8181';
-const userInf = JSON.parse(sessionStorage.getItem('user'));
->>>>>>> 62f14ac58795e7c4dacb9d5c35a9a9522e502dfd
 let state = {
   'filtered': false,
   'inWork': false,
@@ -2239,7 +2233,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const user = JSON.parse(sessionStorage.getItem("user"));
-(0,_modules_topFilters__WEBPACK_IMPORTED_MODULE_3__.topFiltersHandler)();
+
+// topFiltersHandler()
 (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
 (0,_modules_search__WEBPACK_IMPORTED_MODULE_2__.searchModule)();
 const subBtn = document.querySelector(".header-button__add");
