@@ -1,4 +1,6 @@
-export let appAddr = 'http://172.20.10.7:8181'
+// 192.168.1.230
+
+export let appAddr = 'http://192.168.1.230:8181'
 const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
