@@ -1,10 +1,10 @@
-import {getData} from "./getData";
+import {getData} from './getData';
 
 export const topFiltersHandler = () => {
-    const plotFilters = document.querySelector(".nav-filters__plots")
-    const filterFilters = document.querySelector(".nav-filters__filters")
-    const selectUser = document.querySelector(".select-user")
-    const extensions = ["все", "тестовый участок", "тестовый фильтр"]
+    const plotFilters = document.querySelector('.nav-filters__plots')
+    const filterFilters = document.querySelector('.nav-filters__filters')
+    const selectUser = document.querySelector('.select-user')
+    const extensions = ['все', 'тестовый участок', 'тестовый фильтр']
     const checkExt = (extensions, ext) => {
         let flag = false
         extensions.forEach(d => {
@@ -20,39 +20,39 @@ export const topFiltersHandler = () => {
             let condition = !checkExt(extensions, d.name)
             if (condition) {
                 block.insertAdjacentHTML('beforeend', `
-                <li class="nav-filters__item">
-                    <button class="nav-filters__button main__button">${d.name.toUpperCase()}</button>
+                <li class='nav-filters__item'>
+                    <button class='nav-filters__button main__button'>${d.name.toUpperCase()}</button>
                  </li>
         `)
             }
         })
     }
     const removeData = block => {
-        block.innerHTML = ""
+        block.innerHTML = ''
     }
     const plotListener = (block, filters) => {
-        const btns = block.querySelectorAll("button")
+        const btns = block.querySelectorAll('button')
         btns.forEach(btn => {
-            btn.addEventListener("click", _ref => {
+            btn.addEventListener('click', _ref => {
                 let {
                     target
                 } = _ref
                 btns.forEach(b => {
-                    b.classList.remove("chosen__plot")
+                    b.classList.remove('chosen__plot')
                 })
-                target.classList.toggle("chosen__plot")
-                target.classList.toggle("nav-filters__button--chosen")
+                target.classList.toggle('chosen__plot')
+                target.classList.toggle('nav-filters__button--chosen')
                 filterByPlots(target.textContent.toLowerCase(), filters)
             })
         })
     }
     const filterListener = block => {
-        block.querySelectorAll("button").forEach(btn => {
-            btn.addEventListener("click", _ref2 => {
+        block.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', _ref2 => {
                 let {
                     target
                 } = _ref2
-                target.classList.toggle("nav-filters__button--chosen")
+                target.classList.toggle('nav-filters__button--chosen')
             })
         })
     }
@@ -81,8 +81,8 @@ export const topFiltersHandler = () => {
     const drawUsers = users => {
         users.forEach(u => {
             console.log(u)
-            document.querySelector(".select-user").insertAdjacentHTML('beforeend', `
-            <option value="${u.id}">
+            document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
+            <option value='${u.id}'>
                 ${u.name}
             </option>
         `)
@@ -93,20 +93,20 @@ export const topFiltersHandler = () => {
         let plots = []
         let filters = []
 
-        await getData("filters/get-all")
+        await getData('filters/get-all')
             .then(data => {
                 drawData(data.data, filterFilters)
                 filters = data.data
             }).then(_ => filterListener(filterFilters))
 
-        await getData("plots/get-all")
+        await getData('plots/get-all')
             .then(data => {
                 drawData(data.data, plotFilters)
                 plots = data.data
             }).then(_ => plotListener(plotFilters, filters))
 
         if (selectUser !== null) {
-            await getData("users/get-operators")
+            await getData('users/get-operators')
                 .then(data => {
                     drawUsers(data.data)
                     filterByPlots(data.data[0].plot, filters)

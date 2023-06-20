@@ -3,7 +3,7 @@ export const drawDeadlineP = (target, chosenDeadline, deadlines) => {
 
     deadlines.forEach(deadline => {
         block.insertAdjacentHTML('beforeend', `
-             <option ${Number(chosenDeadline) === Number(deadline) ? "selected" : ""} value="${deadline}">${deadline}дн</option>
+             <option ${Number(chosenDeadline) === Number(deadline) ? 'selected' : ''} value='${deadline}'>${deadline}дн</option>
         `)
     })
 }

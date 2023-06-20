@@ -77,7 +77,7 @@ __webpack_require__.r(__webpack_exports__);
 const addTriggers = (tag, trigger) => {
   const elems = document.querySelectorAll(tag);
   elems.forEach(elem => {
-    elem.addEventListener("click", trigger);
+    elem.addEventListener('click', trigger);
   });
 };
 
@@ -99,69 +99,69 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const bindOrdersListeners = () => {
-  document.querySelectorAll(".table__data").forEach(label => {
-    if (!label.classList.contains("click-chose") && !label.classList.contains("click-select")) {
-      setChooseListeners(label, "focus", "add", "table__data--chosen");
-      setChooseListeners(label, "blur", "remove", "table__data--chosen");
-      setChooseListeners(label, "focus", "show-current", "table__data--current");
-      setChooseListeners(label, "blur", "remove", "table__data--current");
-    } else if (!label.classList.contains("click-select")) {
-      setChooseListeners(label, "click", "add", "table__data--chosen");
+  document.querySelectorAll('.table__data').forEach(label => {
+    if (!label.classList.contains('click-chose') && !label.classList.contains('click-select')) {
+      setChooseListeners(label, 'focus', 'add', 'table__data--chosen');
+      setChooseListeners(label, 'blur', 'remove', 'table__data--chosen');
+      setChooseListeners(label, 'focus', 'show-current', 'table__data--current');
+      setChooseListeners(label, 'blur', 'remove', 'table__data--current');
+    } else if (!label.classList.contains('click-select')) {
+      setChooseListeners(label, 'click', 'add', 'table__data--chosen');
     } else {
-      setChooseListeners(label, "click", "toggle", "table__data--chosen");
+      setChooseListeners(label, 'click', 'toggle', 'table__data--chosen');
     }
   });
-  document.querySelectorAll(".table__data").forEach(label => {
-    label.addEventListener("change", e => {
+  document.querySelectorAll('.table__data').forEach(label => {
+    label.addEventListener('change', e => {
       (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.drawSubmit)();
-      const parent = e.target.closest(".table-form--old");
+      const parent = e.target.closest('.table-form--old');
       if (parent !== null) {
-        parent.classList.remove("table-form--old");
-        parent.classList.add("table-form--upd");
+        parent.classList.remove('table-form--old');
+        parent.classList.add('table-form--upd');
       }
     });
   });
-  document.querySelectorAll("input").forEach(el => {
+  document.querySelectorAll('input').forEach(el => {
     el.tabIndex = -1;
-    el.autocomplete = "off";
+    el.autocomplete = 'off';
   });
-  document.querySelectorAll("button").forEach(el => {
-    el.tabIndex = -1;
-  });
-  document.querySelectorAll("a").forEach(el => {
+  document.querySelectorAll('button').forEach(el => {
     el.tabIndex = -1;
   });
-  document.querySelectorAll("select").forEach(el => {
+  document.querySelectorAll('a').forEach(el => {
+    el.tabIndex = -1;
+  });
+  document.querySelectorAll('select').forEach(el => {
     el.tabIndex = -1;
   });
 };
 const setChooseListeners = (label, listener, action, cls) => {
-  if (!label.classList.contains("table__data--clicker")) {
+  if (!label.classList.contains('table__data--clicker')) {
     label.addEventListener(listener, e => {
-      const parent = e.target.closest(".main-table__item");
-      parent.querySelectorAll(".table__data").forEach(item => {
+      const parent = e.target.closest('.main-table__item');
+      parent.querySelectorAll('.table__data').forEach(item => {
         switch (action) {
-          case "add":
-            if (!label.classList.contains("table__data--opened")) {
+          case 'add':
+            if (!label.classList.contains('table__data--opened')) {
               _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
               item.classList.add(cls);
             }
             break;
-          case "show-current":
+          case 'show-current':
             _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
             e.target.classList.add(cls);
             break;
-          case "toggle":
+          case 'toggle':
             _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
             item.classList.toggle(cls);
             break;
           default:
-            if (cls === "table__data--current") {
+            if (cls === 'table__data--current') {
               _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
               item.classList.remove(cls);
               return;
             }
-            if (!label.classList.contains("table__data--opened")) {
+            if (!label.classList.contains('table__data--opened')) {
               _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
               item.classList.remove(cls);
             }
@@ -191,19 +191,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const commentModal = `
-   <div id="modal" class="modal modal--comment bounceIn">
-        <div class="modal_content">
-            <h2 class="comment__title">Предыдущие комментарии</h2>
-            <ul class="comments__prev comments-list">
+   <div id='modal' class='modal modal--comment bounceIn'>
+        <div class='modal_content'>
+            <h2 class='comment__title'>Предыдущие комментарии</h2>
+            <ul class='comments__prev comments-list'>
             </ul>
             
-            <h2 class="comment__title">Ваш комментарий</h2>
-            <textarea class="comments__yours main__input" name="comment" id="comments__yours"></textarea>    
+            <h2 class='comment__title'>Ваш комментарий</h2>
+            <textarea class='comments__yours main__input' name='comment' id='comments__yours'></textarea>    
         </div>
    </div>
 `;
 const deleteComments = () => {
-  const comments = document.querySelectorAll(".comments-list__item");
+  const comments = document.querySelectorAll('.comments-list__item');
   if (comments !== null) {
     comments.forEach(c => {
       c.remove();
@@ -212,56 +212,56 @@ const deleteComments = () => {
 };
 const drawComments = (list, comments) => {
   comments.forEach(comment => {
-    let comm = comment.split(" ");
-    if (comm.length >= 4 && comm[3] !== "") {
+    let comm = comment.split(' ');
+    if (comm.length >= 4 && comm[3] !== '') {
       list.insertAdjacentHTML('afterbegin', `
-                <li class="comments-list__item">${comment}</li>
+                <li class='comments-list__item'>${comment}</li>
             `);
     }
   });
 };
 const triggerCommentsModal = e => {
   const modalElem = (0,_showModal__WEBPACK_IMPORTED_MODULE_1__.showModal)(commentModal);
-  const commentElem = modalElem.querySelector("#comments__yours");
-  const commentsList = modalElem.querySelector(".comments__prev");
-  const parent = e.target.closest("form");
-  const visibleComment = parent.querySelector("input[name='comment']");
-  const comments = parent.querySelector("input[name='all_comments']");
-  const newComments = parent.querySelector("input[name='comments']");
-  const commentsArr = comments.value.split(".-.");
-  const newCommentsArr = newComments.value.split(".-.");
+  const commentElem = modalElem.querySelector('#comments__yours');
+  const commentsList = modalElem.querySelector('.comments__prev');
+  const parent = e.target.closest('form');
+  const visibleComment = parent.querySelector('input[name="comment"]');
+  const comments = parent.querySelector('input[name="all_comments"]');
+  const newComments = parent.querySelector('input[name="comments"]');
+  const commentsArr = comments.value.split('.-.');
+  const newCommentsArr = newComments.value.split('.-.');
   drawComments(commentsList, commentsArr);
-  commentElem.addEventListener("input", e => {
-    const btn = document.querySelector(".comment__button");
-    if (btn === null && e.target.value !== "") {
+  commentElem.addEventListener('input', e => {
+    const btn = document.querySelector('.comment__button');
+    if (btn === null && e.target.value !== '') {
       commentElem.insertAdjacentHTML('afterend', `
-                <button class="main__button comment__button" >Сохранить</button>    
+                <button class='main__button comment__button' >Сохранить</button>    
             `);
-      document.querySelector(".comment__button").addEventListener("click", ev => {
+      document.querySelector('.comment__button').addEventListener('click', ev => {
         let value = e.target.value;
         let today = new Date(Date.now()).toISOString();
         today = today.substring(0, today.length - 8);
         value = `${today} ${_table__WEBPACK_IMPORTED_MODULE_2__.user.name} ${value}`;
         commentsArr.push(value);
         newCommentsArr.push(value);
-        comments.value = commentsArr.join(".-.");
-        newComments.value = newCommentsArr.filter(c => c !== "").join(".-.");
+        comments.value = commentsArr.join('.-.');
+        newComments.value = newCommentsArr.filter(c => c !== '').join('.-.');
         visibleComment.value = value;
         ev.target.textContent = 'Успешно';
         e.target.value = '';
         deleteComments();
         drawComments(commentsList, commentsArr);
         (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.drawSubmit)();
-        if (parent.classList.contains("table-form--old")) {
-          parent.classList.remove("table-form--old");
-          parent.classList.add("table-form--upd");
+        if (parent.classList.contains('table-form--old')) {
+          parent.classList.remove('table-form--old');
+          parent.classList.add('table-form--upd');
         }
         setTimeout(() => {
           ev.target.remove();
         }, 1000);
       });
-    } else if (e.target.value === "") {
-      document.querySelector(".comment__button").remove();
+    } else if (e.target.value === '') {
+      document.querySelector('.comment__button').remove();
     }
   });
 };
@@ -288,27 +288,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const filesModal = `
-   <div id="modal" class="modal bounceIn">
-        <div class="modal_content drop-area">
-            <div class="modal__header modal-header">
-                <div class="modal-header__db"></div>
-                <div class="modal-header__number"></div>
-                <div class="modal-header__enter"></div>
+   <div id='modal' class='modal bounceIn'>
+        <div class='modal_content drop-area'>
+            <div class='modal__header modal-header'>
+                <div class='modal-header__db'></div>
+                <div class='modal-header__number'></div>
+                <div class='modal-header__enter'></div>
             </div>
         
-            <form class="order__files" method="POST" action="/api/files/save-files" enctype="multipart/form-data">
-             <div class="modal__trigger">Укажите файлы для загрузки</div>
-             <input class="modal__files hidden__input" type="file" name="files" multiple tabindex="-1">
+            <form class='order__files' method='POST' action=''/api/files/save-files' enctype='multipart/form-data'>
+             <div class='modal__trigger'>Укажите файлы для загрузки</div>
+             <input class='modal__files hidden__input' type='file' name='files' multiple tabindex=''-1'>
             </form>
             
-            <div class="data">
+            <div class='data'>
             </div>
         </div>
    </div>
 `;
 const DATA_SOURCE = `${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/assets/uploads/`;
 const deleteFiles = () => {
-  const files = document.querySelectorAll(".data__file");
+  const files = document.querySelectorAll('.data__file');
   if (files[0] !== null) {
     files.forEach(file => {
       file.remove();
@@ -318,130 +318,135 @@ const deleteFiles = () => {
 const sendFiles = (files, filesInput) => {
   const formData = new FormData();
   for (let file of files) {
-    formData.append("files", file);
+    formData.append('files', file);
   }
   fetch(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/files/save-files`, {
-    method: "POST",
+    method: 'POST',
     body: formData
   }).then(res => res.json()).then(data => {
-    const currentData = filesInput.value.split(", ");
-    let newData = currentData.concat(data.data).filter(file => file !== "");
+    const currentData = filesInput.value.split('', '');
+    let newData = currentData.concat(data.data).filter(file => file !== '');
     newData = [...new Set(newData)];
-    filesInput.value = newData.join(", ");
+    filesInput.value = newData.join('', '');
     (0,_submitControl__WEBPACK_IMPORTED_MODULE_1__.drawSubmit)();
-    const parent = filesInput.closest("form");
-    const drop = document.querySelector(".modal__trigger");
-    drop.classList.add("success");
-    drop.textContent = "Файлы успешно загружены";
+    const parent = filesInput.closest('form');
+    const drop = document.querySelector('.modal__trigger');
+    drop.classList.add('success');
+    drop.textContent = 'Файлы успешно загружены';
     deleteFiles();
-    drawFiles(document.querySelector(".modal"), filesInput.value);
-    if (parent.classList.contains("table-form--old")) {
-      parent.classList.remove("table-form--old");
-      parent.classList.add("table-form--upd");
+    drawFiles(document.querySelector('.modal'), filesInput.value);
+    if (parent.classList.contains('table-form--old')) {
+      parent.classList.remove('table-form--old');
+      parent.classList.add('table-form--upd');
     }
     setTimeout(() => {
-      drop.classList.remove("success");
-      drop.textContent = "Укажите файлы для загрузки";
+      drop.classList.remove('success');
+      drop.textContent = 'Укажите файлы для загрузки';
     }, 1000);
   });
 };
 function triggerFilesModal(e) {
-  const parent = e.target.closest("ul");
-  const filesInputData = parent.querySelector("input[name='files']");
-  const db = parent.querySelector("#db_id").value;
-  const enter = parent.querySelector("#timestamp").value;
-  const number = parent.querySelector("#number").value;
+  const parent = e.target.closest('ul');
+  const filesInputData = parent.querySelector('input[name="files"]');
+  const db = parent.querySelector('#db_id').value;
+  const enter = parent.querySelector('#timestamp').value;
+  const number = parent.querySelector('#number').value;
   const modalElem = (0,_showModal__WEBPACK_IMPORTED_MODULE_2__.showModal)(filesModal);
-  const modalHeader = modalElem.querySelector(".modal__header");
-  modalHeader.querySelector(".modal-header__db").textContent = '№' + db;
-  modalHeader.querySelector(".modal-header__number").textContent = '№ заказа ' + number;
-  modalHeader.querySelector(".modal-header__enter").textContent = enter;
-  const downloadTrigger = document.querySelector(".modal__trigger");
-  downloadTrigger.addEventListener("click", e => {
-    const filesInput = document.querySelector(".modal__files");
-    filesInput.addEventListener("change", e => {
-      const files = e.target.files;
+  const modalHeader = modalElem.querySelector('.modal__header');
+  modalHeader.querySelector('.modal-header__db').textContent = '№' + db;
+  modalHeader.querySelector('.modal-header__number').textContent = '№ заказа ' + number;
+  modalHeader.querySelector('.modal-header__enter').textContent = enter;
+  const downloadTrigger = document.querySelector('.modal__trigger');
+  if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck) {
+    console.log('check');
+    downloadTrigger.addEventListener('click', e => {
+      const filesInput = document.querySelector('.modal__files');
+      filesInput.addEventListener('change', e => {
+        const files = e.target.files;
+        sendFiles(files, filesInputData);
+      });
+      filesInput.click();
+    });
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      downloadTrigger.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    });
+    downloadTrigger.addEventListener('drop', e => {
+      let dt = e.dataTransfer;
+      let files = dt.files;
       sendFiles(files, filesInputData);
     });
-    filesInput.click();
-  });
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    downloadTrigger.addEventListener(eventName, e => {
+    modalElem.querySelector('.order__files').addEventListener('submit', e => {
       e.preventDefault();
-      e.stopPropagation();
+      const filesData = document.querySelector('.modal__files');
+      sendFiles(filesData.files, filesInputData);
     });
-  });
-  downloadTrigger.addEventListener("drop", e => {
-    let dt = e.dataTransfer;
-    let files = dt.files;
-    sendFiles(files, filesInputData);
-  });
-  modalElem.querySelector(".order__files").addEventListener("submit", e => {
-    e.preventDefault();
-    const filesData = document.querySelector(".modal__files");
-    sendFiles(filesData.files, filesInputData);
-  });
+  } else {
+    downloadTrigger.remove();
+  }
   drawFiles(modalElem, filesInputData.value);
 }
 const drawFiles = (modal, files) => {
-  const data = modal.querySelector(".data");
+  const data = modal.querySelector('.data');
   if (files.length) {
     const fileNames = [];
-    files.split(", ").map(file => {
-      const arrDotFile = file.split(".");
+    files.split('', '').map(file => {
+      const arrDotFile = file.split('.');
       const fileType = arrDotFile[arrDotFile.length - 1];
-      const arrSlashFile = file.split("/");
+      const arrSlashFile = file.split('/');
       arrSlashFile.splice(0, 3);
-      const fileName = arrSlashFile.join("");
-      let fileNameWithoutType = fileName.split(".");
-      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join(".");
+      const fileName = arrSlashFile.join('');
+      let fileNameWithoutType = fileName.split('.');
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
       switch (fileType) {
-        case "pdf":
+        case 'pdf':
           fileNames.push(fileNameWithoutType);
           data.insertAdjacentHTML(`beforeend`, `
-                      <div class="data__file">
-                        <a target="_blank" class="file__original" href="${DATA_SOURCE}${fileNameWithoutType}.pdf">Оригинал</a>
-                        <a target="_blank" class="link__preview" href="${DATA_SOURCE}${fileNameWithoutType}.png">
-                            <img class="file__preview" src="${DATA_SOURCE}${fileNameWithoutType}.png" alt="">
+                      <div class='data__file'>
+                        <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.pdf'>Оригинал</a>
+                        <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.png'>
+                            <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.png' alt=''>
                         </a>
-                        <a class="file__download" href="${DATA_SOURCE}${fileNameWithoutType}.pdf" download>
-                            <svg data-v-42a4bff7 xmlns="http://www.w3.org/2000/svg" class="download-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path data-v-42a4bff7="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
+                        <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.pdf' download>
+                            <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                                <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                                 </path>
                             </svg>
                         </a>
-                        <p class="file__name">${fileName}</p>
+                        <p class='file__name'>${fileName}</p>
                       </div>
                     `);
           break;
         default:
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
-                          <div class="data__file">
-                                <a target="_blank" class="link__preview" href="${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}">
-                                    <img class="file__preview" src="${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}" alt=>
+                          <div class='data__file'>
+                                <a target='_blank' class='link__preview' href='${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}'>
+                                    <img class='file__preview' src='${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/${file}' alt=>
                                 </a>
-                                <a class="file__download" href="http://${file}" download>
-                                     <svg data-v-42a4bff7 xmlns="http://www.w3.org/2000/svg" class="download-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path data-v-42a4bff7="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
+                                <a class='file__download' href='http://${file}' download>
+                                     <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                                        <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                                         </path>
                                      </svg>
                                 </a>
-                                <p class="file__name">${fileName}</p>
+                                <p class='file__name'>${fileName}</p>
                           </div>
                     `);
           }
       }
     });
-    const btn = modal.querySelector(".file__all");
+    const btn = modal.querySelector('.file__all');
     if (btn !== null) {
       btn.remove();
     }
-    data.closest(".modal_content").insertAdjacentHTML('beforeend', `
-            <button class="file__all main__button">Скачать всё</button>
+    data.closest('.modal_content').insertAdjacentHTML('beforeend', `
+            <button class='file__all main__button'>Скачать всё</button>
         `);
-    document.querySelector(".file__all").addEventListener("click", () => {
-      document.querySelectorAll(".file__download").forEach(file => {
+    document.querySelector('.file__all').addEventListener('click', () => {
+      document.querySelectorAll('.file__download').forEach(file => {
         file.click();
       });
     });
@@ -465,7 +470,7 @@ const drawDeadlineP = (target, chosenDeadline, deadlines) => {
   const block = document.querySelector(target);
   deadlines.forEach(deadline => {
     block.insertAdjacentHTML('beforeend', `
-             <option ${Number(chosenDeadline) === Number(deadline) ? "selected" : ""} value="${deadline}">${deadline}дн</option>
+             <option ${Number(chosenDeadline) === Number(deadline) ? 'selected' : ''} value='${deadline}'>${deadline}дн</option>
         `);
   });
 };
@@ -486,10 +491,10 @@ __webpack_require__.r(__webpack_exports__);
 const drawManagers = (target, managers, manager) => {
   const block = document.querySelector(target);
   managers.forEach(man => {
-    let name = man.name.split(" ");
+    let name = man.name.split(' ');
     name = name[0][0] + name[1][0];
     block.insertAdjacentHTML('beforeend', `
-             <option ${manager === man.name ? "selected" : ""} value="${man.name}">${name}</option>
+             <option ${manager === man.name ? 'selected' : ''} value='${man.name}'>${name}</option>
         `);
   });
 };
@@ -525,75 +530,79 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const table = document.querySelector(".main-table");
+const table = document.querySelector('.main-table');
 const drawOrders = async (d, data, users) => {
   (0,_tableFilters__WEBPACK_IMPORTED_MODULE_1__.controlFiltersReset)();
   let uniqueFileNames = [];
   if (d.files !== null) {
     d.files.forEach(file => {
-      const arrDotFile = file.split(".");
+      const arrDotFile = file.split('.');
       const fileType = arrDotFile[arrDotFile.length - 1];
-      const arrSlashFile = file.split("/");
+      const arrSlashFile = file.split('/');
       arrSlashFile.splice(0, 3);
-      const fileName = arrSlashFile.join("");
-      let fileNameWithoutType = fileName.split(".");
-      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join(".");
+      const fileName = arrSlashFile.join('');
+      let fileNameWithoutType = fileName.split('.');
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
       uniqueFileNames.push(fileNameWithoutType);
     });
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
   const pData = [1, 2, 3, 4, 5, 6, 7, 30];
-  const groupper = _state__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_6__.state.techCheck ? "" : "readonly";
+  const admAndTechCheck = _state__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_6__.state.techCheck;
+  const inputAdmAndTechGroupper = admAndTechCheck ? '' : 'readonly';
+  const inputAdmGroupper = _state__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck ? '' : 'readonly';
+  const selectGroupper = _state__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck ? '' : 'disabled';
+  const selectTechAndAdmGroupper = admAndTechCheck ? '' : 'disabled';
   table.insertAdjacentHTML(`afterbegin`, `
-                <form class="table-form table-form--old" method="POST">
-                <ul class="main-table__item">
-                    <li class="table-body_cell table__db">
-                        <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="${d.id}" tabindex="-1" autocomplete="off">
+                <form class='table-form table-form--old' method='POST'>
+                <ul class='main-table__item'>
+                    <li class='table-body_cell table__db'>
+                        <input id='db_id' class='main__button table__data  click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex=''-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__timestamp">
-                        <input id="timestamp" class="table__data   table__data--ro" name="timestamp" type="text" readonly value="${d.timestamp.split("T")[0]}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__timestamp'>
+                        <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex=''-1' autocomplete='off'>
                     </li>
-                     <li class="table-body_cell hidden-input">
-                        <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="${d.files ? d.files.join(', ') : ""}" tabindex="-1" autocomplete="off">
+                     <li class='table-body_cell hidden-input'>
+                        <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex=''-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__files">
-                        <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="${uniqueFileNames.length}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__files'>
+                        <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__number">
+                    <li class='table-body_cell table__number'>
                         <input 
-                        ${groupper}
-                        id="number" class="table__data " name="number" type="text" value="${d.number}" tabindex="-1" autocomplete="off">
+                        ${inputAdmGroupper}
+                        id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__sample">
-                        <input class="table__data   table__data--ro" name="sample" type="text" value="${d.sample}" readonly tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__sample'>
+                        <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__client">
-                        <input ${groupper} class="table__data " type="text" name="client" value="${d.client}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__client'>
+                        <input ${inputAdmGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__name">
-                        <input ${groupper} class="table__data " type="text" name="name" value="${d.name}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__name'>
+                        <input ${inputAdmGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__material">
-                        <input ${groupper} class="table__data " type="text" name="material" value="${d.material}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__material'>
+                        <input ${inputAdmGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__quantity">
-                        <input ${groupper} class="table__data " type="number" name="quantity" required value="${d.quantity}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__quantity'>
+                        <input ${inputAdmGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class="table-body_cell table__issued">
-                        <input ${groupper} class="table__data ${d.quantity === d.issued && d.quantity !== '' ? "table__issued--done" : ""}" tabindex="-1"
+                        <input ${inputAdmGroupper} class="table__data ${d.quantity === d.issued && d.quantity !== '' ? "table__issued--done" : ""}" tabindex="-1"
                         type="number" 
                         name="issued" 
                         required  autocomplete="off"
                         value="${d.issued}">
                     </li>
                     <li class="table-body_cell table__m">
-                        <select ${groupper} class="table__data table-m-select main__button" name="m" id="">
+                        <select ${selectGroupper} class="table__data table-m-select main__button" name="m" id="">
                             <option disabled selected value="">М</option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data "
-                        ${groupper} 
+                        ${inputAdmAndTechGroupper} 
                         name="end_time" 
                         type="text"
                         placeholder=" " 
@@ -681,7 +690,7 @@ const drawOrders = async (d, data, users) => {
                         </ul>
                     </li>
                     <li class="table-body_cell table__p">
-                        <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                        <select ${selectTechAndAdmGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                         </select>
                     </li>
                     <li class="table-body_cell hidden-input table__comment">
@@ -922,7 +931,7 @@ __webpack_require__.r(__webpack_exports__);
 const getData = async url => {
   const resp = await fetch(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/${url}`);
   if (!resp.ok) {
-    console.log("beda");
+    console.log('beda');
   }
   return await resp.json();
 };
@@ -954,7 +963,7 @@ __webpack_require__.r(__webpack_exports__);
 let searchedOrders = [];
 let updatedOrders = [];
 const getOrders = () => {
-  // if (state["inWork"]) return
+  // if (state['inWork']) return
   fetch(`${_state__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
     _state__WEBPACK_IMPORTED_MODULE_2__.state.filtered = false;
     const nums = [];
@@ -967,11 +976,12 @@ const getOrders = () => {
     const deadlines = [];
     (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
     deleteOrders();
-    (0,_getData__WEBPACK_IMPORTED_MODULE_4__.getData)("users/get-users").then(res => {
+    (0,_getData__WEBPACK_IMPORTED_MODULE_4__.getData)('users/get-users').then(res => {
       data.data.forEach(d => {
         _state__WEBPACK_IMPORTED_MODULE_2__.state.orders = data.data;
         _state__WEBPACK_IMPORTED_MODULE_2__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
         searchedOrders = _state__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
+        console.log(d);
         nums.push(d.number);
         clients.push(d.client);
         console.log(d.material);
@@ -980,9 +990,9 @@ const getOrders = () => {
         quantity.push(d.quantity);
         issued.push(d.issued);
         managers.push(d.m);
-        deadlines.push(d.deadlines);
+        deadlines.push(d.end_time);
         if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.filtered) {
-          _state__WEBPACK_IMPORTED_MODULE_2__.state.managers = res.data.filter(user => user.group === "менеджер");
+          _state__WEBPACK_IMPORTED_MODULE_2__.state.managers = res.data.filter(user => user.group === 'менеджер');
         }
         // console.log(d)
 
@@ -994,12 +1004,12 @@ const getOrders = () => {
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(names)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(quantity)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.quantityFilter);
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(issued)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.issuedFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(managers)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(managers)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.managerFilter);
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(deadlines)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
 
-      // if (document.querySelector(".orders__total") === null) {
-      //     document.querySelector(".main__header").insertAdjacentHTML("beforeend", `
-      //      <h3 class="orders__total">Всего в работе ${data.data.length}</h3>
+      // if (document.querySelector('.orders__total') === null) {
+      //     document.querySelector('.main__header').insertAdjacentHTML('beforeend', `
+      //      <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
       //     `)
       // }
       (0,_bindListeners__WEBPACK_IMPORTED_MODULE_3__.bindOrdersListeners)();
@@ -1008,8 +1018,8 @@ const getOrders = () => {
   });
 };
 const deleteOrders = () => {
-  const orders = document.querySelectorAll(".table-form");
-  // document.querySelector(".orders__total").remove()
+  const orders = document.querySelectorAll('.table-form');
+  // document.querySelector('.orders__total').remove()
 
   orders.forEach(order => {
     order.remove();
@@ -1035,154 +1045,156 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
 /* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+
 
 
 
 
 
 const routeModal = `
-   <div id="modal" class="modal modal--route bounceIn">
-<!--        <div id="close_modal">+</div>-->
-        <div class="modal_content modal_content--route">
-            <div class="modal__header modal__header--routes modal-header">
-                <div class="modal-header__db"></div>
-                <div class="modal-header__number"></div>
+   <div id='modal' class='modal modal--route bounceIn'>
+<!--        <div id='close_modal'>+</div>-->
+        <div class='modal_content modal_content--route'>
+            <div class='modal__header modal__header--routes modal-header'>
+                <div class='modal-header__db'></div>
+                <div class='modal-header__number'></div>
             </div>
-            <form class="route__config" method="POST">
-                <div class="route-block__wrapper">
-                    <div class="route__block user__block">
-                        <label class="route__label" for="route__plot">Участок</label>
-                        <select disabled class="clickable route__select main__button main__select route__select--plot" name="plot" id="route__plot">
+            <form class='route__config' method='POST'>
+                <div class='route-block__wrapper'>
+                    <div class='route__block user__block'>
+                        <label class='route__label' for='route__plot'>Участок</label>
+                        <select disabled class='clickable route__select main__button main__select route__select--plot' name='plot' id='route__plot'>
                             <option selected disabled>Выберите участок</option>
                         </select>
                         
-                        <select disabled class="hidden__input" id="plot-connection">
+                        <select disabled class='hidden__input' id='plot-connection'>
                         </select>
                         
-                        <label class="route__label" for="route__user">Оператор</label>
-                        <select disabled class="route__select main__button main__select route__select--user" name="user" id="route__user">
+                        <label class='route__label' for='route__user'>Оператор</label>
+                        <select disabled class='route__select main__button main__select route__select--user' name='user' id='route__user'>
                             <option selected disabled>Выберите оператора</option>
                         </select>
                     </div>      
-                    <div class="route__block progress-block">
-                        <label class="route__label" for="route__quantity">Тираж</label>
-                        <input style="cursor: default" readonly class="text-input progress-block__input main__input" name="quantity" type="number" id="quantity">
-                        <label class="route__label" for="route__issued">Выдано</label>
-                        <input readonly class="table__data--ro main__input progress-block__input" type="number" name="issued" id="route__issued">
+                    <div class='route__block progress-block'>
+                        <label class='route__label' for='route__quantity'>Тираж</label>
+                        <input style='cursor: default' readonly class='text-input progress-block__input main__input' name='quantity' type='number' id='quantity'>
+                        <label class='route__label' for='route__issued'>Выдано</label>
+                        <input readonly class='table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
                     </div>
                 </div>
                 
-                <div class="route__section start-route">
+                <div class='route__section start-route'>
                     <input 
                     readonly
-                    type="text"
-                    placeholder="Время начала"
-                    class="route__input main__button main__input start-route__time"
-                    name="start_time" 
+                    type='text'
+                    placeholder='Время начала'
+                    class='route__input main__button main__input start-route__time'
+                    name='start_time' 
                     disabled
-                    id="start-route__time">
+                    id='start-route__time'>
                     
-<!--                    onfocus="(this.type='datetime-local')"
-                    onblur="(this.type='text')"-->
+<!--                    onfocus='(this.type='datetime-local')'
+                    onblur='(this.type='text')'-->
                     
-                    <button disabled type="button" class="route__btn main__button start-route__btn">Начал</button>
+                    <button disabled type='button' class='route__btn main__button start-route__btn'>Начал</button>
                 </div>
                 
-                <div class="route__section end-route">
+                <div class='route__section end-route'>
                     <input 
                     readonly
-                    type="text"
-                    placeholder="Время сдачи"
-                    onblur="(this.type='text')"
-                    class="route__input end-route__time main__button main__input"
-                    name="end_time" 
-                    id="end-route__time">
+                    type='text'
+                    placeholder='Время сдачи'
+                    onblur=''(this.type='text')'
+                    class='route__input end-route__time main__button main__input'
+                    name='end_time' 
+                    id='end-route__time'>
                     
-                    <button disabled type="button" class="route__btn main__button end-route__btn">Сдал</button>
+                    <button disabled type='button' class='route__btn main__button end-route__btn'>Сдал</button>
                 </div>
                 
-                <div class="route__section otk-route">
+                <div class='route__section otk-route'>
                     <input 
                     readonly
-                    type="text"
-                    placeholder="Время ОТК"
-                    onblur="(this.type='text')"
-                    class="route__input main__button main__input otk-route__time"
-                    name="otk_time" 
-                    id="otk-route__time">
+                    type='text'
+                    placeholder='Время ОТК'
+                    onblur=''(this.type='text')'
+                    class='route__input main__button main__input otk-route__time'
+                    name='otk_time' 
+                    id='otk-route__time'>
                     
-                    <button disabled type="button" class="route__btn main__button otk-route__btn">ОТК</button>
+                    <button disabled type='button' class='route__btn main__button otk-route__btn'>ОТК</button>
                 </div>
                 
-                <div class="route__section error-route">
-                    <input type="text" 
-                    class="route__input error__time main__input hidden__input" 
-                    id="error__time" 
-                    name="error_time">
+                <div class='route__section error-route'>
+                    <input type='text' 
+                    class='route__input error__time main__input hidden__input' 
+                    id='error__time' 
+                    name='error_time'>
                     
                     <input 
-                    type="text"
-                    placeholder="Описание ошибки!"
-                    class="route__input text-input main__input main__input"
-                    name="error_msg" 
-                    id="error-route__msg">
+                    type='text'
+                    placeholder='Описание ошибки!'
+                    class='route__input text-input main__input main__input'
+                    name='error_msg' 
+                    id='error-route__msg'>
                     
-                    <button disabled type="button" class="route__btn main__button error-route__btn">Ошибка!</button>
-                    <button type="button" class="route__btn main__button hidden__input error-route__close">Сбросить ошибку</button>
+                    <button disabled type='button' class='route__btn main__button error-route__btn'>Ошибка!</button>
+                    <button type='button' class='route__btn main__button hidden__input error-route__close'>Сбросить ошибку</button>
                 </div>
                 
-                <div class="route__section route__section--report section-report">
-                    <button type="button" class="clickable main__button route__btn report-route__btn">Отчет по сменам</button>
+                <div class='route__section route__section--report section-report'>
+                    <button type='button' class='clickable main__button route__btn report-route__btn'>Отчет по сменам</button>
                     
-                    <div class="section-report__issued">
+                    <div class='section-report__issued'>
                         <input 
-                        type="text" 
-                        class="hidden__input" 
-                        id="issued_report"
-                        name="issued_report">
+                        type='text' 
+                        class='hidden__input' 
+                        id='issued_report'
+                        name='issued_report'>
                         
-                        <input type="text"
-                        class="hidden__input"
-                        id="issued__all">
+                        <input type='text'
+                        class='hidden__input'
+                        id='issued__all'>
                         
                         <input
                         disabled
-                        id="route-issued__today"
-                        name="issued_today"
-                        placeholder="За смену"
-                        class="route__input main__button main__input issued-route__num" 
-                        type="number">
-                       <button disabled type="button" class="route__btn main__button report-sub--route__btn">ОК</button>
+                        id='route-issued__today'
+                        name='issued_today'
+                        placeholder='За смену'
+                        class='route__input main__button main__input issued-route__num' 
+                        type='number'>
+                       <button disabled type='button' class='route__btn main__button report-sub--route__btn'>ОК</button>
                     </div>
                 </div>
                 
-                <div class="section-logs">
+                <div class='section-logs'>
                     <input 
-                    class="route__comments hidden__input" 
-                    id="route__comments" 
-                    type="text" 
-                    name="comments">
-                    <div class="section-logs__title">Комментарии и логи событий</div>
-                    <ul class="section-logs__list">
+                    class='route__comments hidden__input' 
+                    id='route__comments' 
+                    type='text' 
+                    name='comments'>
+                    <div class='section-logs__title'>Комментарии и логи событий</div>
+                    <ul class='section-logs__list'>
                         
                     </ul>
-                    <div class="section-logs__comment">
+                    <div class='section-logs__comment'>
                         <input
-                        class="section-logs__input main__input" 
-                        placeholder="Напишите комментарий"
-                        type="text" 
-                        name="route-comment" 
-                        id="section-logs__comment">
-                        <button disabled type="button" class="section-logs__btn main__button send__comment">Отправить</button>
+                        class='section-logs__input main__input' 
+                        placeholder='Напишите комментарий'
+                        type='text' 
+                        name='route-comment' 
+                        id='section-logs__comment'>
+                        <button disabled type='button' class='section-logs__btn main__button send__comment'>Отправить</button>
                     </div>
                 </div>
                 
-                <div class="section-finish">
-                    <button disabled class="section-finish__btn section-finish__delete main__button clickable" type="button">УДАЛИТЬ</button>
+                <div class='section-finish'>
+                    <button disabled class='section-finish__btn section-finish__delete main__button clickable' type='button'>УДАЛИТЬ</button>
                     
-                    <div class="section-finish__complete">
-                        <button disabled class="section-finish__btn section-finish__cancel main__button clickable" type="button">ОТМЕНА</button>
-                        <button disabled class="section-finish__btn section-finish__sub main__button clickable" type="submit">ОК</button>
+                    <div class='section-finish__complete'>
+                        <button disabled class='section-finish__btn section-finish__cancel main__button clickable' type='button'>ОТМЕНА</button>
+                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='submit'>ОК</button>
                     </div>
                 </div>
             
@@ -1191,26 +1203,26 @@ const routeModal = `
    </div>
 `;
 const issuedModal = `
-   <div id="modal" style="z-index: 10000" class="modal modal--issued bounceIn">
-        <div class="modal_content modal_content--issued" style="width: 350px">
-            <h2 class="comment__title">Отчет по сменам</h2>
-            <ul class="comment__prev issued-list">
+   <div id='modal' style='z-index: 10000' class='modal modal--issued bounceIn'>
+        <div class='modal_content modal_content--issued' style='width: 350px'>
+            <h2 class='comment__title'>Отчет по сменам</h2>
+            <ul class='comment__prev issued-list'>
             </ul>
         </div>
    </div>
 `;
 const drawLogs = data => {
-  const logsList = document.querySelector(".section-logs__list");
-  const logsItems = logsList.querySelectorAll(".section-logs__item");
+  const logsList = document.querySelector('.section-logs__list');
+  const logsItems = logsList.querySelectorAll('.section-logs__item');
   if (logsItems !== null) {
     logsItems.forEach(item => {
       item.remove();
     });
   }
-  data.value.split("---").reverse().forEach(log => {
-    if (log.trim() !== "") {
+  data.value.split('---').reverse().forEach(log => {
+    if (log.trim() !== '') {
       logsList.insertAdjacentHTML(`beforeend`, `
-                <li class="section-logs__item">${log}</li>
+                <li class='section-logs__item'>${log}</li>
             `);
     }
   });
@@ -1218,7 +1230,7 @@ const drawLogs = data => {
 const saveData = (data, selector) => {
   const dataInput = document.querySelector(selector);
   if (dataInput.value.length) {
-    dataInput.value += "---" + data;
+    dataInput.value += '---' + data;
   } else {
     dataInput.value = data;
   }
@@ -1233,7 +1245,7 @@ const addLog = (name, log, selector) => {
   return logMsg;
 };
 const activateOnInput = (e, cls) => {
-  if (e.target.value !== "") {
+  if (e.target.value !== '') {
     activateNextStage(cls);
   } else {
     disableBtn(cls);
@@ -1242,318 +1254,345 @@ const activateOnInput = (e, cls) => {
 const setDateToInput = inputId => {
   let today = new Date(Date.now()).toISOString();
   today = today.substring(0, today.length - 8);
-  const timeInput = document.querySelector("#" + inputId);
-  timeInput.setAttribute("type", "datetime-local");
+  const timeInput = document.querySelector('#' + inputId);
+  timeInput.setAttribute('type', 'datetime-local');
   timeInput.value = today;
-  timeInput.setAttribute("type", "text");
+  timeInput.setAttribute('type', 'text');
 };
 const activateNextStage = btnClass => {
-  const btn = document.querySelector("." + btnClass);
-  btn.removeAttribute("disabled");
-  btn.classList.add("clickable");
+  const btn = document.querySelector('.' + btnClass);
+  btn.removeAttribute('disabled');
+  btn.classList.add('clickable');
 };
 const disableBtn = btnClass => {
-  const btn = document.querySelector("." + btnClass);
-  btn.setAttribute("disabled", "true");
-  btn.classList.remove("clickable");
+  const btn = document.querySelector('.' + btnClass);
+  btn.setAttribute('disabled', 'true');
+  btn.classList.remove('clickable');
 };
 const showRoutesIssued = e => {
   const parent = e.target.parentNode.parentNode;
-  parent.querySelectorAll(".table__data").forEach(label => {
-    if (!label.classList.contains("tr")) {
-      label.classList.toggle("table__data--opened");
+  parent.querySelectorAll('.table__data').forEach(label => {
+    if (!label.classList.contains('tr')) {
+      label.classList.toggle('table__data--opened');
     }
   });
-  const routeIssued = parent.querySelector(".table-routes__issued");
-  routeIssued.classList.toggle("hidden__input");
+  const routeIssued = parent.querySelector('.table-routes__issued');
+  routeIssued.classList.toggle('hidden__input');
+};
+const confirmChangeTimeModal = `
+    <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
+        <div class='modal_content modal_content--confirm' style='width: 350px'>
+            <h2 class='confirm__title'>Подтвердить сброс времени?</h2>
+            <div class='confirm__section'>
+                <button class='main__button confirm__button confirm__button--ok'>Да</button>
+                <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
+            </div>
+        </div>
+   </div>
+`;
+const confirmChangeTimeHandler = (e, operation) => {
+  (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(confirmChangeTimeModal);
+  const modal = document.querySelector('.modal--confirm');
+  const okBtn = modal.querySelector('.confirm__button--ok');
+  const cncltn = modal.querySelector('.confirm__button--cncl');
+  okBtn.addEventListener('click', () => {
+    e.target.value = '';
+    operation();
+    modal.click();
+  });
+  cncltn.addEventListener('click', () => {
+    modal.click();
+  });
 };
 const triggerRoutesModal = e => {
-  const routeInput = e.target.parentNode.querySelector(".hidden__input");
-  _state__WEBPACK_IMPORTED_MODULE_2__.state.currentRoute = routeInput["name"];
+  const routeInput = e.target.parentNode.querySelector('.hidden__input');
+  _state__WEBPACK_IMPORTED_MODULE_2__.state.currentRoute = routeInput['name'];
   const modalElem = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(routeModal);
   let info = false;
-  let routeInfo = e.target.parentNode.querySelector(".hidden__input").value;
-  if (routeInfo !== "") {
+  let routeInfo = e.target.parentNode.querySelector('.hidden__input').value;
+  if (routeInfo !== '') {
     info = true;
     routeInfo = JSON.parse(routeInfo);
   }
   const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode;
-  const modQ = modalElem.querySelector("#quantity");
-  modQ.addEventListener("input", e => {
-    activateOnInput(e, "section-finish__sub");
+  const modQ = modalElem.querySelector('#quantity');
+  modQ.addEventListener('input', e => {
+    activateOnInput(e, 'section-finish__sub');
   });
-  const issued = modalElem.querySelector("#route__issued");
-  const logsData = document.querySelector("#route__comments");
-  const issuedToday = modalElem.querySelector("#route-issued__today");
-  const reportBtn = modalElem.querySelector(".report-sub--route__btn");
-  const startTime = document.querySelector(".start-route__time");
-  const endTime = document.querySelector(".end-route__time");
-  const errInput = document.querySelector("#error-route__msg");
-  errInput.addEventListener("input", e => {
-    activateOnInput(e, "error-route__btn");
+  const issued = modalElem.querySelector('#route__issued');
+  const logsData = document.querySelector('#route__comments');
+  const issuedToday = modalElem.querySelector('#route-issued__today');
+  const reportBtn = modalElem.querySelector('.report-sub--route__btn');
+  const startTime = document.querySelector('.start-route__time');
+  const endTime = document.querySelector('.end-route__time');
+  const errInput = document.querySelector('#error-route__msg');
+  errInput.addEventListener('input', e => {
+    activateOnInput(e, 'error-route__btn');
   });
-  const errTime = document.querySelector(".error__time");
+  const errTime = document.querySelector('.error__time');
   const errTimeHandler = () => {
-    errTime.classList.add("hidden__input");
-    errInput.classList.remove("hidden__input");
+    errTime.classList.add('hidden__input');
+    errInput.classList.remove('hidden__input');
   };
   const errInputHandler = () => {
-    errInput.classList.add("hidden__input");
-    errTime.classList.remove("hidden__input");
+    errInput.classList.add('hidden__input');
+    errTime.classList.remove('hidden__input');
   };
-  const routeForm = modalElem.querySelector(".route__config");
-  const errBtn = routeForm.querySelector(".error-route__btn");
-  errBtn.addEventListener("click", () => {
-    let name = "";
+  const routeForm = modalElem.querySelector('.route__config');
+  const errBtn = routeForm.querySelector('.error-route__btn');
+  errBtn.addEventListener('click', () => {
+    let name = '';
     if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
       name = _table__WEBPACK_IMPORTED_MODULE_4__.user.name;
     }
-    let logMsg = "ОШИБКА " + document.querySelector("#error-route__msg").value;
-    addLog(name, logMsg, "#route__comments");
-    setDateToInput("error__time");
-    activateNextStage("error__time");
-    // errInput.classList.add("hidden__input")
-    // errTime.classList.remove("hidden__input")
-    // errTime.addEventListener("focus", errTimeHandler)
-    errInput.classList.remove("text-input");
-    errInput.classList.add("clickable");
-    errInput.addEventListener("focus", errInputHandler);
-    errBtn.classList.add("hidden__input");
-    errCloseBtn.classList.remove("hidden__input");
-    activateNextStage("error-route__close");
-    disableBtn("error-route__btn");
+    let logMsg = 'ОШИБКА ' + document.querySelector('#error-route__msg').value;
+    addLog(name, logMsg, '#route__comments');
+    setDateToInput('error__time');
+    activateNextStage('error__time');
+    // errInput.classList.add('hidden__input')
+    // errTime.classList.remove('hidden__input')
+    // errTime.addEventListener('focus', errTimeHandler)
+    errInput.classList.remove('text-input');
+    errInput.classList.add('clickable');
+    errInput.addEventListener('focus', errInputHandler);
+    errBtn.classList.add('hidden__input');
+    errCloseBtn.classList.remove('hidden__input');
+    activateNextStage('error-route__close');
+    disableBtn('error-route__btn');
   });
-  const errCloseBtn = document.querySelector(".error-route__close");
-  errCloseBtn.addEventListener("click", e => {
-    errTime.removeEventListener("focus", errTimeHandler);
-    errTime.value = "";
-    errTime.classList.add("hidden___input");
-    errInput.removeEventListener("focus", errInputHandler);
-    errInput.value = "";
-    errInput.classList.remove("hidden___input");
-    errInput.classList.remove("clickable");
-    errInput.classList.add("text-input");
-    errCloseBtn.classList.add("hidden__input");
-    errBtn.classList.remove("hidden__input");
-    disableBtn("error-route__close");
+  const errCloseBtn = document.querySelector('.error-route__close');
+  errCloseBtn.addEventListener('click', e => {
+    errTime.removeEventListener('focus', errTimeHandler);
+    errTime.value = '';
+    errTime.classList.add('hidden___input');
+    errInput.removeEventListener('focus', errInputHandler);
+    errInput.value = '';
+    errInput.classList.remove('hidden___input');
+    errInput.classList.remove('clickable');
+    errInput.classList.add('text-input');
+    errCloseBtn.classList.add('hidden__input');
+    errBtn.classList.remove('hidden__input');
+    disableBtn('error-route__close');
   });
   if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
-    activateNextStage("start-route__time");
-    activateNextStage("route__select--plot");
-    modQ.removeAttribute("readonly");
+    activateNextStage('start-route__time');
+    activateNextStage('route__select--plot');
+    modQ.removeAttribute('readonly');
     modQ.style.cursor = 'text';
-    endTime.addEventListener("click", e => {
-      e.target.value = "";
-      activateNextStage("end-route__btn");
-      disableBtn("otk-route__btn");
+    startTime.addEventListener('click', e => {
+      confirmChangeTimeHandler(e, () => {
+        activateNextStage('start-route__btn');
+        endTime.value = '';
+        disableBtn('end-route__btn');
+      });
     });
-    startTime.addEventListener("click", e => {
-      e.target.value = "";
-      activateNextStage("start-route__btn");
-      endTime.value = "";
-      disableBtn("end-route__btn");
+    endTime.addEventListener('click', e => {
+      confirmChangeTimeHandler(e, () => {
+        activateNextStage('end-route__btn');
+        disableBtn('otk-route__btn');
+      });
     });
   }
   if (info) {
-    const quantity = routeInfo["quantity"];
-    issued.value = routeInfo["issued"];
-    const plot = routeInfo["plot"];
-    const user = routeInfo["user"];
-    const start = routeInfo["start_time"];
-    const end = routeInfo["end_time"];
-    const otk = routeInfo["otk_time"];
-    const errT = routeInfo["error_time"];
-    const errM = routeInfo["error_msg"];
-    let comments = routeInfo["comments"];
+    const quantity = routeInfo['quantity'];
+    issued.value = routeInfo['issued'];
+    const plot = routeInfo['plot'];
+    const user = routeInfo['user'];
+    const start = routeInfo['start_time'];
+    const end = routeInfo['end_time'];
+    const otk = routeInfo['otk_time'];
+    const errT = routeInfo['error_time'];
+    const errM = routeInfo['error_msg'];
+    let comments = routeInfo['comments'];
     drawPlots(plot);
     drawUsers(null, user);
-    activateNextStage("route__select--user");
-    activateNextStage("route__select--user");
-    disableBtn("route__select--plot");
+    activateNextStage('route__select--user');
+    activateNextStage('route__select--user');
+    disableBtn('route__select--plot');
     if (!start) {
-      activateNextStage("start-route__btn");
+      activateNextStage('start-route__btn');
     } else {
-      activateNextStage("end-route__btn");
+      activateNextStage('end-route__btn');
     }
     startTime.value = start;
-    document.querySelector("#end-route__time").value = end;
-    document.querySelector("#otk-route__time").value = otk;
-    document.querySelector("#error-route__msg").value = errM;
-    document.querySelector("#error__time").value = errT;
+    document.querySelector('#end-route__time').value = end;
+    document.querySelector('#otk-route__time').value = otk;
+    document.querySelector('#error-route__msg').value = errM;
+    document.querySelector('#error__time').value = errT;
     if (comments) {
-      comments = comments.map(c => `${c["date"]}    ${c["value"]}`);
-      comments = comments.join("---");
+      comments = comments.map(c => `${c['date']}    ${c['value']}`);
+      comments = comments.join('---');
       logsData.value = comments;
-      comments = comments.split("---");
-      comments = comments.filter(c => c.includes("За смену"));
-      modalElem.querySelector("#issued__all").value = comments.join("---");
+      comments = comments.split('---');
+      comments = comments.filter(c => c.includes('За смену'));
+      modalElem.querySelector('#issued__all').value = comments.join('---');
     }
     console.log(issued.value);
-    activateNextStage("section-finish__sub");
-    activateNextStage("section-finish__cancel");
+    activateNextStage('section-finish__sub');
+    activateNextStage('section-finish__cancel');
     if (quantity) {
       modQ.value = quantity;
     }
     if (end) {
-      disableBtn("end-route__btn");
+      disableBtn('end-route__btn');
       if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
-        activateNextStage("otk-route__btn");
+        activateNextStage('otk-route__btn');
       }
     }
     if (errM) {
-      errInput.classList.remove("hidden__input");
-      errTime.classList.add("hidden__input");
+      errInput.classList.remove('hidden__input');
+      errTime.classList.add('hidden__input');
       if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
-        errCloseBtn.classList.remove("hidden__input");
-        errBtn.classList.add("hidden__input");
+        errCloseBtn.classList.remove('hidden__input');
+        errBtn.classList.add('hidden__input');
       }
     }
-    issuedToday.classList.add("text-input");
-    issuedToday.removeAttribute("disabled");
+    issuedToday.classList.add('text-input');
+    issuedToday.removeAttribute('disabled');
   } else {
-    modQ.value = currentOrder.querySelector("input[name='quantity']").value;
+    modQ.value = currentOrder.querySelector('input[name="quantity"]').value;
     drawPlots();
   }
-  const dbID = currentOrder.querySelector("#db_id").value;
-  const num = currentOrder.querySelector("#number").value;
-  modalElem.querySelector(".modal-header__db").textContent = "№" + dbID;
-  modalElem.querySelector(".modal-header__number").textContent = "№ заказа " + num;
-  const routePlot = document.querySelector("#route__plot");
-  routePlot.addEventListener("change", e => {
-    const connector = document.querySelector("#plot-connection");
-    let plotName = "";
-    connector.querySelectorAll("option").forEach(conn => {
+  const dbID = currentOrder.querySelector('#db_id').value;
+  const num = currentOrder.querySelector('#number').value;
+  modalElem.querySelector('.modal-header__db').textContent = '№' + dbID;
+  modalElem.querySelector('.modal-header__number').textContent = '№ заказа ' + num;
+  const routePlot = document.querySelector('#route__plot');
+  routePlot.addEventListener('change', e => {
+    const connector = document.querySelector('#plot-connection');
+    let plotName = '';
+    connector.querySelectorAll('option').forEach(conn => {
       if (e.target.value === conn.value) {
         plotName = conn.textContent;
       }
     });
     drawUsers(plotName, null);
   });
-  const routeUser = document.querySelector(".route__select--user");
-  routeUser.addEventListener("change", () => {
-    activateNextStage("start-route__btn");
-    activateNextStage("section-finish__sub");
+  const routeUser = document.querySelector('.route__select--user');
+  routeUser.addEventListener('change', () => {
+    activateNextStage('start-route__btn');
+    activateNextStage('section-finish__sub');
   });
   drawLogs(logsData);
-  const startBtn = routeForm.querySelector(".start-route__btn");
-  startBtn.addEventListener("click", () => {
-    setDateToInput("start-route__time");
-    activateNextStage("end-route__btn");
-    activateNextStage("section-finish__sub");
-    activateNextStage("section-finish__cancel");
-    disableBtn("start-route__btn");
-    disableBtn("route__select--plot");
-    addLog(routeUser.value, '"Начал"', "#route__comments");
-    issuedToday.classList.add("text-input");
-    issuedToday.removeAttribute("disabled");
+  const startBtn = routeForm.querySelector('.start-route__btn');
+  startBtn.addEventListener('click', () => {
+    setDateToInput('start-route__time');
+    activateNextStage('end-route__btn');
+    activateNextStage('section-finish__sub');
+    activateNextStage('section-finish__cancel');
+    disableBtn('start-route__btn');
+    disableBtn('route__select--plot');
+    addLog(routeUser.value, '"Начал"', '#route__comments');
+    issuedToday.classList.add('text-input');
+    issuedToday.removeAttribute('disabled');
   });
-  const endBTn = routeForm.querySelector(".end-route__btn");
-  endBTn.addEventListener("click", () => {
-    setDateToInput("end-route__time");
+  const endBTn = routeForm.querySelector('.end-route__btn');
+  endBTn.addEventListener('click', () => {
+    setDateToInput('end-route__time');
     if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
-      activateNextStage("otk-route__btn");
+      activateNextStage('otk-route__btn');
     }
-    disableBtn("end-route__btn");
-    addLog(routeUser.value, '"Закончил"', "#route__comments");
+    disableBtn('end-route__btn');
+    addLog(routeUser.value, '"Закончил"', '#route__comments');
   });
-  const otkBtn = routeForm.querySelector(".otk-route__btn");
-  otkBtn.addEventListener("click", () => {
-    setDateToInput("otk-route__time");
-    disableBtn("otk-route__btn");
-    addLog(routeUser.value, '"Прошел ОТК"', "#route__comments");
+  const otkBtn = routeForm.querySelector('.otk-route__btn');
+  otkBtn.addEventListener('click', () => {
+    setDateToInput('otk-route__time');
+    disableBtn('otk-route__btn');
+    addLog(routeUser.value, 'Прошел ОТК', '#route__comments');
   });
-  reportBtn.addEventListener("click", () => {
+  reportBtn.addEventListener('click', () => {
     issued.value = String(Number(issued.value) + Number(issuedToday.value));
-    let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, "#route__comments");
-    saveData(logMsg, "#issued_report");
-    issuedToday.value = "";
+    let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, '#route__comments');
+    saveData(logMsg, '#issued_report');
+    issuedToday.value = '';
   });
-  issuedToday.addEventListener("input", e => {
-    activateOnInput(e, "report-sub--route__btn");
+  issuedToday.addEventListener('input', e => {
+    activateOnInput(e, 'report-sub--route__btn');
   });
-  const commentInput = document.querySelector("#section-logs__comment");
-  commentInput.addEventListener("input", e => {
-    activateOnInput(e, "send__comment");
+  const commentInput = document.querySelector('#section-logs__comment');
+  commentInput.addEventListener('input', e => {
+    activateOnInput(e, 'send__comment');
   });
-  const commentBtn = document.querySelector(".send__comment");
-  commentBtn.addEventListener("click", () => {
-    let name = _state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck ? _table__WEBPACK_IMPORTED_MODULE_4__.user.name : routeUser.value !== 'Выберите оператора' ? routeUser.value : "Выберите оператора";
-    addLog(name, `"${document.querySelector("#section-logs__comment").value}"`, "#route__comments");
-    document.querySelector("#section-logs__comment").value = "";
+  const commentBtn = document.querySelector('.send__comment');
+  commentBtn.addEventListener('click', () => {
+    let name = _state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck ? _table__WEBPACK_IMPORTED_MODULE_4__.user.name : routeUser.value !== 'Выберите оператора' ? routeUser.value : 'Выберите оператора';
+    addLog(name, `'${document.querySelector('#section-logs__comment').value}'`, '#route__comments');
+    document.querySelector('#section-logs__comment').value = '';
   });
-  const reportIssued = document.querySelector(".report-route__btn");
-  reportIssued.addEventListener("click", () => {
+  const reportIssued = document.querySelector('.report-route__btn');
+  reportIssued.addEventListener('click', () => {
     (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(issuedModal);
-    const dataPlace = document.querySelector(".issued-list");
-    document.querySelector("#issued__all").value.split("---").forEach(rep => {
-      if (rep.trim() !== "") {
+    const dataPlace = document.querySelector('.issued-list');
+    document.querySelector('#issued__all').value.split('---').forEach(rep => {
+      if (rep.trim() !== '') {
         dataPlace.insertAdjacentHTML(`beforeend`, `
-                    <li style="text-align: center" class="comment__item">${rep}</li>   
+                    <li style='text-align: center' class='comment__item'>${rep}</li>   
                 `);
       }
     });
   });
-  routeForm.addEventListener("submit", e => {
+  routeForm.addEventListener('submit', e => {
     e.preventDefault();
     const formData = new FormData(routeForm);
     const obj = {};
     formData.forEach((value, key) => {
       obj[key] = value;
     });
-    obj["plot"] = e.target.querySelector("#route__plot").value;
-    obj["comments"] = createReportObj(obj["comments"]);
-    obj["issued_report"] = createReportObj(obj["issued_report"]);
+    obj['plot'] = e.target.querySelector('#route__plot').value;
+    obj['comments'] = createReportObj(obj['comments']);
+    obj['issued_report'] = createReportObj(obj['issued_report']);
     routeInput.value = JSON.stringify(obj);
-    (0,_submitControl__WEBPACK_IMPORTED_MODULE_3__.drawSubmit)();
     console.log(obj);
-    const parent = routeInput.closest(".table-form--old");
+    const parent = routeInput.closest('.table-form--old');
     if (!(parent === null)) {
-      parent.classList.remove("table-form--old");
-      parent.classList.add("table-form--upd");
+      parent.classList.remove('table-form--old');
+      parent.classList.add('table-form--upd');
     }
-    document.querySelector(".modal--route").remove();
+    (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_5__.submitData)();
+    document.querySelector('.modal--route').remove();
   });
 };
 const createReportObj = data => {
-  let res = data.split("---");
-  res = res.map(c => c.split("    "));
+  let res = data.split('---');
+  res = res.map(c => c.split('    '));
   res = res.map(c => ({
-    "date": c[0],
-    "value": c[1]
+    'date': c[0],
+    'value': c[1]
   }));
   return res;
 };
 const drawPlots = async plotI => {
-  const plotsResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)("filters/get-all");
+  const plotsResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)('filters/get-all');
   plotsResp.then(plots => {
-    const plotsSelect = document.querySelector("#route__plot");
-    const plotsConnection = document.querySelector("#plot-connection");
+    const plotsSelect = document.querySelector('#route__plot');
+    const plotsConnection = document.querySelector('#plot-connection');
     plots.data.forEach(plot => {
       plotsSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(plotI) === String(plot.name) ? "selected" : ""} value="${plot.name}">${plot.name.toUpperCase()}</option>
+                <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name.toUpperCase()}</option>
             `);
       plotsConnection.insertAdjacentHTML('beforeend', `
-                <option value="${plot.name}">${plot.plot}</option>
+                <option value='${plot.name}'>${plot.plot}</option>
             `);
     });
   });
 };
 const drawUsers = (plotName, userI) => {
-  const usersSelect = document.querySelector("#route__user");
-  usersSelect.querySelectorAll("option").forEach(elem => {
-    if (!elem.hasAttribute("disabled")) elem.remove();
+  const usersSelect = document.querySelector('#route__user');
+  usersSelect.querySelectorAll('option').forEach(elem => {
+    if (!elem.hasAttribute('disabled')) elem.remove();
   });
-  const usersResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)("users/get-all-operators");
+  const usersResp = (0,_getData__WEBPACK_IMPORTED_MODULE_1__.getData)('users/get-all-operators');
   usersResp.then(users => {
     if (plotName) {
       users.data = users.data.filter(u => u.plot === plotName);
     }
     users.data.forEach(user => {
       usersSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(userI) === String(user.name) ? "selected" : ""} value="${user.name}">${user.name}</option>
+                <option ${String(userI) === String(user.name) ? 'selected' : ''} value='${user.name}'>${user.name}</option>
             `);
     });
-    activateNextStage("route__select--user");
+    activateNextStage('route__select--user');
   });
 };
 
@@ -1579,10 +1618,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const searchModule = () => {
-  const searchBtn = document.querySelector(".search__button");
-  searchBtn.addEventListener("click", e => {
-    const target = document.querySelector("#search__target").value;
-    const text = document.querySelector("#search__input").value.toLowerCase();
+  const searchBtn = document.querySelector('.search__button');
+  searchBtn.addEventListener('click', e => {
+    const target = document.querySelector('#search__target').value;
+    const text = document.querySelector('#search__input').value.toLowerCase();
     _state__WEBPACK_IMPORTED_MODULE_3__.state.filtered = true;
 
     // filtered = true
@@ -1612,7 +1651,7 @@ const sendData = async (url, method, body) => {
   return await fetch(url, {
     method: method,
     headers: {
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json'
     },
     body: body
   });
@@ -1633,16 +1672,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const showModal = modal => {
   const body = window.document.body;
-  // let modalElem = document.querySelector(".modal")
+  // let modalElem = document.querySelector('.modal')
   // if (modalElem === null) {
-  body.insertAdjacentHTML("afterbegin", modal);
+  body.insertAdjacentHTML('afterbegin', modal);
   // }
 
-  const modalElem = document.querySelector(".modal");
+  const modalElem = document.querySelector('.modal');
   modalElem.classList.add('modal_vis');
   modalElem.classList.remove('bounceOutDown');
-  body.classList.add("body_block");
-  modalElem.addEventListener("click", ev => {
+  body.classList.add('body_block');
+  modalElem.addEventListener('click', ev => {
     const target = ev.target;
     if (target === modalElem) {
       modalElem.classList.add('bounceOutDown');
@@ -1666,27 +1705,33 @@ const showModal = modal => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "appAddr": () => (/* binding */ appAddr),
-/* harmony export */   "inWork": () => (/* binding */ inWork),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
+<<<<<<< HEAD
 let appAddr = "http://192.168.1.230:8181";
 let inWork = false;
 const userInf = JSON.parse(sessionStorage.getItem("user"));
+=======
+let appAddr = 'http://192.168.1.230:8181';
+const userInf = JSON.parse(sessionStorage.getItem('user'));
+>>>>>>> 62f14ac58795e7c4dacb9d5c35a9a9522e502dfd
 let state = {
-  "filtered": false,
-  "inWork": false,
-  "newOrders": false,
-  "orders": [],
-  "filteredOrders": [],
-  "currentRoute": null,
-  "plots": [],
-  "machines": [],
-  "userInfo": {},
-  "filterTypes": []
+  'filtered': false,
+  'inWork': false,
+  'newOrders': false,
+  'orders': [],
+  'filteredOrders': [],
+  'currentRoute': null,
+  'plots': [],
+  'machines': [],
+  'userInfo': {},
+  'filterTypes': []
 };
 if (userInf) {
-  state["adminCheck"] = userInf.group === 'супер-админ' || userInf.group === 'админ';
-  state["techCheck"] = userInf.group === 'технолог';
+  state['adminCheck'] = userInf.group === 'супер-админ' || userInf.group === 'админ';
+  state['techCheck'] = userInf.group === 'технолог';
+  state['operCheck'] = userInf.group === 'оператор';
+  state['managerCheck'] = userInf.group === 'менеджер';
 }
 
 
@@ -1727,29 +1772,29 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const submitButtonHTML = `
-    <button class="main-header__button main__button header-button__submit">Отправить</button>
+    <button class='main-header__button main__button header-button__submit'>Отправить</button>
 `;
 const cancelButtonHTML = `
-    <button class="main-header__button main__button header-button__cancel">Отмена</button>
+    <button class='main-header__button main__button header-button__cancel'>Отмена</button>
 `;
-const addOrder = document.querySelector(".header-button__add");
+const addOrder = document.querySelector('.header-button__add');
 const drawSubmit = () => {
   _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = true;
   if (_state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders) {
-    const sub = document.querySelector(".header-button__submit");
-    const cancel = document.querySelector(".header-button__cancel");
+    const sub = document.querySelector('.header-button__submit');
+    const cancel = document.querySelector('.header-button__cancel');
     if (cancel === null) {
       addOrder.insertAdjacentHTML(`afterend`, cancelButtonHTML);
-      document.querySelector(".header-button__cancel").addEventListener("click", cancelChange);
+      document.querySelector('.header-button__cancel').addEventListener('click', cancelChange);
     }
     if (sub === null) {
       addOrder.insertAdjacentHTML(`afterend`, submitButtonHTML);
-      document.querySelector(".header-button__submit").addEventListener("click", _submitOrdersData__WEBPACK_IMPORTED_MODULE_7__.submitData);
+      document.querySelector('.header-button__submit').addEventListener('click', _submitOrdersData__WEBPACK_IMPORTED_MODULE_7__.submitData);
     }
   }
 };
 const deleteSubmitBtn = () => {
-  const btn = document.querySelector(".header-button__submit");
+  const btn = document.querySelector('.header-button__submit');
   if (btn !== null) {
     btn.remove();
   }
@@ -1760,15 +1805,19 @@ const cancelChange = e => {
   finallyForOrders(true);
 };
 const deleteCancelBtn = () => {
-  document.querySelector(".header-button__cancel").remove();
+  const btn = document.querySelector('.header-button__cancel');
+  if (btn !== null) {
+    btn.remove();
+  }
+  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
 };
 const showResult = status => {
-  let sucTitle = document.querySelector(".success");
-  let errTitle = document.querySelector(".error");
+  let sucTitle = document.querySelector('.success');
+  let errTitle = document.querySelector('.error');
   if (status) {
     if (sucTitle === null && errTitle === null) {
       addOrder.insertAdjacentHTML(`afterend`, `
-            <h3 class="success">Успешно</h3>
+            <h3 class='success'>Успешно</h3>
         `);
     }
   } else {
@@ -1777,12 +1826,12 @@ const showResult = status => {
         sucTitle.remove();
       }
       addOrder.insertAdjacentHTML(`afterend`, `
-                <h3 class="error">Неудачно</h3>
+                <h3 class='error'>Неудачно</h3>
             `);
     }
   }
-  sucTitle = document.querySelector(".success");
-  errTitle = document.querySelector(".error");
+  sucTitle = document.querySelector('.success');
+  errTitle = document.querySelector('.error');
   setTimeout(() => {
     if (sucTitle !== null) {
       sucTitle.remove();
@@ -1792,14 +1841,14 @@ const showResult = status => {
     }
   }, 1500);
 };
-addOrder.addEventListener("click", e => {
+addOrder.addEventListener('click', e => {
   drawSubmit();
   console.log(_state__WEBPACK_IMPORTED_MODULE_8__.state.managers);
-  _drawOrders__WEBPACK_IMPORTED_MODULE_2__.table.insertAdjacentHTML("afterbegin", _drawOrders__WEBPACK_IMPORTED_MODULE_2__.orderHTML);
+  _drawOrders__WEBPACK_IMPORTED_MODULE_2__.table.insertAdjacentHTML('afterbegin', _drawOrders__WEBPACK_IMPORTED_MODULE_2__.orderHTML);
   (0,_bindListeners__WEBPACK_IMPORTED_MODULE_1__.bindOrdersListeners)();
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(".table__files", _downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(".table__route", _routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_6__.triggerCommentsModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__files', _downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__route', _routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__comment', _commentsModal__WEBPACK_IMPORTED_MODULE_6__.triggerCommentsModal);
 });
 const finallyForOrders = success => {
   deleteSubmitBtn();
@@ -1832,23 +1881,28 @@ const createRes = forms => {
   forms.forEach(form => {
     const formData = new FormData(form);
     const obj = {};
-    obj["routes_json"] = {};
+    obj['routes_json'] = {};
     formData.forEach((value, key) => {
       switch (key) {
-        case "files":
-          obj[key] = value.split(", ");
+        case 'files':
+          obj[key] = value.split('', '');
           break;
-        case "comments":
-          obj[key] = value.split(".-.");
+        case 'comments':
+          obj[key] = value.split('.-.');
           break;
-        case "routes_json":
+        case 'issued':
+          if (value === '') {
+            obj[key] = '0';
+          }
+          break;
+        case 'routes_json':
           break;
         default:
           obj[key] = value.trim();
       }
-      if (key.includes("route") && !key.includes("issued") && !key.includes("json") && value !== "") {
-        if (value !== "-") {
-          obj["routes_json"][key] = JSON.parse(String(value));
+      if (key.includes('route') && !key.includes('issued') && !key.includes('json') && value !== '') {
+        if (value !== '-') {
+          obj['routes_json'][key] = JSON.parse(String(value));
         }
       }
     });
@@ -1858,20 +1912,20 @@ const createRes = forms => {
   return res;
 };
 function submitData() {
-  const forms = document.querySelectorAll(".table-form--new");
-  const formsUpd = document.querySelectorAll(".table-form--upd");
+  const forms = document.querySelectorAll('.table-form--new');
+  const formsUpd = document.querySelectorAll('.table-form--upd');
   let success = false;
   const resNew = createRes(forms);
   const resUpd = createRes(formsUpd);
   if (resNew.length) {
-    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/add`, "POST", JSON.stringify(resNew)).then(res => {
+    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/add`, 'POST', JSON.stringify(resNew)).then(res => {
       if (res.ok) success = true;
     }).finally(() => {
       (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.finallyForOrders)(success);
     });
   }
   if (resUpd.length) {
-    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/update`, "PUT", JSON.stringify(resUpd)).then(res => {
+    (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/update`, 'PUT', JSON.stringify(resUpd)).then(res => {
       if (res.ok) success = true;
     }).finally(() => {
       (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.finallyForOrders)(success);
@@ -1969,40 +2023,40 @@ const bindTableFilters = () => {
       showFilter(e);
     });
   });
-  const showFilter = e => {
-    const target = e.target;
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
-    const label = target.parentNode.querySelector('label');
-    target.classList.add('hidden__input');
-    label.classList.remove('hidden__input');
-  };
-  numsFilter.addEventListener('change', e => {
+  bindFilter(numsFilter, 'number');
+  bindFilter(clientsFilter, 'client');
+  bindFilter(materialsFilter, 'material');
+  bindFilter(namesFilter, 'name');
+  bindFilter(quantityFilter, 'quantity');
+  bindFilter(issuedFilter, 'issued');
+  bindFilter(managerFilter, 'm');
+  bindFilter(deadlineFilter, 'end_time');
+};
+const showFilter = e => {
+  const target = e.target;
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
+  const label = target.parentNode.querySelector('label');
+  target.classList.add('hidden__input');
+  label.classList.remove('hidden__input');
+};
+const filterOrders = (type, filter) => {
+  if (filter === 'все') {
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+    (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
+    return;
+  }
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.filter(o => o[type] === filter);
+  (0,_orders__WEBPACK_IMPORTED_MODULE_0__.deleteOrders)();
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
+    (0,_drawOrders__WEBPACK_IMPORTED_MODULE_2__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
+  });
+};
+const bindFilter = (elem, type) => {
+  elem.addEventListener('change', e => {
     showFilter(e);
-    filterOrders('number', e.target.value);
+    filterOrders(type, e.target.value);
     setChosenFilter(e);
   });
-  clientsFilter.addEventListener('change', e => {
-    showFilter(e);
-    filterOrders('client', e.target.value);
-    setChosenFilter(e);
-  });
-  materialsFilter.addEventListener('change', e => {
-    showFilter(e);
-    filterOrders('material', e.target.value);
-    setChosenFilter(e);
-  });
-  const filterOrders = (type, filter) => {
-    if (filter === 'все') {
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
-      return;
-    }
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o[type] === filter);
-    (0,_orders__WEBPACK_IMPORTED_MODULE_0__.deleteOrders)();
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
-      (0,_drawOrders__WEBPACK_IMPORTED_MODULE_2__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
-    });
-  };
 };
 const controlFiltersReset = () => {
   if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
@@ -2053,10 +2107,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
 
 const topFiltersHandler = () => {
-  const plotFilters = document.querySelector(".nav-filters__plots");
-  const filterFilters = document.querySelector(".nav-filters__filters");
-  const selectUser = document.querySelector(".select-user");
-  const extensions = ["все", "тестовый участок", "тестовый фильтр"];
+  const plotFilters = document.querySelector('.nav-filters__plots');
+  const filterFilters = document.querySelector('.nav-filters__filters');
+  const selectUser = document.querySelector('.select-user');
+  const extensions = ['все', 'тестовый участок', 'тестовый фильтр'];
   const checkExt = (extensions, ext) => {
     let flag = false;
     extensions.forEach(d => {
@@ -2071,39 +2125,39 @@ const topFiltersHandler = () => {
       let condition = !checkExt(extensions, d.name);
       if (condition) {
         block.insertAdjacentHTML('beforeend', `
-                <li class="nav-filters__item">
-                    <button class="nav-filters__button main__button">${d.name.toUpperCase()}</button>
+                <li class='nav-filters__item'>
+                    <button class='nav-filters__button main__button'>${d.name.toUpperCase()}</button>
                  </li>
         `);
       }
     });
   };
   const removeData = block => {
-    block.innerHTML = "";
+    block.innerHTML = '';
   };
   const plotListener = (block, filters) => {
-    const btns = block.querySelectorAll("button");
+    const btns = block.querySelectorAll('button');
     btns.forEach(btn => {
-      btn.addEventListener("click", _ref => {
+      btn.addEventListener('click', _ref => {
         let {
           target
         } = _ref;
         btns.forEach(b => {
-          b.classList.remove("chosen__plot");
+          b.classList.remove('chosen__plot');
         });
-        target.classList.toggle("chosen__plot");
-        target.classList.toggle("nav-filters__button--chosen");
+        target.classList.toggle('chosen__plot');
+        target.classList.toggle('nav-filters__button--chosen');
         filterByPlots(target.textContent.toLowerCase(), filters);
       });
     });
   };
   const filterListener = block => {
-    block.querySelectorAll("button").forEach(btn => {
-      btn.addEventListener("click", _ref2 => {
+    block.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', _ref2 => {
         let {
           target
         } = _ref2;
-        target.classList.toggle("nav-filters__button--chosen");
+        target.classList.toggle('nav-filters__button--chosen');
       });
     });
   };
@@ -2131,8 +2185,8 @@ const topFiltersHandler = () => {
   const drawUsers = users => {
     users.forEach(u => {
       console.log(u);
-      document.querySelector(".select-user").insertAdjacentHTML('beforeend', `
-            <option value="${u.id}">
+      document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
+            <option value='${u.id}'>
                 ${u.name}
             </option>
         `);
@@ -2141,16 +2195,16 @@ const topFiltersHandler = () => {
   const draw = async () => {
     let plots = [];
     let filters = [];
-    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)("filters/get-all").then(data => {
+    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('filters/get-all').then(data => {
       drawData(data.data, filterFilters);
       filters = data.data;
     }).then(_ => filterListener(filterFilters));
-    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)("plots/get-all").then(data => {
+    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('plots/get-all').then(data => {
       drawData(data.data, plotFilters);
       plots = data.data;
     }).then(_ => plotListener(plotFilters, filters));
     if (selectUser !== null) {
-      await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)("users/get-operators").then(data => {
+      await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('users/get-operators').then(data => {
         drawUsers(data.data);
         filterByPlots(data.data[0].plot, filters);
         removePlotsByUser(data.data[0].plot, plots);
@@ -11277,7 +11331,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  overflow-x: scroll;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  margin-bottom: 25px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-right: 1px solid black;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__cell:first-child {\n  border-left: 1px solid black;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n}\n.table__data--current {\n  color: #13d9d9;\n  font-size: 16px;\n}\n.table__db {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__m {\n  min-width: 32px;\n  max-width: 32px;\n}\n.table__endtime {\n  min-width: 120px;\n  max-width: 120px;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:first-child {\n  border-left: 1px solid black;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  border-bottom: 1px solid black;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    overflow-x: scroll;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-right: 1px solid black;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      font-size: 16px;\n    }\n  }\n\n  &__db {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__m {\n    min-width: 32px;\n    max-width: 32px;\n  }\n\n  &__endtime {\n    min-width: 120px;\n    max-width: 120px;\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      border-bottom: 1px solid black;\n    }\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      margin-bottom: 25px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input:not(:disabled) {\n    cursor: pointer;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  overflow-x: scroll;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  margin-bottom: 25px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-right: 1px solid black;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__cell:first-child {\n  border-left: 1px solid black;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n}\n.table__data--current {\n  color: #13d9d9;\n  font-size: 16px;\n}\n.table__db {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:first-child {\n  border-left: 1px solid black;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  border-bottom: 1px solid black;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    overflow-x: scroll;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-right: 1px solid black;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      font-size: 16px;\n    }\n  }\n\n  &__db {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      border-bottom: 1px solid black;\n    }\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      margin-bottom: 25px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input:not(:disabled) {\n    cursor: pointer;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

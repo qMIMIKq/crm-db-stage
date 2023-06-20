@@ -1,15 +1,15 @@
 export const showModal = modal => {
     const body = window.document.body
-    // let modalElem = document.querySelector(".modal")
+    // let modalElem = document.querySelector('.modal')
     // if (modalElem === null) {
-    body.insertAdjacentHTML("afterbegin", modal)
+    body.insertAdjacentHTML('afterbegin', modal)
     // }
 
-    const modalElem = document.querySelector(".modal")
+    const modalElem = document.querySelector('.modal')
     modalElem.classList.add('modal_vis')
     modalElem.classList.remove('bounceOutDown')
-    body.classList.add("body_block")
-    modalElem.addEventListener("click", ev => {
+    body.classList.add('body_block')
+    modalElem.addEventListener('click', ev => {
         const target = ev.target
         if (target === modalElem) {
             modalElem.classList.add('bounceOutDown')

@@ -65,43 +65,46 @@ export const bindTableFilters = () => {
             showFilter(e)
         })
     })
-    const showFilter = e => {
-        const target = e.target
-        state['filtered'] = true
-        const label = target.parentNode.querySelector('label')
-        target.classList.add('hidden__input')
-        label.classList.remove('hidden__input')
+
+    bindFilter(numsFilter, 'number')
+    bindFilter(clientsFilter, 'client')
+    bindFilter(materialsFilter, 'material')
+    bindFilter(namesFilter, 'name')
+    bindFilter(quantityFilter, 'quantity')
+    bindFilter(issuedFilter, 'issued')
+    bindFilter(managerFilter, 'm')
+    bindFilter(deadlineFilter, 'end_time')
+}
+
+const showFilter = e => {
+    const target = e.target
+    state['filtered'] = true
+    const label = target.parentNode.querySelector('label')
+    target.classList.add('hidden__input')
+    label.classList.remove('hidden__input')
+}
+
+const filterOrders = (type, filter) => {
+    if (filter === 'все') {
+        state['filtered'] = false
+        getOrders()
+        return
     }
 
-    numsFilter.addEventListener('change', e => {
-        showFilter(e)
-        filterOrders('number', e.target.value)
-        setChosenFilter(e)
+    state['filteredOrders'] = state['filteredOrders'].filter(o => o[type] === filter)
+    deleteOrders()
+    state['filteredOrders'].forEach(order => {
+        drawOrders(order, state['filteredOrders'], state['managers'])
     })
-    clientsFilter.addEventListener('change', e => {
-        showFilter(e)
-        filterOrders('client', e.target.value)
-        setChosenFilter(e)
-    })
-    materialsFilter.addEventListener('change', e => {
-        showFilter(e)
-        filterOrders('material', e.target.value)
-        setChosenFilter(e)
-    })
+}
 
-    const filterOrders = (type, filter) => {
-        if (filter === 'все') {
-            state['filtered'] = false
-            getOrders()
-            return
-        }
 
-        state['filteredOrders'] = state['orders'].filter(o => o[type] === filter)
-        deleteOrders()
-        state['filteredOrders'].forEach(order => {
-            drawOrders(order, state['filteredOrders'], state['managers'])
-        })
-    }
+const bindFilter = (elem, type) => {
+    elem.addEventListener('change', e => {
+        showFilter(e)
+        filterOrders(type, e.target.value)
+        setChosenFilter(e)
+    })
 }
 
 export const controlFiltersReset = () => {

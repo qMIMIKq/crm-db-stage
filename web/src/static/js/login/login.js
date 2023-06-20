@@ -1,6 +1,12 @@
 import "../../css/login/login.scss"
 import {state} from "../modules/state";
 
+<<<<<<< HEAD
+=======
+//192.168.1.230
+//172.20.10.7
+
+>>>>>>> 62f14ac58795e7c4dacb9d5c35a9a9522e502dfd
 const appAddr = "http://192.168.1.230:8181"
 
 const loginForm = document.querySelector(".login-form")
