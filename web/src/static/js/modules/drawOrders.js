@@ -1,13 +1,13 @@
-import {triggerFilesModal} from "./downloadFilesModal";
-import {controlFiltersReset} from "./tableFilters";
-import {addTriggers} from "./addTriggers";
-import {showRoutesIssued, triggerRoutesModal} from "./routesModal";
-import {triggerCommentsModal} from "./commentsModal";
-import {drawDeadlineP} from "./drawDeadlineP";
-import {state} from "./state";
-import {drawManagers} from "./drawManagers";
+import {triggerFilesModal} from './downloadFilesModal';
+import {controlFiltersReset} from './tableFilters';
+import {addTriggers} from './addTriggers';
+import {showRoutesIssued, triggerRoutesModal} from './routesModal';
+import {triggerCommentsModal} from './commentsModal';
+import {drawDeadlineP} from './drawDeadlineP';
+import {state} from './state';
+import {drawManagers} from './drawManagers';
 
-export const table = document.querySelector(".main-table")
+export const table = document.querySelector('.main-table')
 
 
 export const drawOrders = async (d, data, users) => {
@@ -15,71 +15,77 @@ export const drawOrders = async (d, data, users) => {
     let uniqueFileNames = []
     if (d.files !== null) {
         d.files.forEach(file => {
-            const arrDotFile = file.split(".")
+            const arrDotFile = file.split('.')
             const fileType = arrDotFile[arrDotFile.length - 1]
-            const arrSlashFile = file.split("/")
+            const arrSlashFile = file.split('/')
             arrSlashFile.splice(0, 3)
-            const fileName = arrSlashFile.join("")
-            let fileNameWithoutType = fileName.split(".")
-            fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join(".")
+            const fileName = arrSlashFile.join('')
+            let fileNameWithoutType = fileName.split('.')
+            fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
             uniqueFileNames.push(fileNameWithoutType)
         })
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
 
     const pData = [1, 2, 3, 4, 5, 6, 7, 30]
-    const groupper = state["adminCheck"] || state["techCheck"] ? "" : "readonly"
+
+    const admAndTechCheck = state['adminCheck'] || state['techCheck']
+
+    const inputAdmAndTechGroupper = admAndTechCheck ? '' : 'readonly'
+    const inputAdmGroupper = state['adminCheck'] ? '' : 'readonly'
+    const selectGroupper = state['adminCheck'] ? '' : 'disabled'
+    const selectTechAndAdmGroupper = admAndTechCheck ? '' : 'disabled'
 
     table.insertAdjacentHTML(`afterbegin`, `
-                <form class="table-form table-form--old" method="POST">
-                <ul class="main-table__item">
-                    <li class="table-body_cell table__db">
-                        <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="${d.id}" tabindex="-1" autocomplete="off">
+                <form class='table-form table-form--old' method='POST'>
+                <ul class='main-table__item'>
+                    <li class='table-body_cell table__db'>
+                        <input id='db_id' class='main__button table__data  click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex=''-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__timestamp">
-                        <input id="timestamp" class="table__data   table__data--ro" name="timestamp" type="text" readonly value="${d.timestamp.split("T")[0]}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__timestamp'>
+                        <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex=''-1' autocomplete='off'>
                     </li>
-                     <li class="table-body_cell hidden-input">
-                        <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="${d.files ? d.files.join(', ') : ""}" tabindex="-1" autocomplete="off">
+                     <li class='table-body_cell hidden-input'>
+                        <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex=''-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__files">
-                        <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="${uniqueFileNames.length}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__files'>
+                        <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__number">
+                    <li class='table-body_cell table__number'>
                         <input 
-                        ${groupper}
-                        id="number" class="table__data " name="number" type="text" value="${d.number}" tabindex="-1" autocomplete="off">
+                        ${inputAdmGroupper}
+                        id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__sample">
-                        <input class="table__data   table__data--ro" name="sample" type="text" value="${d.sample}" readonly tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__sample'>
+                        <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__client">
-                        <input ${groupper} class="table__data " type="text" name="client" value="${d.client}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__client'>
+                        <input ${inputAdmGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__name">
-                        <input ${groupper} class="table__data " type="text" name="name" value="${d.name}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__name'>
+                        <input ${inputAdmGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__material">
-                        <input ${groupper} class="table__data " type="text" name="material" value="${d.material}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__material'>
+                        <input ${inputAdmGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__quantity">
-                        <input ${groupper} class="table__data " type="number" name="quantity" required value="${d.quantity}" tabindex="-1" autocomplete="off">
+                    <li class='table-body_cell table__quantity'>
+                        <input ${inputAdmGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class="table-body_cell table__issued">
-                        <input ${groupper} class="table__data ${d.quantity === d.issued && d.quantity !== '' ? "table__issued--done" : ""}" tabindex="-1"
+                        <input ${inputAdmGroupper} class="table__data ${d.quantity === d.issued && d.quantity !== '' ? "table__issued--done" : ""}" tabindex="-1"
                         type="number" 
                         name="issued" 
                         required  autocomplete="off"
                         value="${d.issued}">
                     </li>
                     <li class="table-body_cell table__m">
-                        <select ${groupper} class="table__data table-m-select main__button" name="m" id="">
+                        <select ${selectGroupper} class="table__data table-m-select main__button" name="m" id="">
                             <option disabled selected value="">М</option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data "
-                        ${groupper} 
+                        ${inputAdmAndTechGroupper} 
                         name="end_time" 
                         type="text"
                         placeholder=" " 
@@ -167,7 +173,7 @@ export const drawOrders = async (d, data, users) => {
                         </ul>
                     </li>
                     <li class="table-body_cell table__p">
-                        <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                        <select ${selectTechAndAdmGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                         </select>
                     </li>
                     <li class="table-body_cell hidden-input table__comment">
