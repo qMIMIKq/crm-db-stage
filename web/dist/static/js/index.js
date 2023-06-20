@@ -1706,7 +1706,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "appAddr": () => (/* binding */ appAddr),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-let appAddr = 'http://192.168.1.230:8181';
+let appAddr = 'http://172.20.10.7:8181';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
@@ -2059,15 +2059,15 @@ const controlFiltersReset = () => {
       nav.insertAdjacentHTML('beforeend', `
                 <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
             `);
-    }
-    nav.querySelector('.header-button__reset').addEventListener('click', e => {
-      document.querySelector('#search__input').value = '';
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
-      tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
-        cell.style.textDecoration = 'none';
+      nav.querySelector('.header-button__reset').addEventListener('click', e => {
+        document.querySelector('#search__input').value = '';
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+        tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+          cell.style.textDecoration = 'none';
+        });
+        (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
       });
-      (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)();
-    });
+    }
   } else {
     const resetBtn = document.querySelector('.header-button__reset');
     if (resetBtn !== null) {

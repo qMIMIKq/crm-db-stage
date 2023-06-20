@@ -115,15 +115,16 @@ export const controlFiltersReset = () => {
             nav.insertAdjacentHTML('beforeend', `
                 <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
             `)
-        }
-        nav.querySelector('.header-button__reset').addEventListener('click', e => {
-            document.querySelector('#search__input').value = ''
-            state['filtered'] = false
-            tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
-                cell.style.textDecoration = 'none'
+
+            nav.querySelector('.header-button__reset').addEventListener('click', e => {
+                document.querySelector('#search__input').value = ''
+                state['filtered'] = false
+                tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+                    cell.style.textDecoration = 'none'
+                })
+                getOrders()
             })
-            getOrders()
-        })
+        }
     } else {
         const resetBtn = document.querySelector('.header-button__reset')
         if (resetBtn !== null) {
