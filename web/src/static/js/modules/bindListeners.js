@@ -49,6 +49,7 @@ const setChooseListeners = (label, listener, action, cls) => {
                     if (!chosen.classList.contains('tr')) {
                         chosen.classList.remove(cls)
                     }
+                } else if (chosen.classList.contains('tr') && chosen.parentNode.parentNode.parentNode.parentNode.querySelector('#db_id').classList.contains('table__data--opened')) {
                 } else {
                     chosen.classList.remove(cls)
                 }
