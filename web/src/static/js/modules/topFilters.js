@@ -91,7 +91,12 @@ export const topFiltersHandler = () => {
                 const filter = target.textContent.toLowerCase()
 
                 if (!target.classList.contains('chosen__filter')) {
-                    state['currentTopFilters'].push({'name': filter})
+                    if (!document.querySelector('.chosen__plot')) {
+                        state['currentTopFilters'].push({'name': filter})
+                    } else {
+                        state['currentTopFilters'] = [{'name': filter}]
+                    }
+
                 } else {
                     state['currentTopFilters'] = state['currentTopFilters'].filter(cF => cF.name !== filter)
                 }

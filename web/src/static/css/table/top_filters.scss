@@ -15,7 +15,8 @@
     align-items: center;
 
     &:not(:last-child) {
-      margin-bottom: 25px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
     }
   }
 
@@ -30,5 +31,11 @@
       background: $gray_bg;
       color: $hover_aqua;
     }
+  }
+}
+
+.nav-filters {
+  &__plots {
+    border-bottom: 1px solid black;
   }
 }

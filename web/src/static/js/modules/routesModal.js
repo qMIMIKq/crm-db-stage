@@ -268,8 +268,6 @@ const confirmChangeTimeHandler = (e, operation) => {
 
 export const triggerRoutesModal = e => {
     const routeInput = e.target.parentNode.querySelector('.hidden__input')
-    state['currentRoute'] = routeInput['name']
-
     const modalElem = showModal(routeModal)
 
     let info = false
