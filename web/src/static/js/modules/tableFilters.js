@@ -12,6 +12,7 @@ export const quantityFilter = tableFiltersWrapper.querySelector("#quantity")
 export const issuedFilter = tableFiltersWrapper.querySelector("#issued")
 export const managerFilter = tableFiltersWrapper.querySelector("#m")
 export const deadlineFilter = tableFiltersWrapper.querySelector("#end_time")
+export const timestampFilter = tableFiltersWrapper.querySelector("#timestamp")
 
 export const deleteTableFilters = () => {
     const filters = document.querySelectorAll('.table__filter--new')
@@ -19,25 +20,6 @@ export const deleteTableFilters = () => {
         filters.forEach(filter => filter.remove())
     }
 }
-// export const drawTableFilters =
-//     (numbers, clients, materials, n) => {
-//         numbers.forEach(num => {
-//             numsFilter.insertAdjacentHTML('beforeend', `
-//             <option class='table__filter--new' value='${num}'>${num}</option>
-//         `)
-//         })
-//         clients.forEach(client => {
-//             clientsFilter.insertAdjacentHTML('beforeend', `
-//             <option class='table__filter--new' value='${client}'>${client}</option>
-//         `)
-//         })
-//         materials.forEach(material => {
-//             materialsFilter.insertAdjacentHTML('beforeend', `
-//             <option class='table__filter--new' value='${material}'>${material}</option>
-//         `)
-//         })
-//
-//     }
 
 export const drawTableFilter = (data, target) => {
     data.forEach(d => {
@@ -66,14 +48,15 @@ export const bindTableFilters = () => {
         })
     })
 
-    bindFilter(numsFilter, 'number')
-    bindFilter(clientsFilter, 'client')
-    bindFilter(materialsFilter, 'material')
-    bindFilter(namesFilter, 'name')
-    bindFilter(quantityFilter, 'quantity')
-    bindFilter(issuedFilter, 'issued')
-    bindFilter(managerFilter, 'm')
-    bindFilter(deadlineFilter, 'end_time')
+    bindFilter(numsFilter)
+    bindFilter(clientsFilter)
+    bindFilter(materialsFilter)
+    bindFilter(namesFilter)
+    bindFilter(quantityFilter)
+    bindFilter(issuedFilter)
+    bindFilter(managerFilter)
+    bindFilter(deadlineFilter)
+    bindFilter(timestampFilter)
 }
 
 const showFilter = e => {
@@ -95,15 +78,21 @@ const filterOrders = (type, filter) => {
         return
     }
 
-    state['filteredOrders'] = state['filteredOrders'].filter(o => o[type] === filter)
+    state['filteredOrders'] = state['filteredOrders'].filter(o => {
+        switch (type) {
+            case 'timestamp':
+                return o[type].includes(filter)
+            default:
+                return o[type] === filter
+        }
+    })
     deleteOrders()
     state['filteredOrders'].forEach(order => {
         drawOrders(order, state['filteredOrders'], state['managers'])
     })
 }
 
-
-const bindFilter = (elem, type) => {
+const bindFilter = (elem) => {
     elem.removeEventListener('change', filterListener)
     elem.addEventListener('change', filterListener)
 }

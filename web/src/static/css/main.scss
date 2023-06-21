@@ -123,3 +123,24 @@ button:disabled {
   width: 100px;
   align-self: center;
 }
+
+.test {
+  &__form {
+    display: none;
+    visibility: hidden;
+  }
+
+  &__list {
+    background: none;
+  }
+
+  &__item {
+    background: transparent;
+  }
+
+  &__input {
+    background: transparent;
+    outline: none;
+    border: none;
+  }
+}

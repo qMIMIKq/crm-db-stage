@@ -22,9 +22,16 @@
     flex-direction: column;
   }
 
-  &__input:not(:disabled) {
-    cursor: pointer;
+  &__input {
+    &:not(:disabled), {
+      cursor: pointer;
+    }
+
+    &:not(:read-only) {
+
+    }
   }
+
 
   &__label {
     text-align: center;

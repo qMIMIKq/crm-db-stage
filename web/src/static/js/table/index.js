@@ -7,7 +7,7 @@ import {state} from "../modules/state";
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
 
-// topFiltersHandler()
+topFiltersHandler()
 getOrders()
 searchModule()
 
@@ -15,9 +15,8 @@ const subBtn = document.querySelector(".header-button__add")
 const plotsFilters = document.querySelector(".nav-filters__plots")
 if (!(state["adminCheck"] || state["techCheck"])) {
     subBtn.classList.add("hidden__input")
-    plotsFilters.classList.add("hidden__input")
+    // plotsFilters.classList.add("hidden__input")
 }
-
 
 const updateMainTableData = () => {
     setInterval(getOrders, 1000)

@@ -28,6 +28,15 @@
             </div>
         </nav>
     </header>
+
+    <form class="test__form" action="">
+        <ul class="test__list">
+            <li class="test__item">
+                <input class="test__input" type="text">
+            </li>
+        </ul>
+    </form>
+
     <main class="main">
         <header class="main__header main-header">
             <nav class="main-header__nav">
@@ -49,7 +58,13 @@
         <div class="main-table__data">
             <ul class="main-table__header">
                 <li class="table__cell table__db">№</li>
-                <li class="table__cell table__timestamp">Вход</li>
+                <li class="table__cell table__use table__timestamp">
+                    <label for="timestamp">Вход</label>
+                    <input class="hidden__input filter__type" value="timestamp" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
                 <li class="table__cell table__files">
                     <svg data-v-fa445770="" xmlns="http://www.w3.org/2000/svg" class="files__ico h-5 w-5 mx-auto"
                          fill="none" viewBox="0 0 24 24" stroke="currentColor">

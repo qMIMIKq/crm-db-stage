@@ -20,6 +20,8 @@ const createRes = forms => {
                 case 'issued':
                     if (value === '') {
                         obj[key] = '0'
+                    } else {
+                        obj[key] = String(value)
                     }
                     break
                 case 'routes_json':

@@ -58,10 +58,6 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			}
 		}
 
-		routesCheck := fmt.Sprintf(`
-				SELECT routeID, route_position FROM routes WHERE order_id = $1
-		`)
-
 		routesQuery := fmt.Sprintf(`
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
 													issued, start_time, end_time,
@@ -82,9 +78,9 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			var routeID int
 			routePos := strings.Split(name, "-")[1]
 
-			var dbRoutePos []domain.CheckRoute
-			err = o.db.Select(&dbRoutePos, routesCheck, order.ID)
-			log.Info().Caller().Interface("route pos id", dbRoutePos).Msgf("routePos is %v", dbRoutePos)
+			routesCheck := fmt.Sprintf(`
+				SELECT route_id, route_position FROM routes WHERE order_id = $1 AND route_position = $2
+		`)
 
 			routesUpdateQuery := fmt.Sprintf(`
 				UPDATE routes SET worker = $1, plot_id = $2, quantity = $3,
@@ -92,6 +88,10 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 								otk_time = $7, error_time = $8, error_value = $9
 			 WHERE order_id = $10 AND route_position = $11
 			`)
+
+			var dbRoutePos []domain.CheckRoute
+			err = o.db.Select(&dbRoutePos, routesCheck, order.ID, routePos)
+			log.Info().Caller().Interface("route pos id", dbRoutePos).Msgf("routePos is %v", dbRoutePos)
 
 			log.Info().Interface("route", route.OrderID).Msg("ROUTE")
 
@@ -118,6 +118,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 			} else {
+				log.Warn().Caller().Msg("not match")
 				err = o.db.QueryRow(routesQuery, order.ID,
 					routePos, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg).Scan(&routeID)

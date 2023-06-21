@@ -1,6 +1,7 @@
-// 192.168.1.230
+//192.168.1.230
+//172.20.10.7
 
-export let appAddr = 'http://192.168.1.230:8181'
+export let appAddr = 'http://172.20.10.7:8181'
 const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
@@ -13,7 +14,11 @@ let state = {
     'plots': [],
     'machines': [],
     'userInfo': {},
-    'filterTypes': []
+    'filterTypes': [],
+    'topFilters': [],
+    'currentTopFilters': [],
+    'topPlots': [],
+    'currentTopPlots': [],
 }
 
 if (userInf) {

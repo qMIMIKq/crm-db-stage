@@ -27,8 +27,9 @@ VALUES (1, 'супер админ'),
 
 CREATE TABLE plots
 (
-    plot_id   SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    plot_name VARCHAR(255)              NOT NULL
+    plot_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    plot_name      VARCHAR(255)              NOT NULL,
+    plot_shortname VARCHAR(255)
 );
 
 INSERT INTO plots (plot_name)

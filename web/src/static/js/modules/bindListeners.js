@@ -44,6 +44,16 @@ const setChooseListeners = (label, listener, action, cls) => {
     if (!label.classList.contains('table__data--clicker')) {
         label.addEventListener(listener, e => {
             const parent = e.target.closest('.main-table__item')
+            document.querySelectorAll('.table__data--chosen').forEach(chosen => {
+                if (parent.querySelector('#db_id').classList.contains('table__data--opened')) {
+                    if (!chosen.classList.contains('tr')) {
+                        chosen.classList.remove(cls)
+                    }
+                } else {
+                    chosen.classList.remove(cls)
+                }
+            })
+
             parent.querySelectorAll('.table__data').forEach(item => {
                 switch (action) {
                     case 'add':
@@ -52,14 +62,21 @@ const setChooseListeners = (label, listener, action, cls) => {
                             item.classList.add(cls)
                         }
                         break
+
                     case 'show-current':
                         state['inWork'] = true
                         e.target.classList.add(cls)
                         break
+
                     case 'toggle':
                         state['inWork'] = true
-                        item.classList.toggle(cls)
+                        if (!e.target.classList.contains('table__data--opened')) {
+                            item.classList.remove('table__data--chosen')
+                        } else {
+                            item.classList.add(cls)
+                        }
                         break
+
                     default:
                         if (cls === 'table__data--current') {
                             state['inWork'] = false

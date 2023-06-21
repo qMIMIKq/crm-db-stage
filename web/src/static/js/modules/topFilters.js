@@ -1,4 +1,5 @@
 import {getData} from './getData';
+import {state} from "./state";
 
 export const topFiltersHandler = () => {
     const plotFilters = document.querySelector('.nav-filters__plots')
@@ -30,57 +31,77 @@ export const topFiltersHandler = () => {
     const removeData = block => {
         block.innerHTML = ''
     }
-    const plotListener = (block, filters) => {
+    const plotListener = (block) => {
         const btns = block.querySelectorAll('button')
         btns.forEach(btn => {
-            btn.addEventListener('click', _ref => {
-                let {
-                    target
-                } = _ref
-                btns.forEach(b => {
-                    b.classList.remove('chosen__plot')
-                })
+            btn.addEventListener('click', e => {
+                const target = e.target
+                const plot = target.textContent.toLowerCase()
+
+                if (!target.classList.contains('chosen__plot')) {
+                    state['currentTopPlots'].push(plot)
+                } else {
+                    state['currentTopPlots'] = state['currentTopPlots'].filter(cP => cP !== plot)
+                }
+
                 target.classList.toggle('chosen__plot')
                 target.classList.toggle('nav-filters__button--chosen')
-                filterByPlots(target.textContent.toLowerCase(), filters)
+                filterByPlots()
             })
         })
     }
-    const filterListener = block => {
-        block.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('click', _ref2 => {
-                let {
-                    target
-                } = _ref2
-                target.classList.toggle('nav-filters__button--chosen')
-            })
-        })
-    }
-    const filterByPlots = (plot, filters) => {
-        const newFilters = []
-        filters.forEach(f => {
-            if (f.plot === plot) {
-                newFilters.push(f)
-            }
-        })
+
+    const filterByPlots = () => {
+        state['currentTopFilters'] = state['topFilters'].filter(filt =>
+            state['currentTopPlots'].includes(filt.plot)
+        )
+
         removeData(filterFilters)
-        drawData(newFilters, filterFilters)
+        if (state['currentTopFilters'].length) {
+            drawData(state['currentTopFilters'], filterFilters)
+        } else {
+            drawData(state['topFilters'], filterFilters)
+        }
+
         filterListener(filterFilters)
     }
+
+
     const removePlotsByUser = (plot, plots) => {
         const newPlots = []
         plots.forEach(f => {
+            console.log(f)
             if (f.name === plot) {
                 newPlots.push(f)
             }
         })
+
         removeData(plotFilters)
         drawData(newPlots, plotFilters)
     }
 
+
+    const filterListener = block => {
+        block.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const target = e.target
+                const filter = target.textContent.toLowerCase()
+
+                if (!target.classList.contains('chosen__filter')) {
+                    state['currentTopFilters'].push(filter)
+                } else {
+                    state['currentTopFilters'] = state['currentTopFilters'].filter(cP => cP !== filter)
+                }
+
+                target.classList.toggle('chosen__filter')
+                target.classList.toggle('nav-filters__button--chosen')
+            })
+        })
+    }
+
+
     const drawUsers = users => {
         users.forEach(u => {
-            console.log(u)
             document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
             <option value='${u.id}'>
                 ${u.name}
@@ -97,24 +118,26 @@ export const topFiltersHandler = () => {
             .then(data => {
                 drawData(data.data, filterFilters)
                 filters = data.data
+                state['topFilters'] = filters
             }).then(_ => filterListener(filterFilters))
 
         await getData('plots/get-all')
             .then(data => {
                 drawData(data.data, plotFilters)
                 plots = data.data
-            }).then(_ => plotListener(plotFilters, filters))
+                state['topPlots'] = plots
+            }).then(_ => plotListener(plotFilters))
 
         if (selectUser !== null) {
             await getData('users/get-operators')
                 .then(data => {
                     drawUsers(data.data)
-                    filterByPlots(data.data[0].plot, filters)
-                    removePlotsByUser(data.data[0].plot, plots)
-                    plotListener(plotFilters, filters)
+                    state['currentTopPlots'] = data.data[0].plot
+                    removePlotsByUser(data.data[0].plot, state['topPlots'])
+                    filterByPlots()
+                    plotListener(plotFilters)
                 })
         }
-
     }
     draw()
 }

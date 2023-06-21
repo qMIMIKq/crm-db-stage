@@ -4,7 +4,6 @@ import (
 	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
 	ginSession "github.com/go-session/gin-session"
-	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -30,8 +29,6 @@ func (h *Handler) getUsers(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err)
 		return
 	}
-
-	log.Info().Interface("Users", users).Msg("show users")
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"data": users,

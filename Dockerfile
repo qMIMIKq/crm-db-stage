@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1
 FROM golang:latest
 
+WORKDIR /app
+
 RUN go version
 ENV GOPATH=/
 

@@ -40,13 +40,13 @@ export const drawOrders = async (d, data, users) => {
                 <form class='table-form table-form--old' method='POST'>
                 <ul class='main-table__item'>
                     <li class='table-body_cell table__db'>
-                        <input id='db_id' class='main__button table__data  click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex=''-1' autocomplete='off'>
+                        <input id='db_id' class='main__button table__data  click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__timestamp'>
-                        <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex=''-1' autocomplete='off'>
+                        <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex='-1' autocomplete='off'>
                     </li>
                      <li class='table-body_cell hidden-input'>
-                        <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex=''-1' autocomplete='off'>
+                        <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__files'>
                         <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>

@@ -80,6 +80,9 @@
     &--opened {
       height: 56px;
       border-bottom: 1px solid black;
+      font-size: 15px;
+      background: #f3efef;
+      color: #447e9b;
     }
 
     &--current {

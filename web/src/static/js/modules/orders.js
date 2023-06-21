@@ -9,7 +9,8 @@ import {
     materialsFilter,
     namesFilter,
     numsFilter,
-    quantityFilter
+    quantityFilter,
+    timestampFilter
 } from './tableFilters';
 import {drawOrders} from './drawOrders';
 import {appAddr, state} from './state';
@@ -31,6 +32,7 @@ export const getOrders = () => {
         const issued = []
         const managers = []
         const deadlines = []
+        const timestamps = []
 
         deleteTableFilters()
         deleteOrders()
@@ -42,8 +44,6 @@ export const getOrders = () => {
                     state['filteredOrders'] = state['orders'].filter(o => o)
                     searchedOrders = state['orders'].filter(o => o)
 
-                    console.log(d)
-
                     nums.push(d.number)
                     clients.push(d.client)
                     materials.push(d.material)
@@ -52,14 +52,14 @@ export const getOrders = () => {
                     issued.push(d.issued)
                     managers.push(d.m)
                     deadlines.push(d.end_time)
+                    timestamps.push(d.timestamp.split('T')[0])
 
                     if (!state['filtered']) {
                         state['managers'] = res.data.filter(user => user.group === 'менеджер')
                     }
-                    // console.log(d)
-
                     drawOrders(d, data, state['managers'])
                 })
+
                 drawTableFilter([...new Set(nums)], numsFilter)
                 drawTableFilter([...new Set(clients)], clientsFilter)
                 drawTableFilter([...new Set(materials)], materialsFilter)
@@ -68,6 +68,7 @@ export const getOrders = () => {
                 drawTableFilter([...new Set(issued)], issuedFilter)
                 drawTableFilter([...new Set(managers)], managerFilter)
                 drawTableFilter([...new Set(deadlines)], deadlineFilter)
+                drawTableFilter([...new Set(timestamps)], timestampFilter)
 
                 const totalOrders = document.querySelector('.orders__total')
                 if (totalOrders === null) {
@@ -81,7 +82,6 @@ export const getOrders = () => {
                 bindTableFilters()
             })
     })
-
 }
 
 export const deleteOrders = () => {

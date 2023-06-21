@@ -1,7 +1,6 @@
 import {showModal} from './showModal';
 import {getData} from './getData';
 import {state} from './state';
-import {drawSubmit} from './submitControl';
 import {user} from '../table';
 import {submitData} from "./submitOrdersData";
 
@@ -247,6 +246,9 @@ const confirmChangeTimeModal = `
 `
 
 const confirmChangeTimeHandler = (e, operation) => {
+    if (e.target.value === '') {
+        return
+    }
     showModal(confirmChangeTimeModal)
 
     const modal = document.querySelector('.modal--confirm')

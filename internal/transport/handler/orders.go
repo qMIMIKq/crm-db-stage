@@ -46,10 +46,6 @@ func (h *Handler) updateOrders(c *gin.Context) {
 		return
 	}
 
-	for _, order := range orders {
-		log.Info().Interface("route", order.Routes).Msg("solo order")
-	}
-
 	err := h.services.Orders.UpdateOrders(orders)
 	if err != nil {
 		if !strings.Contains(err.Error(), "duplicate key value violates") {
