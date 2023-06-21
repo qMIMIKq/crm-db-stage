@@ -4,7 +4,7 @@ import {state} from "../modules/state";
 //192.168.1.230
 //172.20.10.7
 
-const appAddr = "http://172.20.10.7:8181"
+const appAddr = "http://192.168.1.230:8181"
 
 const loginForm = document.querySelector(".login-form")
 loginForm.addEventListener("submit", e => {
