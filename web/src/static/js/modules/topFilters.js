@@ -1,11 +1,13 @@
 import {getData} from './getData';
 import {state} from "./state";
+import {drawOrders} from "./drawOrders";
+import {deleteOrders, getOrders} from "./orders";
 
 export const topFiltersHandler = () => {
     const plotFilters = document.querySelector('.nav-filters__plots')
     const filterFilters = document.querySelector('.nav-filters__filters')
     const selectUser = document.querySelector('.select-user')
-    const extensions = ['все', 'тестовый участок', 'тестовый фильтр']
+    const extensions = ['все']
     const checkExt = (extensions, ext) => {
         let flag = false
         extensions.forEach(d => {
@@ -16,7 +18,7 @@ export const topFiltersHandler = () => {
         return flag
     }
 
-    const drawData = (data, block) => {
+    const drawTopPanel = (data, block) => {
         data.forEach(d => {
             let condition = !checkExt(extensions, d.name)
             if (condition) {
@@ -28,9 +30,11 @@ export const topFiltersHandler = () => {
             }
         })
     }
+
     const removeData = block => {
         block.innerHTML = ''
     }
+
     const plotListener = (block) => {
         const btns = block.querySelectorAll('button')
         btns.forEach(btn => {
@@ -47,6 +51,7 @@ export const topFiltersHandler = () => {
                 target.classList.toggle('chosen__plot')
                 target.classList.toggle('nav-filters__button--chosen')
                 filterByPlots()
+                filterData()
             })
         })
     }
@@ -58,14 +63,13 @@ export const topFiltersHandler = () => {
 
         removeData(filterFilters)
         if (state['currentTopFilters'].length) {
-            drawData(state['currentTopFilters'], filterFilters)
+            drawTopPanel(state['currentTopFilters'], filterFilters)
         } else {
-            drawData(state['topFilters'], filterFilters)
+            drawTopPanel(state['topFilters'], filterFilters)
         }
 
         filterListener(filterFilters)
     }
-
 
     const removePlotsByUser = (plot, plots) => {
         const newPlots = []
@@ -77,9 +81,8 @@ export const topFiltersHandler = () => {
         })
 
         removeData(plotFilters)
-        drawData(newPlots, plotFilters)
+        drawTopPanel(newPlots, plotFilters)
     }
-
 
     const filterListener = block => {
         block.querySelectorAll('button').forEach(btn => {
@@ -88,17 +91,44 @@ export const topFiltersHandler = () => {
                 const filter = target.textContent.toLowerCase()
 
                 if (!target.classList.contains('chosen__filter')) {
-                    state['currentTopFilters'].push(filter)
+                    state['currentTopFilters'].push({'name': filter})
                 } else {
-                    state['currentTopFilters'] = state['currentTopFilters'].filter(cP => cP !== filter)
+                    state['currentTopFilters'] = state['currentTopFilters'].filter(cF => cF.name !== filter)
                 }
 
                 target.classList.toggle('chosen__filter')
                 target.classList.toggle('nav-filters__button--chosen')
+                console.log(state['currentTopFilters'])
+                filterData()
             })
         })
     }
 
+    const filterData = () => {
+        const filters = state['currentTopFilters'].map(filter => filter.name)
+        if (filters.length) {
+            state['filteredOrders'] = state['orders'].filter(order => {
+                let flag = false
+
+                if (order.db_routes) {
+                    order.db_routes.forEach(route => {
+                        if (filters.includes(route.plot)) {
+                            flag = true
+                        }
+                    })
+                }
+
+                return flag
+            })
+
+            deleteOrders()
+            state['filteredOrders'].forEach(order => {
+                drawOrders(order, state['filteredOrders'], state['managers'])
+            })
+        } else {
+            getOrders()
+        }
+    }
 
     const drawUsers = users => {
         users.forEach(u => {
@@ -116,14 +146,14 @@ export const topFiltersHandler = () => {
 
         await getData('filters/get-all')
             .then(data => {
-                drawData(data.data, filterFilters)
+                drawTopPanel(data.data, filterFilters)
                 filters = data.data
                 state['topFilters'] = filters
             }).then(_ => filterListener(filterFilters))
 
         await getData('plots/get-all')
             .then(data => {
-                drawData(data.data, plotFilters)
+                drawTopPanel(data.data, plotFilters)
                 plots = data.data
                 state['topPlots'] = plots
             }).then(_ => plotListener(plotFilters))

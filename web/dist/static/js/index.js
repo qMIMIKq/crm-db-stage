@@ -2118,13 +2118,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+
+
 
 
 const topFiltersHandler = () => {
   const plotFilters = document.querySelector('.nav-filters__plots');
   const filterFilters = document.querySelector('.nav-filters__filters');
   const selectUser = document.querySelector('.select-user');
-  const extensions = ['все', 'тестовый участок', 'тестовый фильтр'];
+  const extensions = ['все'];
   const checkExt = (extensions, ext) => {
     let flag = false;
     extensions.forEach(d => {
@@ -2134,7 +2138,7 @@ const topFiltersHandler = () => {
     });
     return flag;
   };
-  const drawData = (data, block) => {
+  const drawTopPanel = (data, block) => {
     data.forEach(d => {
       let condition = !checkExt(extensions, d.name);
       if (condition) {
@@ -2163,6 +2167,7 @@ const topFiltersHandler = () => {
         target.classList.toggle('chosen__plot');
         target.classList.toggle('nav-filters__button--chosen');
         filterByPlots();
+        filterData();
       });
     });
   };
@@ -2170,9 +2175,9 @@ const topFiltersHandler = () => {
     _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters.filter(filt => _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.includes(filt.plot));
     removeData(filterFilters);
     if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
-      drawData(_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters, filterFilters);
+      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters, filterFilters);
     } else {
-      drawData(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters, filterFilters);
+      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters, filterFilters);
     }
     filterListener(filterFilters);
   };
@@ -2185,7 +2190,7 @@ const topFiltersHandler = () => {
       }
     });
     removeData(plotFilters);
-    drawData(newPlots, plotFilters);
+    drawTopPanel(newPlots, plotFilters);
   };
   const filterListener = block => {
     block.querySelectorAll('button').forEach(btn => {
@@ -2193,14 +2198,40 @@ const topFiltersHandler = () => {
         const target = e.target;
         const filter = target.textContent.toLowerCase();
         if (!target.classList.contains('chosen__filter')) {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.push(filter);
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.push({
+            'name': filter
+          });
         } else {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.filter(cP => cP !== filter);
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.filter(cF => cF.name !== filter);
         }
         target.classList.toggle('chosen__filter');
         target.classList.toggle('nav-filters__button--chosen');
+        console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters);
+        filterData();
       });
     });
+  };
+  const filterData = () => {
+    const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
+    if (filters.length) {
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(order => {
+        let flag = false;
+        if (order.db_routes) {
+          order.db_routes.forEach(route => {
+            if (filters.includes(route.plot)) {
+              flag = true;
+            }
+          });
+        }
+        return flag;
+      });
+      (0,_orders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
+        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_2__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
+      });
+    } else {
+      (0,_orders__WEBPACK_IMPORTED_MODULE_3__.getOrders)();
+    }
   };
   const drawUsers = users => {
     users.forEach(u => {
@@ -2215,12 +2246,12 @@ const topFiltersHandler = () => {
     let plots = [];
     let filters = [];
     await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('filters/get-all').then(data => {
-      drawData(data.data, filterFilters);
+      drawTopPanel(data.data, filterFilters);
       filters = data.data;
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = filters;
     }).then(_ => filterListener(filterFilters));
     await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('plots/get-all').then(data => {
-      drawData(data.data, plotFilters);
+      drawTopPanel(data.data, plotFilters);
       plots = data.data;
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = plots;
     }).then(_ => plotListener(plotFilters));
