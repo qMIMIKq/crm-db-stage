@@ -7,9 +7,9 @@ import (
 	"crm/internal/services"
 	"crm/internal/transport"
 	"crm/pkg/database"
-	"crm/pkg/hasher"
 	"crm/pkg/logger"
 	"github.com/rs/zerolog/log"
+	"strconv"
 )
 
 // migrate create -ext sql -dir ./schema -seq init - new migrate
@@ -22,8 +22,20 @@ func init() {
 func main() {
 	cfg := config.GetConfig()
 
-	pass := hasher.GeneratePasswordHash("1111", "asda312das")
-	log.Info().Msg(pass)
+	//arrStr := strings.Split("12345678", "")
+	str := "12345678"
+	res := ""
+	for _, sNum := range str {
+		num, _ := strconv.Atoi(string(sNum))
+
+		if num > 5 {
+			res = "0" + res
+		} else {
+			res = "1" + res
+		}
+	}
+
+	log.Info().Caller().Msgf("Res is %s", res)
 
 	pgDb, err := database.NewPostgresDB(cfg.CrmDB)
 	if err != nil {

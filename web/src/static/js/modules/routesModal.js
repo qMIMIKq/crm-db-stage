@@ -132,6 +132,8 @@ const routeModal = `
                     </ul>
                     <div class='section-logs__comment'>
                         <input
+                        readonly
+                        style="cursor: default"
                         class='section-logs__input main__input' 
                         placeholder='Напишите комментарий'
                         type='text' 
@@ -146,7 +148,7 @@ const routeModal = `
                     
                     <div class='section-finish__complete'>
                         <button disabled class='section-finish__btn section-finish__cancel main__button clickable' type='button'>ОТМЕНА</button>
-                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='submit'>ОК</button>
+                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='button'>ОК</button>
                     </div>
                 </div>
             
@@ -164,6 +166,8 @@ const issuedModal = `
    </div>
 `
 const drawLogs = data => {
+    const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Ошибка', 'Сбросил', 'За смену', 'Просмотрел']
+
     const logsList = document.querySelector('.section-logs__list')
     const logsItems = logsList.querySelectorAll('.section-logs__item')
     if (logsItems !== null) {
@@ -173,9 +177,23 @@ const drawLogs = data => {
     }
     data.value.split('---').reverse().forEach(log => {
         if (log.trim() !== '') {
-            logsList.insertAdjacentHTML(`beforeend`, `
-                <li class='section-logs__item'>${log}</li>
-            `)
+            let flag = true
+
+            systemWords.forEach(word => {
+                if (log.includes(word)) {
+                    flag = false
+                }
+            })
+
+            if (flag) {
+                logsList.insertAdjacentHTML(`beforeend`, `
+                    <li class='section-logs__item'>${log}</li>
+                `)
+            } else {
+                logsList.insertAdjacentHTML(`beforeend`, `
+                    <li style="color: #447e9b" class='section-logs__item'>${log}</li>
+                `)
+            }
         }
     })
 }
@@ -256,9 +274,23 @@ const confirmChangeTimeHandler = (e, operation) => {
     const cncltn = modal.querySelector('.confirm__button--cncl')
 
     okBtn.addEventListener('click', () => {
+        let logMsg
+        switch (e.target.name) {
+            case 'start_time':
+                logMsg = '"Сбросил время начала"'
+                break
+            case 'end_time':
+                logMsg = '"Сбросил время сдачи"'
+                break
+            case 'otk_time':
+                logMsg = '"Сбросил время ОТК"'
+                break
+        }
+
         e.target.value = ''
         operation()
         modal.click()
+        addLog(user.name, logMsg, '#route__comments')
     })
 
     cncltn.addEventListener('click', () => {
@@ -269,6 +301,7 @@ const confirmChangeTimeHandler = (e, operation) => {
 export const triggerRoutesModal = e => {
     const routeInput = e.target.parentNode.querySelector('.hidden__input')
     const modalElem = showModal(routeModal)
+    let logName = state['adminCheck'] || state['techCheck'] ? user.name : ''
 
     let info = false
     let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
@@ -278,9 +311,10 @@ export const triggerRoutesModal = e => {
     }
 
     const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
-    const modQ = modalElem.querySelector('#quantity')
-    modQ.addEventListener('input', e => {
+    const routeQuantity = modalElem.querySelector('#quantity')
+    routeQuantity.addEventListener('change', e => {
         activateOnInput(e, 'section-finish__sub')
+        addLog(logName, `"Установил тираж в ${e.target.value}"`, '#route__comments')
     })
     const issued = modalElem.querySelector('#route__issued')
     const logsData = document.querySelector('#route__comments')
@@ -307,13 +341,9 @@ export const triggerRoutesModal = e => {
 
     const errBtn = routeForm.querySelector('.error-route__btn')
     errBtn.addEventListener('click', () => {
-        let name = ''
-        if (state['adminCheck'] || state['techCheck']) {
-            name = user.name
-        }
         let logMsg = 'ОШИБКА ' + document.querySelector('#error-route__msg').value
 
-        addLog(name, logMsg, '#route__comments')
+        addLog(logName, logMsg, '#route__comments')
         setDateToInput('error__time')
         activateNextStage('error__time')
         // errInput.classList.add('hidden__input')
@@ -346,8 +376,6 @@ export const triggerRoutesModal = e => {
     if (state['adminCheck'] || state['techCheck']) {
         activateNextStage('start-route__time')
         activateNextStage('route__select--plot')
-        modQ.removeAttribute('readonly')
-        modQ.style.cursor = 'text'
 
         startTime.addEventListener('click', e => {
             confirmChangeTimeHandler(e, () => {
@@ -365,6 +393,24 @@ export const triggerRoutesModal = e => {
         })
     }
 
+    const commentInput = document.querySelector('#section-logs__comment')
+    commentInput.addEventListener('input', e => {
+        activateOnInput(e, 'send__comment')
+    })
+    const commentBtn = document.querySelector('.send__comment')
+    commentBtn.addEventListener('click', e => {
+        let name
+        if (logName === '') {
+            name = routeUser.value
+        } else {
+            name = logName
+        }
+
+        addLog(name, `"${document.querySelector('#section-logs__comment').value}"`, '#route__comments')
+        document.querySelector('#section-logs__comment').value = ''
+        disableBtn('send__comment')
+    })
+
     if (info) {
         const quantity = routeInfo['quantity']
         issued.value = routeInfo['issued']
@@ -380,7 +426,15 @@ export const triggerRoutesModal = e => {
         drawPlots(plot)
         drawUsers(null, user)
         activateNextStage('route__select--user')
-        activateNextStage('route__select--user')
+        controlQuantityAccess(routeQuantity)
+        if (logName !== '') {
+            controlCommentAccess(commentInput)
+        }
+
+        if (user) {
+            controlCommentAccess(commentInput)
+        }
+
         disableBtn('route__select--plot')
 
         if (!start) {
@@ -405,13 +459,11 @@ export const triggerRoutesModal = e => {
             modalElem.querySelector('#issued__all').value = comments.join('---')
         }
 
-        console.log(issued.value)
-
         activateNextStage('section-finish__sub')
         activateNextStage('section-finish__cancel')
 
         if (quantity) {
-            modQ.value = quantity
+            routeQuantity.value = quantity
         }
 
         if (end) {
@@ -435,7 +487,7 @@ export const triggerRoutesModal = e => {
         issuedToday.classList.add('text-input')
         issuedToday.removeAttribute('disabled')
     } else {
-        modQ.value = currentOrder.querySelector('input[name="quantity"]').value
+        routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
         drawPlots()
     }
 
@@ -454,12 +506,18 @@ export const triggerRoutesModal = e => {
             }
         })
 
+
+        addLog(logName, `Выбрал этап "${routePlot.value.toUpperCase()}"`, '#route__comments')
+
         drawUsers(plotName, null)
+        activateNextStage('section-finish__sub')
+        controlQuantityAccess(routeQuantity)
+        controlCommentAccess(commentInput)
     })
     const routeUser = document.querySelector('.route__select--user')
     routeUser.addEventListener('change', () => {
+        addLog(logName, `"Назначил оператора ${routeUser.value}"`, '#route__comments')
         activateNextStage('start-route__btn')
-        activateNextStage('section-finish__sub')
     })
     drawLogs(logsData)
     const startBtn = routeForm.querySelector('.start-route__btn')
@@ -500,16 +558,6 @@ export const triggerRoutesModal = e => {
     issuedToday.addEventListener('input', e => {
         activateOnInput(e, 'report-sub--route__btn')
     })
-    const commentInput = document.querySelector('#section-logs__comment')
-    commentInput.addEventListener('input', e => {
-        activateOnInput(e, 'send__comment')
-    })
-    const commentBtn = document.querySelector('.send__comment')
-    commentBtn.addEventListener('click', () => {
-        let name = state['adminCheck'] || state['techCheck'] ? user.name : routeUser.value !== 'Выберите оператора' ? routeUser.value : 'Выберите оператора'
-        addLog(name, `'${document.querySelector('#section-logs__comment').value}'`, '#route__comments')
-        document.querySelector('#section-logs__comment').value = ''
-    })
     const reportIssued = document.querySelector('.report-route__btn')
     reportIssued.addEventListener('click', () => {
         showModal(issuedModal)
@@ -521,22 +569,24 @@ export const triggerRoutesModal = e => {
                 `)
             }
         })
+
+        addLog(logName, '"Просмотрел отчет по сменам"', '#route__comments')
     })
 
-    routeForm.addEventListener('submit', e => {
-        e.preventDefault()
+    window.addEventListener('keydown', subCommentByEnter)
+
+    document.querySelector('.section-finish__sub').addEventListener('click', () => {
         const formData = new FormData(routeForm)
         const obj = {}
         formData.forEach((value, key) => {
             obj[key] = value
         })
-        obj['plot'] = e.target.querySelector('#route__plot').value
+        obj['plot'] = routeForm.querySelector('#route__plot').value
 
         obj['comments'] = createReportObj(obj['comments'])
         obj['issued_report'] = createReportObj(obj['issued_report'])
         routeInput.value = JSON.stringify(obj)
 
-        console.log(obj)
         const parent = routeInput.closest('.table-form--old')
 
         if (!(parent === null)) {
@@ -546,7 +596,17 @@ export const triggerRoutesModal = e => {
 
         submitData()
         document.querySelector('.modal--route').remove()
+        window.removeEventListener('keydown', subCommentByEnter)
     })
+}
+
+export const subCommentByEnter = e => {
+    if (e.code === 'Enter') {
+        const commentInput = document.querySelector('#section-logs__comment')
+        if (commentInput && commentInput.value) {
+            document.querySelector('.send__comment').click()
+        }
+    }
 }
 
 const createReportObj = (data) => {
@@ -596,6 +656,18 @@ const drawUsers = (plotName, userI) => {
             `)
         })
 
-        activateNextStage('route__select--user')
     })
+    activateNextStage('route__select--user')
+}
+
+const controlQuantityAccess = (routeQuantity) => {
+    if (state['adminCheck'] || state['techCheck']) {
+        routeQuantity.removeAttribute('readonly')
+        routeQuantity.style.cursor = 'text'
+    }
+}
+
+const controlCommentAccess = (commentInput) => {
+    commentInput.removeAttribute('readonly')
+    commentInput.style.cursor = 'text'
 }

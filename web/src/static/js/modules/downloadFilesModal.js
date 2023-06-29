@@ -12,9 +12,9 @@ export const filesModal = `
                 <div class='modal-header__enter'></div>
             </div>
         
-            <form class='order__files' method='POST' action=''/api/files/save-files' enctype='multipart/form-data'>
+            <form class='order__files' method='POST' action='/api/files/save-files' enctype='multipart/form-data'>
              <div class='modal__trigger'>Укажите файлы для загрузки</div>
-             <input class='modal__files hidden__input' type='file' name='files' multiple tabindex=''-1'>
+             <input class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
             </form>
             
             <div class='data'>
@@ -42,10 +42,10 @@ const sendFiles = (files, filesInput) => {
         method: 'POST',
         body: formData
     }).then(res => res.json()).then(data => {
-        const currentData = filesInput.value.split('', '')
+        const currentData = filesInput.value.split(', ')
         let newData = currentData.concat(data.data).filter(file => file !== '')
         newData = [...new Set(newData)]
-        filesInput.value = newData.join('', '')
+        filesInput.value = newData.join(', ')
         drawSubmit()
         const parent = filesInput.closest('form')
         const drop = document.querySelector('.modal__trigger')
@@ -115,9 +115,11 @@ export function triggerFilesModal(e) {
 
 export const drawFiles = (modal, files) => {
     const data = modal.querySelector('.data')
+    console.log(files)
     if (files.length) {
         const fileNames = []
-        files.split('', '').map(file => {
+        files.split(', ').map(file => {
+            console.log(file)
             const arrDotFile = file.split('.')
             const fileType = arrDotFile[arrDotFile.length - 1]
             const arrSlashFile = file.split('/')

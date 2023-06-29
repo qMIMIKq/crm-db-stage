@@ -51,7 +51,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Users:         NewUsersPG(db),
 		Filters:       NewFiltersPG(db),
 		Plots:         NewPlotsPG(db),
-		//Files:         NewFilesMW(),
-		Orders: NewOrdersPG(db),
+		Files:         NewFilesMW(),
+		Orders:        NewOrdersPG(db),
 	}
 }

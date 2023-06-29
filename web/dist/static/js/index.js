@@ -309,9 +309,9 @@ const filesModal = `
                 <div class='modal-header__enter'></div>
             </div>
         
-            <form class='order__files' method='POST' action=''/api/files/save-files' enctype='multipart/form-data'>
+            <form class='order__files' method='POST' action='/api/files/save-files' enctype='multipart/form-data'>
              <div class='modal__trigger'>Укажите файлы для загрузки</div>
-             <input class='modal__files hidden__input' type='file' name='files' multiple tabindex=''-1'>
+             <input class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
             </form>
             
             <div class='data'>
@@ -337,10 +337,10 @@ const sendFiles = (files, filesInput) => {
     method: 'POST',
     body: formData
   }).then(res => res.json()).then(data => {
-    const currentData = filesInput.value.split('', '');
+    const currentData = filesInput.value.split(', ');
     let newData = currentData.concat(data.data).filter(file => file !== '');
     newData = [...new Set(newData)];
-    filesInput.value = newData.join('', '');
+    filesInput.value = newData.join(', ');
     (0,_submitControl__WEBPACK_IMPORTED_MODULE_1__.drawSubmit)();
     const parent = filesInput.closest('form');
     const drop = document.querySelector('.modal__trigger');
@@ -403,9 +403,11 @@ function triggerFilesModal(e) {
 }
 const drawFiles = (modal, files) => {
   const data = modal.querySelector('.data');
+  console.log(files);
   if (files.length) {
     const fileNames = [];
-    files.split('', '').map(file => {
+    files.split(', ').map(file => {
+      console.log(file);
       const arrDotFile = file.split('.');
       const fileType = arrDotFile[arrDotFile.length - 1];
       const arrSlashFile = file.split('/');
@@ -479,7 +481,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "drawDeadlineP": () => (/* binding */ drawDeadlineP)
 /* harmony export */ });
-const drawDeadlineP = (target, chosenDeadline, deadlines) => {
+const drawDeadlineP = (target, deadlines, chosenDeadline) => {
   const block = document.querySelector(target);
   deadlines.forEach(deadline => {
     block.insertAdjacentHTML('beforeend', `
@@ -560,7 +562,6 @@ const drawOrders = async (d, data, users) => {
     });
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
-  const pData = [1, 2, 3, 4, 5, 6, 7, 30];
   const admAndTechCheck = _state__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_6__.state.techCheck;
   const inputAdmAndTechGroupper = admAndTechCheck ? '' : 'readonly';
   const inputAdmGroupper = _state__WEBPACK_IMPORTED_MODULE_6__.state.adminCheck ? '' : 'readonly';
@@ -704,6 +705,7 @@ const drawOrders = async (d, data, users) => {
                     </li>
                     <li class="table-body_cell table__p">
                         <select ${selectTechAndAdmGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell hidden-input table__comment">
@@ -740,7 +742,7 @@ const drawOrders = async (d, data, users) => {
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__route", _routesModal__WEBPACK_IMPORTED_MODULE_3__.triggerRoutesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_4__.triggerCommentsModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)("#db_id", _routesModal__WEBPACK_IMPORTED_MODULE_3__.showRoutesIssued);
-  (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_5__.drawDeadlineP)(".table-p-select", d.p, pData);
+  (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_5__.drawDeadlineP)(".table-p-select", _state__WEBPACK_IMPORTED_MODULE_6__.state.deadlinesP, d.p);
   (0,_drawManagers__WEBPACK_IMPORTED_MODULE_7__.drawManagers)(".table-m-select", users, d.m);
   const jsonRoute = document.querySelector("input[name='routes_json']");
   const routesWrapper = document.querySelector(".table-routes__wrapper");
@@ -801,7 +803,9 @@ const orderHTML = `
                         value="">
                     </li>
                     <li class="table-body_cell table__m">
-                        <input class="table__data " name="m" type="text" value="" tabindex="-1" autocomplete="off">
+                        <select class="table__data table-m-select main__button" name="m" id="">
+                            <option disabled selected value="">М</option>
+                        </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data " 
@@ -893,6 +897,7 @@ const orderHTML = `
                     </li>
                     <li class="table-body_cell table__p">
                         <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell hidden-input table__comment">
@@ -1052,6 +1057,7 @@ const deleteOrders = () => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "showRoutesIssued": () => (/* binding */ showRoutesIssued),
+/* harmony export */   "subCommentByEnter": () => (/* binding */ subCommentByEnter),
 /* harmony export */   "triggerRoutesModal": () => (/* binding */ triggerRoutesModal)
 /* harmony export */ });
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
@@ -1192,6 +1198,8 @@ const routeModal = `
                     </ul>
                     <div class='section-logs__comment'>
                         <input
+                        readonly
+                        style="cursor: default"
                         class='section-logs__input main__input' 
                         placeholder='Напишите комментарий'
                         type='text' 
@@ -1206,7 +1214,7 @@ const routeModal = `
                     
                     <div class='section-finish__complete'>
                         <button disabled class='section-finish__btn section-finish__cancel main__button clickable' type='button'>ОТМЕНА</button>
-                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='submit'>ОК</button>
+                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='button'>ОК</button>
                     </div>
                 </div>
             
@@ -1224,6 +1232,7 @@ const issuedModal = `
    </div>
 `;
 const drawLogs = data => {
+  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Ошибка', 'Сбросил', 'За смену', 'Просмотрел'];
   const logsList = document.querySelector('.section-logs__list');
   const logsItems = logsList.querySelectorAll('.section-logs__item');
   if (logsItems !== null) {
@@ -1233,9 +1242,21 @@ const drawLogs = data => {
   }
   data.value.split('---').reverse().forEach(log => {
     if (log.trim() !== '') {
-      logsList.insertAdjacentHTML(`beforeend`, `
-                <li class='section-logs__item'>${log}</li>
-            `);
+      let flag = true;
+      systemWords.forEach(word => {
+        if (log.includes(word)) {
+          flag = false;
+        }
+      });
+      if (flag) {
+        logsList.insertAdjacentHTML(`beforeend`, `
+                    <li class='section-logs__item'>${log}</li>
+                `);
+      } else {
+        logsList.insertAdjacentHTML(`beforeend`, `
+                    <li style="color: #447e9b" class='section-logs__item'>${log}</li>
+                `);
+      }
     }
   });
 };
@@ -1311,9 +1332,22 @@ const confirmChangeTimeHandler = (e, operation) => {
   const okBtn = modal.querySelector('.confirm__button--ok');
   const cncltn = modal.querySelector('.confirm__button--cncl');
   okBtn.addEventListener('click', () => {
+    let logMsg;
+    switch (e.target.name) {
+      case 'start_time':
+        logMsg = '"Сбросил время начала"';
+        break;
+      case 'end_time':
+        logMsg = '"Сбросил время сдачи"';
+        break;
+      case 'otk_time':
+        logMsg = '"Сбросил время ОТК"';
+        break;
+    }
     e.target.value = '';
     operation();
     modal.click();
+    addLog(_table__WEBPACK_IMPORTED_MODULE_3__.user.name, logMsg, '#route__comments');
   });
   cncltn.addEventListener('click', () => {
     modal.click();
@@ -1322,6 +1356,7 @@ const confirmChangeTimeHandler = (e, operation) => {
 const triggerRoutesModal = e => {
   const routeInput = e.target.parentNode.querySelector('.hidden__input');
   const modalElem = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(routeModal);
+  let logName = _state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck ? _table__WEBPACK_IMPORTED_MODULE_3__.user.name : '';
   let info = false;
   let routeInfo = e.target.parentNode.querySelector('.hidden__input').value;
   if (routeInfo !== '') {
@@ -1329,9 +1364,10 @@ const triggerRoutesModal = e => {
     routeInfo = JSON.parse(routeInfo);
   }
   const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode;
-  const modQ = modalElem.querySelector('#quantity');
-  modQ.addEventListener('input', e => {
+  const routeQuantity = modalElem.querySelector('#quantity');
+  routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub');
+    addLog(logName, `"Установил тираж в ${e.target.value}"`, '#route__comments');
   });
   const issued = modalElem.querySelector('#route__issued');
   const logsData = document.querySelector('#route__comments');
@@ -1355,12 +1391,8 @@ const triggerRoutesModal = e => {
   const routeForm = modalElem.querySelector('.route__config');
   const errBtn = routeForm.querySelector('.error-route__btn');
   errBtn.addEventListener('click', () => {
-    let name = '';
-    if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
-      name = _table__WEBPACK_IMPORTED_MODULE_3__.user.name;
-    }
     let logMsg = 'ОШИБКА ' + document.querySelector('#error-route__msg').value;
-    addLog(name, logMsg, '#route__comments');
+    addLog(logName, logMsg, '#route__comments');
     setDateToInput('error__time');
     activateNextStage('error__time');
     // errInput.classList.add('hidden__input')
@@ -1391,8 +1423,6 @@ const triggerRoutesModal = e => {
   if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
     activateNextStage('start-route__time');
     activateNextStage('route__select--plot');
-    modQ.removeAttribute('readonly');
-    modQ.style.cursor = 'text';
     startTime.addEventListener('click', e => {
       confirmChangeTimeHandler(e, () => {
         activateNextStage('start-route__btn');
@@ -1407,6 +1437,22 @@ const triggerRoutesModal = e => {
       });
     });
   }
+  const commentInput = document.querySelector('#section-logs__comment');
+  commentInput.addEventListener('input', e => {
+    activateOnInput(e, 'send__comment');
+  });
+  const commentBtn = document.querySelector('.send__comment');
+  commentBtn.addEventListener('click', e => {
+    let name;
+    if (logName === '') {
+      name = routeUser.value;
+    } else {
+      name = logName;
+    }
+    addLog(name, `"${document.querySelector('#section-logs__comment').value}"`, '#route__comments');
+    document.querySelector('#section-logs__comment').value = '';
+    disableBtn('send__comment');
+  });
   if (info) {
     const quantity = routeInfo['quantity'];
     issued.value = routeInfo['issued'];
@@ -1421,7 +1467,13 @@ const triggerRoutesModal = e => {
     drawPlots(plot);
     drawUsers(null, user);
     activateNextStage('route__select--user');
-    activateNextStage('route__select--user');
+    controlQuantityAccess(routeQuantity);
+    if (logName !== '') {
+      controlCommentAccess(commentInput);
+    }
+    if (user) {
+      controlCommentAccess(commentInput);
+    }
     disableBtn('route__select--plot');
     if (!start) {
       activateNextStage('start-route__btn');
@@ -1441,11 +1493,10 @@ const triggerRoutesModal = e => {
       comments = comments.filter(c => c.includes('За смену'));
       modalElem.querySelector('#issued__all').value = comments.join('---');
     }
-    console.log(issued.value);
     activateNextStage('section-finish__sub');
     activateNextStage('section-finish__cancel');
     if (quantity) {
-      modQ.value = quantity;
+      routeQuantity.value = quantity;
     }
     if (end) {
       disableBtn('end-route__btn');
@@ -1464,7 +1515,7 @@ const triggerRoutesModal = e => {
     issuedToday.classList.add('text-input');
     issuedToday.removeAttribute('disabled');
   } else {
-    modQ.value = currentOrder.querySelector('input[name="quantity"]').value;
+    routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value;
     drawPlots();
   }
   const dbID = currentOrder.querySelector('#db_id').value;
@@ -1480,12 +1531,16 @@ const triggerRoutesModal = e => {
         plotName = conn.textContent;
       }
     });
+    addLog(logName, `Выбрал этап "${routePlot.value.toUpperCase()}"`, '#route__comments');
     drawUsers(plotName, null);
+    activateNextStage('section-finish__sub');
+    controlQuantityAccess(routeQuantity);
+    controlCommentAccess(commentInput);
   });
   const routeUser = document.querySelector('.route__select--user');
   routeUser.addEventListener('change', () => {
+    addLog(logName, `"Назначил оператора ${routeUser.value}"`, '#route__comments');
     activateNextStage('start-route__btn');
-    activateNextStage('section-finish__sub');
   });
   drawLogs(logsData);
   const startBtn = routeForm.querySelector('.start-route__btn');
@@ -1524,16 +1579,6 @@ const triggerRoutesModal = e => {
   issuedToday.addEventListener('input', e => {
     activateOnInput(e, 'report-sub--route__btn');
   });
-  const commentInput = document.querySelector('#section-logs__comment');
-  commentInput.addEventListener('input', e => {
-    activateOnInput(e, 'send__comment');
-  });
-  const commentBtn = document.querySelector('.send__comment');
-  commentBtn.addEventListener('click', () => {
-    let name = _state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck ? _table__WEBPACK_IMPORTED_MODULE_3__.user.name : routeUser.value !== 'Выберите оператора' ? routeUser.value : 'Выберите оператора';
-    addLog(name, `'${document.querySelector('#section-logs__comment').value}'`, '#route__comments');
-    document.querySelector('#section-logs__comment').value = '';
-  });
   const reportIssued = document.querySelector('.report-route__btn');
   reportIssued.addEventListener('click', () => {
     (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(issuedModal);
@@ -1545,19 +1590,19 @@ const triggerRoutesModal = e => {
                 `);
       }
     });
+    addLog(logName, '"Просмотрел отчет по сменам"', '#route__comments');
   });
-  routeForm.addEventListener('submit', e => {
-    e.preventDefault();
+  window.addEventListener('keydown', subCommentByEnter);
+  document.querySelector('.section-finish__sub').addEventListener('click', () => {
     const formData = new FormData(routeForm);
     const obj = {};
     formData.forEach((value, key) => {
       obj[key] = value;
     });
-    obj['plot'] = e.target.querySelector('#route__plot').value;
+    obj['plot'] = routeForm.querySelector('#route__plot').value;
     obj['comments'] = createReportObj(obj['comments']);
     obj['issued_report'] = createReportObj(obj['issued_report']);
     routeInput.value = JSON.stringify(obj);
-    console.log(obj);
     const parent = routeInput.closest('.table-form--old');
     if (!(parent === null)) {
       parent.classList.remove('table-form--old');
@@ -1565,7 +1610,16 @@ const triggerRoutesModal = e => {
     }
     (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_4__.submitData)();
     document.querySelector('.modal--route').remove();
+    window.removeEventListener('keydown', subCommentByEnter);
   });
+};
+const subCommentByEnter = e => {
+  if (e.code === 'Enter') {
+    const commentInput = document.querySelector('#section-logs__comment');
+    if (commentInput && commentInput.value) {
+      document.querySelector('.send__comment').click();
+    }
+  }
 };
 const createReportObj = data => {
   let res = data.split('---');
@@ -1606,8 +1660,18 @@ const drawUsers = (plotName, userI) => {
                 <option ${String(userI) === String(user.name) ? 'selected' : ''} value='${user.name}'>${user.name}</option>
             `);
     });
-    activateNextStage('route__select--user');
   });
+  activateNextStage('route__select--user');
+};
+const controlQuantityAccess = routeQuantity => {
+  if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+    routeQuantity.removeAttribute('readonly');
+    routeQuantity.style.cursor = 'text';
+  }
+};
+const controlCommentAccess = commentInput => {
+  commentInput.removeAttribute('readonly');
+  commentInput.style.cursor = 'text';
 };
 
 /***/ }),
@@ -1684,6 +1748,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "showModal": () => (/* binding */ showModal)
 /* harmony export */ });
+/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/routesModal.js");
+
 const showModal = modal => {
   const body = window.document.body;
   // let modalElem = document.querySelector('.modal')
@@ -1702,6 +1768,7 @@ const showModal = modal => {
       modalElem.classList.remove('modal_vis');
       body.classList.remove('body_block');
       modalElem.remove();
+      window.removeEventListener('keydown', _routesModal__WEBPACK_IMPORTED_MODULE_0__.subCommentByEnter);
     }
   });
   return modalElem;
@@ -1721,7 +1788,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "appAddr": () => (/* binding */ appAddr),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-//192.168.1.230
+//192.168.1.231
 //172.20.10.7
 
 let appAddr = 'http://172.20.10.7:8181';
@@ -1739,7 +1806,8 @@ let state = {
   'topFilters': [],
   'currentTopFilters': [],
   'topPlots': [],
-  'currentTopPlots': []
+  'currentTopPlots': [],
+  'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30]
 };
 if (userInf) {
   state['adminCheck'] = userInf.group === 'супер-админ' || userInf.group === 'админ';
@@ -1776,6 +1844,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _commentsModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./commentsModal */ "./web/src/static/js/modules/commentsModal.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
+/* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawDeadlineP.js");
+
+
 
 
 
@@ -1859,6 +1931,8 @@ addOrder.addEventListener('click', e => {
   drawSubmit();
   console.log(_state__WEBPACK_IMPORTED_MODULE_8__.state.managers);
   _drawOrders__WEBPACK_IMPORTED_MODULE_2__.table.insertAdjacentHTML('afterbegin', _drawOrders__WEBPACK_IMPORTED_MODULE_2__.orderHTML);
+  (0,_drawManagers__WEBPACK_IMPORTED_MODULE_9__.drawManagers)('.table-m-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.managers, 'adfasdfsdfsdada');
+  (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_10__.drawDeadlineP)('.table-p-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.deadlinesP, 'adfasdfsdfsdada');
   (0,_bindListeners__WEBPACK_IMPORTED_MODULE_1__.bindOrdersListeners)();
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__files', _downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__route', _routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal);
@@ -1899,7 +1973,8 @@ const createRes = forms => {
     formData.forEach((value, key) => {
       switch (key) {
         case 'files':
-          obj[key] = value.split('', '');
+          console.log(obj[key]);
+          obj[key] = value.split(', ');
           break;
         case 'comments':
           obj[key] = value.split('.-.');
@@ -11389,7 +11464,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 500px;\n  overflow: scroll;\n  margin-bottom: 15px;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 12px;\n  margin-bottom: 12px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  border-bottom: 1px solid black;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-right: 1px solid black;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__cell:first-child {\n  border-left: 1px solid black;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  font-size: 16px;\n}\n.table__db {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:first-child {\n  border-left: 1px solid black;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  border-bottom: 1px solid black;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 500px;\n    overflow: scroll;\n    margin-bottom: 15px;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-right: 1px solid black;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      font-size: 16px;\n    }\n  }\n\n  &__db {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      border-bottom: 1px solid black;\n    }\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 12px;\n      margin-bottom: 12px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    border-bottom: 1px solid black;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 500px;\n  overflow: scroll;\n  margin-bottom: 15px;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 12px;\n  margin-bottom: 12px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  border-bottom: 1px solid black;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 7px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-right: 1px solid black;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n}\n.table__cell:first-child {\n  border-left: 1px solid black;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.table__db {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:first-child {\n  border-left: 1px solid black;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  border-bottom: 1px solid black;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 500px;\n    overflow: scroll;\n    margin-bottom: 15px;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 7px;\n}\n\ninput.tr {\n padding: 0;\n}\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-right: 1px solid black;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      text-decoration: underline;\n      font-style: italic;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:first-child {\n      border-left: 1px solid black;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      border-bottom: 1px solid black;\n    }\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 12px;\n      margin-bottom: 12px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    border-bottom: 1px solid black;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0px 0px;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

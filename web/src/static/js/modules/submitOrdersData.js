@@ -12,7 +12,8 @@ const createRes = forms => {
         formData.forEach((value, key) => {
             switch (key) {
                 case 'files':
-                    obj[key] = value.split('', '')
+                    console.log(obj[key])
+                    obj[key] = value.split(', ')
                     break
                 case 'comments':
                     obj[key] = value.split('.-.')

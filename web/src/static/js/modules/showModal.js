@@ -1,3 +1,5 @@
+import {subCommentByEnter} from "./routesModal";
+
 export const showModal = modal => {
     const body = window.document.body
     // let modalElem = document.querySelector('.modal')
@@ -16,6 +18,7 @@ export const showModal = modal => {
             modalElem.classList.remove('modal_vis')
             body.classList.remove('body_block')
             modalElem.remove()
+            window.removeEventListener('keydown', subCommentByEnter)
         }
     })
     return modalElem

@@ -27,8 +27,6 @@ export const drawOrders = async (d, data, users) => {
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
 
-    const pData = [1, 2, 3, 4, 5, 6, 7, 30]
-
     const admAndTechCheck = state['adminCheck'] || state['techCheck']
 
     const inputAdmAndTechGroupper = admAndTechCheck ? '' : 'readonly'
@@ -174,6 +172,7 @@ export const drawOrders = async (d, data, users) => {
                     </li>
                     <li class="table-body_cell table__p">
                         <select ${selectTechAndAdmGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell hidden-input table__comment">
@@ -210,7 +209,7 @@ export const drawOrders = async (d, data, users) => {
     addTriggers(".table__route", triggerRoutesModal)
     addTriggers(".table__comment", triggerCommentsModal)
     addTriggers("#db_id", showRoutesIssued)
-    drawDeadlineP(".table-p-select", d.p, pData)
+    drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
     drawManagers(".table-m-select", users, d.m)
 
     const jsonRoute = document.querySelector("input[name='routes_json']")
@@ -277,7 +276,9 @@ export const orderHTML = `
                         value="">
                     </li>
                     <li class="table-body_cell table__m">
-                        <input class="table__data " name="m" type="text" value="" tabindex="-1" autocomplete="off">
+                        <select class="table__data table-m-select main__button" name="m" id="">
+                            <option disabled selected value="">М</option>
+                        </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data " 
@@ -369,6 +370,7 @@ export const orderHTML = `
                     </li>
                     <li class="table-body_cell table__p">
                         <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell hidden-input table__comment">

@@ -1,4 +1,4 @@
-export const drawDeadlineP = (target, chosenDeadline, deadlines) => {
+export const drawDeadlineP = (target, deadlines, chosenDeadline) => {
     const block = document.querySelector(target)
 
     deadlines.forEach(deadline => {

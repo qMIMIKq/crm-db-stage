@@ -1,7 +1,7 @@
 import "../../css/login/login.scss"
 import {state} from "../modules/state";
 
-//192.168.1.230
+//192.168.1.231
 //172.20.10.7
 
 const appAddr = "http://172.20.10.7:8181"

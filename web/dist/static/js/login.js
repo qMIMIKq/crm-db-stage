@@ -52,7 +52,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "appAddr": () => (/* binding */ appAddr),
 /* harmony export */   "state": () => (/* binding */ state)
 /* harmony export */ });
-//192.168.1.230
+//192.168.1.231
 //172.20.10.7
 
 let appAddr = 'http://172.20.10.7:8181';
@@ -70,7 +70,8 @@ let state = {
   'topFilters': [],
   'currentTopFilters': [],
   'topPlots': [],
-  'currentTopPlots': []
+  'currentTopPlots': [],
+  'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30]
 };
 if (userInf) {
   state['adminCheck'] = userInf.group === 'супер-админ' || userInf.group === 'админ';
@@ -10492,7 +10493,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-//192.168.1.230
+//192.168.1.231
 //172.20.10.7
 
 const appAddr = "http://172.20.10.7:8181";

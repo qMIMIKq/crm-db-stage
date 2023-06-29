@@ -7,6 +7,8 @@ import {triggerRoutesModal} from './routesModal';
 import {triggerCommentsModal} from './commentsModal';
 import {submitData} from './submitOrdersData';
 import {state} from './state';
+import {drawManagers} from "./drawManagers";
+import {drawDeadlineP} from "./drawDeadlineP";
 
 const submitButtonHTML = `
     <button class='main-header__button main__button header-button__submit'>Отправить</button>
@@ -90,6 +92,8 @@ addOrder.addEventListener('click', e => {
     drawSubmit()
     console.log(state['managers'])
     table.insertAdjacentHTML('afterbegin', orderHTML)
+    drawManagers('.table-m-select', state['managers'], 'adfasdfsdfsdada')
+    drawDeadlineP('.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
     bindOrdersListeners()
     addTriggers('.table__files', triggerFilesModal)
     addTriggers('.table__route', triggerRoutesModal)

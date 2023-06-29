@@ -1,4 +1,4 @@
-//192.168.1.230
+//192.168.1.231
 //172.20.10.7
 
 export let appAddr = 'http://172.20.10.7:8181'
@@ -18,6 +18,7 @@ let state = {
     'currentTopFilters': [],
     'topPlots': [],
     'currentTopPlots': [],
+    'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30],
 }
 
 if (userInf) {

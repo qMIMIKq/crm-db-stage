@@ -9,6 +9,10 @@
   &__header {
     display: flex;
     align-items: center;
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    width: 100%;
     //border: 1px solid black;
     //border-top: none;
   }
@@ -19,6 +23,13 @@
   }
 }
 
+input.table__data {
+  padding: 0 7px;
+}
+
+input.tr {
+ padding: 0;
+}
 
 .table {
   &__cell {
@@ -31,6 +42,7 @@
     border-right: 1px solid black;
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+    background: white;
 
     &:first-child {
       border-left: 1px solid black;
@@ -87,7 +99,9 @@
 
     &--current {
       color: $hover_aqua;
-      font-size: 16px;
+      text-decoration: underline;
+      font-style: italic;
+      //font-size: 16px;
     }
   }
 

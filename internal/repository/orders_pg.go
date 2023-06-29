@@ -91,15 +91,10 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 			var dbRoutePos []domain.CheckRoute
 			err = o.db.Select(&dbRoutePos, routesCheck, order.ID, routePos)
-			log.Info().Caller().Interface("route pos id", dbRoutePos).Msgf("routePos is %v", dbRoutePos)
-
-			log.Info().Interface("route", route.OrderID).Msg("ROUTE")
 
 			if len(dbRoutePos) > 0 {
 				for _, check := range dbRoutePos {
 					if check.RoutePos == routePos {
-						log.Warn().Caller().Msg("MATCH")
-
 						_, err = o.db.Exec(routesUpdateQuery, route.User, route.Plot,
 							route.Quantity, route.Issued, route.StartTime,
 							route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, order.ID, routePos)
@@ -118,11 +113,9 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 			} else {
-				log.Warn().Caller().Msg("not match")
 				err = o.db.QueryRow(routesQuery, order.ID,
 					routePos, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg).Scan(&routeID)
-				log.Info().Msgf("id is %v", routeID)
 
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
