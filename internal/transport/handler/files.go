@@ -20,3 +20,16 @@ func (h *Handler) saveFiles(c *gin.Context) {
 
 	newDataResponse(c, http.StatusOK, data)
 }
+
+func (h *Handler) removeFile(c *gin.Context) {
+	orderId := c.Param("oder-id")
+	fileName := c.Param("name")
+
+	err := h.services.Files.RemoveFile(orderId, fileName)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	newOkResponse(c, http.StatusOK)
+}

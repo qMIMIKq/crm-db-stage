@@ -1,11 +1,11 @@
 ---
 
-app_port: 8181
+app_port: 8182
 salt: dasdfasffsdf
 #192.168.1.231
 #172.20.10.7
 db:
-  host: 192.168.1.231
+  host: 172.20.10.7
   port: 5437
   user: nik
   password: '1325'

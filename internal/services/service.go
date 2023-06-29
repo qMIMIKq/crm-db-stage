@@ -27,6 +27,7 @@ type Users interface {
 
 type Files interface {
 	SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]string, error)
+	RemoveFile(orderID string, fileName string) error
 }
 
 type Orders interface {

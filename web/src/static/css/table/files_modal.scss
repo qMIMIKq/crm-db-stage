@@ -102,6 +102,23 @@
     }
   }
 
+  &__remove {
+    cursor: pointer;
+    top: 0px;
+    right: 5px;
+    position: absolute;
+    color: $button_color !important;
+    font-size: 26px;
+    transform: rotate(45deg);
+    transition: color .3s;
+
+    &:hover {
+      cursor: pointer;
+      color: red !important;
+      transition: color .3s;
+    }
+  }
+
 
   &__original {
     position: absolute;

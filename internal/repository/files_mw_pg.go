@@ -1,25 +1,23 @@
 package repository
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"gopkg.in/gographics/imagick.v3/imagick"
 	"mime/multipart"
+	"os"
 	"strings"
 )
 
-type FilesMW struct {
+type FilesMwPg struct {
+	db *sqlx.DB
 	mw *imagick.MagickWand
-}
-
-func NewFilesMW(mw *imagick.MagickWand) *FilesMW {
-	return &FilesMW{
-		mw: mw,
-	}
 }
 
 const DataPath = "./assets/uploads/"
 
-func (f *FilesMW) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]string, error) {
+func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]string, error) {
 	var newFiles []string
 
 	for _, file := range files {
@@ -48,4 +46,35 @@ func (f *FilesMW) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]st
 	}
 
 	return newFiles, nil
+}
+
+func (f *FilesMwPg) RemoveFile(orderID string, fileName string) error {
+	fullPath := DataPath + fileName
+
+	fileDeleteQuery := fmt.Sprintf(`
+		DELETE FROM files WHERE order_id = $1 AND file_name = $2
+	`)
+
+	fileCheckQuery := fmt.Sprintf(`
+		SELECT file_id 
+	    FROM files 
+     WHERE order_id <> $1 AND file_name = $2
+     LIMIT 1
+	`)
+
+	var id int
+	err := f.db.Get(&id, fileCheckQuery, orderID, fullPath)
+	if id == 0 {
+		err = os.RemoveAll(fullPath)
+	}
+
+	_, err = f.db.Exec(fileDeleteQuery, orderID, fullPath)
+	return err
+}
+
+func NewFilesMW(db *sqlx.DB, mw *imagick.MagickWand) *FilesMwPg {
+	return &FilesMwPg{
+		db: db,
+		mw: mw,
+	}
 }

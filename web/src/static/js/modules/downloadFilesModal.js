@@ -1,6 +1,7 @@
 import {appAddr, state} from './state';
 import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
+import {sendData} from "./sendData";
 
 
 export const filesModal = `
@@ -38,6 +39,10 @@ const sendFiles = (files, filesInput) => {
     for (let file of files) {
         formData.append('files', file)
     }
+
+    const drop = document.querySelector('.modal__trigger')
+    drop.textContent = 'Идет загрузка файлов'
+
     fetch(`${appAddr}/api/files/save-files`, {
         method: 'POST',
         body: formData
@@ -48,7 +53,6 @@ const sendFiles = (files, filesInput) => {
         filesInput.value = newData.join(', ')
         drawSubmit()
         const parent = filesInput.closest('form')
-        const drop = document.querySelector('.modal__trigger')
         drop.classList.add('success')
         drop.textContent = 'Файлы успешно загружены'
         deleteFiles()
@@ -110,16 +114,14 @@ export function triggerFilesModal(e) {
     } else {
         downloadTrigger.remove()
     }
-    drawFiles(modalElem, filesInputData.value)
+    drawFiles(modalElem, filesInputData.value, db)
 }
 
-export const drawFiles = (modal, files) => {
+export const drawFiles = (modal, files, id) => {
     const data = modal.querySelector('.data')
-    console.log(files)
     if (files.length) {
         const fileNames = []
         files.split(', ').map(file => {
-            console.log(file)
             const arrDotFile = file.split('.')
             const fileType = arrDotFile[arrDotFile.length - 1]
             const arrSlashFile = file.split('/')
@@ -127,6 +129,7 @@ export const drawFiles = (modal, files) => {
             const fileName = arrSlashFile.join('')
             let fileNameWithoutType = fileName.split('.')
             fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
+
             switch (fileType) {
                 case 'pdf' || 'PDF':
                     fileNames.push(fileNameWithoutType)
@@ -142,6 +145,9 @@ export const drawFiles = (modal, files) => {
                                 </path>
                             </svg>
                         </a>
+                        <div class="file__remove">
+                            +
+                        </div>
                         <p class='file__name'>${fileName}</p>
                       </div>
                     `)
@@ -159,12 +165,36 @@ export const drawFiles = (modal, files) => {
                                         </path>
                                      </svg>
                                 </a>
+                                <div class="file__remove">
+                                    +
+                                </div>
                                 <p class='file__name'>${fileName}</p>
                           </div>
                     `)
                     }
             }
         })
+        document.querySelectorAll(".file__remove").forEach(btn => {
+            btn.addEventListener('click', e => {
+                const file = e.target.parentNode
+                const drop = modal.querySelector('.modal__trigger')
+
+                sendData(`${appAddr}/api/files/remove-file/${id}/${file.querySelector('.file__name').textContent}`, 'POST', null)
+                    .then(res => {
+                        if (res.ok) {
+                            drop.textContent = 'Файл успешно удалён'
+                            drop.classList.add('success')
+                            file.remove()
+
+                            setTimeout(() => {
+                                drop.classList.remove('success')
+                                drop.textContent = 'Укажите файлы для загрузки'
+                            }, 1000)
+                        }
+                    })
+            })
+        })
+
         const btn = modal.querySelector('.file__all')
         if (btn !== null) {
             btn.remove()
@@ -177,5 +207,6 @@ export const drawFiles = (modal, files) => {
                 file.click()
             })
         })
+
     }
 }

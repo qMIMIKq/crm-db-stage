@@ -29,6 +29,7 @@ type Plots interface {
 
 type Files interface {
 	SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]string, error)
+	RemoveFile(orderID string, fileName string) error
 }
 
 type Orders interface {
@@ -52,7 +53,7 @@ func NewRepository(db *sqlx.DB, mw *imagick.MagickWand) *Repository {
 		Users:         NewUsersPG(db),
 		Filters:       NewFiltersPG(db),
 		Plots:         NewPlotsPG(db),
-		Files:         NewFilesMW(mw),
+		Files:         NewFilesMW(db, mw),
 		Orders:        NewOrdersPG(db),
 	}
 }

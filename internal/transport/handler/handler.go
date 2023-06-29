@@ -38,6 +38,7 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 		files := api.Group("/files")
 		{
 			files.POST("/save-files", h.saveFiles)
+			files.POST("/remove-file/:oder-id/:name", h.removeFile)
 		}
 
 		orders := api.Group("/orders")
