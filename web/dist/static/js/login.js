@@ -55,7 +55,7 @@ __webpack_require__.r(__webpack_exports__);
 //192.168.1.231
 //172.20.10.7
 
-let appAddr = 'http://172.20.10.7:8181';
+let appAddr = 'http://192.168.1.231:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
@@ -10496,7 +10496,7 @@ __webpack_require__.r(__webpack_exports__);
 //192.168.1.231
 //172.20.10.7
 
-const appAddr = "http://172.20.10.7:8181";
+const appAddr = "http://192.168.1.231:8182";
 const loginForm = document.querySelector(".login-form");
 loginForm.addEventListener("submit", e => {
   e.preventDefault();

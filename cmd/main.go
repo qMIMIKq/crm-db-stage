@@ -9,6 +9,7 @@ import (
 	"crm/pkg/database"
 	"crm/pkg/logger"
 	"github.com/rs/zerolog/log"
+	"gopkg.in/gographics/imagick.v3/imagick"
 	"strconv"
 )
 
@@ -42,7 +43,12 @@ func main() {
 		log.Fatal().Caller().Err(err).Msg("error connecting to database")
 	}
 
-	repos := repository.NewRepository(pgDb)
+	imagick.Initialize()
+	defer imagick.Terminate()
+	mw := imagick.NewMagickWand()
+	defer mw.Destroy()
+
+	repos := repository.NewRepository(pgDb, mw)
 	service := services.NewService(repos)
 	mainHandler := transport.NewMainHandler(service)
 

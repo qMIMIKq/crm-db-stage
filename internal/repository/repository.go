@@ -4,6 +4,7 @@ import (
 	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	"gopkg.in/gographics/imagick.v3/imagick"
 	"mime/multipart"
 )
 
@@ -45,13 +46,13 @@ type Repository struct {
 	Orders
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
+func NewRepository(db *sqlx.DB, mw *imagick.MagickWand) *Repository {
 	return &Repository{
 		Authorization: NewAuthPG(db),
 		Users:         NewUsersPG(db),
 		Filters:       NewFiltersPG(db),
 		Plots:         NewPlotsPG(db),
-		Files:         NewFilesMW(),
+		Files:         NewFilesMW(mw),
 		Orders:        NewOrdersPG(db),
 	}
 }

@@ -416,7 +416,7 @@ const drawFiles = (modal, files) => {
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
       switch (fileType) {
-        case 'pdf':
+        case 'pdf' || 0:
           fileNames.push(fileNameWithoutType);
           data.insertAdjacentHTML(`beforeend`, `
                       <div class='data__file'>
@@ -1791,7 +1791,7 @@ __webpack_require__.r(__webpack_exports__);
 //192.168.1.231
 //172.20.10.7
 
-let appAddr = 'http://172.20.10.7:8181';
+let appAddr = 'http://192.168.1.231:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
