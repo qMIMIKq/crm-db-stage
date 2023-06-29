@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/gographics/imagick.v2/imagick"
+	"gopkg.in/gographics/imagick.v3/imagick"
 	"mime/multipart"
 	"strings"
 )
@@ -31,7 +31,7 @@ func (f *FilesMW) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]st
 
 		newFiles = append(newFiles, filePath)
 		switch fileType[len(fileType)-1] {
-		case "pdf":
+		case "pdf", "PDF":
 			name := filePath[:len(filePath)-3] + "png"
 			newFiles = append(newFiles, name)
 

@@ -128,7 +128,7 @@ export const drawFiles = (modal, files) => {
             let fileNameWithoutType = fileName.split('.')
             fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
             switch (fileType) {
-                case 'pdf':
+                case 'pdf' || 'PDF':
                     fileNames.push(fileNameWithoutType)
                     data.insertAdjacentHTML(`beforeend`, `
                       <div class='data__file'>

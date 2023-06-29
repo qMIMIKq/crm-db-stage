@@ -10,11 +10,11 @@ RUN apt-get update && \
 RUN apt-get -q -y install libjpeg-dev libpng-dev libtiff-dev \
     libgif-dev libx11-dev ghostscript --no-install-recommends
 
-ENV IMAGEMAGICK_VERSION=6.9.10-11
+ENV IMAGEMAGICK_VERSION=7.0.9-27
 ENV CGO_CFLAGS_ALLOW='-Xpreprocessor'
 
 RUN cd && \
-	wget https://github.com/ImageMagick/ImageMagick6/archive/${IMAGEMAGICK_VERSION}.tar.gz && \
+	wget https://github.com/ImageMagick/ImageMagick/archive/${IMAGEMAGICK_VERSION}.tar.gz && \
 	tar xvzf ${IMAGEMAGICK_VERSION}.tar.gz && \
 	cd ImageMagick* && \
 	./configure \
