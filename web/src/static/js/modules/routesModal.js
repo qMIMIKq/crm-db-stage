@@ -1,8 +1,11 @@
 import {showModal} from './showModal';
 import {getData} from './getData';
-import {state} from './state';
+import {appAddr, state} from './state';
 import {user} from '../table';
 import {submitData} from "./submitOrdersData";
+import {sendData} from "./sendData";
+import {showResult} from "./submitControl";
+import {getOrders} from "./orders";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -16,7 +19,7 @@ const routeModal = `
                 <div class='route-block__wrapper'>
                     <div class='route__block user__block'>
                         <label class='route__label' for='route__plot'>Участок</label>
-                        <select disabled class='clickable route__select main__button main__select route__select--plot' name='plot' id='route__plot'>
+                        <select class='clickable route__select main__button main__select route__select--plot' name='plot' id='route__plot'>
                             <option selected disabled>Выберите участок</option>
                         </select>
                         
@@ -70,7 +73,7 @@ const routeModal = `
                     readonly
                     type='text'
                     placeholder='Время ОТК'
-                    onblur=''(this.type='text')'
+                    onblur='(this.type="text")'
                     class='route__input main__button main__input otk-route__time'
                     name='otk_time' 
                     id='otk-route__time'>
@@ -126,6 +129,9 @@ const routeModal = `
                     id='route__comments' 
                     type='text' 
                     name='comments'>
+                    
+                    <input type="text" class="hidden__input" id="visible__comments">
+                    
                     <div class='section-logs__title'>Комментарии и логи событий</div>
                     <ul class='section-logs__list'>
                         
@@ -144,7 +150,7 @@ const routeModal = `
                 </div>
                 
                 <div class='section-finish'>
-                    <button disabled class='section-finish__btn section-finish__delete main__button clickable' type='button'>УДАЛИТЬ</button>
+                    <input id="route__delete" disabled class='section-finish__btn section-finish__delete main__button' type='button' value="УДАЛИТЬ">
                     
                     <div class='section-finish__complete'>
                         <button disabled class='section-finish__btn section-finish__cancel main__button clickable' type='button'>ОТМЕНА</button>
@@ -198,6 +204,7 @@ const drawLogs = data => {
     })
 }
 const saveData = (data, selector) => {
+    console.log(selector)
     const dataInput = document.querySelector(selector)
     if (dataInput.value.length) {
         dataInput.value += '---' + data
@@ -208,10 +215,11 @@ const saveData = (data, selector) => {
 }
 const addLog = (name, log, selector) => {
     let today = new Date(Date.now()).toISOString()
-    today = today.substring(0, today.length - 8)
+    today = today.substring(0, today.length - 8).split("T").join(" ")
     let logMsg = `${today}    ${name} ${log}`
-    const dataInput = saveData(logMsg, selector)
-    drawLogs(dataInput)
+    const visible = saveData(logMsg, selector)
+    saveData(logMsg, '#route__comments')
+    drawLogs(visible)
     return logMsg
 }
 const activateOnInput = (e, cls) => {
@@ -252,7 +260,7 @@ const confirmChangeTimeModal = `
    </div>
 `
 
-const confirmChangeTimeHandler = (e, operation) => {
+const confirmChangeTimeHandler = (e, operation, alertContent) => {
     if (e.target.value === '') {
         return
     }
@@ -261,15 +269,18 @@ const confirmChangeTimeHandler = (e, operation) => {
     const modal = document.querySelector('.modal--confirm')
     const okBtn = modal.querySelector('.confirm__button--ok')
     const cncltn = modal.querySelector('.confirm__button--cncl')
+    if (alertContent) {
+        modal.querySelector('.confirm__title').textContent = alertContent
+    }
 
     okBtn.addEventListener('click', () => {
         let logMsg
         switch (e.target.name) {
             case 'start_time':
-                logMsg = '"Сбросил время начала"'
+                logMsg = '"Сбросил время начала, сдачи, ОТК"'
                 break
             case 'end_time':
-                logMsg = '"Сбросил время сдачи"'
+                logMsg = '"Сбросил время сдачи, ОТК"'
                 break
             case 'otk_time':
                 logMsg = '"Сбросил время ОТК"'
@@ -279,7 +290,7 @@ const confirmChangeTimeHandler = (e, operation) => {
         e.target.value = ''
         operation()
         modal.click()
-        addLog(user.name, logMsg, '#route__comments')
+        addLog(user.name, logMsg, '#visible__comments')
     })
 
     cncltn.addEventListener('click', () => {
@@ -303,18 +314,22 @@ export const triggerRoutesModal = e => {
     const routeQuantity = modalElem.querySelector('#quantity')
     routeQuantity.addEventListener('change', e => {
         activateOnInput(e, 'section-finish__sub')
-        addLog(logName, `"Установил тираж в ${e.target.value}"`, '#route__comments')
+        addLog(logName, `"Установил тираж в ${e.target.value}"`, '#visible__comments')
     })
     const issued = modalElem.querySelector('#route__issued')
     const logsData = document.querySelector('#route__comments')
+    const visibleLogs = document.querySelector("#visible__comments")
     const issuedToday = modalElem.querySelector('#route-issued__today')
     const reportBtn = modalElem.querySelector('.report-sub--route__btn')
     const startTime = document.querySelector('.start-route__time')
     const endTime = document.querySelector('.end-route__time')
+    const deleteBtn = document.querySelector('#route__delete')
+
     const errInput = document.querySelector('#error-route__msg')
     errInput.addEventListener('input', e => {
         activateOnInput(e, 'error-route__btn')
     })
+
     const errTime = document.querySelector('.error__time')
     const errTimeHandler = () => {
         errTime.classList.add('hidden__input')
@@ -331,7 +346,7 @@ export const triggerRoutesModal = e => {
     errBtn.addEventListener('click', () => {
         let logMsg = 'ОШИБКА ' + document.querySelector('#error-route__msg').value
 
-        addLog(logName, logMsg, '#route__comments')
+        addLog(logName, logMsg, '#visible__comments')
         setDateToInput('error__time')
         activateNextStage('error__time')
         // errInput.classList.add('hidden__input')
@@ -369,7 +384,9 @@ export const triggerRoutesModal = e => {
             confirmChangeTimeHandler(e, () => {
                 activateNextStage('start-route__btn')
                 endTime.value = ''
+                document.querySelector('#otk-route__time').value = ''
                 disableBtn('end-route__btn')
+                disableBtn('otk-route__btn')
             })
         })
 
@@ -394,12 +411,13 @@ export const triggerRoutesModal = e => {
             name = logName
         }
 
-        addLog(name, `"${document.querySelector('#section-logs__comment').value}"`, '#route__comments')
+        addLog(name, `"${document.querySelector('#section-logs__comment').value}"`, '#visible__comments')
         document.querySelector('#section-logs__comment').value = ''
         disableBtn('send__comment')
     })
 
     if (info) {
+        const id = routeInfo['route_id']
         const quantity = routeInfo['quantity']
         issued.value = routeInfo['issued']
         const plot = routeInfo['plot']
@@ -410,7 +428,20 @@ export const triggerRoutesModal = e => {
         const errT = routeInfo['error_time']
         const errM = routeInfo['error_msg']
         let comments = routeInfo['comments']
-        let plotName = ""
+
+        if (logName !== '') {
+            deleteBtn.removeAttribute('disabled')
+            deleteBtn.addEventListener('click', e => {
+                confirmChangeTimeHandler(e, () => {
+                    sendData(`${appAddr}/api/routes/delete/${id}`, 'POST', null)
+                        .then(resp => {
+                            if (resp.ok) showResult(true)
+                            modalElem.remove()
+                            getOrders()
+                        })
+                }, 'Удалить маршрут?')
+            })
+        }
 
         drawPlots(plot, user)
         activateNextStage('route__select--user')
@@ -422,8 +453,6 @@ export const triggerRoutesModal = e => {
         if (user) {
             controlCommentAccess(commentInput)
         }
-
-        disableBtn('route__select--plot')
 
         if (!start) {
             activateNextStage('start-route__btn')
@@ -440,7 +469,7 @@ export const triggerRoutesModal = e => {
         if (comments) {
             comments = comments.map(c => `${c['date']}    ${c['value']}`)
             comments = comments.join('---')
-            logsData.value = comments
+            visibleLogs.value = comments
 
             comments = comments.split('---')
             comments = comments.filter(c => c.includes('За смену'))
@@ -494,8 +523,7 @@ export const triggerRoutesModal = e => {
             }
         })
 
-        addLog(logName, `Выбрал этап "${routePlot.value.toUpperCase()}"`, '#route__comments')
-
+        addLog(logName, `Выбрал этап "${routePlot.value.toUpperCase()}"`, '#visible__comments')
         drawUsers(plotName, null)
         activateNextStage('section-finish__sub')
         controlQuantityAccess(routeQuantity)
@@ -504,11 +532,11 @@ export const triggerRoutesModal = e => {
 
     const routeUser = document.querySelector('.route__select--user')
     routeUser.addEventListener('change', () => {
-        addLog(logName, `"Назначил оператора ${routeUser.value}"`, '#route__comments')
+        addLog(logName, `"Назначил оператора ${routeUser.value}"`, '#visible__comments')
         activateNextStage('start-route__btn')
     })
 
-    drawLogs(logsData)
+    drawLogs(visibleLogs)
     const startBtn = routeForm.querySelector('.start-route__btn')
     startBtn.addEventListener('click', () => {
         setDateToInput('start-route__time')
@@ -516,8 +544,7 @@ export const triggerRoutesModal = e => {
         activateNextStage('section-finish__sub')
         activateNextStage('section-finish__cancel')
         disableBtn('start-route__btn')
-        disableBtn('route__select--plot')
-        addLog(routeUser.value, '"Начал"', '#route__comments')
+        addLog(routeUser.value, '"Начал"', '#visible__comments')
         issuedToday.classList.add('text-input')
         issuedToday.removeAttribute('disabled')
     })
@@ -530,7 +557,7 @@ export const triggerRoutesModal = e => {
             activateNextStage('otk-route__btn')
         }
         disableBtn('end-route__btn')
-        addLog(routeUser.value, '"Закончил"', '#route__comments')
+        addLog(routeUser.value, '"Закончил"', '#visible__comments')
     })
 
     // OTK
@@ -538,13 +565,13 @@ export const triggerRoutesModal = e => {
     otkBtn.addEventListener('click', () => {
         setDateToInput('otk-route__time')
         disableBtn('otk-route__btn')
-        addLog(routeUser.value, 'Прошел ОТК', '#route__comments')
+        addLog(routeUser.value, '"Прошел ОТК"', '#visible__comments')
     })
 
     // REPORT
     reportBtn.addEventListener('click', () => {
         issued.value = String(Number(issued.value) + Number(issuedToday.value))
-        let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, '#route__comments')
+        let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, '#visible__comments')
         saveData(logMsg, '#issued_report')
         issuedToday.value = ''
     })
@@ -564,7 +591,7 @@ export const triggerRoutesModal = e => {
             }
         })
 
-        addLog(logName, '"Просмотрел отчет по сменам"', '#route__comments')
+        addLog(logName, '"Просмотрел отчет по сменам"', '#visible__comments')
     })
 
     window.addEventListener('keydown', subCommentByEnter)
@@ -639,12 +666,12 @@ const drawPlots = (plotI, user) => {
 const drawUsers = (plotName, userI) => {
     const usersSelect = document.querySelector('#route__user')
     usersSelect.querySelectorAll('option').forEach(elem => {
-        if (!elem.hasAttribute('disabled')) elem.remove()
+        // if (!elem.hasAttribute('disabled'))
+        elem.remove()
     })
 
     const usersResp = getData('users/get-all-operators')
     usersResp.then(users => {
-        console.log(users.data)
         if (plotName) {
             users.data = users.data.filter(u => u.plot === plotName)
         }
@@ -656,9 +683,13 @@ const drawUsers = (plotName, userI) => {
         })
     })
 
-    if (userI) {
-        usersSelect.querySelector('option[disabled]').remove()
-    }
+    usersSelect.insertAdjacentHTML(`beforeend`, `
+        <option selected disabled>Выберите оператора</option>
+    `)
+
+    // if (userI) {
+    //     usersSelect.querySelector('option[disabled]').remove()
+    // }
 
     activateNextStage('route__select--user')
 }

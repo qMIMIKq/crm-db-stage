@@ -36,7 +36,12 @@ type Orders interface {
 	UpdateOrders(orders []*domain.Order) error
 }
 
+type Routes interface {
+	DeleteRoute(routeID string) error
+}
+
 type Services struct {
+	Routes
 	Files
 	Authorization
 	Filters
@@ -53,5 +58,6 @@ func NewService(repos *repository.Repository) *Services {
 		Plots:         NewPlotsService(repos.Plots),
 		Files:         NewFilesService(repos.Files),
 		Orders:        NewOrdersService(repos.Orders),
+		Routes:        NewRoutesService(repos.Routes),
 	}
 }

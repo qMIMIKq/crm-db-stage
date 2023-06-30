@@ -50,36 +50,36 @@ export const triggerCommentsModal = e => {
     drawComments(commentsList, commentsArr)
 
     const saveBtn = document.querySelector('.comment__button')
+    saveBtn.addEventListener('click', ev => {
+        let value = commentElem.value
+        let today = new Date(Date.now()).toISOString()
+        today = today.substring(0, today.length - 8).split("T").join(" ")
+
+        value = `${today} ${user.name} "${value}"`
+
+        commentsArr.push(value)
+        newCommentsArr.push(value)
+        comments.value = commentsArr.join('.-.')
+        newComments.value = newCommentsArr.filter(c => c !== '').join('.-.')
+        visibleComment.value = value
+        ev.target.textContent = 'Успешно'
+        commentElem.value = ''
+        deleteComments()
+        drawComments(commentsList, commentsArr)
+        drawSubmit()
+        if (parent.classList.contains('table-form--old')) {
+            parent.classList.remove('table-form--old')
+            parent.classList.add('table-form--upd')
+        }
+        setTimeout(() => {
+            ev.target.textContent = 'Сохранить'
+            ev.target.setAttribute('disabled', '')
+        }, 1000)
+    })
     commentElem.addEventListener('input', e => {
         if (e.target.value !== '') {
             saveBtn.removeAttribute('disabled')
 
-            saveBtn.addEventListener('click', ev => {
-                let value = e.target.value
-                let today = new Date(Date.now()).toISOString()
-                today = today.substring(0, today.length - 8)
-
-                value = `${today} ${user.name} ${value}`
-
-                commentsArr.push(value)
-                newCommentsArr.push(value)
-                comments.value = commentsArr.join('.-.')
-                newComments.value = newCommentsArr.filter(c => c !== '').join('.-.')
-                visibleComment.value = value
-                ev.target.textContent = 'Успешно'
-                e.target.value = ''
-                deleteComments()
-                drawComments(commentsList, commentsArr)
-                drawSubmit()
-                if (parent.classList.contains('table-form--old')) {
-                    parent.classList.remove('table-form--old')
-                    parent.classList.add('table-form--upd')
-                }
-                setTimeout(() => {
-                    ev.target.textContent = 'Сохранить'
-                    ev.target.setAttribute('disabled', '')
-                }, 1000)
-            })
         } else if (e.target.value === '') {
             saveBtn.setAttribute('disabled', '')
         }

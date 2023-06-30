@@ -73,7 +73,18 @@ let state = {
   'currentTopPlots': [],
   'currentOrder': null,
   'openedOrders': [],
-  'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30]
+  'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30],
+  'tableFilters': {
+    'numbers': [],
+    'clients': [],
+    'materials': [],
+    'name': [],
+    'quantity': [],
+    'issued': [],
+    'm': [],
+    'end_time': [],
+    'timestamp': []
+  }
 };
 if (userInf) {
   state['adminCheck'] = userInf.group === 'супер-админ' || userInf.group === 'админ';

@@ -2,7 +2,6 @@ import {appAddr, state} from './state';
 import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
 import {sendData} from "./sendData";
-import {submitData} from "./submitOrdersData";
 
 
 export const filesModal = `
@@ -131,7 +130,8 @@ export const drawFiles = (modal, files, id) => {
             fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
 
             switch (fileType) {
-                case 'pdf' || 'PDF':
+                case 'pdf':
+                case 'PDF':
                     fileNames.push(fileNameWithoutType)
                     data.insertAdjacentHTML(`beforeend`, `
                       <div class='data__file'>

@@ -3,7 +3,6 @@ package handler
 import (
 	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"strings"
 )
@@ -42,10 +41,6 @@ func (h *Handler) updateOrders(c *gin.Context) {
 	if err := c.Bind(&orders); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err)
 		return
-	}
-
-	for _, order := range orders {
-		log.Info().Interface("order", order).Msg("ORDER \n")
 	}
 
 	err := h.services.Orders.UpdateOrders(orders)

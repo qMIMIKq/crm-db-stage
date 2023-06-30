@@ -108,6 +108,12 @@
   &__cancel {
     margin-right: 30px;
   }
+
+  &__delete {
+    &:hover {
+      color: red !important;
+    }
+  }
 }
 
 #quantity,
@@ -171,5 +177,14 @@
     }
 
     margin-bottom: 10px;
+  }
+}
+
+#route__delete:disabled {
+  cursor: default;
+  color: gray;
+
+  &:hover {
+    color: gray !important;
   }
 }

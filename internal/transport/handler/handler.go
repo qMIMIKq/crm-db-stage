@@ -47,6 +47,11 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			orders.POST("/add", h.addOrders)
 			orders.PUT("/update", h.updateOrders)
 		}
+
+		routes := api.Group("/routes")
+		{
+			routes.POST("/delete/:id", h.deleteRoute)
+		}
 	}
 }
 

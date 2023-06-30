@@ -38,6 +38,10 @@ type Orders interface {
 	UpdateOrders(orders []*domain.Order) error
 }
 
+type Routes interface {
+	DeleteRoute(routeID string) error
+}
+
 type Repository struct {
 	Files
 	Authorization
@@ -45,6 +49,7 @@ type Repository struct {
 	Filters
 	Plots
 	Orders
+	Routes
 }
 
 func NewRepository(db *sqlx.DB, mw *imagick.MagickWand) *Repository {
@@ -53,7 +58,8 @@ func NewRepository(db *sqlx.DB, mw *imagick.MagickWand) *Repository {
 		Users:         NewUsersPG(db),
 		Filters:       NewFiltersPG(db),
 		Plots:         NewPlotsPG(db),
-		Files:         NewFilesMW(db, mw),
+		Files:         NewFilesMwPg(db, mw),
 		Orders:        NewOrdersPG(db),
+		Routes:        NewRoutesPG(db),
 	}
 }

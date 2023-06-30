@@ -72,7 +72,7 @@ func (f *FilesMwPg) RemoveFile(orderID string, fileName string) error {
 	return err
 }
 
-func NewFilesMW(db *sqlx.DB, mw *imagick.MagickWand) *FilesMwPg {
+func NewFilesMwPg(db *sqlx.DB, mw *imagick.MagickWand) *FilesMwPg {
 	return &FilesMwPg{
 		db: db,
 		mw: mw,
