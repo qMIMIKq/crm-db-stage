@@ -2,6 +2,7 @@ import {appAddr, state} from './state';
 import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
 import {sendData} from "./sendData";
+import {submitData} from "./submitOrdersData";
 
 
 export const filesModal = `

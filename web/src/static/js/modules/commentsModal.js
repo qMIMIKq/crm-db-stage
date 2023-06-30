@@ -11,6 +11,7 @@ const commentModal = `
             
             <h2 class='comment__title'>Ваш комментарий</h2>
             <textarea class='comments__yours main__input' name='comment' id='comments__yours'></textarea>    
+            <button disabled class='main__button comment__button' >Сохранить</button>   
         </div>
    </div>
 `
@@ -47,13 +48,13 @@ export const triggerCommentsModal = e => {
     const commentsArr = comments.value.split('.-.')
     const newCommentsArr = newComments.value.split('.-.')
     drawComments(commentsList, commentsArr)
+
+    const saveBtn = document.querySelector('.comment__button')
     commentElem.addEventListener('input', e => {
-        const btn = document.querySelector('.comment__button')
-        if (btn === null && e.target.value !== '') {
-            commentElem.insertAdjacentHTML('afterend', `
-                <button class='main__button comment__button' >Сохранить</button>    
-            `)
-            document.querySelector('.comment__button').addEventListener('click', ev => {
+        if (e.target.value !== '') {
+            saveBtn.removeAttribute('disabled')
+
+            saveBtn.addEventListener('click', ev => {
                 let value = e.target.value
                 let today = new Date(Date.now()).toISOString()
                 today = today.substring(0, today.length - 8)
@@ -75,11 +76,12 @@ export const triggerCommentsModal = e => {
                     parent.classList.add('table-form--upd')
                 }
                 setTimeout(() => {
-                    ev.target.remove()
+                    ev.target.textContent = 'Сохранить'
+                    ev.target.setAttribute('disabled', '')
                 }, 1000)
             })
         } else if (e.target.value === '') {
-            document.querySelector('.comment__button').remove()
+            saveBtn.setAttribute('disabled', '')
         }
     })
 }
