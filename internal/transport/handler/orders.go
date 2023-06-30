@@ -16,8 +16,6 @@ func (h *Handler) addOrders(c *gin.Context) {
 		return
 	}
 
-	log.Info().Interface("data", orders).Msg("orders")
-
 	err := h.services.Orders.AddOrders(orders)
 	if err != nil {
 		if !strings.Contains(err.Error(), " duplicate key value violates") {
@@ -44,6 +42,10 @@ func (h *Handler) updateOrders(c *gin.Context) {
 	if err := c.Bind(&orders); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err)
 		return
+	}
+
+	for _, order := range orders {
+		log.Info().Interface("order", order).Msg("ORDER \n")
 	}
 
 	err := h.services.Orders.UpdateOrders(orders)

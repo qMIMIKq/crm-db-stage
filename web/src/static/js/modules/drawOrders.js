@@ -1,11 +1,14 @@
 import {triggerFilesModal} from './downloadFilesModal';
 import {controlFiltersReset} from './tableFilters';
 import {addTriggers} from './addTriggers';
-import {showRoutesIssued, triggerRoutesModal} from './routesModal';
+import {triggerRoutesModal} from './routesModal';
+import {showRoutesIssued} from "./showFull";
 import {triggerCommentsModal} from './commentsModal';
 import {drawDeadlineP} from './drawDeadlineP';
 import {state} from './state';
 import {drawManagers} from './drawManagers';
+import {submitData} from "./submitOrdersData";
+import {drawSubmit} from "./submitControl";
 
 export const table = document.querySelector('.main-table')
 
@@ -27,15 +30,19 @@ export const drawOrders = async (d, data, users) => {
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
 
-    const admAndTechCheck = state['adminCheck'] || state['techCheck']
+    const admManCheck = state['adminCheck'] || state['manCheck']
+    const admTechCheck = state['adminCheck'] || state['techCheck']
+    const admManTechCheck = admManCheck || state['techCheck']
 
-    const inputAdmAndTechGroupper = admAndTechCheck ? '' : 'readonly'
-    const inputAdmGroupper = state['adminCheck'] ? '' : 'readonly'
-    const selectGroupper = state['adminCheck'] ? '' : 'disabled'
-    const selectTechAndAdmGroupper = admAndTechCheck ? '' : 'disabled'
+    const inputAdmManGroupper = admManCheck ? '' : 'readonly'
+    const inputAdmManTechGroupper = admManTechCheck ? '' : 'readonly'
+    const inputAdmTechGroupper = admTechCheck ? '' : 'readonly'
+    const selectAdmManGroupper = admManCheck ? '' : 'disabled'
+    const selectAdmManTechGroupper = admManTechCheck ? '' : 'disabled'
+    const orderCompleted = d.quantity === d.issued && d.quantity !== ''
 
     table.insertAdjacentHTML(`afterbegin`, `
-                <form class='table-form table-form--old' method='POST'>
+                <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
                 <ul class='main-table__item'>
                     <li class='table-body_cell table__db'>
                         <input id='db_id' class='main__button table__data  click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
@@ -51,39 +58,44 @@ export const drawOrders = async (d, data, users) => {
                     </li>
                     <li class='table-body_cell table__number'>
                         <input 
-                        ${inputAdmGroupper}
+                        ${inputAdmManGroupper}
                         id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__sample'>
                         <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__client'>
-                        <input ${inputAdmGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__name'>
-                        <input ${inputAdmGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__material'>
-                        <input ${inputAdmGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__quantity'>
-                        <input ${inputAdmGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
+                        <input ${inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
                     </li>
-                    <li class="table-body_cell table__issued">
-                        <input ${inputAdmGroupper} class="table__data ${d.quantity === d.issued && d.quantity !== '' ? "table__issued--done" : ""}" tabindex="-1"
-                        type="number" 
-                        name="issued" 
-                        required  autocomplete="off"
-                        value="${d.issued}">
+                    <ul class="table__issueds">
+                        <li class="table-body_cell table__issued">
+                            <input ${inputAdmTechGroupper} class="table__data ${orderCompleted ? "table__issued--done tr" : ""}" tabindex="-1"
+                            type="number" 
+                            name="issued" 
+                            required  autocomplete="off"
+                            value="${d.issued}">
+                        </li>
+                    </ul>
+                    <li class="table-body_cell hidden__input table__finished">
+                        <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
                     </li>
                     <li class="table-body_cell table__m">
-                        <select ${selectGroupper} class="table__data table-m-select main__button" name="m" id="">
+                        <select ${selectAdmManGroupper} class="table__data table-m-select main__button" name="m" id="">
                             <option disabled selected value="">М</option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data "
-                        ${inputAdmAndTechGroupper} 
+                        ${inputAdmManTechGroupper} 
                         name="end_time" 
                         type="text"
                         placeholder=" " 
@@ -171,7 +183,7 @@ export const drawOrders = async (d, data, users) => {
                         </ul>
                     </li>
                     <li class="table-body_cell table__p">
-                        <select ${selectTechAndAdmGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                        <select ${selectAdmManTechGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                             <option selected value=""></option>
                         </select>
                     </li>
@@ -195,7 +207,7 @@ export const drawOrders = async (d, data, users) => {
                     </li>
                     
                     <li class="table-body_cell table__comment">
-                        <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
+                        <input ${inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
                             value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
@@ -205,6 +217,61 @@ export const drawOrders = async (d, data, users) => {
                 </ul>
             </form>
     `)
+
+    const currentOrder = document.getElementById(`form-${d.id}`)
+
+    if (state['openedOrders'].includes(String(d.id))) {
+        currentOrder.querySelectorAll('.table__data').forEach(item => {
+            if (!item.classList.contains('tr')) {
+                if (!item.classList.contains('table__data--opened')) {
+                    item.classList.add('table__data--opened')
+                }
+            } else {
+                item.classList.add('table__data--chosen')
+            }
+
+        })
+        try {
+            currentOrder.querySelector('.table-routes__issued').classList.toggle('hidden__input')
+            currentOrder.querySelector('.table__complete').classList.toggle('hidden__input')
+        } catch {
+        }
+    }
+
+    if (String(d.id) === state['currentOrder']) {
+        currentOrder.querySelectorAll('.table__data').forEach(item => {
+            if (!item.classList.contains('table__data--opened')) {
+                item.classList.add('table__data--chosen')
+            }
+        })
+    }
+
+    const completedBlock = currentOrder.querySelector('.table__issued--done')
+    if (completedBlock) {
+        completedBlock.insertAdjacentHTML(`afterend`, `
+            <li class="table-body_cell hidden__input table__complete">
+                <input class="table__data main__button tr" tabindex="-1"
+                readonly
+                type="text" 
+                autocomplete="off"
+                value="В архив">
+            </li>  
+        `)
+
+        currentOrder.querySelector('.table__complete').addEventListener('click', e => {
+            currentOrder.querySelector('#completed').value = true
+            const parent = e.target.closest('.table-form--old')
+
+            if (parent !== null) {
+                parent.classList.remove('table-form--old')
+                parent.classList.add('table-form--upd')
+                submitData()
+            } else {
+                drawSubmit()
+            }
+        })
+    }
+
     addTriggers(".table__files", triggerFilesModal)
     addTriggers(".table__route", triggerRoutesModal)
     addTriggers(".table__comment", triggerCommentsModal)

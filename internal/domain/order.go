@@ -16,7 +16,7 @@ type Order struct {
 	OTK       string            `json:"otk" db:"order_otk"`
 	P         string            `json:"p" db:"order_p"`
 	Comments  []string          `json:"comments"`
-	Completed bool              `json:"completed"`
+	Completed bool              `json:"completed" db:"completed"`
 	Routes    map[string]*Route `json:"routes_json"`
 	DbRoutes  []*Route          `json:"db_routes"`
 }

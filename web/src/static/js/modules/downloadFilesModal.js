@@ -83,7 +83,6 @@ export function triggerFilesModal(e) {
     const downloadTrigger = document.querySelector('.modal__trigger')
 
     if (!state['operCheck']) {
-        console.log('check')
         downloadTrigger.addEventListener('click', e => {
             const filesInput = document.querySelector('.modal__files')
             filesInput.addEventListener('change', e => {

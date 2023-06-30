@@ -24,11 +24,11 @@
 }
 
 input.table__data {
-  padding: 0 7px;
+  padding: 0 10px;
 }
 
 input.tr {
- padding: 0;
+  padding: 0;
 }
 
 .table {
@@ -111,8 +111,8 @@ input.tr {
   }
 
   &__timestamp {
-    min-width: 80px;
-    max-width: 80px;
+    min-width: 90px;
+    max-width: 90px;
   }
 
   &__files {
@@ -154,10 +154,21 @@ input.tr {
   &__issued {
     min-width: 70px;
     max-width: 70px;
+    border-left: none !important;
 
     &--done {
       color: green;
       animation: issued-ready infinite 4s;
+    }
+  }
+
+  &__complete {
+    border-right: none !important;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+
+    input {
+      height: 26px;
     }
   }
 
@@ -262,7 +273,7 @@ input.tr {
     }
 
     input {
-      border-bottom: 1px solid black;
+      height: 26px;
     }
   }
 }

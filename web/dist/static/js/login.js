@@ -71,13 +71,15 @@ let state = {
   'currentTopFilters': [],
   'topPlots': [],
   'currentTopPlots': [],
+  'currentOrder': null,
+  'openedOrders': [],
   'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30]
 };
 if (userInf) {
   state['adminCheck'] = userInf.group === 'супер-админ' || userInf.group === 'админ';
   state['techCheck'] = userInf.group === 'технолог';
   state['operCheck'] = userInf.group === 'оператор';
-  state['managerCheck'] = userInf.group === 'менеджер';
+  state['manCheck'] = userInf.group === 'менеджер';
 }
 
 

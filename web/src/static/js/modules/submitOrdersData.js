@@ -1,4 +1,4 @@
-import {finallyForOrders} from './submitControl';
+import {finallyForOrders, showResult} from './submitControl';
 import {appAddr} from './state';
 import {sendData} from './sendData';
 
@@ -12,8 +12,10 @@ const createRes = forms => {
         formData.forEach((value, key) => {
             switch (key) {
                 case 'files':
-                    console.log(obj[key])
                     obj[key] = value.split(', ')
+                    break
+                case 'completed':
+                    obj[key] = value === "true";
                     break
                 case 'comments':
                     obj[key] = value.split('.-.')
@@ -41,6 +43,20 @@ const createRes = forms => {
         console.log(res)
     })
     return res
+}
+
+export function submitSingleOrder(id) {
+    const form = document.querySelectorAll(`#${id}`)
+    console.log(form)
+
+    let success
+    sendData(`${appAddr}/api/orders/update`, 'PUT', JSON.stringify(createRes(form))).then(res => {
+        if (res.ok) success = true
+    }).finally(() => {
+        showResult(success)
+        form[0].classList.remove('table-form--upd')
+        form[0].classList.add('table-form--old')
+    })
 }
 
 export function submitData() {

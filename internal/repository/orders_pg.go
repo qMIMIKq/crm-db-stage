@@ -17,8 +17,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			UPDATE orders 
 				 SET order_number = $1 ,order_sample = $2, order_client = $3, order_name = $4,
 						 order_material = $5, order_quantity = $6, order_issued = $7, order_m = $8,
-						 order_endtime = $9, order_otk = $10, order_p = $11
-			WHERE order_id = $12
+						 order_endtime = $9, order_otk = $10, order_p = $11, completed = $12
+			WHERE order_id = $13
 	`)
 
 	fileQuery := fmt.Sprintf(`
@@ -43,7 +43,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 		_, err = o.db.Exec(query, order.Number, order.Sample,
 			order.Client, order.Name, order.Material, order.Quantity,
 			order.Issued, order.M, order.EndTime, order.OTK,
-			order.P, order.ID)
+			order.P, order.Completed, order.ID)
 
 		err = o.db.Select(&files, getFilesQuery, order.ID)
 		for _, file := range order.Files {
@@ -237,7 +237,7 @@ func (o OrdersPG) findFile(files []string, file string) bool {
 
 func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 	query := fmt.Sprintf(`
-		SELECT * FROM orders ORDER BY order_id ASC;
+		SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC;
 	`)
 
 	queryFiles := fmt.Sprintf(`
@@ -247,17 +247,6 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 	queryComments := fmt.Sprintf(`
 		SELECT comment_text FROM comments WHERE order_id = $1
 	`)
-
-	//query = fmt.Sprintf(`
-	//	SELECT u.user_name, g.group_name, g.group_id,
-	//         p.plot_name, p.plot_id
-	//    FROM users_rights ur
-	//         JOIN users u on u.user_id = ur.user_id
-	//         JOIN groups g on g.group_id = ur.group_id
-	//         JOIN plots p on p.plot_id = ur.plot_id
-	//    WHERE u.login = $1
-	//		  AND u.password = $2;
-	//`)
 
 	queryRoutes := fmt.Sprintf(`
 		SELECT r.route_position, r.issued, r.start_time, 

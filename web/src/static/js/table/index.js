@@ -13,7 +13,7 @@ searchModule()
 
 const subBtn = document.querySelector(".header-button__add")
 const plotsFilters = document.querySelector(".nav-filters__plots")
-if (!(state["adminCheck"] || state["techCheck"])) {
+if (!(state["adminCheck"] || state['manCheck'])) {
     subBtn.classList.add("hidden__input")
     // plotsFilters.classList.add("hidden__input")
 }

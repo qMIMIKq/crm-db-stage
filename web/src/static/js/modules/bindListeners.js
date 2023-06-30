@@ -1,5 +1,6 @@
 import {drawSubmit} from './submitControl';
 import {state} from './state';
+import {submitData, submitSingleOrder} from "./submitOrdersData";
 
 export const bindOrdersListeners = () => {
     document.querySelectorAll('.table__data').forEach(label => {
@@ -16,12 +17,15 @@ export const bindOrdersListeners = () => {
     })
     document.querySelectorAll('.table__data').forEach(label => {
         label.addEventListener('change', e => {
-            drawSubmit()
             const parent = e.target.closest('.table-form--old')
 
             if (parent !== null) {
                 parent.classList.remove('table-form--old')
                 parent.classList.add('table-form--upd')
+                submitData()
+                // submitSingleOrder(parent.getAttribute('id'))
+            } else {
+                drawSubmit()
             }
         })
     })
@@ -61,6 +65,7 @@ const setChooseListeners = (label, listener, action, cls) => {
                         if (!label.classList.contains('table__data--opened')) {
                             state['inWork'] = true
                             item.classList.add(cls)
+                            state['currentOrder'] = parent.querySelector('#db_id').value
                         }
                         break
 
