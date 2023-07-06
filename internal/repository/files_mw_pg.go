@@ -1,11 +1,15 @@
 package repository
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 	"gopkg.in/gographics/imagick.v3/imagick"
+	"io"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -40,6 +44,34 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 			err = f.mw.SetImageCompressionQuality(20)
 			err = f.mw.SetImageFormat("png")
 			err = f.mw.WriteImage(name)
+
+			return newFiles, err
+
+		case "DXF", "dxf":
+			name := filePath[:len(filePath)-3] + "png"
+			newFiles = append(newFiles, name)
+
+			client := &http.Client{}
+			body := &bytes.Buffer{}
+			writer := multipart.NewWriter(body)
+			fw, err := writer.CreateFormFile("file", file.Filename)
+			if err != nil {
+				log.Fatal().Caller().Err(err).Msg("error")
+			}
+
+			file, err := os.Open(filePath)
+			if err != nil {
+				log.Fatal().Caller().Err(err).Msg("error")
+			}
+			_, err = io.Copy(fw, file)
+			writer.Close()
+
+			req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/dxf-convert", bytes.NewReader(body.Bytes()))
+			req.Header.Set("Content-Type", writer.FormDataContentType())
+			rsp, _ := client.Do(req)
+			if rsp.StatusCode != http.StatusOK {
+				log.Warn().Msgf("FUCK")
+			}
 
 			return newFiles, err
 		}

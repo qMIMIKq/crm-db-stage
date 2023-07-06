@@ -21,16 +21,18 @@ let state = {
     'currentOrder': null,
     'openedOrders': [],
     'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30],
+    'currentInput': null,
+    'checkOrders': [],
     'tableFilters': {
-        'numbers': [],
-        'clients': [],
-        'materials': [],
-        'name': [],
-        'quantity': [],
-        'issued': [],
-        'm': [],
-        'end_time': [],
-        'timestamp': [],
+        'number': '',
+        'client': '',
+        'material': '',
+        'name': '',
+        'quantity': '',
+        'issued': '',
+        'm': '',
+        'end_time': '',
+        'timestamp': '',
     }
 }
 

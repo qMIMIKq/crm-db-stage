@@ -68,28 +68,51 @@ const showFilter = e => {
 }
 
 const filterOrders = (type, filter) => {
-    if (filter === 'все') {
-        state['filtered'] = false
-        tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
-            cell.style.textDecoration = 'none'
-        })
+    // if (filter === 'все') {
+    //     state['filtered'] = false
+    //     tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+    //         cell.style.textDecoration = 'none'
+    //     })
+    //
+    //     getOrders()
+    //     return
+    // }
+    state['tableFilters'][type] = filter
 
-        getOrders()
-        return
-    }
+    console.log(type, state['tableFilters'])
+    console.log(state['tableFilters'][type])
 
-    state['filteredOrders'] = state['filteredOrders'].filter(o => {
-        switch (type) {
-            case 'timestamp':
-                return o[type].includes(filter)
-            default:
-                return o[type] === filter
-        }
-    })
     deleteOrders()
-    state['filteredOrders'].forEach(order => {
-        drawOrders(order, state['filteredOrders'], state['managers'])
+    state['filteredOrders'] = state['orders'].filter(o => {
+        let flag = true
+        for (let type in state['tableFilters']) {
+            if (state['tableFilters'][type]) {
+                if (!(o[type].trim() === state['tableFilters'][type].trim())) {
+                    flag = false
+                    break
+                }
+            }
+        }
+
+        if (flag) {
+            drawOrders(o, state['filteredOrders'], state['managers'])
+        }
+
+        return flag
     })
+
+    // state['filteredOrders'] = state['filteredOrders'].filter(o => {
+    //     switch (type) {
+    //         case 'timestamp':
+    //             return o[type].includes(filter)
+    //         default:
+    //             return o[type] === filter
+    //     }
+    // })
+    // deleteOrders()
+    // state['filteredOrders'].forEach(order => {
+    //     drawOrders(order, state['filteredOrders'], state['managers'])
+    // })
 }
 
 const bindFilter = (elem) => {

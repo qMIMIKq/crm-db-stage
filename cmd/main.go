@@ -14,6 +14,7 @@ import (
 
 // migrate create -ext sql -dir ./schema -seq init - new migrate
 // migrate -path ./schema -database 'postgres://nik:1325@localhost:5437/nik?sslmode=disable' up
+// export LIBRARY_PATH=/opt/homebrew/Cellar/imagemagick/7.1.1-12/lib
 
 func init() {
 	logger.CustomizeLogger()

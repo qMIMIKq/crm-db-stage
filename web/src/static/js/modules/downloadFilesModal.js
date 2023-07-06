@@ -2,6 +2,7 @@ import {appAddr, state} from './state';
 import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
 import {sendData} from "./sendData";
+import {submitData} from "./submitOrdersData";
 
 
 export const filesModal = `
@@ -34,7 +35,7 @@ const deleteFiles = () => {
     }
 }
 
-const sendFiles = (files, filesInput) => {
+const sendFiles = (files, filesInput, old) => {
     const formData = new FormData()
     for (let file of files) {
         formData.append('files', file)
@@ -65,11 +66,15 @@ const sendFiles = (files, filesInput) => {
             drop.classList.remove('success')
             drop.textContent = 'Укажите файлы для загрузки'
         }, 1000)
+
+        if (old) submitData()
     })
 }
 
 export function triggerFilesModal(e) {
     const parent = e.target.closest('ul')
+    const old = parent.parentNode.classList.contains('table-form--old')
+    console.log(parent.parentNode)
     const filesInputData = parent.querySelector('input[name="files"]')
     const db = parent.querySelector('#db_id').value
     const enter = parent.querySelector('#timestamp').value
@@ -102,7 +107,7 @@ export function triggerFilesModal(e) {
         downloadTrigger.addEventListener('drop', e => {
             let dt = e.dataTransfer
             let files = dt.files
-            sendFiles(files, filesInputData)
+            sendFiles(files, filesInputData, old)
         })
 
         modalElem.querySelector('.order__files').addEventListener('submit', e => {
@@ -132,14 +137,16 @@ export const drawFiles = (modal, files, id) => {
             switch (fileType) {
                 case 'pdf':
                 case 'PDF':
+                case 'dxf':
+                case 'DXF':
                     fileNames.push(fileNameWithoutType)
                     data.insertAdjacentHTML(`beforeend`, `
                       <div class='data__file'>
-                        <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.pdf'>Оригинал</a>
+                        <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>Оригинал</a>
                         <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.png'>
                             <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.png' alt=''>
                         </a>
-                        <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.pdf' download>
+                        <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
                             <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                                 <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                                 </path>

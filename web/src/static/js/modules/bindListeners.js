@@ -1,6 +1,6 @@
 import {drawSubmit} from './submitControl';
 import {state} from './state';
-import {submitData, submitSingleOrder} from "./submitOrdersData";
+import {submitData} from "./submitOrdersData";
 
 export const bindOrdersListeners = () => {
     document.querySelectorAll('.table__data').forEach(label => {
@@ -54,6 +54,7 @@ const setChooseListeners = (label, listener, action, cls) => {
                         chosen.classList.remove(cls)
                     }
                 } else if (chosen.classList.contains('tr') && chosen.parentNode.parentNode.parentNode.parentNode.querySelector('#db_id').classList.contains('table__data--opened')) {
+                    console.log(chosen)
                 } else {
                     chosen.classList.remove(cls)
                 }

@@ -1,6 +1,7 @@
 import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
 import {user} from '../table';
+import {submitData} from "./submitOrdersData";
 
 const commentModal = `
    <div id='modal' class='modal modal--comment bounceIn'>
@@ -56,9 +57,9 @@ export const triggerCommentsModal = e => {
         today = today.substring(0, today.length - 8).split("T").join(" ")
 
         value = `${today} ${user.name} "${value}"`
-
         commentsArr.push(value)
         newCommentsArr.push(value)
+
         comments.value = commentsArr.join('.-.')
         newComments.value = newCommentsArr.filter(c => c !== '').join('.-.')
         visibleComment.value = value
@@ -66,10 +67,11 @@ export const triggerCommentsModal = e => {
         commentElem.value = ''
         deleteComments()
         drawComments(commentsList, commentsArr)
-        drawSubmit()
         if (parent.classList.contains('table-form--old')) {
             parent.classList.remove('table-form--old')
             parent.classList.add('table-form--upd')
+        } else {
+            drawSubmit()
         }
         setTimeout(() => {
             ev.target.textContent = 'Сохранить'

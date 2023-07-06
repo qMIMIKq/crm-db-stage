@@ -8,6 +8,10 @@ import (
 	"mime/multipart"
 )
 
+type Init interface {
+	InitDB() error
+}
+
 type Authorization interface {
 	GetUser(user domain.UserAuth) (domain.UserInfo, error)
 }
@@ -43,13 +47,14 @@ type Routes interface {
 }
 
 type Repository struct {
-	Files
+	Init
 	Authorization
-	Users
 	Filters
-	Plots
 	Orders
+	Plots
 	Routes
+	Users
+	Files
 }
 
 func NewRepository(db *sqlx.DB, mw *imagick.MagickWand) *Repository {
@@ -61,5 +66,6 @@ func NewRepository(db *sqlx.DB, mw *imagick.MagickWand) *Repository {
 		Files:         NewFilesMwPg(db, mw),
 		Orders:        NewOrdersPG(db),
 		Routes:        NewRoutesPG(db),
+		Init:          NewInitPG(db),
 	}
 }

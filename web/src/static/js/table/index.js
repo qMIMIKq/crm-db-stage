@@ -17,6 +17,7 @@ if (!(state["adminCheck"] || state['manCheck'])) {
     subBtn.classList.add("hidden__input")
     // plotsFilters.classList.add("hidden__input")
 }
+
 const updateMainTableData = () => {
     setInterval(getOrders, 1000)
 }

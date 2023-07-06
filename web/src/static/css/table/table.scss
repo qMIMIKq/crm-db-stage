@@ -39,14 +39,17 @@ input.tr {
     align-items: center;
     font-size: 16px;
     cursor: default;
-    border-right: 1px solid black;
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     background: white;
 
-    &:first-child {
-      border-left: 1px solid black;
+    &:not(:last-child) {
+      border-right: 1px solid black;
     }
+  }
+
+  &:last-child {
+    border-right: none;
   }
 
   &-form {
@@ -154,7 +157,7 @@ input.tr {
   &__issued {
     min-width: 70px;
     max-width: 70px;
-    border-left: none !important;
+    border-right: 1px solid black !important;
 
     &--done {
       color: green;
@@ -182,6 +185,12 @@ input.tr {
     max-width: 130px;
   }
 
+  &__route {
+    &:last-child {
+      border-right: 1px solid black !important;
+    }
+  }
+
   &__routes {
     min-width: 400px;
     max-width: 400px;
@@ -201,7 +210,6 @@ input.tr {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-
     cursor: pointer;
   }
 
@@ -232,8 +240,8 @@ input.tr {
     border-right: 1px solid black;
     border-bottom: 1px solid black;
 
-    &:first-child {
-      border-left: 1px solid black;
+    &:last-child {
+      border-right: none;
     }
 
     &--opened {

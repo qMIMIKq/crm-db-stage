@@ -204,7 +204,6 @@ const drawLogs = data => {
     })
 }
 const saveData = (data, selector) => {
-    console.log(selector)
     const dataInput = document.querySelector(selector)
     if (dataInput.value.length) {
         dataInput.value += '---' + data
@@ -222,6 +221,7 @@ const addLog = (name, log, selector) => {
     drawLogs(visible)
     return logMsg
 }
+
 const activateOnInput = (e, cls) => {
     if (e.target.value !== '') {
         activateNextStage(cls)
@@ -229,19 +229,20 @@ const activateOnInput = (e, cls) => {
         disableBtn(cls)
     }
 }
+
 const setDateToInput = inputId => {
     let today = new Date(Date.now()).toISOString()
-    today = today.substring(0, today.length - 8)
+    today = today.substring(0, today.length - 8).split("T").join(" ")
     const timeInput = document.querySelector('#' + inputId)
-    timeInput.setAttribute('type', 'datetime-local')
     timeInput.value = today
-    timeInput.setAttribute('type', 'text')
 }
+
 const activateNextStage = btnClass => {
     const btn = document.querySelector('.' + btnClass)
     btn.removeAttribute('disabled')
     btn.classList.add('clickable')
 }
+
 const disableBtn = btnClass => {
     const btn = document.querySelector('.' + btnClass)
     btn.setAttribute('disabled', 'true')
@@ -277,10 +278,11 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
         let logMsg
         switch (e.target.name) {
             case 'start_time':
-                logMsg = '"Сбросил время начала, сдачи, ОТК"'
+                logMsg = '"Сбросил время начала"'
+                activateNextStage("route__select--plot")
                 break
             case 'end_time':
-                logMsg = '"Сбросил время сдачи, ОТК"'
+                logMsg = '"Сбросил время сдачи"'
                 break
             case 'otk_time':
                 logMsg = '"Сбросил время ОТК"'
@@ -344,7 +346,7 @@ export const triggerRoutesModal = e => {
 
     const errBtn = routeForm.querySelector('.error-route__btn')
     errBtn.addEventListener('click', () => {
-        let logMsg = 'ОШИБКА ' + document.querySelector('#error-route__msg').value
+        let logMsg = `"ОШИБКА ${document.querySelector('#error-route__msg').value}"`
 
         addLog(logName, logMsg, '#visible__comments')
         setDateToInput('error__time')
@@ -373,6 +375,7 @@ export const triggerRoutesModal = e => {
         errCloseBtn.classList.add('hidden__input')
         errBtn.classList.remove('hidden__input')
         disableBtn('error-route__close')
+        addLog(logName, '"Сбросил ошибку"', '#visible__comments')
     })
 
 
@@ -441,6 +444,10 @@ export const triggerRoutesModal = e => {
                         })
                 }, 'Удалить маршрут?')
             })
+        }
+
+        if (start) {
+            disableBtn('route__select--plot')
         }
 
         drawPlots(plot, user)
@@ -544,6 +551,7 @@ export const triggerRoutesModal = e => {
         activateNextStage('section-finish__sub')
         activateNextStage('section-finish__cancel')
         disableBtn('start-route__btn')
+        disableBtn('route__select--plot')
         addLog(routeUser.value, '"Начал"', '#visible__comments')
         issuedToday.classList.add('text-input')
         issuedToday.removeAttribute('disabled')
