@@ -1118,7 +1118,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let searchedOrders = [];
-let updatedOrders = [];
 const getOrders = () => {
   console.log('get orders');
   fetch(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
