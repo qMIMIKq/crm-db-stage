@@ -10510,7 +10510,7 @@ __webpack_require__.r(__webpack_exports__);
 
 //192.168.1.231
 //172.20.10.7
-
+const appAddr = "http://192.168.1.231:8182";
 const loginForm = document.querySelector(".login-form");
 loginForm.addEventListener("submit", e => {
   e.preventDefault();
@@ -10520,7 +10520,7 @@ loginForm.addEventListener("submit", e => {
   formData.forEach((value, key) => {
     obj[key] = value.trim();
   });
-  fetch(`${_modules_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/auth/sign-in`, {
+  fetch(`${appAddr}/auth/sign-in`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -10537,7 +10537,7 @@ loginForm.addEventListener("submit", e => {
         };
         sessionStorage.setItem("user", JSON.stringify(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo));
         console.log(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo);
-        window.location.replace(`${_modules_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/main/table`);
+        window.location.replace(`${appAddr}/main/table`);
       });
     } else if (errBlock === null) {
       loginForm.insertAdjacentHTML("beforeend", `
