@@ -1,7 +1,8 @@
 import {getData} from './getData';
 import {state} from "./state";
-import {drawOrders} from "./drawOrders";
 import {deleteOrders, getOrders} from "./orders";
+import {globalFilterOrders} from "./filterOrders";
+import {bindOrdersListeners} from "./bindListeners";
 
 export const topFiltersHandler = () => {
     const plotFilters = document.querySelector('.nav-filters__plots')
@@ -109,32 +110,6 @@ export const topFiltersHandler = () => {
         })
     }
 
-    const filterData = () => {
-        const filters = state['currentTopFilters'].map(filter => filter.name)
-        if (filters.length) {
-            state['filteredOrders'] = state['orders'].filter(order => {
-                let flag = false
-
-                if (order.db_routes) {
-                    order.db_routes.forEach(route => {
-                        if (filters.includes(route.plot)) {
-                            flag = true
-                        }
-                    })
-                }
-
-                return flag
-            })
-
-            deleteOrders()
-            state['filteredOrders'].forEach(order => {
-                drawOrders(order, state['filteredOrders'], state['managers'])
-            })
-        } else {
-            getOrders()
-        }
-    }
-
     const drawUsers = users => {
         users.forEach(u => {
             document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
@@ -175,4 +150,37 @@ export const topFiltersHandler = () => {
         }
     }
     draw()
+}
+
+export const filterData = () => {
+    const filters = state['currentTopFilters'].map(filter => filter.name)
+    if (filters.length) {
+        console.log('фильтруем')
+        state['filtered'] = true
+        state['filteredOrders'] = state['orders'].filter(order => {
+            let flag = false
+
+            if (order.db_routes) {
+                order.db_routes.forEach(route => {
+                    if (filters.includes(route.plot)) {
+                        flag = true
+                    }
+                })
+            }
+
+            return flag
+        })
+
+        deleteOrders()
+        state['filteredOrders'].forEach(order => {
+            globalFilterOrders(order)
+        })
+        bindOrdersListeners()
+    } else {
+        getOrders()
+    }
+
+    if (state['filtered']) {
+
+    }
 }

@@ -12,18 +12,19 @@ import {
     quantityFilter,
     timestampFilter
 } from './tableFilters';
-import {drawOrders} from './drawOrders';
 import {appAddr, state} from './state';
 import {bindOrdersListeners} from './bindListeners';
 import {getData} from './getData';
+import {globalFilterOrders} from "./filterOrders";
+import {drawOrders} from "./drawOrders";
 
 let searchedOrders = []
 let updatedOrders = []
 
 export const getOrders = () => {
     // if (state['inWork']) return
+    console.log(state['filtered'])
     fetch(`${appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
-        state['filtered'] = false
         const nums = []
         const clients = []
         const materials = []
@@ -57,7 +58,12 @@ export const getOrders = () => {
                     if (!state['filtered']) {
                         state['managers'] = res.data.filter(user => user.group === 'менеджер')
                     }
-                    drawOrders(d, data, state['managers'])
+
+                    if (state['filtered']) {
+                        globalFilterOrders(d)
+                    } else {
+                        drawOrders(d, data, state['managers'])
+                    }
                 })
 
                 drawTableFilter([...new Set(nums)], numsFilter)

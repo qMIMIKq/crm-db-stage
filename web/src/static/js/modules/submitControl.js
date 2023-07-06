@@ -60,9 +60,10 @@ export const deleteCancelBtn = () => {
 export const showResult = status => {
     let sucTitle = document.querySelector('.success')
     let errTitle = document.querySelector('.error')
+    const nav = document.querySelector(".main-header__nav")
     if (status) {
         if (sucTitle === null && errTitle === null) {
-            addOrder.insertAdjacentHTML(`afterend`, `
+            nav.insertAdjacentHTML(`beforeend`, `
             <h3 class='success'>Успешно</h3>
         `)
         }
@@ -71,7 +72,7 @@ export const showResult = status => {
             if (sucTitle !== null) {
                 sucTitle.remove()
             }
-            addOrder.insertAdjacentHTML(`afterend`, `
+            nav.insertAdjacentHTML(`beforeend`, `
                 <h3 class='error'>Неудачно</h3>
             `)
         }

@@ -1036,6 +1036,40 @@ const orderHTML = `
 
 /***/ }),
 
+/***/ "./web/src/static/js/modules/filterOrders.js":
+/*!***************************************************!*\
+  !*** ./web/src/static/js/modules/filterOrders.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "globalFilterOrders": () => (/* binding */ globalFilterOrders)
+/* harmony export */ });
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+
+
+const globalFilterOrders = order => {
+  let flag = true;
+  for (let type in _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters) {
+    const filter = _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type];
+    if (filter === 'все') {} else if (filter) {
+      if (!(order[type].trim() === _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type].trim())) {
+        flag = false;
+        break;
+      }
+    }
+  }
+  if (flag) {
+    // state['filteredOrders'].push(order)
+    (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+  }
+};
+
+/***/ }),
+
 /***/ "./web/src/static/js/modules/getData.js":
 /*!**********************************************!*\
   !*** ./web/src/static/js/modules/getData.js ***!
@@ -1072,10 +1106,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getOrders": () => (/* binding */ getOrders)
 /* harmony export */ });
 /* harmony import */ var _tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tableFilters */ "./web/src/static/js/modules/tableFilters.js");
-/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+
 
 
 
@@ -1085,8 +1121,8 @@ let searchedOrders = [];
 let updatedOrders = [];
 const getOrders = () => {
   // if (state['inWork']) return
-  fetch(`${_state__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
-    _state__WEBPACK_IMPORTED_MODULE_2__.state.filtered = false;
+  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered);
+  fetch(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
     const nums = [];
     const clients = [];
     const materials = [];
@@ -1098,11 +1134,11 @@ const getOrders = () => {
     const timestamps = [];
     (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
     deleteOrders();
-    (0,_getData__WEBPACK_IMPORTED_MODULE_4__.getData)('users/get-users').then(res => {
+    (0,_getData__WEBPACK_IMPORTED_MODULE_3__.getData)('users/get-users').then(res => {
       data.data.forEach(d => {
-        _state__WEBPACK_IMPORTED_MODULE_2__.state.orders = data.data;
-        _state__WEBPACK_IMPORTED_MODULE_2__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
-        searchedOrders = _state__WEBPACK_IMPORTED_MODULE_2__.state.orders.filter(o => o);
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
+        searchedOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
         nums.push(d.number);
         clients.push(d.client);
         materials.push(d.material);
@@ -1112,10 +1148,14 @@ const getOrders = () => {
         managers.push(d.m);
         deadlines.push(d.end_time);
         timestamps.push(d.timestamp.split('T')[0]);
-        if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.filtered) {
-          _state__WEBPACK_IMPORTED_MODULE_2__.state.managers = res.data.filter(user => user.group === 'менеджер');
+        if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
         }
-        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(d, data, _state__WEBPACK_IMPORTED_MODULE_2__.state.managers);
+        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+          (0,_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)(d);
+        } else {
+          (0,_drawOrders__WEBPACK_IMPORTED_MODULE_5__.drawOrders)(d, data, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
+        }
       });
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(nums)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(clients)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
@@ -1134,7 +1174,7 @@ const getOrders = () => {
       } else {
         totalOrders.textContent = `Всего в работе ${data.data.length}`;
       }
-      (0,_bindListeners__WEBPACK_IMPORTED_MODULE_3__.bindOrdersListeners)();
+      (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
     });
   });
@@ -2092,9 +2132,10 @@ const deleteCancelBtn = () => {
 const showResult = status => {
   let sucTitle = document.querySelector('.success');
   let errTitle = document.querySelector('.error');
+  const nav = document.querySelector(".main-header__nav");
   if (status) {
     if (sucTitle === null && errTitle === null) {
-      addOrder.insertAdjacentHTML(`afterend`, `
+      nav.insertAdjacentHTML(`beforeend`, `
             <h3 class='success'>Успешно</h3>
         `);
     }
@@ -2103,7 +2144,7 @@ const showResult = status => {
       if (sucTitle !== null) {
         sucTitle.remove();
       }
-      addOrder.insertAdjacentHTML(`afterend`, `
+      nav.insertAdjacentHTML(`beforeend`, `
                 <h3 class='error'>Неудачно</h3>
             `);
     }
@@ -2259,7 +2300,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
+
 
 
 
@@ -2289,8 +2332,6 @@ const drawTableFilter = (data, target) => {
 const bindTableFilters = () => {
   const tableFilters = document.querySelectorAll('.table__filter');
   const filterWrappers = document.querySelectorAll('.table__use label');
-  let allFilters = [];
-  let currentFilters = [];
   filterWrappers.forEach(wrapper => {
     wrapper.addEventListener('click', e => {
       const select = wrapper.parentNode.querySelector('select');
@@ -2321,49 +2362,16 @@ const showFilter = e => {
   label.classList.remove('hidden__input');
 };
 const filterOrders = (type, filter) => {
-  // if (filter === 'все') {
-  //     state['filtered'] = false
-  //     tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
-  //         cell.style.textDecoration = 'none'
-  //     })
-  //
-  //     getOrders()
-  //     return
-  // }
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
   _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters[type] = filter;
-  console.log(type, _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters);
-  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters[type]);
+  console.log(type, filter);
+  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters);
   (0,_orders__WEBPACK_IMPORTED_MODULE_0__.deleteOrders)();
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => {
-    let flag = true;
-    for (let type in _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters) {
-      if (_state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters[type]) {
-        if (!(o[type].trim() === _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters[type].trim())) {
-          flag = false;
-          break;
-        }
-      }
-    }
-    if (flag) {
-      (0,_drawOrders__WEBPACK_IMPORTED_MODULE_2__.drawOrders)(o, _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
-    }
-    return flag;
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.forEach(o => {
+    (0,_filterOrders__WEBPACK_IMPORTED_MODULE_3__.globalFilterOrders)(o);
   });
-
-  // state['filteredOrders'] = state['filteredOrders'].filter(o => {
-  //     switch (type) {
-  //         case 'timestamp':
-  //             return o[type].includes(filter)
-  //         default:
-  //             return o[type] === filter
-  //     }
-  // })
-  // deleteOrders()
-  // state['filteredOrders'].forEach(order => {
-  //     drawOrders(order, state['filteredOrders'], state['managers'])
-  // })
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
 };
-
 const bindFilter = elem => {
   elem.removeEventListener('change', filterListener);
   elem.addEventListener('change', filterListener);
@@ -2384,6 +2392,7 @@ const controlFiltersReset = () => {
       nav.querySelector('.header-button__reset').addEventListener('click', e => {
         document.querySelector('#search__input').value = '';
         _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters = {};
         tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
           cell.style.textDecoration = 'none';
         });
@@ -2416,12 +2425,15 @@ const setChosenFilter = e => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "filterData": () => (/* binding */ filterData),
 /* harmony export */   "topFiltersHandler": () => (/* binding */ topFiltersHandler)
 /* harmony export */ });
 /* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+
 
 
 
@@ -2519,28 +2531,6 @@ const topFiltersHandler = () => {
       });
     });
   };
-  const filterData = () => {
-    const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
-    if (filters.length) {
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(order => {
-        let flag = false;
-        if (order.db_routes) {
-          order.db_routes.forEach(route => {
-            if (filters.includes(route.plot)) {
-              flag = true;
-            }
-          });
-        }
-        return flag;
-      });
-      (0,_orders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
-        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_2__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
-      });
-    } else {
-      (0,_orders__WEBPACK_IMPORTED_MODULE_3__.getOrders)();
-    }
-  };
   const drawUsers = users => {
     users.forEach(u => {
       document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
@@ -2574,6 +2564,32 @@ const topFiltersHandler = () => {
     }
   };
   draw();
+};
+const filterData = () => {
+  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
+  if (filters.length) {
+    console.log('фильтруем');
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(order => {
+      let flag = false;
+      if (order.db_routes) {
+        order.db_routes.forEach(route => {
+          if (filters.includes(route.plot)) {
+            flag = true;
+          }
+        });
+      }
+      return flag;
+    });
+    (0,_orders__WEBPACK_IMPORTED_MODULE_2__.deleteOrders)();
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
+      (0,_filterOrders__WEBPACK_IMPORTED_MODULE_3__.globalFilterOrders)(order);
+    });
+    (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
+  } else {
+    (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)();
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {}
 };
 
 /***/ }),

@@ -1,6 +1,7 @@
 import {deleteOrders, getOrders} from './orders';
 import {state} from './state';
-import {drawOrders} from './drawOrders';
+import {bindOrdersListeners} from "./bindListeners";
+import {globalFilterOrders} from "./filterOrders";
 
 
 export const tableFiltersWrapper = document.querySelector('.main-table__header')
@@ -32,8 +33,6 @@ export const drawTableFilter = (data, target) => {
 export const bindTableFilters = () => {
     const tableFilters = document.querySelectorAll('.table__filter')
     const filterWrappers = document.querySelectorAll('.table__use label')
-    let allFilters = []
-    let currentFilters = []
 
     filterWrappers.forEach(wrapper => {
         wrapper.addEventListener('click', e => {
@@ -68,51 +67,16 @@ const showFilter = e => {
 }
 
 const filterOrders = (type, filter) => {
-    // if (filter === 'все') {
-    //     state['filtered'] = false
-    //     tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
-    //         cell.style.textDecoration = 'none'
-    //     })
-    //
-    //     getOrders()
-    //     return
-    // }
+    state['filtered'] = true
     state['tableFilters'][type] = filter
-
-    console.log(type, state['tableFilters'])
-    console.log(state['tableFilters'][type])
+    console.log(type, filter)
+    console.log(state['tableFilters'])
 
     deleteOrders()
-    state['filteredOrders'] = state['orders'].filter(o => {
-        let flag = true
-        for (let type in state['tableFilters']) {
-            if (state['tableFilters'][type]) {
-                if (!(o[type].trim() === state['tableFilters'][type].trim())) {
-                    flag = false
-                    break
-                }
-            }
-        }
-
-        if (flag) {
-            drawOrders(o, state['filteredOrders'], state['managers'])
-        }
-
-        return flag
+    state['orders'].forEach(o => {
+        globalFilterOrders(o)
     })
-
-    // state['filteredOrders'] = state['filteredOrders'].filter(o => {
-    //     switch (type) {
-    //         case 'timestamp':
-    //             return o[type].includes(filter)
-    //         default:
-    //             return o[type] === filter
-    //     }
-    // })
-    // deleteOrders()
-    // state['filteredOrders'].forEach(order => {
-    //     drawOrders(order, state['filteredOrders'], state['managers'])
-    // })
+    bindOrdersListeners()
 }
 
 const bindFilter = (elem) => {
@@ -138,6 +102,8 @@ export const controlFiltersReset = () => {
             nav.querySelector('.header-button__reset').addEventListener('click', e => {
                 document.querySelector('#search__input').value = ''
                 state['filtered'] = false
+                state['tableFilters'] = {}
+
                 tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
                     cell.style.textDecoration = 'none'
                 })
