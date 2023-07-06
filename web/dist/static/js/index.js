@@ -1120,9 +1120,9 @@ __webpack_require__.r(__webpack_exports__);
 let searchedOrders = [];
 let updatedOrders = [];
 const getOrders = () => {
-  // if (state['inWork']) return
-  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered);
+  console.log('get orders');
   fetch(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
+    console.log('orders HERE');
     const nums = [];
     const clients = [];
     const materials = [];
@@ -1176,6 +1176,7 @@ const getOrders = () => {
       }
       (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
+      console.log('drawed orders');
     });
   });
 };

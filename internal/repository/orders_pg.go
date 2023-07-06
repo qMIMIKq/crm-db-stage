@@ -236,6 +236,8 @@ func (o OrdersPG) findFile(files []string, file string) bool {
 }
 
 func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
+	log.Info().Msg("Getting orders")
+
 	query := fmt.Sprintf(`
 		SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC;
 	`)
@@ -302,6 +304,7 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 		}
 	}
 
+	log.Info().Msg("RETURNING orders")
 	return orders, err
 }
 

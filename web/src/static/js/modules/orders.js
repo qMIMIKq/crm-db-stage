@@ -19,12 +19,11 @@ import {globalFilterOrders} from "./filterOrders";
 import {drawOrders} from "./drawOrders";
 
 let searchedOrders = []
-let updatedOrders = []
 
 export const getOrders = () => {
-    // if (state['inWork']) return
-    console.log(state['filtered'])
+    console.log('get orders')
     fetch(`${appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
+        console.log('orders HERE')
         const nums = []
         const clients = []
         const materials = []
@@ -86,6 +85,7 @@ export const getOrders = () => {
                 }
                 bindOrdersListeners()
                 bindTableFilters()
+                console.log('drawed orders')
             })
     })
 }
