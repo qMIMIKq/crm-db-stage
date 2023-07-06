@@ -17,11 +17,13 @@ import {bindOrdersListeners} from './bindListeners';
 import {getData} from './getData';
 import {globalFilterOrders} from "./filterOrders";
 import {drawOrders} from "./drawOrders";
+import {filterData} from "./topFilters";
 
 let searchedOrders = []
 
 export const getOrders = () => {
-    console.log('get orders')
+    const filters = state['currentTopFilters'].map(filter => filter.name)
+    console.time('get orders')
     fetch(`${appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
         console.log('orders HERE')
         const nums = []
@@ -58,11 +60,17 @@ export const getOrders = () => {
                         state['managers'] = res.data.filter(user => user.group === 'менеджер')
                     }
 
-                    if (state['filtered']) {
-                        globalFilterOrders(d)
+                    if (state['filtered'] && filters) {
+                        globalFilterOrders(d, filters)
+                        filterData()
+                    } else if (state['filtered']) {
+                        globalFilterOrders()
+                    } else if (filters.length) {
+                        filterData()
                     } else {
                         drawOrders(d, data, state['managers'])
                     }
+
                 })
 
                 drawTableFilter([...new Set(nums)], numsFilter)
@@ -85,7 +93,13 @@ export const getOrders = () => {
                 }
                 bindOrdersListeners()
                 bindTableFilters()
-                console.log('drawed orders')
+                console.timeEnd('get orders')
+
+                document.querySelectorAll(".table-form").forEach(form => {
+                    form.addEventListener('click', e => {
+                        console.log("I am form hi)")
+                    })
+                })
             })
     })
 }

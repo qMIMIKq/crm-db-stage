@@ -1,7 +1,7 @@
 import {state} from "./state";
 import {drawOrders} from "./drawOrders";
 
-export const globalFilterOrders = (order) => {
+export const globalFilterOrders = (order, topFilters) => {
     let flag = true
     for (let type in state['tableFilters']) {
         const filter = state['tableFilters'][type]
@@ -15,7 +15,8 @@ export const globalFilterOrders = (order) => {
     }
 
     if (flag) {
-        // state['filteredOrders'].push(order)
         drawOrders(order, state['filteredOrders'], state['managers'])
     }
+
+    return flag
 }

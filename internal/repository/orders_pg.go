@@ -40,6 +40,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var err error
 	for _, order := range orders {
+		log.Info().Interface("comments", order.Comments).Msg("comments")
 		_, err = o.db.Exec(query, order.Number, order.Sample,
 			order.Client, order.Name, order.Material, order.Quantity,
 			order.Issued, order.M, order.EndTime, order.OTK,
@@ -183,6 +184,7 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 	var err error
 	var id int
 	for _, order := range orders {
+		log.Info().Interface("comments", order.Comments).Msg("comments")
 		err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
 			order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P).Scan(&id)
 
@@ -239,7 +241,7 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 	log.Info().Msg("Getting orders")
 
 	query := fmt.Sprintf(`
-		SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC LIMIT 1000;
+		SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC;
 	`)
 
 	queryFiles := fmt.Sprintf(`

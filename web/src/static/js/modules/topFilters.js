@@ -104,8 +104,12 @@ export const topFiltersHandler = () => {
 
                 target.classList.toggle('chosen__filter')
                 target.classList.toggle('nav-filters__button--chosen')
-                console.log(state['currentTopFilters'])
-                filterData()
+
+                if (state['currentTopFilters'].length) {
+                    filterData()
+                } else {
+                    getOrders()
+                }
             })
         })
     }
@@ -154,33 +158,24 @@ export const topFiltersHandler = () => {
 
 export const filterData = () => {
     const filters = state['currentTopFilters'].map(filter => filter.name)
-    if (filters.length) {
-        console.log('фильтруем')
-        state['filtered'] = true
-        state['filteredOrders'] = state['orders'].filter(order => {
-            let flag = false
 
-            if (order.db_routes) {
-                order.db_routes.forEach(route => {
-                    if (filters.includes(route.plot)) {
-                        flag = true
-                    }
-                })
-            }
+    state['filteredOrders'] = state['orders'].filter(order => {
+        let flag = false
 
-            return flag
-        })
+        if (order.db_routes) {
+            order.db_routes.forEach(route => {
+                if (filters.includes(route.plot)) {
+                    flag = true
+                }
+            })
+        }
 
-        deleteOrders()
-        state['filteredOrders'].forEach(order => {
-            globalFilterOrders(order)
-        })
-        bindOrdersListeners()
-    } else {
-        getOrders()
-    }
+        return flag
+    })
 
-    if (state['filtered']) {
-
-    }
+    deleteOrders()
+    state['filteredOrders'].forEach(order => {
+        globalFilterOrders(order)
+    })
+    bindOrdersListeners()
 }

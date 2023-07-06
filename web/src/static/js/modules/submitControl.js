@@ -58,8 +58,8 @@ export const deleteCancelBtn = () => {
 }
 
 export const showResult = status => {
-    let sucTitle = document.querySelector('.success')
-    let errTitle = document.querySelector('.error')
+    let sucTitle = document.querySelector('h3.success')
+    let errTitle = document.querySelector('h3.error')
     const nav = document.querySelector(".main-header__nav")
     if (status) {
         if (sucTitle === null && errTitle === null) {
@@ -77,8 +77,8 @@ export const showResult = status => {
             `)
         }
     }
-    sucTitle = document.querySelector('.success')
-    errTitle = document.querySelector('.error')
+    sucTitle = document.querySelector('h3.success')
+    errTitle = document.querySelector('h3.error')
     setTimeout(() => {
         if (sucTitle !== null) {
             sucTitle.remove()
@@ -91,7 +91,6 @@ export const showResult = status => {
 
 addOrder.addEventListener('click', e => {
     drawSubmit()
-    console.log(state['managers'])
     table.insertAdjacentHTML('afterbegin', orderHTML)
     drawManagers('.table-m-select', state['managers'], 'adfasdfsdfsdada')
     drawDeadlineP('.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')

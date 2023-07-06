@@ -3,6 +3,7 @@ import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
 import {sendData} from "./sendData";
 import {submitData} from "./submitOrdersData";
+import {subCommentByEnter} from "./routesModal";
 
 
 export const filesModal = `
@@ -36,6 +37,7 @@ const deleteFiles = () => {
 }
 
 const sendFiles = (files, filesInput, old) => {
+    console.log(old)
     const formData = new FormData()
     for (let file of files) {
         formData.append('files', file)
@@ -52,7 +54,6 @@ const sendFiles = (files, filesInput, old) => {
         let newData = currentData.concat(data.data).filter(file => file !== '')
         newData = [...new Set(newData)]
         filesInput.value = newData.join(', ')
-        drawSubmit()
         const parent = filesInput.closest('form')
         drop.classList.add('success')
         drop.textContent = 'Файлы успешно загружены'
@@ -67,14 +68,17 @@ const sendFiles = (files, filesInput, old) => {
             drop.textContent = 'Укажите файлы для загрузки'
         }, 1000)
 
-        if (old) submitData()
+        if (old) {
+            // submitData()
+        } else {
+            drawSubmit()
+        }
     })
 }
 
 export function triggerFilesModal(e) {
     const parent = e.target.closest('ul')
     const old = parent.parentNode.classList.contains('table-form--old')
-    console.log(parent.parentNode)
     const filesInputData = parent.querySelector('input[name="files"]')
     const db = parent.querySelector('#db_id').value
     const enter = parent.querySelector('#timestamp').value
@@ -85,6 +89,14 @@ export function triggerFilesModal(e) {
     modalHeader.querySelector('.modal-header__number').textContent = '№ заказа ' + number
     modalHeader.querySelector('.modal-header__enter').textContent = enter
 
+    modalElem.addEventListener('click', ev => {
+        if (ev.target === modalElem) {
+            if (old) {
+                submitData()
+            }
+        }
+    })
+
     const downloadTrigger = document.querySelector('.modal__trigger')
 
     if (!state['operCheck']) {
@@ -92,7 +104,7 @@ export function triggerFilesModal(e) {
             const filesInput = document.querySelector('.modal__files')
             filesInput.addEventListener('change', e => {
                 const files = e.target.files
-                sendFiles(files, filesInputData)
+                sendFiles(files, filesInputData, old)
             })
             filesInput.click()
         })
@@ -113,7 +125,7 @@ export function triggerFilesModal(e) {
         modalElem.querySelector('.order__files').addEventListener('submit', e => {
             e.preventDefault()
             const filesData = document.querySelector('.modal__files')
-            sendFiles(filesData.files, filesInputData)
+            sendFiles(filesData.files, filesInputData, old)
         })
     } else {
         downloadTrigger.remove()

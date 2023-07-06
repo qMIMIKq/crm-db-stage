@@ -1,52 +1,17 @@
 package handler
 
 import (
-	"bytes"
-	"crm/internal/repository"
 	"crm/internal/services"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
-	"io"
-	"mime/multipart"
 	"net/http"
-	"os"
 )
 
 type Handler struct {
-	services *services.Services
+	services   *services.Services
+	lastChange string
 }
 
 func (h *Handler) InitRoutes(router *gin.Engine) {
-	router.GET("/test", func(c *gin.Context) {
-		client := &http.Client{}
-		body := &bytes.Buffer{}
-		writer := multipart.NewWriter(body)
-		fw, err := writer.CreateFormFile("file", "Уголок_YpiaZs8.DXF")
-		if err != nil {
-			log.Fatal().Caller().Err(err).Msg("error")
-		}
-
-		file, err := os.Open(repository.DataPath + "Уголок_YpiaZs8.DXF")
-		if err != nil {
-			log.Fatal().Caller().Err(err).Msg("error")
-		}
-		_, err = io.Copy(fw, file)
-		if err != nil {
-			log.Fatal().Caller().Err(err).Msg("error")
-		}
-		writer.Close()
-
-		req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:5000/dxf-convert", bytes.NewReader(body.Bytes()))
-		if err != nil {
-			log.Fatal().Caller().Err(err).Msg("error")
-		}
-		req.Header.Set("Content-Type", writer.FormDataContentType())
-		rsp, err := client.Do(req)
-		if rsp.StatusCode != http.StatusOK {
-			log.Fatal().Caller().Err(err).Msg("error")
-		}
-	})
-
 	auth := router.Group("/auth")
 	{
 		auth.POST("/sign-in", h.signIn)

@@ -2,6 +2,7 @@ import {deleteOrders, getOrders} from './orders';
 import {state} from './state';
 import {bindOrdersListeners} from "./bindListeners";
 import {globalFilterOrders} from "./filterOrders";
+import {filterData} from "./topFilters";
 
 
 export const tableFiltersWrapper = document.querySelector('.main-table__header')
@@ -73,9 +74,11 @@ const filterOrders = (type, filter) => {
     console.log(state['tableFilters'])
 
     deleteOrders()
+    const filters = state['currentTopFilters'].map(filter => filter.name)
     state['orders'].forEach(o => {
-        globalFilterOrders(o)
+        globalFilterOrders(o, filters)
     })
+    filterData()
     bindOrdersListeners()
 }
 

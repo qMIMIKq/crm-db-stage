@@ -9,7 +9,6 @@ import (
 	"crm/pkg/database"
 	"crm/pkg/logger"
 	"github.com/rs/zerolog/log"
-	"gopkg.in/gographics/imagick.v3/imagick"
 )
 
 // migrate create -ext sql -dir ./schema -seq init - new migrate
@@ -27,13 +26,13 @@ func main() {
 	if err != nil {
 		log.Fatal().Caller().Err(err).Msg("error connecting to database")
 	}
+	//
+	//imagick.Initialize()
+	//defer imagick.Terminate()
+	//mw := imagick.NewMagickWand()
+	//defer mw.Destroy()
 
-	imagick.Initialize()
-	defer imagick.Terminate()
-	mw := imagick.NewMagickWand()
-	defer mw.Destroy()
-
-	repos := repository.NewRepository(pgDb, mw)
+	repos := repository.NewRepository(pgDb)
 	service := services.NewService(repos)
 	mainHandler := transport.NewMainHandler(service)
 

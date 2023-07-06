@@ -55,8 +55,9 @@ export const triggerCommentsModal = e => {
         let value = commentElem.value
         let today = new Date(Date.now()).toISOString()
         today = today.substring(0, today.length - 8).split("T").join(" ")
+        const old = parent.classList.contains('table-form--old')
 
-        value = `${today} ${user.name} "${value}"`
+        value = `${today} ${user.name} ${value}`
         commentsArr.push(value)
         newCommentsArr.push(value)
 
@@ -66,13 +67,23 @@ export const triggerCommentsModal = e => {
         ev.target.textContent = 'Успешно'
         commentElem.value = ''
         deleteComments()
+
+        modalElem.addEventListener('click', event => {
+            if (event.target === modalElem) {
+                if (old) {
+                    submitData()
+                }
+            }
+        })
+
         drawComments(commentsList, commentsArr)
-        if (parent.classList.contains('table-form--old')) {
+        if (old) {
             parent.classList.remove('table-form--old')
             parent.classList.add('table-form--upd')
         } else {
             drawSubmit()
         }
+
         setTimeout(() => {
             ev.target.textContent = 'Сохранить'
             ev.target.setAttribute('disabled', '')
