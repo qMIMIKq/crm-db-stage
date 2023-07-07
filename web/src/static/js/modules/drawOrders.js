@@ -209,32 +209,6 @@ export const drawOrders = async (d, data, users) => {
 
     const currentOrder = document.getElementById(`form-${d.id}`)
 
-    if (state['openedOrders'].includes(String(d.id))) {
-        currentOrder.querySelectorAll('.table__data').forEach(item => {
-            if (!item.classList.contains('tr')) {
-                if (!item.classList.contains('table__data--opened')) {
-                    item.classList.add('table__data--opened')
-                }
-            } else {
-                item.classList.add('table__data--chosen')
-            }
-
-        })
-        try {
-            currentOrder.querySelector('.table-routes__issued').classList.toggle('hidden__input')
-            currentOrder.querySelector('.table__complete').classList.toggle('hidden__input')
-        } catch {
-        }
-    }
-
-    if (String(d.id) === state['currentOrder']) {
-        currentOrder.querySelectorAll('.table__data').forEach(item => {
-            if (!item.classList.contains('table__data--opened')) {
-                item.classList.add('table__data--chosen')
-            }
-        })
-    }
-
     const completedBlock = currentOrder.querySelector('.table__issued--done')
     if (completedBlock) {
         completedBlock.insertAdjacentHTML(`afterend`, `
@@ -261,6 +235,33 @@ export const drawOrders = async (d, data, users) => {
         })
     }
 
+    if (state['openedOrders'].includes(String(d.id))) {
+        currentOrder.querySelectorAll('.table__data').forEach(item => {
+            if (!item.classList.contains('tr')) {
+                if (!item.classList.contains('table__data--opened')) {
+                    item.classList.add('table__data--opened')
+                }
+            } else {
+                item.classList.add('table__data--chosen')
+            }
+        })
+        try {
+            currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input')
+            const complete = currentOrder.querySelector('.table__complete')
+            complete.classList.remove('hidden__input')
+            complete.querySelector('.tr').classList.add('table-data__chosen')
+        } catch {
+        }
+    }
+
+    if (String(d.id) === state['currentOrder']) {
+        currentOrder.querySelectorAll('.table__data').forEach(item => {
+            if (!item.classList.contains('table__data--opened')) {
+                item.classList.add('table__data--chosen')
+            }
+        })
+    }
+
     addTriggers(".table__files", triggerFilesModal)
     addTriggers(".table__route", triggerRoutesModal)
     addTriggers(".table__comment", triggerCommentsModal)
@@ -268,7 +269,6 @@ export const drawOrders = async (d, data, users) => {
     drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
     drawManagers(".table-m-select", users, d.m)
 
-    const jsonRoute = document.querySelector("input[name='routes_json']")
     const routesWrapper = document.querySelector(".table-routes__wrapper")
     const routesIssuedWrapper = document.querySelector(".table-routes__issued")
 

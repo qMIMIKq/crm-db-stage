@@ -86,7 +86,7 @@ export const showResult = status => {
         if (errTitle !== null) {
             errTitle.remove()
         }
-    }, 1500)
+    }, 500)
 }
 
 addOrder.addEventListener('click', e => {

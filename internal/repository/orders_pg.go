@@ -241,7 +241,7 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 	log.Info().Msg("Getting orders")
 
 	query := fmt.Sprintf(`
-		SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC;
+		SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC LIMIT 50;
 	`)
 
 	queryFiles := fmt.Sprintf(`

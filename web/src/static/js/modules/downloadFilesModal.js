@@ -3,7 +3,6 @@ import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
 import {sendData} from "./sendData";
 import {submitData} from "./submitOrdersData";
-import {subCommentByEnter} from "./routesModal";
 
 
 export const filesModal = `
@@ -37,7 +36,6 @@ const deleteFiles = () => {
 }
 
 const sendFiles = (files, filesInput, old) => {
-    console.log(old)
     const formData = new FormData()
     for (let file of files) {
         formData.append('files', file)
@@ -130,10 +128,10 @@ export function triggerFilesModal(e) {
     } else {
         downloadTrigger.remove()
     }
-    drawFiles(modalElem, filesInputData.value, db)
+    drawFiles(modalElem, filesInputData.value, db, parent)
 }
 
-export const drawFiles = (modal, files, id) => {
+export const drawFiles = (modal, files, id, parent) => {
     const data = modal.querySelector('.data')
     if (files.length) {
         const fileNames = []
@@ -226,6 +224,5 @@ export const drawFiles = (modal, files, id) => {
                 file.click()
             })
         })
-
     }
 }

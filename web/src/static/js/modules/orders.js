@@ -20,10 +20,13 @@ import {drawOrders} from "./drawOrders";
 import {filterData} from "./topFilters";
 
 export const getOrders = () => {
+    document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
+        <h3 class="warning">Обновляем таблицу...</h3>
+    `)
+
     const filters = state['currentTopFilters'].map(filter => filter.name)
     console.time('get orders')
     fetch(`${appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
-        console.log('orders HERE')
         const nums = []
         const clients = []
         const materials = []
@@ -84,10 +87,11 @@ export const getOrders = () => {
                 drawTableFilter([...new Set(deadlines)], deadlineFilter)
                 drawTableFilter([...new Set(timestamps)], timestampFilter)
 
+                document.querySelector('.table-info').querySelector('.warning').remove()
                 const totalOrders = document.querySelector('.orders__total')
                 if (totalOrders === null) {
-                    document.querySelector('.main').insertAdjacentHTML('beforeend', `
-                     <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
+                    document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
+                        <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
                     `)
                 } else {
                     totalOrders.textContent = `Всего в работе ${data.data.length}`
@@ -97,6 +101,7 @@ export const getOrders = () => {
                 bindTableFilters()
 
                 console.timeEnd('get orders')
+
                 document.querySelectorAll(".table-form").forEach(form => {
                     form.addEventListener('click', e => {
                         console.log("I am form hi)")

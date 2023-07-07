@@ -5,9 +5,11 @@ import {globalFilterOrders} from "./filterOrders";
 import {bindOrdersListeners} from "./bindListeners";
 
 export const topFiltersHandler = () => {
+    let filtered
     const plotFilters = document.querySelector('.nav-filters__plots')
     const filterFilters = document.querySelector('.nav-filters__filters')
     const selectUser = document.querySelector('.select-user')
+    const nav = document.querySelector('.nav-filters')
     const extensions = ['все']
     const checkExt = (extensions, ext) => {
         let flag = false
@@ -48,14 +50,18 @@ export const topFiltersHandler = () => {
                 } else {
                     state['currentTopPlots'] = state['currentTopPlots'].filter(cP => cP !== plot)
                 }
-
+                console.log(e.target.value)
                 target.classList.toggle('chosen__plot')
                 target.classList.toggle('nav-filters__button--chosen')
                 filterByPlots()
                 if (state['currentTopFilters'].length) {
                     filterData()
+                    filtered = true
+                    controlFilterReset()
                 } else {
                     getOrders()
+                    filtered = false
+                    controlFilterReset()
                 }
             })
         })
@@ -111,11 +117,41 @@ export const topFiltersHandler = () => {
 
                 if (state['currentTopFilters'].length) {
                     filterData()
+                    filtered = true
+                    controlFilterReset()
                 } else {
                     getOrders()
+                    filtered = false
+                    controlFilterReset()
                 }
             })
         })
+    }
+
+    const controlFilterReset = () => {
+        const resetBtn = document.querySelector('.nav-filters__reset')
+        if (filtered) {
+            if (!resetBtn) {
+                nav.insertAdjacentHTML('beforeend', `
+                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+                `)
+
+                document.querySelector('.nav-filters__reset').addEventListener('click', () => {
+                    state['currentTopFilters'] = []
+                    document.querySelector('.nav-filters__reset').remove()
+                    getOrders()
+
+                    nav.querySelectorAll('.nav-filters__button').forEach(btn => {
+                        console.log(btn)
+                        btn.classList.remove('nav-filters__button--chosen')
+                        btn.classList.remove('chosen__plot')
+                        btn.classList.remove('chosen__filter')
+                    })
+                })
+            }
+        } else {
+            document.querySelector('.nav-filters__reset').remove()
+        }
     }
 
     const drawUsers = users => {

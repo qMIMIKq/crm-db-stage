@@ -1,6 +1,7 @@
 .nav-filters {
   margin-top: 15px;
   margin-bottom: 30px;
+  position: relative;
 
   border: 1px solid black;
   border-radius: 5px;
@@ -15,8 +16,8 @@
     align-items: center;
 
     &:not(:last-child) {
-      padding-bottom: 12px;
-      margin-bottom: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
   }
 
@@ -36,6 +37,16 @@
 
 .nav-filters {
   &__plots {
+    margin-top: 15px;
     border-bottom: 1px solid black;
+  }
+  &__filters {
+    margin-bottom: 0 !important;
+  }
+
+  &__reset {
+    width: 131px;
+    display: block;
+    align-self: center;
   }
 }

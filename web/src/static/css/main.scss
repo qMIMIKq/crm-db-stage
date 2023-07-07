@@ -85,6 +85,11 @@ ul {
   color: red !important;
 }
 
+.warning {
+  color: #c0c03b !important;
+  margin-right: 10px;
+}
+
 .click-chose,
 .click-select {
   cursor: pointer !important;
@@ -145,4 +150,25 @@ button:disabled {
     outline: none;
     border: none;
   }
+}
+
+.admin-form__button {
+  width: 130px;
+  transition: color .3s;
+  position: absolute;
+  right: 24px;
+
+  &:hover {
+    transition: color .3s;
+    color: $hover_aqua;
+  }
+}
+
+.search {
+  display: flex;
+  align-items: center;
+}
+
+.orders__total {
+  margin-right: 10px;
 }
