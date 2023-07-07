@@ -24,6 +24,7 @@ module.exports = {
         path: path.resolve(__dirname, "web/dist"),
         clean: true,
         filename: "static/js/[name].js",
+        // filename: "static/js/[name].[contenthash].js",
         assetModuleFilename: "static/css/[name]/[name][ext]"
     },
     plugins: [

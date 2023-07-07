@@ -253,11 +253,11 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 	`)
 
 	queryRoutes := fmt.Sprintf(`
-		SELECT r.route_position, r.issued, r.start_time, 
+		SELECT r.route_position, r.issued, r.start_time,
 					 r.end_time, r.otk_time, r.error_time,
 					 r.error_value, r.quantity, r.worker, r.plot_id, r.route_id
-      FROM routes r
-     WHERE order_id = $1
+	   FROM routes r
+	  WHERE order_id = $1
 	`)
 
 	queryRouteComments := fmt.Sprintf(`
@@ -276,38 +276,56 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 
 	var orders []*domain.Order
 	err = o.db.Select(&orders, query)
-
-	var files []string
-	var comments []string
-	var routes []*domain.Route
+	//check := make(chan bool)
 	for _, order := range orders {
-		err = o.db.Select(&files, queryFiles, order.ID)
-		for _, f := range files {
-			order.Files = append(order.Files, f)
-		}
-
-		err = o.db.Select(&comments, queryComments, order.ID)
-		for _, c := range comments {
-			order.Comments = append(order.Comments, c)
-		}
-
-		err = o.db.Select(&routes, queryRoutes, order.ID)
-
-		for _, route := range routes {
+		//go o.getOrderSubInfo(files, comments, routes, order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued, &err, check)
+		//fmt.Println(<-check)
+		err = o.db.Select(&order.Files, queryFiles, order.ID)
+		err = o.db.Select(&order.Comments, queryComments, order.ID)
+		err = o.db.Select(&order.DbRoutes, queryRoutes, order.ID)
+		for _, route := range order.DbRoutes {
 			err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
 		}
-
-		for _, route := range routes {
+		for _, route := range order.DbRoutes {
 			err = o.db.Select(&route.IssuedReport, queryRouteIssued, route.RouteID)
-		}
-
-		for _, r := range routes {
-			order.DbRoutes = append(order.DbRoutes, r)
 		}
 	}
 
 	log.Info().Msg("RETURNING orders")
 	return orders, err
+}
+
+func (o *OrdersPG) getOrderSubInfo(files, comments []string,
+	routes []*domain.Route, order *domain.Order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued string, outErr *error, check chan bool) {
+
+	err := o.db.Select(&files, queryFiles, order.ID)
+	for _, f := range files {
+		order.SetFiles(f)
+	}
+
+	err = o.db.Select(&comments, queryComments, order.ID)
+	for _, c := range comments {
+		order.Comments = append(order.Comments, c)
+	}
+
+	err = o.db.Select(&routes, queryRoutes, order.ID)
+
+	for _, route := range routes {
+		err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
+	}
+
+	for _, route := range routes {
+		err = o.db.Select(&route.IssuedReport, queryRouteIssued, route.RouteID)
+	}
+
+	for _, r := range routes {
+		order.DbRoutes = append(order.DbRoutes, r)
+	}
+
+	log.Info().Interface("order", order.Files).Msg("check order")
+
+	check <- true
+	*outErr = err
 }
 
 func NewOrdersPG(db *sqlx.DB) *OrdersPG {

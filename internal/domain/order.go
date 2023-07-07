@@ -21,6 +21,14 @@ type Order struct {
 	DbRoutes  []*Route          `json:"db_routes"`
 }
 
+func (o *Order) SetFiles(file string) {
+	o.Files = append(o.Files, file)
+}
+
+func (o *Order) SetComments(comment string) {
+	o.Comments = append(o.Comments, comment)
+}
+
 type Route struct {
 	User          string   `json:"user" db:"worker"`
 	RouteID       string   `json:"route_id" db:"route_id"`

@@ -78,7 +78,11 @@ const filterOrders = (type, filter) => {
     state['orders'].forEach(o => {
         globalFilterOrders(o, filters)
     })
-    filterData()
+
+    if (filters.length) {
+        filterData()
+    }
+
     bindOrdersListeners()
 }
 

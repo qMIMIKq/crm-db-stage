@@ -630,14 +630,6 @@ const drawOrders = async (d, data, users) => {
     });
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
-  const admManCheck = _state__WEBPACK_IMPORTED_MODULE_7__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_7__.state.manCheck;
-  const admTechCheck = _state__WEBPACK_IMPORTED_MODULE_7__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_7__.state.techCheck;
-  const admManTechCheck = admManCheck || _state__WEBPACK_IMPORTED_MODULE_7__.state.techCheck;
-  const inputAdmManGroupper = admManCheck ? '' : 'readonly';
-  const inputAdmManTechGroupper = admManTechCheck ? '' : 'readonly';
-  const inputAdmTechGroupper = admTechCheck ? '' : 'readonly';
-  const selectAdmManGroupper = admManCheck ? '' : 'disabled';
-  const selectAdmManTechGroupper = admManTechCheck ? '' : 'disabled';
   const orderCompleted = d.quantity === d.issued && d.quantity !== '';
   table.insertAdjacentHTML(`afterbegin`, `
                 <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
@@ -656,27 +648,27 @@ const drawOrders = async (d, data, users) => {
                     </li>
                     <li class='table-body_cell table__number'>
                         <input 
-                        ${inputAdmManGroupper}
+                        ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper}
                         id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__sample'>
                         <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__client'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+                        <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__name'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+                        <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__material'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+                        <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__quantity'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
+                        <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
                     </li>
                     <ul class="table__issueds">
                         <li class="table-body_cell table__issued">
-                            <input ${inputAdmTechGroupper} class="table__data ${orderCompleted ? "table__issued--done tr" : ""}" tabindex="-1"
+                            <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmTechGroupper} class="table__data ${orderCompleted ? "table__issued--done tr" : ""}" tabindex="-1"
                             type="number" 
                             name="issued" 
                             required  autocomplete="off"
@@ -687,13 +679,13 @@ const drawOrders = async (d, data, users) => {
                         <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
                     </li>
                     <li class="table-body_cell table__m">
-                        <select ${selectAdmManGroupper} class="table__data table-m-select main__button" name="m" id="">
+                        <select ${_state__WEBPACK_IMPORTED_MODULE_7__.state.selectAdmManGroupper} class="table__data table-m-select main__button" name="m" id="">
                             <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data "
-                        ${inputAdmManTechGroupper} 
+                        ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManTechGroupper} 
                         name="end_time" 
                         type="text"
                         placeholder=" " 
@@ -781,7 +773,7 @@ const drawOrders = async (d, data, users) => {
                         </ul>
                     </li>
                     <li class="table-body_cell table__p">
-                        <select ${selectAdmManTechGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                        <select ${_state__WEBPACK_IMPORTED_MODULE_7__.state.selectAdmManTechGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                             <option selected value=""></option>
                         </select>
                     </li>
@@ -805,7 +797,7 @@ const drawOrders = async (d, data, users) => {
                     </li>
                     
                     <li class="table-body_cell table__comment">
-                        <input ${inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
+                        <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
                             value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
@@ -1139,7 +1131,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-let searchedOrders = [];
 const getOrders = () => {
   const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
   console.time('get orders');
@@ -1154,13 +1145,12 @@ const getOrders = () => {
     const managers = [];
     const deadlines = [];
     const timestamps = [];
-    (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
-    deleteOrders();
     (0,_getData__WEBPACK_IMPORTED_MODULE_3__.getData)('users/get-users').then(res => {
+      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
+      deleteOrders();
       data.data.forEach(d => {
         _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
         _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
-        searchedOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
         nums.push(d.number);
         clients.push(d.client);
         materials.push(d.material);
@@ -1173,14 +1163,18 @@ const getOrders = () => {
         if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
           _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
         }
-        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered && filters) {
+        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered && filters.length) {
+          console.log('big filter');
           (0,_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)(d, filters);
           (0,_topFilters__WEBPACK_IMPORTED_MODULE_6__.filterData)();
         } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-          (0,_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)();
+          console.log('table filter');
+          (0,_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)(d);
         } else if (filters.length) {
+          console.log('top filter');
           (0,_topFilters__WEBPACK_IMPORTED_MODULE_6__.filterData)();
         } else {
+          console.log('draw only');
           (0,_drawOrders__WEBPACK_IMPORTED_MODULE_5__.drawOrders)(d, data, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
         }
       });
@@ -2041,7 +2035,9 @@ __webpack_require__.r(__webpack_exports__);
 //192.168.1.231
 //172.20.10.7
 
-let appAddr = 'http://192.168.1.231:8182';
+// let addr = process.env.CHECK
+// console.log(addr)
+let appAddr = 'http://172.20.10.7:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
@@ -2079,6 +2075,14 @@ if (userInf) {
   state['techCheck'] = userInf.group === 'технолог';
   state['operCheck'] = userInf.group === 'оператор';
   state['manCheck'] = userInf.group === 'менеджер';
+  const admManCheck = state['adminCheck'] || state['manCheck'];
+  const admTechCheck = state['adminCheck'] || state['techCheck'];
+  const admManTechCheck = admManCheck || state['techCheck'];
+  state['inputAdmManGroupper'] = admManCheck ? '' : 'readonly';
+  state['inputAdmManTechGroupper'] = admManTechCheck ? '' : 'readonly';
+  state['inputAdmTechGroupper'] = admTechCheck ? '' : 'readonly';
+  state['selectAdmManGroupper'] = admManCheck ? '' : 'disabled';
+  state['selectAdmManTechGroupper'] = admManTechCheck ? '' : 'disabled';
 }
 
 
@@ -2405,7 +2409,9 @@ const filterOrders = (type, filter) => {
   _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.forEach(o => {
     (0,_filterOrders__WEBPACK_IMPORTED_MODULE_3__.globalFilterOrders)(o, filters);
   });
-  (0,_topFilters__WEBPACK_IMPORTED_MODULE_4__.filterData)();
+  if (filters.length) {
+    (0,_topFilters__WEBPACK_IMPORTED_MODULE_4__.filterData)();
+  }
   (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
 };
 const bindFilter = elem => {
@@ -2517,7 +2523,11 @@ const topFiltersHandler = () => {
         target.classList.toggle('chosen__plot');
         target.classList.toggle('nav-filters__button--chosen');
         filterByPlots();
-        filterData();
+        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
+          filterData();
+        } else {
+          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)();
+        }
       });
     });
   };

@@ -19,8 +19,6 @@ import {globalFilterOrders} from "./filterOrders";
 import {drawOrders} from "./drawOrders";
 import {filterData} from "./topFilters";
 
-let searchedOrders = []
-
 export const getOrders = () => {
     const filters = state['currentTopFilters'].map(filter => filter.name)
     console.time('get orders')
@@ -36,15 +34,14 @@ export const getOrders = () => {
         const deadlines = []
         const timestamps = []
 
-        deleteTableFilters()
-        deleteOrders()
-
         getData('users/get-users')
             .then(res => {
+                deleteTableFilters()
+                deleteOrders()
+
                 data.data.forEach(d => {
                     state['orders'] = data.data
                     state['filteredOrders'] = state['orders'].filter(o => o)
-                    searchedOrders = state['orders'].filter(o => o)
 
                     nums.push(d.number)
                     clients.push(d.client)
@@ -60,14 +57,18 @@ export const getOrders = () => {
                         state['managers'] = res.data.filter(user => user.group === 'менеджер')
                     }
 
-                    if (state['filtered'] && filters) {
+                    if (state['filtered'] && filters.length) {
+                        console.log('big filter')
                         globalFilterOrders(d, filters)
                         filterData()
                     } else if (state['filtered']) {
-                        globalFilterOrders()
+                        console.log('table filter')
+                        globalFilterOrders(d)
                     } else if (filters.length) {
+                        console.log('top filter')
                         filterData()
                     } else {
+                        console.log('draw only')
                         drawOrders(d, data, state['managers'])
                     }
 
@@ -91,10 +92,11 @@ export const getOrders = () => {
                 } else {
                     totalOrders.textContent = `Всего в работе ${data.data.length}`
                 }
+
                 bindOrdersListeners()
                 bindTableFilters()
-                console.timeEnd('get orders')
 
+                console.timeEnd('get orders')
                 document.querySelectorAll(".table-form").forEach(form => {
                     form.addEventListener('click', e => {
                         console.log("I am form hi)")

@@ -52,7 +52,11 @@ export const topFiltersHandler = () => {
                 target.classList.toggle('chosen__plot')
                 target.classList.toggle('nav-filters__button--chosen')
                 filterByPlots()
-                filterData()
+                if (state['currentTopFilters'].length) {
+                    filterData()
+                } else {
+                    getOrders()
+                }
             })
         })
     }

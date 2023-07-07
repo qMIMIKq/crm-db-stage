@@ -12,7 +12,6 @@ import {drawSubmit} from "./submitControl";
 
 export const table = document.querySelector('.main-table')
 
-
 export const drawOrders = async (d, data, users) => {
     controlFiltersReset()
     let uniqueFileNames = []
@@ -29,16 +28,6 @@ export const drawOrders = async (d, data, users) => {
         })
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
-
-    const admManCheck = state['adminCheck'] || state['manCheck']
-    const admTechCheck = state['adminCheck'] || state['techCheck']
-    const admManTechCheck = admManCheck || state['techCheck']
-
-    const inputAdmManGroupper = admManCheck ? '' : 'readonly'
-    const inputAdmManTechGroupper = admManTechCheck ? '' : 'readonly'
-    const inputAdmTechGroupper = admTechCheck ? '' : 'readonly'
-    const selectAdmManGroupper = admManCheck ? '' : 'disabled'
-    const selectAdmManTechGroupper = admManTechCheck ? '' : 'disabled'
     const orderCompleted = d.quantity === d.issued && d.quantity !== ''
 
     table.insertAdjacentHTML(`afterbegin`, `
@@ -58,27 +47,27 @@ export const drawOrders = async (d, data, users) => {
                     </li>
                     <li class='table-body_cell table__number'>
                         <input 
-                        ${inputAdmManGroupper}
+                        ${state['inputAdmManGroupper']}
                         id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__sample'>
                         <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__client'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+                        <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__name'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+                        <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__material'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+                        <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__quantity'>
-                        <input ${inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
+                        <input ${state['inputAdmManGroupper']} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
                     </li>
                     <ul class="table__issueds">
                         <li class="table-body_cell table__issued">
-                            <input ${inputAdmTechGroupper} class="table__data ${orderCompleted ? "table__issued--done tr" : ""}" tabindex="-1"
+                            <input ${state["inputAdmTechGroupper"]} class="table__data ${orderCompleted ? "table__issued--done tr" : ""}" tabindex="-1"
                             type="number" 
                             name="issued" 
                             required  autocomplete="off"
@@ -89,13 +78,13 @@ export const drawOrders = async (d, data, users) => {
                         <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
                     </li>
                     <li class="table-body_cell table__m">
-                        <select ${selectAdmManGroupper} class="table__data table-m-select main__button" name="m" id="">
+                        <select ${state["selectAdmManGroupper"]} class="table__data table-m-select main__button" name="m" id="">
                             <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">
                         <input class="main__button table__data "
-                        ${inputAdmManTechGroupper} 
+                        ${state["inputAdmManTechGroupper"]} 
                         name="end_time" 
                         type="text"
                         placeholder=" " 
@@ -183,7 +172,7 @@ export const drawOrders = async (d, data, users) => {
                         </ul>
                     </li>
                     <li class="table-body_cell table__p">
-                        <select ${selectAdmManTechGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                        <select ${state["selectAdmManTechGroupper"]} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                             <option selected value=""></option>
                         </select>
                     </li>
@@ -207,7 +196,7 @@ export const drawOrders = async (d, data, users) => {
                     </li>
                     
                     <li class="table-body_cell table__comment">
-                        <input ${inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
+                        <input ${state["inputAdmManTechGroupper"]} class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
                             value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 

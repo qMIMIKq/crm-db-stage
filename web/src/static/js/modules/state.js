@@ -1,7 +1,9 @@
 //192.168.1.231
 //172.20.10.7
 
-export let appAddr = 'http://192.168.1.231:8182'
+// let addr = process.env.CHECK
+// console.log(addr)
+export let appAddr = 'http://172.20.10.7:8182'
 const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
@@ -33,7 +35,7 @@ let state = {
         'm': '',
         'end_time': '',
         'timestamp': '',
-    }
+    },
 }
 
 if (userInf) {
@@ -41,6 +43,16 @@ if (userInf) {
     state['techCheck'] = userInf.group === 'технолог'
     state['operCheck'] = userInf.group === 'оператор'
     state['manCheck'] = userInf.group === 'менеджер'
+
+    const admManCheck = state['adminCheck'] || state['manCheck']
+    const admTechCheck = state['adminCheck'] || state['techCheck']
+    const admManTechCheck = admManCheck || state['techCheck']
+
+    state['inputAdmManGroupper'] = admManCheck ? '' : 'readonly'
+    state['inputAdmManTechGroupper'] = admManTechCheck ? '' : 'readonly'
+    state['inputAdmTechGroupper'] = admTechCheck ? '' : 'readonly'
+    state['selectAdmManGroupper'] = admManCheck ? '' : 'disabled'
+    state['selectAdmManTechGroupper'] = admManTechCheck ? '' : 'disabled'
 }
 
 export {state}
