@@ -280,8 +280,25 @@ export const drawOrders = async (d, data, users) => {
             const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
 
             if (dataInput) {
+                const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`)
+
                 dataInput.value = JSON.stringify(route)
-                dataInput.parentNode.querySelector(`input[value="-"]`).value = route["plot"].toUpperCase()
+                routeInfo.value = route.plot.toUpperCase()
+
+                if (route.start_time) {
+                    routeInfo.classList.add('route--started')
+                }
+
+                if (route.issued && route.quantity && route.issued === route.quantity) {
+                    routeInfo.classList.add('route--completed')
+                    routeInfo.classList.remove('route--started')
+                }
+
+                if (route.error_msg) {
+                    routeInfo.classList.add('route--error')
+                    routeInfo.classList.remove('route--started')
+                    routeInfo.classList.remove('route--completed')
+                }
             }
 
             if (dataIssuedInput) {

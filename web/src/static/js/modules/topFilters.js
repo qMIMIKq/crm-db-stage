@@ -21,15 +21,24 @@ export const topFiltersHandler = () => {
         return flag
     }
 
-    const drawTopPanel = (data, block) => {
+    const drawTopPanel = (data, block, short) => {
         data.forEach(d => {
             let condition = !checkExt(extensions, d.name)
             if (condition) {
-                block.insertAdjacentHTML('beforeend', `
-                <li class='nav-filters__item'>
-                    <button class='nav-filters__button main__button'>${d.name.toUpperCase()}</button>
-                 </li>
-        `)
+                if (short) {
+                    block.insertAdjacentHTML('beforeend', `
+                    <li class='nav-filters__item'>
+                        <button class='nav-filters__button main__button'>${d.short_name.toUpperCase()}</button>
+                        <input class='hidden__input' value="${d.name.toUpperCase()}"/>
+                     </li>
+                    `)
+                } else {
+                    block.insertAdjacentHTML('beforeend', `
+                    <li class='nav-filters__item'>
+                        <button class='nav-filters__button main__button'>${d.name.toUpperCase()}</button>
+                     </li>
+                    `)
+                }
             }
         })
     }
@@ -43,14 +52,13 @@ export const topFiltersHandler = () => {
         btns.forEach(btn => {
             btn.addEventListener('click', e => {
                 const target = e.target
-                const plot = target.textContent.toLowerCase()
+                const plot = target.parentNode.querySelector('input').value.toLowerCase()
 
                 if (!target.classList.contains('chosen__plot')) {
                     state['currentTopPlots'].push(plot)
                 } else {
                     state['currentTopPlots'] = state['currentTopPlots'].filter(cP => cP !== plot)
                 }
-                console.log(e.target.value)
                 target.classList.toggle('chosen__plot')
                 target.classList.toggle('nav-filters__button--chosen')
                 filterByPlots()
@@ -177,7 +185,7 @@ export const topFiltersHandler = () => {
 
         await getData('plots/get-all')
             .then(data => {
-                drawTopPanel(data.data, plotFilters)
+                drawTopPanel(data.data, plotFilters, true)
                 plots = data.data
                 state['topPlots'] = plots
             }).then(_ => plotListener(plotFilters))

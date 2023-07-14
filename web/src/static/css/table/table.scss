@@ -290,6 +290,23 @@ input.tr {
   }
 }
 
+.route {
+  &--started {
+    background: yellow;
+    color: black !important;
+  }
+
+  &--error {
+    background: red;
+    color: black !important;
+  }
+
+  &--completed {
+    background: green;
+    color: black !important;
+  }
+}
+
 .table-info {
   display: flex;
   align-items: center;

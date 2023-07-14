@@ -40,7 +40,6 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var err error
 	for _, order := range orders {
-		log.Info().Interface("comments", order.Comments).Msg("comments")
 		_, err = o.db.Exec(query, order.Number, order.Sample,
 			order.Client, order.Name, order.Material, order.Quantity,
 			order.Issued, order.M, order.EndTime, order.OTK,
@@ -131,9 +130,6 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 			}
 		}
-
-		//log.Info().Msgf("pos is %s", routePos)
-
 	}
 
 	return err
@@ -278,15 +274,14 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 	err = o.db.Select(&orders, query)
 	//check := make(chan bool)
 	for _, order := range orders {
-		//go o.getOrderSubInfo(files, comments, routes, order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued, &err, check)
+		//go o.getOrderSubInfo(order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued, &err, check)
 		//fmt.Println(<-check)
+
 		err = o.db.Select(&order.Files, queryFiles, order.ID)
 		err = o.db.Select(&order.Comments, queryComments, order.ID)
 		err = o.db.Select(&order.DbRoutes, queryRoutes, order.ID)
 		for _, route := range order.DbRoutes {
 			err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
-		}
-		for _, route := range order.DbRoutes {
 			err = o.db.Select(&route.IssuedReport, queryRouteIssued, route.RouteID)
 		}
 	}
@@ -295,34 +290,18 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 	return orders, err
 }
 
-func (o *OrdersPG) getOrderSubInfo(files, comments []string,
-	routes []*domain.Route, order *domain.Order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued string, outErr *error, check chan bool) {
-
-	err := o.db.Select(&files, queryFiles, order.ID)
-	for _, f := range files {
-		order.SetFiles(f)
-	}
-
-	err = o.db.Select(&comments, queryComments, order.ID)
-	for _, c := range comments {
-		order.Comments = append(order.Comments, c)
-	}
-
-	err = o.db.Select(&routes, queryRoutes, order.ID)
-
-	for _, route := range routes {
+func (o *OrdersPG) getOrderSubInfo(order *domain.Order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued string, outErr *error, check chan bool) {
+	err := o.db.Select(&order.Files, queryFiles, order.ID)
+	err = o.db.Select(&order.Comments, queryComments, order.ID)
+	err = o.db.Select(&order.DbRoutes, queryRoutes, order.ID)
+	for _, route := range order.DbRoutes {
 		err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
 	}
-
-	for _, route := range routes {
+	for _, route := range order.DbRoutes {
 		err = o.db.Select(&route.IssuedReport, queryRouteIssued, route.RouteID)
 	}
 
-	for _, r := range routes {
-		order.DbRoutes = append(order.DbRoutes, r)
-	}
-
-	log.Info().Interface("order", order.Files).Msg("check order")
+	log.Info().Interface("order", order.ID).Msg("check order")
 
 	check <- true
 	*outErr = err
