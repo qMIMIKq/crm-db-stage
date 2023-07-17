@@ -36,8 +36,9 @@ func (h *Handler) signIn(c *gin.Context) {
 	}
 
 	newDataResponse(c, http.StatusOK, map[string]interface{}{
-		"name":  userInfo.Name,
-		"group": userInfo.Group,
-		"plot":  userInfo.Plot,
+		"name":     userInfo.Name,
+		"group":    userInfo.Group,
+		"plot":     userInfo.Plot,
+		"nickname": userInfo.Nickname,
 	})
 }

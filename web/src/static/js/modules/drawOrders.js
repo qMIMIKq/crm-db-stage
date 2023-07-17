@@ -5,10 +5,12 @@ import {triggerRoutesModal} from './routesModal';
 import {showRoutesIssued} from "./showFull";
 import {triggerCommentsModal} from './commentsModal';
 import {drawDeadlineP} from './drawDeadlineP';
-import {state} from './state';
+import {appAddr, state} from './state';
 import {drawManagers} from './drawManagers';
 import {submitData} from "./submitOrdersData";
 import {drawSubmit} from "./submitControl";
+import {sendData} from "./sendData";
+import {getOrders} from "./orders";
 
 export const table = document.querySelector('.main-table')
 
@@ -34,7 +36,7 @@ export const drawOrders = async (d, data, users) => {
                 <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
                 <ul class='main-table__item'>
                     <li class='table-body_cell table__db'>
-                        <input id='db_id' class='main__button table__data  click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
+                        <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
                     </li>
                     <li class='table-body_cell table__timestamp'>
                         <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex='-1' autocomplete='off'>
@@ -67,7 +69,7 @@ export const drawOrders = async (d, data, users) => {
                     </li>
                     <ul class="table__issueds">
                         <li class="table-body_cell table__issued">
-                            <input ${state["inputAdmTechGroupper"]} class="table__data ${orderCompleted ? "table__issued--done tr" : ""}" tabindex="-1"
+                            <input ${state["inputAdmTechGroupper"]} class="table__data ${orderCompleted && !state["isArchive"] ? "table__issued--done tr" : ""}" tabindex="-1"
                             type="number" 
                             name="issued" 
                             required  autocomplete="off"
@@ -208,9 +210,10 @@ export const drawOrders = async (d, data, users) => {
     `)
 
     const currentOrder = document.getElementById(`form-${d.id}`)
+    const routes = d["db_routes"]
 
     const completedBlock = currentOrder.querySelector('.table__issued--done')
-    if (completedBlock) {
+    if (completedBlock && !state['isArchive']) {
         completedBlock.insertAdjacentHTML(`afterend`, `
             <li class="table-body_cell hidden__input table__complete">
                 <input class="table__data main__button tr" tabindex="-1"
@@ -245,6 +248,17 @@ export const drawOrders = async (d, data, users) => {
                 item.classList.add('table__data--chosen')
             }
         })
+
+        if (d.issued == 0 && state['adminCheck'] && !routes) {
+            currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
+                <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
+            `)
+            document.querySelector('.order__delete').addEventListener('click', e => {
+                sendData(`${appAddr}/api/orders/delete/${d.id}`, 'POST', null).then(() => {
+                    getOrders()
+                })
+            })
+        }
         try {
             currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input')
             const complete = currentOrder.querySelector('.table__complete')
@@ -272,8 +286,6 @@ export const drawOrders = async (d, data, users) => {
     const routesWrapper = document.querySelector(".table-routes__wrapper")
     const routesIssuedWrapper = document.querySelector(".table-routes__issued")
 
-    const routes = d["db_routes"]
-
     if (routes) {
         routes.forEach(route => {
             const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
@@ -296,8 +308,15 @@ export const drawOrders = async (d, data, users) => {
 
                 if (route.error_msg) {
                     routeInfo.classList.add('route--error')
-                    routeInfo.classList.remove('route--started')
-                    routeInfo.classList.remove('route--completed')
+                    if (routeInfo.classList.contains("route--started")) {
+                        routeInfo.style.color = "yellow"
+                        routeInfo.classList.remove('route--started')
+                    }
+
+                    if (routeInfo.classList.contains("route--completed")) {
+                        routeInfo.style.color = "#09d009"
+                        routeInfo.classList.remove('route--completed')
+                    }
                 }
             }
 
@@ -305,6 +324,17 @@ export const drawOrders = async (d, data, users) => {
                 dataIssuedInput.value = route["issued"]
             }
         })
+    } else {
+        if (d.issued == 0 && state['adminCheck']) {
+            currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
+                <input class="hidden__input order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
+            `)
+            document.querySelector('.order__delete').addEventListener('click', e => {
+                sendData(`${appAddr}/api/orders/delete/${d.id}`, 'POST', null).then(() => {
+                    getOrders()
+                })
+            })
+        }
     }
 }
 

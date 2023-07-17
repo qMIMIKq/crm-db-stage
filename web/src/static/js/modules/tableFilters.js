@@ -114,7 +114,7 @@ export const controlFiltersReset = () => {
                 tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
                     cell.style.textDecoration = 'none'
                 })
-                getOrders()
+                getOrders('get-all')
             })
         }
     } else {

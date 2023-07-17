@@ -26,13 +26,12 @@ loginForm.addEventListener("submit", e => {
                 const data = JSON.parse(JSON.stringify(userInfo))
                 state["userInfo"] = {
                     "name": data["data"].name,
+                    "nickname": data["data"].nickname,
                     "group": data["data"].group,
                     "plot": data["data"].plot,
                 }
+
                 sessionStorage.setItem("user", JSON.stringify(state["userInfo"]))
-
-                console.log(state["userInfo"])
-
                 window.location.replace(`${appAddr}/main/table`)
             })
 

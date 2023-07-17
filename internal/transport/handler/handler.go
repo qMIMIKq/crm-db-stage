@@ -45,6 +45,8 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 		orders := api.Group("/orders")
 		{
 			orders.GET("/get-all", h.getOrders)
+			orders.GET("/get-old", h.getOldOrders)
+			orders.POST("/delete/:id", h.deleteOrder)
 			orders.POST("/add", h.addOrders)
 			orders.PUT("/update", h.updateOrders)
 		}

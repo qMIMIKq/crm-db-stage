@@ -9,6 +9,7 @@ type UserAuth struct {
 type UserInfo struct {
 	ID       int    `json:"id" db:"user_id"`
 	Name     string `json:"name" db:"user_name"`
+	Nickname string `json:"nickname" db:"nickname"`
 	Group    string `json:"group" db:"group_name"`
 	GroupID  string `json:"group_id" db:"group_id"`
 	Plot     string `json:"plot" db:"plot_name"`

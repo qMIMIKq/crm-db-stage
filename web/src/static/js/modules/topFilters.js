@@ -67,7 +67,7 @@ export const topFiltersHandler = () => {
                     filtered = true
                     controlFilterReset()
                 } else {
-                    getOrders()
+                    getOrders('get-all')
                     filtered = false
                     controlFilterReset()
                 }
@@ -128,7 +128,7 @@ export const topFiltersHandler = () => {
                     filtered = true
                     controlFilterReset()
                 } else {
-                    getOrders()
+                    getOrders('get-all')
                     filtered = false
                     controlFilterReset()
                 }
@@ -147,7 +147,7 @@ export const topFiltersHandler = () => {
                 document.querySelector('.nav-filters__reset').addEventListener('click', () => {
                     state['currentTopFilters'] = []
                     document.querySelector('.nav-filters__reset').remove()
-                    getOrders()
+                    getOrders('get-all')
 
                     nav.querySelectorAll('.nav-filters__button').forEach(btn => {
                         console.log(btn)

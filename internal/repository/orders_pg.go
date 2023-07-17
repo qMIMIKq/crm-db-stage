@@ -233,12 +233,24 @@ func (o OrdersPG) findFile(files []string, file string) bool {
 	return false
 }
 
-func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
+func (o OrdersPG) DeleteOrderByID(id int) error {
+	_, err := o.db.Exec("DELETE FROM orders WHERE order_id = $1", id)
+	return err
+}
+
+func (o OrdersPG) GetOrders(old bool) ([]*domain.Order, error) {
 	log.Info().Msg("Getting orders")
 
-	query := fmt.Sprintf(`
-		SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC LIMIT 50;
-	`)
+	var query string
+	if old {
+		query = fmt.Sprintf(`
+			SELECT * FROM orders WHERE completed = true ORDER BY order_id ASC LIMIT 50;
+		`)
+	} else {
+		query = fmt.Sprintf(`
+			SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC LIMIT 50;
+		`)
+	}
 
 	queryFiles := fmt.Sprintf(`
 		SELECT file_name FROM files WHERE order_id = $1
@@ -282,6 +294,7 @@ func (o OrdersPG) GetOrders() ([]*domain.Order, error) {
 		err = o.db.Select(&order.DbRoutes, queryRoutes, order.ID)
 		for _, route := range order.DbRoutes {
 			err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
+			log.Warn().Interface("Route Comments", route.Comments)
 			err = o.db.Select(&route.IssuedReport, queryRouteIssued, route.RouteID)
 		}
 	}

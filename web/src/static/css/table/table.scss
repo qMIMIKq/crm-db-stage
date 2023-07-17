@@ -109,6 +109,7 @@ input.tr {
   }
 
   &__db {
+    display: flex;
     min-width: 70px;
     max-width: 70px;
   }
@@ -297,12 +298,11 @@ input.tr {
   }
 
   &--error {
-    background: red;
-    color: black !important;
+    background: #de1313;
   }
 
   &--completed {
-    background: green;
+    background: #09d009;
     color: black !important;
   }
 }
@@ -310,4 +310,17 @@ input.tr {
 .table-info {
   display: flex;
   align-items: center;
+}
+
+.order__delete {
+  width: 20px;
+  border: none;
+  background: red;
+  transition: color .3s;
+
+  &:hover {
+    cursor: pointer;
+    transition: color .3s;
+    color: white;
+  }
 }

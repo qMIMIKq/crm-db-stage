@@ -17,9 +17,19 @@ export const showRoutesIssued = e => {
         }
     })
 
-    try {
-        parent.querySelector('.table-routes__issued').classList.toggle('hidden__input')
-        parent.querySelector('.table__complete').classList.toggle('hidden__input')
-    } catch {
+    const issued = parent.querySelector('.table-routes__issued')
+    if (issued) {
+        issued.classList.toggle('hidden__input')
+    }
+    const complete = parent.querySelector('.table__complete')
+    if (complete) {
+        complete.classList.toggle('hidden__input')
+    }
+    const delBtn = parent.querySelector('.order__delete')
+    if (delBtn) {
+        delBtn.classList.toggle('hidden__input')
+        delBtn.addEventListener('click', e => {
+            console.log(e.target.parentNode.querySelector('#db_id').value)
+        })
     }
 }

@@ -12,7 +12,7 @@ type AuthPG struct {
 
 func (a AuthPG) GetUser(user domain.UserAuth) (domain.UserInfo, error) {
 	query := fmt.Sprintf(`
-		SELECT u.user_name, g.group_name, g.group_id,
+		SELECT u.user_name, u.nickname, g.group_name, g.group_id,
            p.plot_name, p.plot_id
       FROM users_rights ur
            JOIN users u on u.user_id = ur.user_id

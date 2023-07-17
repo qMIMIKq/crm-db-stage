@@ -303,7 +303,7 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
 export const triggerRoutesModal = e => {
     const routeInput = e.target.parentNode.querySelector('.hidden__input')
     const modalElem = showModal(routeModal)
-    let logName = state['adminCheck'] || state['techCheck'] ? user.name : ''
+    let logName = state['adminCheck'] || state['techCheck'] ? user.nickname : ''
 
     let info = false
     let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
@@ -432,6 +432,10 @@ export const triggerRoutesModal = e => {
         const errM = routeInfo['error_msg']
         let comments = routeInfo['comments']
 
+        console.log(user)
+
+        console.log(user)
+
         if (logName !== '') {
             deleteBtn.removeAttribute('disabled')
             deleteBtn.addEventListener('click', e => {
@@ -440,7 +444,7 @@ export const triggerRoutesModal = e => {
                         .then(resp => {
                             if (resp.ok) showResult(true)
                             modalElem.remove()
-                            getOrders()
+                            getOrders('get-all')
                         })
                 }, 'Удалить маршрут?')
             })
@@ -686,7 +690,7 @@ const drawUsers = (plotName, userI) => {
 
         users.data.forEach(user => {
             usersSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(userI) === String(user.name) ? 'selected' : ''} value='${user.name}'>${user.name}</option>
+                <option ${String(userI) === String(user.nickname) ? 'selected' : ''} value='${user.nickname}'>${user.nickname}</option>
             `)
         })
     })

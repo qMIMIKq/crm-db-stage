@@ -104,5 +104,5 @@ export const finallyForOrders = success => {
     deleteSubmitBtn()
     deleteCancelBtn()
     showResult(success)
-    getOrders()
+    getOrders('get-all')
 }

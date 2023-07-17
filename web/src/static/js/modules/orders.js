@@ -19,14 +19,17 @@ import {globalFilterOrders} from "./filterOrders";
 import {drawOrders} from "./drawOrders";
 import {filterData} from "./topFilters";
 
-export const getOrders = () => {
+export const getOrders = (postfix = 'get-all') => {
+    state['isArchive'] = postfix !== 'get-all'
+
     document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
         <h3 class="warning">Обновляем таблицу...</h3>
     `)
+    document.querySelector('.table__archive').classList.add('hidden__input')
 
     const filters = state['currentTopFilters'].map(filter => filter.name)
     console.time('get orders')
-    fetch(`${appAddr}/api/orders/get-all`).then(res => res.json()).then(data => {
+    fetch(`${appAddr}/api/orders/${postfix}`).then(res => res.json()).then(data => {
         const nums = []
         const clients = []
         const materials = []
@@ -90,12 +93,13 @@ export const getOrders = () => {
                 document.querySelector('.table-info').querySelector('.warning').remove()
                 const totalOrders = document.querySelector('.orders__total')
                 if (totalOrders === null) {
-                    document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
+                    document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
                         <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
                     `)
                 } else {
                     totalOrders.textContent = `Всего в работе ${data.data.length}`
                 }
+                document.querySelector('.table__archive').classList.remove('hidden__input')
 
                 bindOrdersListeners()
                 bindTableFilters()

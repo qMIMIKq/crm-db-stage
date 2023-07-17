@@ -78,6 +78,7 @@ let state = {
   'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30],
   'currentInput': null,
   'checkOrders': [],
+  'isArchive': false,
   'tableFilters': {
     'number': '',
     'client': '',
@@ -88,6 +89,11 @@ let state = {
     'm': '',
     'end_time': '',
     'timestamp': ''
+  },
+  'routesFilters': {
+    'started': false,
+    'error': false,
+    'inWork': false
   }
 };
 if (userInf) {
@@ -10542,11 +10548,11 @@ loginForm.addEventListener("submit", e => {
         const data = JSON.parse(JSON.stringify(userInfo));
         _modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo = {
           "name": data["data"].name,
+          "nickname": data["data"].nickname,
           "group": data["data"].group,
           "plot": data["data"].plot
         };
         sessionStorage.setItem("user", JSON.stringify(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo));
-        console.log(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo);
         window.location.replace(`${appAddr}/main/table`);
       });
     } else if (errBlock === null) {

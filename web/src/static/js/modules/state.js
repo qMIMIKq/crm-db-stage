@@ -25,6 +25,7 @@ let state = {
     'deadlinesP': [1, 2, 3, 4, 5, 6, 7, 30],
     'currentInput': null,
     'checkOrders': [],
+    'isArchive': false,
     'tableFilters': {
         'number': '',
         'client': '',
@@ -36,6 +37,11 @@ let state = {
         'end_time': '',
         'timestamp': '',
     },
+    'routesFilters': {
+        'started': false,
+        'error': false,
+        'inWork': false,
+    }
 }
 
 if (userInf) {

@@ -4,6 +4,7 @@ import (
 	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -27,7 +28,17 @@ func (h *Handler) addOrders(c *gin.Context) {
 }
 
 func (h *Handler) getOrders(c *gin.Context) {
-	orders, err := h.services.GetOrders()
+	orders, err := h.services.GetOrders(false)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	newDataResponse(c, http.StatusOK, orders)
+}
+
+func (h *Handler) getOldOrders(c *gin.Context) {
+	orders, err := h.services.GetOrders(true)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err)
 		return
@@ -49,6 +60,23 @@ func (h *Handler) updateOrders(c *gin.Context) {
 			newErrorResponse(c, http.StatusInternalServerError, err)
 			return
 		}
+	}
+
+	newOkResponse(c, http.StatusOK)
+}
+
+func (h *Handler) deleteOrder(c *gin.Context) {
+	orderId := c.Param("id")
+	id, err := strconv.Atoi(orderId)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err)
+		return
+	}
+
+	err = h.services.Orders.DeleteOrderByID(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
 	}
 
 	newOkResponse(c, http.StatusOK)

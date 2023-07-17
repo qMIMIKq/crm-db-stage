@@ -6,7 +6,6 @@ import {state} from "../modules/state";
 
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
-
 topFiltersHandler()
 getOrders()
 searchModule()
@@ -17,6 +16,17 @@ if (!(state["adminCheck"] || state['manCheck'])) {
     subBtn.classList.add("hidden__input")
     // plotsFilters.classList.add("hidden__input")
 }
+
+const archive = document.querySelector('.table__archive')
+archive.addEventListener('click', e => {
+    if (e.target.textContent === 'Архив') {
+        getOrders('get-old')
+        e.target.textContent = 'В работе'
+    } else {
+        getOrders()
+        e.target.textContent = 'Архив'
+    }
+})
 
 const updateMainTableData = () => {
     setInterval(getOrders, 1000)

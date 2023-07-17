@@ -57,7 +57,7 @@ export const triggerCommentsModal = e => {
         today = today.substring(0, today.length - 8).split("T").join(" ")
         const old = parent.classList.contains('table-form--old')
 
-        value = `${today} ${user.name} ${value}`
+        value = `${today} ${user.nickname} ${value}`
         commentsArr.push(value)
         newCommentsArr.push(value)
 
