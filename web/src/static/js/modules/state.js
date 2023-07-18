@@ -3,7 +3,7 @@
 
 // let addr = process.env.CHECK
 // console.log(addr)
-export let appAddr = 'http://172.20.10.7:8182'
+export let appAddr = 'http://192.168.1.231:8182'
 const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
