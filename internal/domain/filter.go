@@ -2,6 +2,7 @@ package domain
 
 type FilterInfo struct {
 	ID        int    `json:"id" db:"filter_id"`
+	Position  int    `json:"position" db:"position"`
 	Name      string `json:"name" db:"filter_name"`
 	PlotID    string `json:"plot_id" db:"plot_id"`
 	Plot      string `json:"plot" db:"plot_name"`

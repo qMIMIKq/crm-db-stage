@@ -209,6 +209,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
 /* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+
 
 
 
@@ -296,6 +298,79 @@ const triggerCommentsModal = e => {
       saveBtn.setAttribute('disabled', '');
     }
   });
+  if (_state__WEBPACK_IMPORTED_MODULE_4__.state.isArchive) {
+    commentElem.remove();
+    modalElem.querySelector('.comment__title').remove();
+    modalElem.querySelector('.comment__button').remove();
+  }
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/deleteOrdersHandler.js":
+/*!**********************************************************!*\
+  !*** ./web/src/static/js/modules/deleteOrdersHandler.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "deleteOrdersHandler": () => (/* binding */ deleteOrdersHandler)
+/* harmony export */ });
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
+
+
+
+
+const confirmDeleteOrderModal = `
+    <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
+        <div class='modal_content modal_content--confirm' style='width: 350px'>
+            <h2 class='confirm__title'></h2>
+            <div class='confirm__section'>
+                <button class='main__button confirm__button confirm__button--ok'>Да</button>
+                <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
+            </div>
+        </div>
+   </div>
+`;
+const confirmDeleteHandler = (e, operation, titleText) => {
+  const modal = (0,_showModal__WEBPACK_IMPORTED_MODULE_3__.showModal)(confirmDeleteOrderModal);
+  const okBtn = modal.querySelector('.confirm__button--ok');
+  const cnclBtn = modal.querySelector('.confirm__button--cncl');
+  const title = modal.querySelector('.confirm__title');
+  title.textContent = titleText;
+  okBtn.addEventListener('click', () => {
+    operation();
+    modal.click();
+  });
+  cnclBtn.addEventListener('click', ev => {
+    modal.click();
+  });
+};
+const deleteOrdersHandler = function (currentOrder, issued, routes, id) {
+  let hidden = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+  if (issued && _state__WEBPACK_IMPORTED_MODULE_0__.state.adminCheck) {
+    if (hidden) {
+      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
+                <input class="order__delete hidden__input table__data--ro" id='order__delete' type="button" value="X" readonly>
+            `);
+    } else {
+      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
+                <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
+            `);
+    }
+    document.querySelector('.order__delete').addEventListener('click', e => {
+      confirmDeleteHandler(e, () => {
+        (0,_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/orders/delete/${id}`, 'POST', null).then(() => {
+          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)();
+        });
+      }, `Подвтердить удаление заказа №${id}?`);
+    });
+  }
 };
 
 /***/ }),
@@ -406,7 +481,7 @@ function triggerFilesModal(e) {
     }
   });
   const downloadTrigger = document.querySelector('.modal__trigger');
-  if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck) {
+  if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck && !_state__WEBPACK_IMPORTED_MODULE_0__.state.isArchive) {
     downloadTrigger.addEventListener('click', e => {
       const filesInput = document.querySelector('.modal__files');
       filesInput.addEventListener('change', e => {
@@ -599,9 +674,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
-
+/* harmony import */ var _deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./deleteOrdersHandler */ "./web/src/static/js/modules/deleteOrdersHandler.js");
 
 
 
@@ -843,16 +916,7 @@ const drawOrders = async (d, data, users) => {
         item.classList.add('table__data--chosen');
       }
     });
-    if (d.issued == 0 && _state__WEBPACK_IMPORTED_MODULE_7__.state.adminCheck && !routes) {
-      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `);
-      document.querySelector('.order__delete').addEventListener('click', e => {
-        (0,_sendData__WEBPACK_IMPORTED_MODULE_11__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_7__.appAddr}/api/orders/delete/${d.id}`, 'POST', null).then(() => {
-          (0,_orders__WEBPACK_IMPORTED_MODULE_12__.getOrders)();
-        });
-      });
-    }
+    (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id, false);
     try {
       currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input');
       const complete = currentOrder.querySelector('.table__complete');
@@ -867,57 +931,49 @@ const drawOrders = async (d, data, users) => {
       }
     });
   }
+  const routesWrapper = document.querySelector(".table-routes__wrapper");
+  const routesIssuedWrapper = document.querySelector(".table-routes__issued");
+  if (!_state__WEBPACK_IMPORTED_MODULE_7__.state.isArchive) {
+    (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_6__.drawDeadlineP)(".table-p-select", _state__WEBPACK_IMPORTED_MODULE_7__.state.deadlinesP, d.p);
+    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_8__.drawManagers)(".table-m-select", users, d.m);
+    if (routes) {
+      routes.forEach(route => {
+        const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`);
+        const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`);
+        if (dataInput) {
+          const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`);
+          dataInput.value = JSON.stringify(route);
+          routeInfo.value = route.plot.toUpperCase();
+          if (route.start_time) {
+            routeInfo.classList.add('route--started');
+          }
+          if (route.issued && route.quantity && route.issued >= route.quantity) {
+            routeInfo.classList.add('route--completed');
+            routeInfo.classList.remove('route--started');
+          }
+          if (route.error_msg) {
+            routeInfo.classList.add('route--error');
+            if (routeInfo.classList.contains("route--started")) {
+              routeInfo.style.color = "yellow";
+              routeInfo.classList.remove('route--started');
+            }
+            if (routeInfo.classList.contains("route--completed")) {
+              routeInfo.style.color = "#09d009";
+              routeInfo.classList.remove('route--completed');
+            }
+          }
+        }
+        if (dataIssuedInput) {
+          dataIssuedInput.value = route["issued"];
+        }
+      });
+    }
+  }
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__files", _downloadFilesModal__WEBPACK_IMPORTED_MODULE_0__.triggerFilesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__route", _routesModal__WEBPACK_IMPORTED_MODULE_3__.triggerRoutesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_5__.triggerCommentsModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)("#db_id", _showFull__WEBPACK_IMPORTED_MODULE_4__.showRoutesIssued);
-  (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_6__.drawDeadlineP)(".table-p-select", _state__WEBPACK_IMPORTED_MODULE_7__.state.deadlinesP, d.p);
-  (0,_drawManagers__WEBPACK_IMPORTED_MODULE_8__.drawManagers)(".table-m-select", users, d.m);
-  const routesWrapper = document.querySelector(".table-routes__wrapper");
-  const routesIssuedWrapper = document.querySelector(".table-routes__issued");
-  if (routes) {
-    routes.forEach(route => {
-      const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`);
-      const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`);
-      if (dataInput) {
-        const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`);
-        dataInput.value = JSON.stringify(route);
-        routeInfo.value = route.plot.toUpperCase();
-        if (route.start_time) {
-          routeInfo.classList.add('route--started');
-        }
-        if (route.issued && route.quantity && route.issued === route.quantity) {
-          routeInfo.classList.add('route--completed');
-          routeInfo.classList.remove('route--started');
-        }
-        if (route.error_msg) {
-          routeInfo.classList.add('route--error');
-          if (routeInfo.classList.contains("route--started")) {
-            routeInfo.style.color = "yellow";
-            routeInfo.classList.remove('route--started');
-          }
-          if (routeInfo.classList.contains("route--completed")) {
-            routeInfo.style.color = "#09d009";
-            routeInfo.classList.remove('route--completed');
-          }
-        }
-      }
-      if (dataIssuedInput) {
-        dataIssuedInput.value = route["issued"];
-      }
-    });
-  } else {
-    if (d.issued == 0 && _state__WEBPACK_IMPORTED_MODULE_7__.state.adminCheck) {
-      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="hidden__input order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `);
-      document.querySelector('.order__delete').addEventListener('click', e => {
-        (0,_sendData__WEBPACK_IMPORTED_MODULE_11__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_7__.appAddr}/api/orders/delete/${d.id}`, 'POST', null).then(() => {
-          (0,_orders__WEBPACK_IMPORTED_MODULE_12__.getOrders)();
-        });
-      });
-    }
-  }
+  (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id);
 };
 const orderHTML = `
 <form class="table-form table-form--new" method="POST">
@@ -1103,6 +1159,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+
 
 
 const globalFilterOrders = (order, topFilters) => {
@@ -1166,6 +1224,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
 /* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
 /* harmony import */ var _topFilters__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./topFilters */ "./web/src/static/js/modules/topFilters.js");
+/* harmony import */ var _tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tableRoutesFilters */ "./web/src/static/js/modules/tableRoutesFilters.js");
+
 
 
 
@@ -1224,6 +1284,15 @@ const getOrders = function () {
           console.log('draw only');
           (0,_drawOrders__WEBPACK_IMPORTED_MODULE_5__.drawOrders)(d, data, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
         }
+        if (!filters.length) {
+          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.started) {
+            deleteOrders();
+            (0,_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.startFilter)(filters);
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.error) {
+            deleteOrders();
+            (0,_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.errFilter)(filters);
+          }
+        }
       });
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(nums)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(clients)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
@@ -1246,6 +1315,11 @@ const getOrders = function () {
       document.querySelector('.table__archive').classList.remove('hidden__input');
       (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
       (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
+      if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+        document.querySelectorAll('.table__data').forEach(field => {
+          field.setAttribute("readonly", "true");
+        });
+      }
       console.timeEnd('get orders');
       document.querySelectorAll(".table-form").forEach(form => {
         form.addEventListener('click', e => {
@@ -1691,7 +1765,6 @@ const triggerRoutesModal = e => {
     const errM = routeInfo['error_msg'];
     let comments = routeInfo['comments'];
     console.log(user);
-    console.log(user);
     if (logName !== '') {
       deleteBtn.removeAttribute('disabled');
       deleteBtn.addEventListener('click', e => {
@@ -1859,6 +1932,14 @@ const triggerRoutesModal = e => {
     document.querySelector('.modal--route').remove();
     window.removeEventListener('keydown', subCommentByEnter);
   });
+  if (_state__WEBPACK_IMPORTED_MODULE_2__.state.isArchive) {
+    modalElem.querySelectorAll('input').forEach(inp => {
+      inp.setAttribute('disabled', 'true');
+    });
+    modalElem.querySelectorAll('select').forEach(sel => {
+      sel.setAttribute('disabled', 'true');
+    });
+  }
 };
 const subCommentByEnter = e => {
   if (e.code === 'Enter') {
@@ -2135,7 +2216,7 @@ let state = {
   'routesFilters': {
     'started': false,
     'error': false,
-    'inWork': false
+    'uncompleted': false
   }
 };
 if (userInf) {
@@ -2503,6 +2584,7 @@ const controlFiltersReset = () => {
         document.querySelector('#search__input').value = '';
         _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
         _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters = {};
+        document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'));
         tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
           cell.style.textDecoration = 'none';
         });
@@ -2522,6 +2604,192 @@ const setChosenFilter = e => {
   } else {
     e.target.parentNode.querySelector('label').style.textDecoration = 'none';
   }
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/tableRoutesFilters.js":
+/*!*********************************************************!*\
+  !*** ./web/src/static/js/modules/tableRoutesFilters.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "errFilter": () => (/* binding */ errFilter),
+/* harmony export */   "startFilter": () => (/* binding */ startFilter),
+/* harmony export */   "tableRoutesFiltersHandler": () => (/* binding */ tableRoutesFiltersHandler),
+/* harmony export */   "uncompletedFilter": () => (/* binding */ uncompletedFilter)
+/* harmony export */ });
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
+/* harmony import */ var _topFilters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./topFilters */ "./web/src/static/js/modules/topFilters.js");
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+
+
+
+
+
+
+const startFilter = filters => {
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.start_time) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true;
+            }
+          } else {
+            check = true;
+          }
+        }
+      });
+    }
+    if (check) {
+      console.log(order);
+      if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered && filters.length) {
+        (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+        (0,_topFilters__WEBPACK_IMPORTED_MODULE_2__.filterData)();
+      } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered) {
+        (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+      } else {
+        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+      }
+    }
+    return check;
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const errFilter = filters => {
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.error_msg) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true;
+            }
+          } else {
+            check = true;
+          }
+        }
+      });
+    }
+    if (check) {
+      if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered && filters.length) {
+        (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+        (0,_topFilters__WEBPACK_IMPORTED_MODULE_2__.filterData)();
+      } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered) {
+        console.log('table filters');
+        (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+      } else {
+        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+      }
+    }
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const uncompletedFilter = filters => {
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.issued && route.quantity) {
+          if (route.issued >= route.quantity) {} else {
+            if (filters.length) {
+              if (filters.includes(route.plot)) {
+                check = true;
+              }
+            } else {
+              check = true;
+            }
+          }
+        } else {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true;
+            }
+          } else {
+            check = true;
+          }
+        }
+      });
+    }
+    if (check) {
+      if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered && filters.length) {
+        (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+        (0,_topFilters__WEBPACK_IMPORTED_MODULE_2__.filterData)();
+      } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered) {
+        console.log('table filters');
+        (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+      } else {
+        (0,_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+      }
+    }
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const tableRoutesFiltersHandler = () => {
+  const inWorkBtn = document.querySelector(".header-routes__work");
+  const inErrorBtn = document.querySelector(".header-routes__error");
+  const uncompletedBtn = document.querySelector(".header-routes__uncompleted");
+  inWorkBtn.addEventListener('click', e => {
+    if (inWorkBtn.classList.contains('route__filter--chosen')) {
+      inWorkBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    inErrorBtn.classList.remove('route__filter--chosen');
+    uncompletedBtn.classList.remove('route__filter--chosen');
+    inWorkBtn.classList.add('route__filter--chosen');
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.uncompleted = false;
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    startFilter(filters);
+  });
+  inErrorBtn.addEventListener('click', e => {
+    if (inErrorBtn.classList.contains('route__filter--chosen')) {
+      inErrorBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.uncompleted = false;
+    inWorkBtn.classList.remove('route__filter--chosen');
+    uncompletedBtn.classList.remove('route__filter--chosen');
+    inErrorBtn.classList.add('route__filter--chosen');
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    errFilter(filters);
+  });
+  uncompletedBtn.addEventListener('click', e => {
+    if (uncompletedBtn.classList.contains('route__filter--chosen')) {
+      uncompletedBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    inErrorBtn.classList.remove('route__filter--chosen');
+    inWorkBtn.classList.remove('route__filter--chosen');
+    uncompletedBtn.classList.add('route__filter--chosen');
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.uncompleted = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    uncompletedFilter(filters);
+  });
 };
 
 /***/ }),
@@ -2731,7 +2999,40 @@ const filterData = () => {
     if (order.db_routes) {
       order.db_routes.forEach(route => {
         if (filters.includes(route.plot)) {
-          flag = true;
+          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.started) {
+            console.log('started');
+            if (route.start_time) {
+              flag = true;
+            }
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.error) {
+            console.log('error');
+            if (route.error_msg) {
+              flag = true;
+            }
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.uncompleted) {
+            if (route.issued && route.quantity) {
+              if (route.issued >= route.quantity) {} else {
+                if (filters.length) {
+                  if (filters.includes(route.plot)) {
+                    flag = true;
+                  }
+                } else {
+                  flag = true;
+                }
+              }
+            } else {
+              if (filters.length) {
+                if (filters.includes(route.plot)) {
+                  flag = true;
+                }
+              } else {
+                flag = true;
+              }
+            }
+          } else {
+            console.log(route);
+            flag = true;
+          }
         }
       });
     }
@@ -2762,6 +3063,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_search__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/search */ "./web/src/static/js/modules/search.js");
 /* harmony import */ var _modules_topFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/topFilters */ "./web/src/static/js/modules/topFilters.js");
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _modules_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/tableRoutesFilters */ "./web/src/static/js/modules/tableRoutesFilters.js");
+
 
 
 
@@ -2788,6 +3091,7 @@ archive.addEventListener('click', e => {
     e.target.textContent = 'Архив';
   }
 });
+(0,_modules_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_5__.tableRoutesFiltersHandler)();
 const updateMainTableData = () => {
   setInterval(_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders, 1000);
 };
@@ -11871,7 +12175,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 65vh;\n  overflow: scroll;\n  margin-bottom: 15px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  position: relative;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 10px;\n  margin-bottom: 10px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  margin-top: 15px;\n  border-bottom: 1px solid black;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__reset {\n  width: 131px;\n  display: block;\n  align-self: center;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: #447e9b !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 6px;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route--started {\n  color: black !important;\n}\n\n.route--started {\n  background: yellow;\n}\n.route--error {\n  background: #de1313;\n}\n.route--completed {\n  color: black !important;\n}\n.route--completed {\n  background: #09d009;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 65vh;\n    overflow: scroll;\n    margin-bottom: 15px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color .3s;\n  position: absolute;\n  right: 24px;\n\n  &:hover {\n    transition: color .3s;\n    color: $hover_aqua;\n  }\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n\n.orders__total {\n  margin-right: 10px;\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      text-decoration: underline;\n      font-style: italic;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__route {\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  &--started {\n    background: yellow;\n    color: black !important;\n  }\n\n  &--error {\n    background: #de1313;\n  }\n\n  &--completed {\n    background: #09d009;\n    color: black !important;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  position: relative;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 10px;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    margin-top: 15px;\n    border-bottom: 1px solid black;\n  }\n  &__filters {\n    margin-bottom: 0 !important;\n  }\n\n  &__reset {\n    width: 131px;\n    display: block;\n    align-self: center;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $button_color !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 6px;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 65vh;\n  overflow: scroll;\n  margin-bottom: 15px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  position: relative;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 10px;\n  margin-bottom: 10px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  margin-top: 15px;\n  border-bottom: 1px solid black;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__reset {\n  width: 131px;\n  display: block;\n  align-self: center;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 10px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n.header-routes__work {\n  margin-right: 15px;\n}\n.header-routes__error {\n  margin-right: 15px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  color: #13d9d9;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: #447e9b !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 30px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 6px;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route--started {\n  color: black !important;\n}\n\n.route--started {\n  background: yellow;\n}\n.route--error {\n  background: #de1313;\n}\n.route--completed {\n  color: black !important;\n}\n.route--completed {\n  background: #09d009;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 65vh;\n    overflow: scroll;\n    margin-bottom: 15px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color .3s;\n  position: absolute;\n  right: 24px;\n\n  &:hover {\n    transition: color .3s;\n    color: $hover_aqua;\n  }\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n\n.orders__total {\n  margin-right: 10px;\n}","@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      text-decoration: underline;\n      font-style: italic;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__route {\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  &--started {\n    background: yellow;\n    color: black !important;\n  }\n\n  &--error {\n    background: #de1313;\n  }\n\n  &--completed {\n    background: #09d009;\n    color: black !important;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 15px;\n  margin-bottom: 30px;\n  position: relative;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 10px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 10px;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    margin-top: 15px;\n    border-bottom: 1px solid black;\n  }\n  &__filters {\n    margin-bottom: 0 !important;\n  }\n\n  &__reset {\n    width: 131px;\n    display: block;\n    align-self: center;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 10px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n.header-routes {\n  &__work {\n    margin-right: 15px;\n  }\n\n  &__error {\n    margin-right: 15px;\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  //background: #f3efef;\n  color: #13d9d9;\n}",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $button_color !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 20px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 6px;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

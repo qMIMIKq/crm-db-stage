@@ -39,10 +39,16 @@
 
     <main class="main">
         <header class="main__header main-header">
-            <nav class="main-header__nav">
+            <div class="main-header__nav">
                 <h3 class="main-header__title">Журнал заказов</h3>
                 <button class="main__button main-header__button header-button__add">Добавить</button>
-            </nav>
+            </div>
+
+            <div class="main-header__routes header-routes">
+                <button class="main__button header-routes__work">В работе</button>
+                <button class="main__button header-routes__error">Ошибка</button>
+                <button class="main__button header-routes__uncompleted">Не сдал</button>
+            </div>
 
             <div class="main-header__search search">
                 <select name="search__target" class="main__button main__select" id="search__target">

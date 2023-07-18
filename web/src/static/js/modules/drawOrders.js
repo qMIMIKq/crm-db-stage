@@ -5,12 +5,11 @@ import {triggerRoutesModal} from './routesModal';
 import {showRoutesIssued} from "./showFull";
 import {triggerCommentsModal} from './commentsModal';
 import {drawDeadlineP} from './drawDeadlineP';
-import {appAddr, state} from './state';
+import {state} from './state';
 import {drawManagers} from './drawManagers';
 import {submitData} from "./submitOrdersData";
 import {drawSubmit} from "./submitControl";
-import {sendData} from "./sendData";
-import {getOrders} from "./orders";
+import {deleteOrdersHandler} from "./deleteOrdersHandler";
 
 export const table = document.querySelector('.main-table')
 
@@ -249,16 +248,8 @@ export const drawOrders = async (d, data, users) => {
             }
         })
 
-        if (d.issued == 0 && state['adminCheck'] && !routes) {
-            currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `)
-            document.querySelector('.order__delete').addEventListener('click', e => {
-                sendData(`${appAddr}/api/orders/delete/${d.id}`, 'POST', null).then(() => {
-                    getOrders()
-                })
-            })
-        }
+        deleteOrdersHandler(currentOrder, d.issued, routes, d.id, false)
+
         try {
             currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input')
             const complete = currentOrder.querySelector('.table__complete')
@@ -276,66 +267,60 @@ export const drawOrders = async (d, data, users) => {
         })
     }
 
+    const routesWrapper = document.querySelector(".table-routes__wrapper")
+    const routesIssuedWrapper = document.querySelector(".table-routes__issued")
+
+    if (!state['isArchive']) {
+        drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
+        drawManagers(".table-m-select", users, d.m)
+
+        if (routes) {
+            routes.forEach(route => {
+                const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
+                const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
+
+                if (dataInput) {
+                    const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`)
+
+                    dataInput.value = JSON.stringify(route)
+                    routeInfo.value = route.plot.toUpperCase()
+
+                    if (route.start_time) {
+                        routeInfo.classList.add('route--started')
+                    }
+
+                    if (route.issued && route.quantity && route.issued >= route.quantity) {
+                        routeInfo.classList.add('route--completed')
+                        routeInfo.classList.remove('route--started')
+                    }
+
+                    if (route.error_msg) {
+                        routeInfo.classList.add('route--error')
+                        if (routeInfo.classList.contains("route--started")) {
+                            routeInfo.style.color = "yellow"
+                            routeInfo.classList.remove('route--started')
+                        }
+
+                        if (routeInfo.classList.contains("route--completed")) {
+                            routeInfo.style.color = "#09d009"
+                            routeInfo.classList.remove('route--completed')
+                        }
+                    }
+                }
+
+                if (dataIssuedInput) {
+                    dataIssuedInput.value = route["issued"]
+                }
+            })
+        }
+    }
+
     addTriggers(".table__files", triggerFilesModal)
     addTriggers(".table__route", triggerRoutesModal)
     addTriggers(".table__comment", triggerCommentsModal)
     addTriggers("#db_id", showRoutesIssued)
-    drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
-    drawManagers(".table-m-select", users, d.m)
 
-    const routesWrapper = document.querySelector(".table-routes__wrapper")
-    const routesIssuedWrapper = document.querySelector(".table-routes__issued")
-
-    if (routes) {
-        routes.forEach(route => {
-            const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
-            const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
-
-            if (dataInput) {
-                const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`)
-
-                dataInput.value = JSON.stringify(route)
-                routeInfo.value = route.plot.toUpperCase()
-
-                if (route.start_time) {
-                    routeInfo.classList.add('route--started')
-                }
-
-                if (route.issued && route.quantity && route.issued === route.quantity) {
-                    routeInfo.classList.add('route--completed')
-                    routeInfo.classList.remove('route--started')
-                }
-
-                if (route.error_msg) {
-                    routeInfo.classList.add('route--error')
-                    if (routeInfo.classList.contains("route--started")) {
-                        routeInfo.style.color = "yellow"
-                        routeInfo.classList.remove('route--started')
-                    }
-
-                    if (routeInfo.classList.contains("route--completed")) {
-                        routeInfo.style.color = "#09d009"
-                        routeInfo.classList.remove('route--completed')
-                    }
-                }
-            }
-
-            if (dataIssuedInput) {
-                dataIssuedInput.value = route["issued"]
-            }
-        })
-    } else {
-        if (d.issued == 0 && state['adminCheck']) {
-            currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="hidden__input order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `)
-            document.querySelector('.order__delete').addEventListener('click', e => {
-                sendData(`${appAddr}/api/orders/delete/${d.id}`, 'POST', null).then(() => {
-                    getOrders()
-                })
-            })
-        }
-    }
+    deleteOrdersHandler(currentOrder, d.issued, routes, d.id)
 }
 
 export const orderHTML = `

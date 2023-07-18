@@ -110,6 +110,7 @@ export const controlFiltersReset = () => {
                 document.querySelector('#search__input').value = ''
                 state['filtered'] = false
                 state['tableFilters'] = {}
+                document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))
 
                 tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
                     cell.style.textDecoration = 'none'

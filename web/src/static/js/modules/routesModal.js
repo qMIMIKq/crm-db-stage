@@ -434,8 +434,6 @@ export const triggerRoutesModal = e => {
 
         console.log(user)
 
-        console.log(user)
-
         if (logName !== '') {
             deleteBtn.removeAttribute('disabled')
             deleteBtn.addEventListener('click', e => {
@@ -631,6 +629,15 @@ export const triggerRoutesModal = e => {
         document.querySelector('.modal--route').remove()
         window.removeEventListener('keydown', subCommentByEnter)
     })
+
+    if (state['isArchive']) {
+        modalElem.querySelectorAll('input').forEach(inp => {
+            inp.setAttribute('disabled', 'true')
+        })
+        modalElem.querySelectorAll('select').forEach(sel => {
+            sel.setAttribute('disabled', 'true')
+        })
+    }
 }
 
 export const subCommentByEnter = e => {

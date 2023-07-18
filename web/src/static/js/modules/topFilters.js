@@ -213,7 +213,43 @@ export const filterData = () => {
         if (order.db_routes) {
             order.db_routes.forEach(route => {
                 if (filters.includes(route.plot)) {
-                    flag = true
+                    if (state['routesFilters'].started) {
+                        console.log('started')
+                        if (route.start_time) {
+                            flag = true
+                        }
+                    } else if (state['routesFilters'].error) {
+                        console.log('error')
+                        if (route.error_msg) {
+                            flag = true
+                        }
+                    } else if (state['routesFilters'].uncompleted) {
+                        if (route.issued && route.quantity) {
+                            if (route.issued >= route.quantity) {
+
+                            } else {
+                                if (filters.length) {
+                                    if (filters.includes(route.plot)) {
+                                        flag = true
+                                    }
+                                } else {
+                                    flag = true
+                                }
+                            }
+                        } else {
+                            if (filters.length) {
+                                if (filters.includes(route.plot)) {
+                                    flag = true
+                                }
+                            } else {
+                                flag = true
+                            }
+                        }
+                    } else {
+                        console.log(route)
+                        flag = true
+                    }
+
                 }
             })
         }

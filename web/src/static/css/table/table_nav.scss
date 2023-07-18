@@ -30,6 +30,16 @@
   }
 }
 
+.header-routes {
+  &__work {
+    margin-right: 15px;
+  }
+
+  &__error {
+    margin-right: 15px;
+  }
+}
+
 #search__target {
   width: 120px !important;
   margin-right: 5px;
@@ -38,4 +48,9 @@
 #search__input {
   height: 28px;
   margin-right: 5px;
+}
+
+.route__filter--chosen {
+  //background: #f3efef;
+  color: #13d9d9;
 }

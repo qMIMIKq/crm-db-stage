@@ -2,6 +2,7 @@ import {drawSubmit} from './submitControl';
 import {showModal} from './showModal';
 import {user} from '../table';
 import {submitData} from "./submitOrdersData";
+import {state} from "./state";
 
 const commentModal = `
    <div id='modal' class='modal modal--comment bounceIn'>
@@ -97,4 +98,10 @@ export const triggerCommentsModal = e => {
             saveBtn.setAttribute('disabled', '')
         }
     })
+
+    if (state['isArchive']) {
+        commentElem.remove()
+        modalElem.querySelector('.comment__title').remove()
+        modalElem.querySelector('.comment__button').remove()
+    }
 }

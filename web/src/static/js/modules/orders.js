@@ -18,6 +18,7 @@ import {getData} from './getData';
 import {globalFilterOrders} from "./filterOrders";
 import {drawOrders} from "./drawOrders";
 import {filterData} from "./topFilters";
+import {errFilter, startFilter} from "./tableRoutesFilters";
 
 export const getOrders = (postfix = 'get-all') => {
     state['isArchive'] = postfix !== 'get-all'
@@ -78,6 +79,15 @@ export const getOrders = (postfix = 'get-all') => {
                         drawOrders(d, data, state['managers'])
                     }
 
+                    if (!filters.length) {
+                        if (state['routesFilters'].started) {
+                            deleteOrders()
+                            startFilter(filters)
+                        } else if (state['routesFilters'].error) {
+                            deleteOrders()
+                            errFilter(filters)
+                        }
+                    }
                 })
 
                 drawTableFilter([...new Set(nums)], numsFilter)
@@ -103,6 +113,12 @@ export const getOrders = (postfix = 'get-all') => {
 
                 bindOrdersListeners()
                 bindTableFilters()
+
+                if (state['isArchive']) {
+                    document.querySelectorAll('.table__data').forEach(field => {
+                        field.setAttribute("readonly", "true")
+                    })
+                }
 
                 console.timeEnd('get orders')
 

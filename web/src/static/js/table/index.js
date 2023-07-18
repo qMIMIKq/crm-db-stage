@@ -3,6 +3,7 @@ import {getOrders} from "../modules/orders";
 import {searchModule} from "../modules/search";
 import {topFiltersHandler} from "../modules/topFilters";
 import {state} from "../modules/state";
+import {tableRoutesFiltersHandler} from "../modules/tableRoutesFilters";
 
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
@@ -27,6 +28,8 @@ archive.addEventListener('click', e => {
         e.target.textContent = 'Архив'
     }
 })
+
+tableRoutesFiltersHandler()
 
 const updateMainTableData = () => {
     setInterval(getOrders, 1000)
