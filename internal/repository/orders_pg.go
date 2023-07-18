@@ -244,7 +244,7 @@ func (o OrdersPG) GetOrders(old bool) ([]*domain.Order, error) {
 	var query string
 	if old {
 		query = fmt.Sprintf(`
-			SELECT * FROM orders WHERE completed = true ORDER BY order_id ASC LIMIT 50;
+			SELECT * FROM orders WHERE completed = true ORDER BY order_id ASC;
 		`)
 	} else {
 		query = fmt.Sprintf(`
