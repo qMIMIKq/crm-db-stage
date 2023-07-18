@@ -312,6 +312,8 @@ export const drawOrders = async (d, data, users) => {
                     dataIssuedInput.value = route["issued"]
                 }
             })
+        } else {
+            deleteOrdersHandler(currentOrder, d.issued, false, d.id)
         }
     }
 
@@ -319,8 +321,6 @@ export const drawOrders = async (d, data, users) => {
     addTriggers(".table__route", triggerRoutesModal)
     addTriggers(".table__comment", triggerCommentsModal)
     addTriggers("#db_id", showRoutesIssued)
-
-    deleteOrdersHandler(currentOrder, d.issued, routes, d.id)
 }
 
 export const orderHTML = `

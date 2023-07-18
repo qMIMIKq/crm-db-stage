@@ -353,7 +353,8 @@ const confirmDeleteHandler = (e, operation, titleText) => {
 };
 const deleteOrdersHandler = function (currentOrder, issued, routes, id) {
   let hidden = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
-  if (issued && _state__WEBPACK_IMPORTED_MODULE_0__.state.adminCheck) {
+  if (issued == 0 && _state__WEBPACK_IMPORTED_MODULE_0__.state.adminCheck && !routes) {
+    console.log('hi');
     if (hidden) {
       currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
                 <input class="order__delete hidden__input table__data--ro" id='order__delete' type="button" value="X" readonly>
@@ -967,13 +968,14 @@ const drawOrders = async (d, data, users) => {
           dataIssuedInput.value = route["issued"];
         }
       });
+    } else {
+      (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
     }
   }
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__files", _downloadFilesModal__WEBPACK_IMPORTED_MODULE_0__.triggerFilesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__route", _routesModal__WEBPACK_IMPORTED_MODULE_3__.triggerRoutesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_5__.triggerCommentsModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)("#db_id", _showFull__WEBPACK_IMPORTED_MODULE_4__.showRoutesIssued);
-  (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id);
 };
 const orderHTML = `
 <form class="table-form table-form--new" method="POST">
@@ -2180,7 +2182,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // let addr = process.env.CHECK
 // console.log(addr)
-let appAddr = 'http://192.168.1.231:8182';
+let appAddr = 'http://172.20.10.7:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
