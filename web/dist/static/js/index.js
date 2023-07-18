@@ -704,7 +704,7 @@ const drawOrders = async (d, data, users) => {
     });
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
-  const orderCompleted = d.quantity === d.issued && d.quantity !== '';
+  const orderCompleted = d.quantity && d.issued && d.issued >= d.quantity;
   table.insertAdjacentHTML(`afterbegin`, `
                 <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
                 <ul class='main-table__item'>
@@ -2180,7 +2180,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // let addr = process.env.CHECK
 // console.log(addr)
-let appAddr = 'http://172.20.10.7:8182';
+let appAddr = 'http://192.168.1.231:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
