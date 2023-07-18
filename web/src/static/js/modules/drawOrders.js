@@ -29,7 +29,7 @@ export const drawOrders = async (d, data, users) => {
         })
     }
     uniqueFileNames = [...new Set(uniqueFileNames)]
-    const orderCompleted = d.quantity === d.issued && d.quantity !== ''
+    const orderCompleted = d.quantity && d.issued && d.issued >= d.quantity
 
     table.insertAdjacentHTML(`afterbegin`, `
                 <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
