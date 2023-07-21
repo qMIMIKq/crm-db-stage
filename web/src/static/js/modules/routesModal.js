@@ -171,7 +171,7 @@ const issuedModal = `
    </div>
 `
 const drawLogs = data => {
-  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Ошибка', 'Сбросил', 'За смену', 'Просмотрел']
+  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел']
 
   const logsList = document.querySelector('.section-logs__list')
   const logsItems = logsList.querySelectorAll('.section-logs__item')
@@ -190,14 +190,18 @@ const drawLogs = data => {
         }
       })
 
-      if (flag) {
+      if (log.includes('ОШИБКА')) {
         logsList.insertAdjacentHTML(`beforeend`, `
-                    <li class='section-logs__item'>${log}</li>
-                `)
+          <li style="color: red" class='section-logs__item'>${log}</li>
+        `)
+      } else if (flag) {
+        logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item'>${log}</li>
+        `)
       } else {
         logsList.insertAdjacentHTML(`beforeend`, `
-                    <li style="color: #447e9b" class='section-logs__item'>${log}</li>
-                `)
+          <li style="color: #447e9b" class='section-logs__item'>${log}</li>
+        `)
       }
     }
   })
@@ -293,7 +297,7 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
     e.target.value = ''
     operation()
     modal.click()
-    addLog(user.name, logMsg, '#visible__comments')
+    addLog(user.nickname, logMsg, '#visible__comments')
   })
 
   cncltn.addEventListener('click', () => {

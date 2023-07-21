@@ -1545,7 +1545,7 @@ const issuedModal = `
    </div>
 `;
 const drawLogs = data => {
-  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Ошибка', 'Сбросил', 'За смену', 'Просмотрел'];
+  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел'];
   const logsList = document.querySelector('.section-logs__list');
   const logsItems = logsList.querySelectorAll('.section-logs__item');
   if (logsItems !== null) {
@@ -1556,19 +1556,24 @@ const drawLogs = data => {
   data.value.split('---').reverse().forEach(log => {
     if (log.trim() !== '') {
       let flag = true;
+      console.log(log);
       systemWords.forEach(word => {
         if (log.includes(word)) {
           flag = false;
         }
       });
-      if (flag) {
+      if (log.includes('ОШИБКА')) {
         logsList.insertAdjacentHTML(`beforeend`, `
-                    <li class='section-logs__item'>${log}</li>
-                `);
+          <li style="color: red" class='section-logs__item'>${log}</li>
+        `);
+      } else if (flag) {
+        logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item'>${log}</li>
+        `);
       } else {
         logsList.insertAdjacentHTML(`beforeend`, `
-                    <li style="color: #447e9b" class='section-logs__item'>${log}</li>
-                `);
+          <li style="color: #447e9b" class='section-logs__item'>${log}</li>
+        `);
       }
     }
   });
@@ -1653,7 +1658,7 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
     e.target.value = '';
     operation();
     modal.click();
-    addLog(_table__WEBPACK_IMPORTED_MODULE_3__.user.name, logMsg, '#visible__comments');
+    addLog(_table__WEBPACK_IMPORTED_MODULE_3__.user.nickname, logMsg, '#visible__comments');
   });
   cncltn.addEventListener('click', () => {
     modal.click();
