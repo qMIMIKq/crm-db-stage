@@ -14,24 +14,24 @@ import {deleteOrdersHandler} from "./deleteOrdersHandler";
 export const table = document.querySelector('.main-table')
 
 export const drawOrders = async (d, data, users) => {
-    controlFiltersReset()
-    let uniqueFileNames = []
-    if (d.files !== null) {
-        d.files.forEach(file => {
-            const arrDotFile = file.split('.')
-            const fileType = arrDotFile[arrDotFile.length - 1]
-            const arrSlashFile = file.split('/')
-            arrSlashFile.splice(0, 3)
-            const fileName = arrSlashFile.join('')
-            let fileNameWithoutType = fileName.split('.')
-            fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
-            uniqueFileNames.push(fileNameWithoutType)
-        })
-    }
-    uniqueFileNames = [...new Set(uniqueFileNames)]
-    const orderCompleted = d.quantity && d.issued && d.issued >= d.quantity
+  controlFiltersReset()
+  let uniqueFileNames = []
+  if (d.files !== null) {
+    d.files.forEach(file => {
+      const arrDotFile = file.split('.')
+      const fileType = arrDotFile[arrDotFile.length - 1]
+      const arrSlashFile = file.split('/')
+      arrSlashFile.splice(0, 3)
+      const fileName = arrSlashFile.join('')
+      let fileNameWithoutType = fileName.split('.')
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
+      uniqueFileNames.push(fileNameWithoutType)
+    })
+  }
+  uniqueFileNames = [...new Set(uniqueFileNames)]
+  const orderCompleted = d.quantity && d.issued && d.issued >= d.quantity
 
-    table.insertAdjacentHTML(`afterbegin`, `
+  table.insertAdjacentHTML(`afterbegin`, `
                 <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
                 <ul class='main-table__item'>
                     <li class='table-body_cell table__db'>
@@ -208,12 +208,12 @@ export const drawOrders = async (d, data, users) => {
             </form>
     `)
 
-    const currentOrder = document.getElementById(`form-${d.id}`)
-    const routes = d["db_routes"]
+  const currentOrder = document.getElementById(`form-${d.id}`)
+  const routes = d["db_routes"]
 
-    const completedBlock = currentOrder.querySelector('.table__issued--done')
-    if (completedBlock && !state['isArchive']) {
-        completedBlock.insertAdjacentHTML(`afterend`, `
+  const completedBlock = currentOrder.querySelector('.table__issued--done')
+  if (completedBlock && !state['isArchive']) {
+    completedBlock.insertAdjacentHTML(`afterend`, `
             <li class="table-body_cell hidden__input table__complete">
                 <input class="table__data main__button tr" tabindex="-1"
                 readonly
@@ -223,104 +223,118 @@ export const drawOrders = async (d, data, users) => {
             </li>  
         `)
 
-        currentOrder.querySelector('.table__complete').addEventListener('click', e => {
-            currentOrder.querySelector('#completed').value = true
-            const parent = e.target.closest('.table-form--old')
+    currentOrder.querySelector('.table__complete').addEventListener('click', e => {
+      currentOrder.querySelector('#completed').value = true
+      const parent = e.target.closest('.table-form--old')
 
-            if (parent !== null) {
-                parent.classList.remove('table-form--old')
-                parent.classList.add('table-form--upd')
-                submitData()
-            } else {
-                drawSubmit()
-            }
-        })
-    }
+      if (parent !== null) {
+        parent.classList.remove('table-form--old')
+        parent.classList.add('table-form--upd')
+        submitData()
+      } else {
+        drawSubmit()
+      }
+    })
+  }
 
-    if (state['openedOrders'].includes(String(d.id))) {
-        currentOrder.querySelectorAll('.table__data').forEach(item => {
-            if (!item.classList.contains('tr')) {
-                if (!item.classList.contains('table__data--opened')) {
-                    item.classList.add('table__data--opened')
-                }
-            } else {
-                item.classList.add('table__data--chosen')
-            }
-        })
-
-        deleteOrdersHandler(currentOrder, d.issued, routes, d.id, false)
-
-        try {
-            currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input')
-            const complete = currentOrder.querySelector('.table__complete')
-            complete.classList.remove('hidden__input')
-            complete.querySelector('.tr').classList.add('table-data__chosen')
-        } catch {
+  if (state['openedOrders'].includes(String(d.id))) {
+    currentOrder.querySelectorAll('.table__data').forEach(item => {
+      if (!item.classList.contains('tr')) {
+        if (!item.classList.contains('table__data--opened')) {
+          item.classList.add('table__data--opened')
         }
-    }
+      } else {
+        item.classList.add('table__data--chosen')
+      }
+    })
 
-    if (String(d.id) === state['currentOrder']) {
-        currentOrder.querySelectorAll('.table__data').forEach(item => {
-            if (!item.classList.contains('table__data--opened')) {
-                item.classList.add('table__data--chosen')
+    deleteOrdersHandler(currentOrder, d.issued, routes, d.id, false)
+
+    try {
+      currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input')
+      const complete = currentOrder.querySelector('.table__complete')
+      complete.classList.remove('hidden__input')
+      complete.querySelector('.tr').classList.add('table-data__chosen')
+    } catch {
+    }
+  }
+
+  if (String(d.id) === state['currentOrder']) {
+    currentOrder.querySelectorAll('.table__data').forEach(item => {
+      if (!item.classList.contains('table__data--opened')) {
+        item.classList.add('table__data--chosen')
+      }
+    })
+  }
+
+  const routesWrapper = document.querySelector(".table-routes__wrapper")
+  const routesIssuedWrapper = document.querySelector(".table-routes__issued")
+
+  if (!state['isArchive']) {
+    drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
+    drawManagers(".table-m-select", users, d.m)
+
+    if (routes) {
+      routes.forEach(route => {
+        const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
+        const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
+
+        if (dataInput) {
+          const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`)
+
+          dataInput.value = JSON.stringify(route)
+          routeInfo.value = route.plot
+
+          if (route.start_time && !route.end_time) {
+            routeInfo.classList.add('route--started')
+
+            if (route.issued && route.quantity && route.issued >= route.quantity) {
+              routeInfo.style.color = "rgb(0 207 0)"
+            } else {
+              routeInfo.style.color = "black"
             }
-        })
-    }
+          }
 
-    const routesWrapper = document.querySelector(".table-routes__wrapper")
-    const routesIssuedWrapper = document.querySelector(".table-routes__issued")
+          if (route.end_time) {
+            routeInfo.classList.add('route--completed')
+            routeInfo.classList.remove('route--started')
 
-    if (!state['isArchive']) {
-        drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
-        drawManagers(".table-m-select", users, d.m)
+            if (route.error_msg) {
+              routeInfo.style.color = "red"
+            } else if (route.quantity && route.issued < route.quantity) {
+              routeInfo.style.color = "yellow"
+            } else {
+              routeInfo.style.color = "black"
+            }
+          }
 
-        if (routes) {
-            routes.forEach(route => {
-                const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
-                const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
+          if (route.error_msg && !route.end_time) {
+            routeInfo.classList.add('route--error')
 
-                if (dataInput) {
-                    const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`)
+            if (route.start_time) {
+              routeInfo.style.color = "black"
+              routeInfo.classList.remove('route--started')
 
-                    dataInput.value = JSON.stringify(route)
-                    routeInfo.value = route.plot.toUpperCase()
-
-                    if (route.start_time) {
-                        routeInfo.classList.add('route--started')
-                    }
-
-                    if (route.issued && route.quantity && route.issued >= route.quantity) {
-                        routeInfo.classList.add('route--completed')
-                        routeInfo.classList.remove('route--started')
-                    }
-
-                    if (route.error_msg) {
-                        routeInfo.classList.add('route--error')
-                        if (routeInfo.classList.contains("route--started")) {
-                            routeInfo.style.color = "yellow"
-                            routeInfo.classList.remove('route--started')
-                        }
-
-                        if (routeInfo.classList.contains("route--completed")) {
-                            routeInfo.style.color = "#09d009"
-                            routeInfo.classList.remove('route--completed')
-                        }
-                    }
-                }
-
-                if (dataIssuedInput) {
-                    dataIssuedInput.value = route["issued"]
-                }
-            })
-        } else {
-            deleteOrdersHandler(currentOrder, d.issued, false, d.id)
+              if (route.issued && route.quantity && route.issued >= route.quantity) {
+                routeInfo.style.color = "#07e807"
+              }
+            }
+          }
         }
-    }
 
-    addTriggers(".table__files", triggerFilesModal)
-    addTriggers(".table__route", triggerRoutesModal)
-    addTriggers(".table__comment", triggerCommentsModal)
-    addTriggers("#db_id", showRoutesIssued)
+        if (dataIssuedInput) {
+          dataIssuedInput.value = route["issued"]
+        }
+      })
+    } else {
+      deleteOrdersHandler(currentOrder, d.issued, false, d.id)
+    }
+  }
+
+  addTriggers(".table__files", triggerFilesModal)
+  addTriggers(".table__route", triggerRoutesModal)
+  addTriggers(".table__comment", triggerCommentsModal)
+  addTriggers("#db_id", showRoutesIssued)
 }
 
 export const orderHTML = `

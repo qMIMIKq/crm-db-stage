@@ -25,17 +25,18 @@ export const topFiltersHandler = () => {
         data.forEach(d => {
             let condition = !checkExt(extensions, d.name)
             if (condition) {
+                console.log(d.name)
                 if (short) {
                     block.insertAdjacentHTML('beforeend', `
                     <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button'>${d.short_name.toUpperCase()}</button>
-                        <input class='hidden__input' value="${d.name.toUpperCase()}"/>
+                        <button class='nav-filters__button main__button'>${d.short_name}</button>
+                        <input class='hidden__input' value="${d.name}"/>
                      </li>
                     `)
                 } else {
                     block.insertAdjacentHTML('beforeend', `
                     <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button'>${d.name.toUpperCase()}</button>
+                        <button class='nav-filters__button main__button'>${d.name}</button>
                      </li>
                     `)
                 }
@@ -52,7 +53,7 @@ export const topFiltersHandler = () => {
         btns.forEach(btn => {
             btn.addEventListener('click', e => {
                 const target = e.target
-                const plot = target.parentNode.querySelector('input').value.toLowerCase()
+                const plot = target.parentNode.querySelector('input').value
 
                 if (!target.classList.contains('chosen__plot')) {
                     state['currentTopPlots'].push(plot)
@@ -107,7 +108,7 @@ export const topFiltersHandler = () => {
         block.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', e => {
                 const target = e.target
-                const filter = target.textContent.toLowerCase()
+                const filter = target.textContent
 
                 if (!target.classList.contains('chosen__filter')) {
                     if (!document.querySelector('.chosen__plot')) {

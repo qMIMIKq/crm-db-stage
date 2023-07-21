@@ -40,5 +40,6 @@ func (h *Handler) signIn(c *gin.Context) {
 		"group":    userInfo.Group,
 		"plot":     userInfo.Plot,
 		"nickname": userInfo.Nickname,
+		"group_id": userInfo.GroupID,
 	})
 }

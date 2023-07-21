@@ -3,7 +3,7 @@
 
 // let addr = process.env.CHECK
 // console.log(addr)
-export let appAddr = 'http://192.168.1.231:8182'
+export let appAddr = 'http://172.20.10.7:8182'
 const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
@@ -45,10 +45,11 @@ let state = {
 }
 
 if (userInf) {
-    state['adminCheck'] = userInf.group === 'супер-админ' || userInf.group === 'админ'
-    state['techCheck'] = userInf.group === 'технолог'
-    state['operCheck'] = userInf.group === 'оператор'
-    state['manCheck'] = userInf.group === 'менеджер'
+    console.log(userInf)
+    state['adminCheck'] = userInf.groupId === '1' || userInf.groupId === '2'
+    state['techCheck'] = userInf.groupId === '3'
+    state['operCheck'] = userInf.groupId === '5'
+    state['manCheck'] = userInf.groupId === '4'
 
     const admManCheck = state['adminCheck'] || state['manCheck']
     const admTechCheck = state['adminCheck'] || state['techCheck']

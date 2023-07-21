@@ -292,9 +292,10 @@ input.tr {
 }
 
 .route {
+  color: black;
+
   &--started {
-    background: yellow;
-    color: black !important;
+    background: #ffff4e;
   }
 
   &--error {
@@ -303,7 +304,6 @@ input.tr {
 
   &--completed {
     background: #09d009;
-    color: black !important;
   }
 }
 

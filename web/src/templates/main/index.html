@@ -12,14 +12,14 @@
     <header class="header">
         <nav class="header__nav nav">
             <div class="nav__filters nav-filters">
-                {{if eq .User.Group "оператор"}}
+                {{if eq .GroupID "5"}}
                     <select name="user" class="select-user main__button main__select">
 
                     </select>
                 {{end}}
 
-                {{if eq .User.Group "супер-админ"}}
-                    <a class="admin-form__button" target="_blank" href="http://192.168.1.231:8192/panel">Перейти в
+                {{if eq .GroupID "1"}}
+                    <a class="admin-form__button" target="_blank" href="http://172.20.10.7:8192/panel">Перейти в
                         админку</a>
                 {{end}}
 

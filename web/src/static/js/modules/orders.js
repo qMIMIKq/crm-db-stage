@@ -65,17 +65,17 @@ export const getOrders = (postfix = 'get-all') => {
                     }
 
                     if (state['filtered'] && filters.length) {
-                        console.log('big filter')
+                        // console.log('big filter')
                         globalFilterOrders(d, filters)
                         filterData()
                     } else if (state['filtered']) {
                         console.log('table filter')
                         globalFilterOrders(d)
                     } else if (filters.length) {
-                        console.log('top filter')
+                        // console.log('top filter')
                         filterData()
                     } else {
-                        console.log('draw only')
+                        // console.log('draw only')
                         drawOrders(d, data, state['managers'])
                     }
 

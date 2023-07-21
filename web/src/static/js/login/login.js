@@ -3,7 +3,7 @@ import {state} from "../modules/state";
 
 //192.168.1.231
 //172.20.10.7
-const appAddr = "http://192.168.1.231:8182"
+const appAddr = "http://172.20.10.7:8182"
 
 const loginForm = document.querySelector(".login-form")
 loginForm.addEventListener("submit", e => {
@@ -29,6 +29,7 @@ loginForm.addEventListener("submit", e => {
                     "nickname": data["data"].nickname,
                     "group": data["data"].group,
                     "plot": data["data"].plot,
+                    "groupId": data["data"].group_id
                 }
 
                 sessionStorage.setItem("user", JSON.stringify(state["userInfo"]))

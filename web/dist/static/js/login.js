@@ -57,7 +57,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // let addr = process.env.CHECK
 // console.log(addr)
-let appAddr = 'http://192.168.1.231:8182';
+let appAddr = 'http://172.20.10.7:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
@@ -97,10 +97,11 @@ let state = {
   }
 };
 if (userInf) {
-  state['adminCheck'] = userInf.group === 'супер-админ' || userInf.group === 'админ';
-  state['techCheck'] = userInf.group === 'технолог';
-  state['operCheck'] = userInf.group === 'оператор';
-  state['manCheck'] = userInf.group === 'менеджер';
+  console.log(userInf);
+  state['adminCheck'] = userInf.groupId === '1' || userInf.groupId === '2';
+  state['techCheck'] = userInf.groupId === '3';
+  state['operCheck'] = userInf.groupId === '5';
+  state['manCheck'] = userInf.groupId === '4';
   const admManCheck = state['adminCheck'] || state['manCheck'];
   const admTechCheck = state['adminCheck'] || state['techCheck'];
   const admManTechCheck = admManCheck || state['techCheck'];
@@ -10526,7 +10527,7 @@ __webpack_require__.r(__webpack_exports__);
 
 //192.168.1.231
 //172.20.10.7
-const appAddr = "http://192.168.1.231:8182";
+const appAddr = "http://172.20.10.7:8182";
 const loginForm = document.querySelector(".login-form");
 loginForm.addEventListener("submit", e => {
   e.preventDefault();
@@ -10550,7 +10551,8 @@ loginForm.addEventListener("submit", e => {
           "name": data["data"].name,
           "nickname": data["data"].nickname,
           "group": data["data"].group,
-          "plot": data["data"].plot
+          "plot": data["data"].plot,
+          "groupId": data["data"].group_id
         };
         sessionStorage.setItem("user", JSON.stringify(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo));
         window.location.replace(`${appAddr}/main/table`);

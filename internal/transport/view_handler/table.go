@@ -14,7 +14,8 @@ func (h *ViewHandler) indexView(c *gin.Context) {
 	userInfo := user.(domain.UserInfo)
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"Title": "Главная страница",
-		"User":  userInfo,
+		"Title":   "Главная страница",
+		"User":    userInfo,
+		"GroupID": userInfo.GroupID,
 	})
 }

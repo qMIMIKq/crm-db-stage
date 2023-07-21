@@ -422,7 +422,6 @@ export const triggerRoutesModal = e => {
     if (info) {
         const id = routeInfo['route_id']
         const quantity = routeInfo['quantity']
-        issued.value = routeInfo['issued']
         const plot = routeInfo['plot']
         const user = routeInfo['user']
         const start = routeInfo['start_time']
@@ -433,6 +432,10 @@ export const triggerRoutesModal = e => {
         let comments = routeInfo['comments']
 
         console.log(user)
+
+        if (routeInfo['issued']) {
+            issued.value = routeInfo['issued']
+        }
 
         if (logName !== '') {
             deleteBtn.removeAttribute('disabled')
@@ -490,6 +493,8 @@ export const triggerRoutesModal = e => {
 
         if (quantity) {
             routeQuantity.value = quantity
+        } else {
+            routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
         }
 
         if (end) {
@@ -666,9 +671,10 @@ const drawPlots = (plotI, user) => {
         const plotsSelect = document.querySelector('#route__plot')
         const plotsConnection = document.querySelector('#plot-connection')
 
+        console.log(plotI)
         plots.data.forEach(plot => {
             plotsSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name.toUpperCase()}</option>
+                <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>
             `)
 
             plotsConnection.insertAdjacentHTML('beforeend', `
@@ -677,7 +683,7 @@ const drawPlots = (plotI, user) => {
         })
 
         if (plotI) {
-            drawUsers(plotsConnection.querySelector('option[selected]').textContent.toLowerCase(), user)
+            drawUsers(plotsConnection.querySelector('option[selected]').textContent, user)
         }
     })
 }
