@@ -6,15 +6,15 @@ type Route struct {
 	Plot          string   `json:"plot" db:"plot_id"`
 	RoutePosition string   `json:"route_position" db:"route_position"`
 	Comments      []Report `json:"comments"`
-	IssuedReport  []Report `json:"issued_report"`
-	StartTime     string   `json:"start_time" db:"start_time"`
-	OtkTime       string   `json:"otk_time" db:"otk_time"`
-	EndTime       string   `json:"end_time" db:"end_time"`
-	ErrorTime     string   `json:"error_time" db:"error_time"`
-	ErrorMsg      string   `json:"error_msg" db:"error_value"`
-	Quantity      string   `json:"quantity" db:"quantity"`
-	Issued        string   `json:"issued" db:"issued"`
-	OrderID       string   `json:"order_id" db:"order_id"`
+	//IssuedReport  []Report `json:"issued_report"`
+	StartTime string `json:"start_time" db:"start_time"`
+	OtkTime   string `json:"otk_time" db:"otk_time"`
+	EndTime   string `json:"end_time" db:"end_time"`
+	ErrorTime string `json:"error_time" db:"error_time"`
+	ErrorMsg  string `json:"error_msg" db:"error_value"`
+	Quantity  string `json:"quantity" db:"quantity"`
+	Issued    string `json:"issued" db:"issued"`
+	OrderID   string `json:"order_id" db:"order_id"`
 }
 
 type Report struct {

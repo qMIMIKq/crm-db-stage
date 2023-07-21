@@ -1502,10 +1502,9 @@ const routeModal = `
                     class='route__comments hidden__input' 
                     id='route__comments' 
                     type='text' 
-                    name='comments'>
+                    name='commentss'>
                     
-                    <input type="text" class="hidden__input" id="visible__comments">
-                    
+                    <input name='comments' type="text" class="hidden__input" id="visible__comments">
                     <div class='section-logs__title'>Комментарии и логи событий</div>
                     <ul class='section-logs__list'>
                         
@@ -1641,14 +1640,14 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
     let logMsg;
     switch (e.target.name) {
       case 'start_time':
-        logMsg = '"Сбросил время начала"';
+        logMsg = 'Сбросил время начала';
         activateNextStage("route__select--plot");
         break;
       case 'end_time':
-        logMsg = '"Сбросил время сдачи"';
+        logMsg = 'Сбросил время сдачи';
         break;
       case 'otk_time':
-        logMsg = '"Сбросил время ОТК"';
+        logMsg = 'Сбросил время ОТК';
         break;
     }
     e.target.value = '';
@@ -1674,7 +1673,7 @@ const triggerRoutesModal = e => {
   const routeQuantity = modalElem.querySelector('#quantity');
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub');
-    addLog(logName, `"Установил тираж в ${e.target.value}"`, '#visible__comments');
+    addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments');
   });
   const issued = modalElem.querySelector('#route__issued');
   const logsData = document.querySelector('#route__comments');
@@ -1700,7 +1699,7 @@ const triggerRoutesModal = e => {
   const routeForm = modalElem.querySelector('.route__config');
   const errBtn = routeForm.querySelector('.error-route__btn');
   errBtn.addEventListener('click', () => {
-    let logMsg = `"ОШИБКА ${document.querySelector('#error-route__msg').value}"`;
+    let logMsg = `ОШИБКА ${document.querySelector('#error-route__msg').value}`;
     addLog(logName, logMsg, '#visible__comments');
     setDateToInput('error__time');
     activateNextStage('error__time');
@@ -1728,7 +1727,7 @@ const triggerRoutesModal = e => {
     errCloseBtn.classList.add('hidden__input');
     errBtn.classList.remove('hidden__input');
     disableBtn('error-route__close');
-    addLog(logName, '"Сбросил ошибку"', '#visible__comments');
+    addLog(logName, 'Сбросил ошибку', '#visible__comments');
   });
   if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
     activateNextStage('start-route__time');
@@ -1761,7 +1760,7 @@ const triggerRoutesModal = e => {
     } else {
       name = logName;
     }
-    addLog(name, `"${document.querySelector('#section-logs__comment').value}"`, '#visible__comments');
+    addLog(name, `${document.querySelector('#section-logs__comment').value}`, '#visible__comments');
     document.querySelector('#section-logs__comment').value = '';
     disableBtn('send__comment');
   });
@@ -1862,7 +1861,7 @@ const triggerRoutesModal = e => {
         plotName = conn.textContent;
       }
     });
-    addLog(logName, `Выбрал этап "${routePlot.value.toUpperCase()}"`, '#visible__comments');
+    addLog(logName, `Выбрал этап ${routePlot.value}`, '#visible__comments');
     drawUsers(plotName, null);
     activateNextStage('section-finish__sub');
     controlQuantityAccess(routeQuantity);
@@ -1870,7 +1869,7 @@ const triggerRoutesModal = e => {
   });
   const routeUser = document.querySelector('.route__select--user');
   routeUser.addEventListener('change', () => {
-    addLog(logName, `"Назначил оператора ${routeUser.value}"`, '#visible__comments');
+    addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments');
     activateNextStage('start-route__btn');
   });
   drawLogs(visibleLogs);
@@ -1882,7 +1881,7 @@ const triggerRoutesModal = e => {
     activateNextStage('section-finish__cancel');
     disableBtn('start-route__btn');
     disableBtn('route__select--plot');
-    addLog(routeUser.value, '"Начал"', '#visible__comments');
+    addLog(routeUser.value, 'Начал', '#visible__comments');
     issuedToday.classList.add('text-input');
     issuedToday.removeAttribute('disabled');
   });
@@ -1895,7 +1894,7 @@ const triggerRoutesModal = e => {
       activateNextStage('otk-route__btn');
     }
     disableBtn('end-route__btn');
-    addLog(routeUser.value, '"Закончил"', '#visible__comments');
+    addLog(routeUser.value, 'Закончил', '#visible__comments');
   });
 
   // OTK
@@ -1903,13 +1902,13 @@ const triggerRoutesModal = e => {
   otkBtn.addEventListener('click', () => {
     setDateToInput('otk-route__time');
     disableBtn('otk-route__btn');
-    addLog(routeUser.value, '"Прошел ОТК"', '#visible__comments');
+    addLog(routeUser.value, 'Прошел ОТК', '#visible__comments');
   });
 
   // REPORT
   reportBtn.addEventListener('click', () => {
     issued.value = String(Number(issued.value) + Number(issuedToday.value));
-    let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, '#visible__comments');
+    let logMsg = addLog(routeUser.value, `За смену ${issuedToday.value}`, '#visible__comments');
     saveData(logMsg, '#issued_report');
     issuedToday.value = '';
   });
@@ -1927,7 +1926,7 @@ const triggerRoutesModal = e => {
                 `);
       }
     });
-    addLog(logName, '"Просмотрел отчет по сменам"', '#visible__comments');
+    addLog(logName, 'Просмотрел отчет по сменам', '#visible__comments');
   });
   window.addEventListener('keydown', subCommentByEnter);
   document.querySelector('.section-finish__sub').addEventListener('click', () => {
@@ -1938,7 +1937,6 @@ const triggerRoutesModal = e => {
     });
     obj['plot'] = routeForm.querySelector('#route__plot').value;
     obj['comments'] = createReportObj(obj['comments']);
-    obj['issued_report'] = createReportObj(obj['issued_report']);
     routeInput.value = JSON.stringify(obj);
     const parent = routeInput.closest('.table-form--old');
     if (!(parent === null)) {

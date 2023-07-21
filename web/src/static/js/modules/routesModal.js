@@ -128,10 +128,9 @@ const routeModal = `
                     class='route__comments hidden__input' 
                     id='route__comments' 
                     type='text' 
-                    name='comments'>
+                    name='commentss'>
                     
-                    <input type="text" class="hidden__input" id="visible__comments">
-                    
+                    <input name='comments' type="text" class="hidden__input" id="visible__comments">
                     <div class='section-logs__title'>Комментарии и логи событий</div>
                     <ul class='section-logs__list'>
                         
@@ -172,81 +171,83 @@ const issuedModal = `
    </div>
 `
 const drawLogs = data => {
-    const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Ошибка', 'Сбросил', 'За смену', 'Просмотрел']
+  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Ошибка', 'Сбросил', 'За смену', 'Просмотрел']
 
-    const logsList = document.querySelector('.section-logs__list')
-    const logsItems = logsList.querySelectorAll('.section-logs__item')
-    if (logsItems !== null) {
-        logsItems.forEach(item => {
-            item.remove()
-        })
-    }
-    data.value.split('---').reverse().forEach(log => {
-        if (log.trim() !== '') {
-            let flag = true
+  const logsList = document.querySelector('.section-logs__list')
+  const logsItems = logsList.querySelectorAll('.section-logs__item')
+  if (logsItems !== null) {
+    logsItems.forEach(item => {
+      item.remove()
+    })
+  }
+  data.value.split('---').reverse().forEach(log => {
+    if (log.trim() !== '') {
+      let flag = true
 
-            systemWords.forEach(word => {
-                if (log.includes(word)) {
-                    flag = false
-                }
-            })
+      systemWords.forEach(word => {
+        if (log.includes(word)) {
+          flag = false
+        }
+      })
 
-            if (flag) {
-                logsList.insertAdjacentHTML(`beforeend`, `
+      if (flag) {
+        logsList.insertAdjacentHTML(`beforeend`, `
                     <li class='section-logs__item'>${log}</li>
                 `)
-            } else {
-                logsList.insertAdjacentHTML(`beforeend`, `
+      } else {
+        logsList.insertAdjacentHTML(`beforeend`, `
                     <li style="color: #447e9b" class='section-logs__item'>${log}</li>
                 `)
-            }
-        }
-    })
-}
-const saveData = (data, selector) => {
-    const dataInput = document.querySelector(selector)
-    if (dataInput.value.length) {
-        dataInput.value += '---' + data
-    } else {
-        dataInput.value = data
+      }
     }
-    return dataInput
+  })
 }
+
+const saveData = (data, selector) => {
+  const dataInput = document.querySelector(selector)
+  if (dataInput.value.length) {
+    dataInput.value += '---' + data
+  } else {
+    dataInput.value = data
+  }
+  return dataInput
+}
+
 const addLog = (name, log, selector) => {
-    let today = new Date(Date.now()).toISOString()
-    today = today.substring(0, today.length - 8).split("T").join(" ")
-    let logMsg = `${today}    ${name} ${log}`
-    const visible = saveData(logMsg, selector)
-    saveData(logMsg, '#route__comments')
-    drawLogs(visible)
-    return logMsg
+  let today = new Date(Date.now()).toISOString()
+  today = today.substring(0, today.length - 8).split("T").join(" ")
+  let logMsg = `${today}    ${name} ${log}`
+  const visible = saveData(logMsg, selector)
+  saveData(logMsg, '#route__comments')
+  drawLogs(visible)
+  return logMsg
 }
 
 const activateOnInput = (e, cls) => {
-    if (e.target.value !== '') {
-        activateNextStage(cls)
-    } else {
-        disableBtn(cls)
-    }
+  if (e.target.value !== '') {
+    activateNextStage(cls)
+  } else {
+    disableBtn(cls)
+  }
 }
 
 const setDateToInput = inputId => {
-    let today = new Date(Date.now()).toISOString()
-    today = today.substring(0, today.length - 8).split("T").join(" ")
-    const timeInput = document.querySelector('#' + inputId)
-    timeInput.value = today
+  let today = new Date(Date.now()).toISOString()
+  today = today.substring(0, today.length - 8).split("T").join(" ")
+  const timeInput = document.querySelector('#' + inputId)
+  timeInput.value = today
 }
 
 const activateNextStage = btnClass => {
-    const btn = document.querySelector('.' + btnClass)
-    btn.removeAttribute('disabled')
-    btn.classList.add('clickable')
+  const btn = document.querySelector('.' + btnClass)
+  btn.removeAttribute('disabled')
+  btn.classList.add('clickable')
 }
 
 const disableBtn = btnClass => {
-    const btn = document.querySelector('.' + btnClass)
-    btn.setAttribute('disabled', 'true')
-    btn.classList.remove('clickable')
+  const btn = document.querySelector('.' + btnClass)
+  btn.setAttribute('disabled', 'true')
+  btn.classList.remove('clickable')
 }
 
 const confirmChangeTimeModal = `
@@ -262,471 +263,470 @@ const confirmChangeTimeModal = `
 `
 
 const confirmChangeTimeHandler = (e, operation, alertContent) => {
-    if (e.target.value === '') {
-        return
+  if (e.target.value === '') {
+    return
+  }
+  showModal(confirmChangeTimeModal)
+
+  const modal = document.querySelector('.modal--confirm')
+  const okBtn = modal.querySelector('.confirm__button--ok')
+  const cncltn = modal.querySelector('.confirm__button--cncl')
+  if (alertContent) {
+    modal.querySelector('.confirm__title').textContent = alertContent
+  }
+
+  okBtn.addEventListener('click', () => {
+    let logMsg
+    switch (e.target.name) {
+      case 'start_time':
+        logMsg = 'Сбросил время начала'
+        activateNextStage("route__select--plot")
+        break
+      case 'end_time':
+        logMsg = 'Сбросил время сдачи'
+        break
+      case 'otk_time':
+        logMsg = 'Сбросил время ОТК'
+        break
     }
-    showModal(confirmChangeTimeModal)
 
-    const modal = document.querySelector('.modal--confirm')
-    const okBtn = modal.querySelector('.confirm__button--ok')
-    const cncltn = modal.querySelector('.confirm__button--cncl')
-    if (alertContent) {
-        modal.querySelector('.confirm__title').textContent = alertContent
-    }
+    e.target.value = ''
+    operation()
+    modal.click()
+    addLog(user.name, logMsg, '#visible__comments')
+  })
 
-    okBtn.addEventListener('click', () => {
-        let logMsg
-        switch (e.target.name) {
-            case 'start_time':
-                logMsg = '"Сбросил время начала"'
-                activateNextStage("route__select--plot")
-                break
-            case 'end_time':
-                logMsg = '"Сбросил время сдачи"'
-                break
-            case 'otk_time':
-                logMsg = '"Сбросил время ОТК"'
-                break
-        }
-
-        e.target.value = ''
-        operation()
-        modal.click()
-        addLog(user.name, logMsg, '#visible__comments')
-    })
-
-    cncltn.addEventListener('click', () => {
-        modal.click()
-    })
+  cncltn.addEventListener('click', () => {
+    modal.click()
+  })
 }
 
 export const triggerRoutesModal = e => {
-    const routeInput = e.target.parentNode.querySelector('.hidden__input')
-    const modalElem = showModal(routeModal)
-    let logName = state['adminCheck'] || state['techCheck'] ? user.nickname : ''
+  const routeInput = e.target.parentNode.querySelector('.hidden__input')
+  const modalElem = showModal(routeModal)
+  let logName = state['adminCheck'] || state['techCheck'] ? user.nickname : ''
 
-    let info = false
-    let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
-    if (routeInfo !== '') {
-        info = true
-        routeInfo = JSON.parse(routeInfo)
-    }
+  let info = false
+  let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
+  if (routeInfo !== '') {
+    info = true
+    routeInfo = JSON.parse(routeInfo)
+  }
 
-    const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
-    const routeQuantity = modalElem.querySelector('#quantity')
-    routeQuantity.addEventListener('change', e => {
-        activateOnInput(e, 'section-finish__sub')
-        addLog(logName, `"Установил тираж в ${e.target.value}"`, '#visible__comments')
-    })
-    const issued = modalElem.querySelector('#route__issued')
-    const logsData = document.querySelector('#route__comments')
-    const visibleLogs = document.querySelector("#visible__comments")
-    const issuedToday = modalElem.querySelector('#route-issued__today')
-    const reportBtn = modalElem.querySelector('.report-sub--route__btn')
-    const startTime = document.querySelector('.start-route__time')
-    const endTime = document.querySelector('.end-route__time')
-    const deleteBtn = document.querySelector('#route__delete')
+  const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
+  const routeQuantity = modalElem.querySelector('#quantity')
+  routeQuantity.addEventListener('change', e => {
+    activateOnInput(e, 'section-finish__sub')
+    addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
+  })
+  const issued = modalElem.querySelector('#route__issued')
+  const logsData = document.querySelector('#route__comments')
+  const visibleLogs = document.querySelector("#visible__comments")
+  const issuedToday = modalElem.querySelector('#route-issued__today')
+  const reportBtn = modalElem.querySelector('.report-sub--route__btn')
+  const startTime = document.querySelector('.start-route__time')
+  const endTime = document.querySelector('.end-route__time')
+  const deleteBtn = document.querySelector('#route__delete')
 
-    const errInput = document.querySelector('#error-route__msg')
-    errInput.addEventListener('input', e => {
-        activateOnInput(e, 'error-route__btn')
-    })
+  const errInput = document.querySelector('#error-route__msg')
+  errInput.addEventListener('input', e => {
+    activateOnInput(e, 'error-route__btn')
+  })
 
-    const errTime = document.querySelector('.error__time')
-    const errTimeHandler = () => {
-        errTime.classList.add('hidden__input')
-        errInput.classList.remove('hidden__input')
-    }
-    const errInputHandler = () => {
-        errInput.classList.add('hidden__input')
-        errTime.classList.remove('hidden__input')
-    }
+  const errTime = document.querySelector('.error__time')
+  const errTimeHandler = () => {
+    errTime.classList.add('hidden__input')
+    errInput.classList.remove('hidden__input')
+  }
+  const errInputHandler = () => {
+    errInput.classList.add('hidden__input')
+    errTime.classList.remove('hidden__input')
+  }
 
-    const routeForm = modalElem.querySelector('.route__config')
+  const routeForm = modalElem.querySelector('.route__config')
 
-    const errBtn = routeForm.querySelector('.error-route__btn')
-    errBtn.addEventListener('click', () => {
-        let logMsg = `"ОШИБКА ${document.querySelector('#error-route__msg').value}"`
+  const errBtn = routeForm.querySelector('.error-route__btn')
+  errBtn.addEventListener('click', () => {
+    let logMsg = `ОШИБКА ${document.querySelector('#error-route__msg').value}`
 
-        addLog(logName, logMsg, '#visible__comments')
-        setDateToInput('error__time')
-        activateNextStage('error__time')
-        // errInput.classList.add('hidden__input')
-        // errTime.classList.remove('hidden__input')
-        // errTime.addEventListener('focus', errTimeHandler)
-        errInput.classList.remove('text-input')
-        errInput.classList.add('clickable')
-        errInput.addEventListener('focus', errInputHandler)
-        errBtn.classList.add('hidden__input')
-        errCloseBtn.classList.remove('hidden__input')
-        activateNextStage('error-route__close')
-        disableBtn('error-route__btn')
-    })
-    const errCloseBtn = document.querySelector('.error-route__close')
-    errCloseBtn.addEventListener('click', e => {
-        errTime.removeEventListener('focus', errTimeHandler)
-        errTime.value = ''
-        errTime.classList.add('hidden___input')
-        errInput.removeEventListener('focus', errInputHandler)
-        errInput.value = ''
-        errInput.classList.remove('hidden___input')
-        errInput.classList.remove('clickable')
-        errInput.classList.add('text-input')
-        errCloseBtn.classList.add('hidden__input')
-        errBtn.classList.remove('hidden__input')
-        disableBtn('error-route__close')
-        addLog(logName, '"Сбросил ошибку"', '#visible__comments')
-    })
+    addLog(logName, logMsg, '#visible__comments')
+    setDateToInput('error__time')
+    activateNextStage('error__time')
+    // errInput.classList.add('hidden__input')
+    // errTime.classList.remove('hidden__input')
+    // errTime.addEventListener('focus', errTimeHandler)
+    errInput.classList.remove('text-input')
+    errInput.classList.add('clickable')
+    errInput.addEventListener('focus', errInputHandler)
+    errBtn.classList.add('hidden__input')
+    errCloseBtn.classList.remove('hidden__input')
+    activateNextStage('error-route__close')
+    disableBtn('error-route__btn')
+  })
+  const errCloseBtn = document.querySelector('.error-route__close')
+  errCloseBtn.addEventListener('click', e => {
+    errTime.removeEventListener('focus', errTimeHandler)
+    errTime.value = ''
+    errTime.classList.add('hidden___input')
+    errInput.removeEventListener('focus', errInputHandler)
+    errInput.value = ''
+    errInput.classList.remove('hidden___input')
+    errInput.classList.remove('clickable')
+    errInput.classList.add('text-input')
+    errCloseBtn.classList.add('hidden__input')
+    errBtn.classList.remove('hidden__input')
+    disableBtn('error-route__close')
+    addLog(logName, 'Сбросил ошибку', '#visible__comments')
+  })
 
 
-    if (state['adminCheck'] || state['techCheck']) {
-        activateNextStage('start-route__time')
-        activateNextStage('route__select--plot')
+  if (state['adminCheck'] || state['techCheck']) {
+    activateNextStage('start-route__time')
+    activateNextStage('route__select--plot')
 
-        startTime.addEventListener('click', e => {
-            confirmChangeTimeHandler(e, () => {
-                activateNextStage('start-route__btn')
-                endTime.value = ''
-                document.querySelector('#otk-route__time').value = ''
-                disableBtn('end-route__btn')
-                disableBtn('otk-route__btn')
-            })
-        })
-
-        endTime.addEventListener('click', e => {
-            confirmChangeTimeHandler(e, () => {
-                activateNextStage('end-route__btn')
-                disableBtn('otk-route__btn')
-            })
-        })
-    }
-
-    const commentInput = document.querySelector('#section-logs__comment')
-    commentInput.addEventListener('input', e => {
-        activateOnInput(e, 'send__comment')
-    })
-    const commentBtn = document.querySelector('.send__comment')
-    commentBtn.addEventListener('click', e => {
-        let name
-        if (logName === '') {
-            name = routeUser.value
-        } else {
-            name = logName
-        }
-
-        addLog(name, `"${document.querySelector('#section-logs__comment').value}"`, '#visible__comments')
-        document.querySelector('#section-logs__comment').value = ''
-        disableBtn('send__comment')
-    })
-
-    if (info) {
-        const id = routeInfo['route_id']
-        const quantity = routeInfo['quantity']
-        const plot = routeInfo['plot']
-        const user = routeInfo['user']
-        const start = routeInfo['start_time']
-        const end = routeInfo['end_time']
-        const otk = routeInfo['otk_time']
-        const errT = routeInfo['error_time']
-        const errM = routeInfo['error_msg']
-        let comments = routeInfo['comments']
-
-        console.log(user)
-
-        if (routeInfo['issued']) {
-            issued.value = routeInfo['issued']
-        }
-
-        if (logName !== '') {
-            deleteBtn.removeAttribute('disabled')
-            deleteBtn.addEventListener('click', e => {
-                confirmChangeTimeHandler(e, () => {
-                    sendData(`${appAddr}/api/routes/delete/${id}`, 'POST', null)
-                        .then(resp => {
-                            if (resp.ok) showResult(true)
-                            modalElem.remove()
-                            getOrders('get-all')
-                        })
-                }, 'Удалить маршрут?')
-            })
-        }
-
-        if (start) {
-            disableBtn('route__select--plot')
-        }
-
-        drawPlots(plot, user)
-        activateNextStage('route__select--user')
-        controlQuantityAccess(routeQuantity)
-        if (logName !== '') {
-            controlCommentAccess(commentInput)
-        }
-
-        if (user) {
-            controlCommentAccess(commentInput)
-        }
-
-        if (!start) {
-            activateNextStage('start-route__btn')
-        } else {
-            activateNextStage('end-route__btn')
-        }
-
-        startTime.value = start
-        document.querySelector('#end-route__time').value = end
-        document.querySelector('#otk-route__time').value = otk
-        document.querySelector('#error-route__msg').value = errM
-        document.querySelector('#error__time').value = errT
-
-        if (comments) {
-            comments = comments.map(c => `${c['date']}    ${c['value']}`)
-            comments = comments.join('---')
-            visibleLogs.value = comments
-
-            comments = comments.split('---')
-            comments = comments.filter(c => c.includes('За смену'))
-            modalElem.querySelector('#issued__all').value = comments.join('---')
-        }
-
-        activateNextStage('section-finish__sub')
-        activateNextStage('section-finish__cancel')
-
-        if (quantity) {
-            routeQuantity.value = quantity
-        } else {
-            routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
-        }
-
-        if (end) {
-            disableBtn('end-route__btn')
-
-            if (state['adminCheck'] || state['techCheck']) {
-                activateNextStage('otk-route__btn')
-            }
-        }
-
-        if (errM) {
-            errInput.classList.remove('hidden__input')
-            errTime.classList.add('hidden__input')
-
-            if (state['adminCheck'] || state['techCheck']) {
-                errCloseBtn.classList.remove('hidden__input')
-                errBtn.classList.add('hidden__input')
-            }
-        }
-
-        issuedToday.classList.add('text-input')
-        issuedToday.removeAttribute('disabled')
-    } else {
-        routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
-        drawPlots()
-    }
-
-    const dbID = currentOrder.querySelector('#db_id').value
-    const num = currentOrder.querySelector('#number').value
-    modalElem.querySelector('.modal-header__db').textContent = '№' + dbID
-    modalElem.querySelector('.modal-header__number').textContent = '№ заказа ' + num
-
-    const routePlot = document.querySelector('#route__plot')
-    routePlot.addEventListener('change', e => {
-        const connector = document.querySelector('#plot-connection')
-        let plotName = ''
-        connector.querySelectorAll('option').forEach(conn => {
-            if (e.target.value === conn.value) {
-                plotName = conn.textContent
-            }
-        })
-
-        addLog(logName, `Выбрал этап "${routePlot.value.toUpperCase()}"`, '#visible__comments')
-        drawUsers(plotName, null)
-        activateNextStage('section-finish__sub')
-        controlQuantityAccess(routeQuantity)
-        controlCommentAccess(commentInput)
-    })
-
-    const routeUser = document.querySelector('.route__select--user')
-    routeUser.addEventListener('change', () => {
-        addLog(logName, `"Назначил оператора ${routeUser.value}"`, '#visible__comments')
+    startTime.addEventListener('click', e => {
+      confirmChangeTimeHandler(e, () => {
         activateNextStage('start-route__btn')
-    })
-
-    drawLogs(visibleLogs)
-    const startBtn = routeForm.querySelector('.start-route__btn')
-    startBtn.addEventListener('click', () => {
-        setDateToInput('start-route__time')
-        activateNextStage('end-route__btn')
-        activateNextStage('section-finish__sub')
-        activateNextStage('section-finish__cancel')
-        disableBtn('start-route__btn')
-        disableBtn('route__select--plot')
-        addLog(routeUser.value, '"Начал"', '#visible__comments')
-        issuedToday.classList.add('text-input')
-        issuedToday.removeAttribute('disabled')
-    })
-
-    // END
-    const endBTn = routeForm.querySelector('.end-route__btn')
-    endBTn.addEventListener('click', () => {
-        setDateToInput('end-route__time')
-        if (state['adminCheck'] || state['techCheck']) {
-            activateNextStage('otk-route__btn')
-        }
+        endTime.value = ''
+        document.querySelector('#otk-route__time').value = ''
         disableBtn('end-route__btn')
-        addLog(routeUser.value, '"Закончил"', '#visible__comments')
-    })
-
-    // OTK
-    const otkBtn = routeForm.querySelector('.otk-route__btn')
-    otkBtn.addEventListener('click', () => {
-        setDateToInput('otk-route__time')
         disableBtn('otk-route__btn')
-        addLog(routeUser.value, '"Прошел ОТК"', '#visible__comments')
+      })
     })
 
-    // REPORT
-    reportBtn.addEventListener('click', () => {
-        issued.value = String(Number(issued.value) + Number(issuedToday.value))
-        let logMsg = addLog(routeUser.value, `"За смену ${issuedToday.value}"`, '#visible__comments')
-        saveData(logMsg, '#issued_report')
-        issuedToday.value = ''
+    endTime.addEventListener('click', e => {
+      confirmChangeTimeHandler(e, () => {
+        activateNextStage('end-route__btn')
+        disableBtn('otk-route__btn')
+      })
+    })
+  }
+
+  const commentInput = document.querySelector('#section-logs__comment')
+  commentInput.addEventListener('input', e => {
+    activateOnInput(e, 'send__comment')
+  })
+  const commentBtn = document.querySelector('.send__comment')
+  commentBtn.addEventListener('click', e => {
+    let name
+    if (logName === '') {
+      name = routeUser.value
+    } else {
+      name = logName
+    }
+
+    addLog(name, `${document.querySelector('#section-logs__comment').value}`, '#visible__comments')
+    document.querySelector('#section-logs__comment').value = ''
+    disableBtn('send__comment')
+  })
+
+  if (info) {
+    const id = routeInfo['route_id']
+    const quantity = routeInfo['quantity']
+    const plot = routeInfo['plot']
+    const user = routeInfo['user']
+    const start = routeInfo['start_time']
+    const end = routeInfo['end_time']
+    const otk = routeInfo['otk_time']
+    const errT = routeInfo['error_time']
+    const errM = routeInfo['error_msg']
+    let comments = routeInfo['comments']
+
+    console.log(user)
+
+    if (routeInfo['issued']) {
+      issued.value = routeInfo['issued']
+    }
+
+    if (logName !== '') {
+      deleteBtn.removeAttribute('disabled')
+      deleteBtn.addEventListener('click', e => {
+        confirmChangeTimeHandler(e, () => {
+          sendData(`${appAddr}/api/routes/delete/${id}`, 'POST', null)
+            .then(resp => {
+              if (resp.ok) showResult(true)
+              modalElem.remove()
+              getOrders('get-all')
+            })
+        }, 'Удалить маршрут?')
+      })
+    }
+
+    if (start) {
+      disableBtn('route__select--plot')
+    }
+
+    drawPlots(plot, user)
+    activateNextStage('route__select--user')
+    controlQuantityAccess(routeQuantity)
+    if (logName !== '') {
+      controlCommentAccess(commentInput)
+    }
+
+    if (user) {
+      controlCommentAccess(commentInput)
+    }
+
+    if (!start) {
+      activateNextStage('start-route__btn')
+    } else {
+      activateNextStage('end-route__btn')
+    }
+
+    startTime.value = start
+    document.querySelector('#end-route__time').value = end
+    document.querySelector('#otk-route__time').value = otk
+    document.querySelector('#error-route__msg').value = errM
+    document.querySelector('#error__time').value = errT
+
+    if (comments) {
+      comments = comments.map(c => `${c['date']}    ${c['value']}`)
+      comments = comments.join('---')
+      visibleLogs.value = comments
+
+      comments = comments.split('---')
+      comments = comments.filter(c => c.includes('За смену'))
+      modalElem.querySelector('#issued__all').value = comments.join('---')
+    }
+
+    activateNextStage('section-finish__sub')
+    activateNextStage('section-finish__cancel')
+
+    if (quantity) {
+      routeQuantity.value = quantity
+    } else {
+      routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
+    }
+
+    if (end) {
+      disableBtn('end-route__btn')
+
+      if (state['adminCheck'] || state['techCheck']) {
+        activateNextStage('otk-route__btn')
+      }
+    }
+
+    if (errM) {
+      errInput.classList.remove('hidden__input')
+      errTime.classList.add('hidden__input')
+
+      if (state['adminCheck'] || state['techCheck']) {
+        errCloseBtn.classList.remove('hidden__input')
+        errBtn.classList.add('hidden__input')
+      }
+    }
+
+    issuedToday.classList.add('text-input')
+    issuedToday.removeAttribute('disabled')
+  } else {
+    routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
+    drawPlots()
+  }
+
+  const dbID = currentOrder.querySelector('#db_id').value
+  const num = currentOrder.querySelector('#number').value
+  modalElem.querySelector('.modal-header__db').textContent = '№' + dbID
+  modalElem.querySelector('.modal-header__number').textContent = '№ заказа ' + num
+
+  const routePlot = document.querySelector('#route__plot')
+  routePlot.addEventListener('change', e => {
+    const connector = document.querySelector('#plot-connection')
+    let plotName = ''
+    connector.querySelectorAll('option').forEach(conn => {
+      if (e.target.value === conn.value) {
+        plotName = conn.textContent
+      }
     })
 
-    issuedToday.addEventListener('input', e => {
-        activateOnInput(e, 'report-sub--route__btn')
-    })
-    const reportIssued = document.querySelector('.report-route__btn')
-    reportIssued.addEventListener('click', () => {
-        showModal(issuedModal)
-        const dataPlace = document.querySelector('.issued-list')
-        document.querySelector('#issued__all').value.split('---').forEach(rep => {
-            if (rep.trim() !== '') {
-                dataPlace.insertAdjacentHTML(`beforeend`, `
+    addLog(logName, `Выбрал этап ${routePlot.value}`, '#visible__comments')
+    drawUsers(plotName, null)
+    activateNextStage('section-finish__sub')
+    controlQuantityAccess(routeQuantity)
+    controlCommentAccess(commentInput)
+  })
+
+  const routeUser = document.querySelector('.route__select--user')
+  routeUser.addEventListener('change', () => {
+    addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
+    activateNextStage('start-route__btn')
+  })
+
+  drawLogs(visibleLogs)
+  const startBtn = routeForm.querySelector('.start-route__btn')
+  startBtn.addEventListener('click', () => {
+    setDateToInput('start-route__time')
+    activateNextStage('end-route__btn')
+    activateNextStage('section-finish__sub')
+    activateNextStage('section-finish__cancel')
+    disableBtn('start-route__btn')
+    disableBtn('route__select--plot')
+    addLog(routeUser.value, 'Начал', '#visible__comments')
+    issuedToday.classList.add('text-input')
+    issuedToday.removeAttribute('disabled')
+  })
+
+  // END
+  const endBTn = routeForm.querySelector('.end-route__btn')
+  endBTn.addEventListener('click', () => {
+    setDateToInput('end-route__time')
+    if (state['adminCheck'] || state['techCheck']) {
+      activateNextStage('otk-route__btn')
+    }
+    disableBtn('end-route__btn')
+    addLog(routeUser.value, 'Закончил', '#visible__comments')
+  })
+
+  // OTK
+  const otkBtn = routeForm.querySelector('.otk-route__btn')
+  otkBtn.addEventListener('click', () => {
+    setDateToInput('otk-route__time')
+    disableBtn('otk-route__btn')
+    addLog(routeUser.value, 'Прошел ОТК', '#visible__comments')
+  })
+
+  // REPORT
+  reportBtn.addEventListener('click', () => {
+    issued.value = String(Number(issued.value) + Number(issuedToday.value))
+    let logMsg = addLog(routeUser.value, `За смену ${issuedToday.value}`, '#visible__comments')
+    saveData(logMsg, '#issued_report')
+    issuedToday.value = ''
+  })
+
+  issuedToday.addEventListener('input', e => {
+    activateOnInput(e, 'report-sub--route__btn')
+  })
+  const reportIssued = document.querySelector('.report-route__btn')
+  reportIssued.addEventListener('click', () => {
+    showModal(issuedModal)
+    const dataPlace = document.querySelector('.issued-list')
+    document.querySelector('#issued__all').value.split('---').forEach(rep => {
+      if (rep.trim() !== '') {
+        dataPlace.insertAdjacentHTML(`beforeend`, `
                     <li style='text-align: center' class='comment__item'>${rep}</li>   
                 `)
-            }
-        })
-
-        addLog(logName, '"Просмотрел отчет по сменам"', '#visible__comments')
+      }
     })
 
-    window.addEventListener('keydown', subCommentByEnter)
+    addLog(logName, 'Просмотрел отчет по сменам', '#visible__comments')
+  })
 
-    document.querySelector('.section-finish__sub').addEventListener('click', () => {
-        const formData = new FormData(routeForm)
-        const obj = {}
-        formData.forEach((value, key) => {
-            obj[key] = value
-        })
-        obj['plot'] = routeForm.querySelector('#route__plot').value
+  window.addEventListener('keydown', subCommentByEnter)
 
-        obj['comments'] = createReportObj(obj['comments'])
-        obj['issued_report'] = createReportObj(obj['issued_report'])
-        routeInput.value = JSON.stringify(obj)
-
-        const parent = routeInput.closest('.table-form--old')
-
-        if (!(parent === null)) {
-            parent.classList.remove('table-form--old')
-            parent.classList.add('table-form--upd')
-        }
-
-        submitData()
-        document.querySelector('.modal--route').remove()
-        window.removeEventListener('keydown', subCommentByEnter)
+  document.querySelector('.section-finish__sub').addEventListener('click', () => {
+    const formData = new FormData(routeForm)
+    const obj = {}
+    formData.forEach((value, key) => {
+      obj[key] = value
     })
+    obj['plot'] = routeForm.querySelector('#route__plot').value
 
-    if (state['isArchive']) {
-        modalElem.querySelectorAll('input').forEach(inp => {
-            inp.setAttribute('disabled', 'true')
-        })
-        modalElem.querySelectorAll('select').forEach(sel => {
-            sel.setAttribute('disabled', 'true')
-        })
+    obj['comments'] = createReportObj(obj['comments'])
+    routeInput.value = JSON.stringify(obj)
+
+    const parent = routeInput.closest('.table-form--old')
+
+    if (!(parent === null)) {
+      parent.classList.remove('table-form--old')
+      parent.classList.add('table-form--upd')
     }
+
+    submitData()
+    document.querySelector('.modal--route').remove()
+    window.removeEventListener('keydown', subCommentByEnter)
+  })
+
+  if (state['isArchive']) {
+    modalElem.querySelectorAll('input').forEach(inp => {
+      inp.setAttribute('disabled', 'true')
+    })
+    modalElem.querySelectorAll('select').forEach(sel => {
+      sel.setAttribute('disabled', 'true')
+    })
+  }
 }
 
 export const subCommentByEnter = e => {
-    if (e.code === 'Enter') {
-        const commentInput = document.querySelector('#section-logs__comment')
-        if (commentInput && commentInput.value) {
-            document.querySelector('.send__comment').click()
-        }
+  if (e.code === 'Enter') {
+    const commentInput = document.querySelector('#section-logs__comment')
+    if (commentInput && commentInput.value) {
+      document.querySelector('.send__comment').click()
     }
+  }
 }
 
 const createReportObj = (data) => {
-    let res = data.split('---')
-    res = res.map(c => c.split('    '))
-    res = res.map(c => ({
-        'date': c[0],
-        'value': c[1]
-    }))
+  let res = data.split('---')
+  res = res.map(c => c.split('    '))
+  res = res.map(c => ({
+    'date': c[0],
+    'value': c[1]
+  }))
 
-    return res
+  return res
 }
 
 const drawPlots = (plotI, user) => {
-    const plotsResp = getData('filters/get-all')
-    plotsResp.then(plots => {
-        const plotsSelect = document.querySelector('#route__plot')
-        const plotsConnection = document.querySelector('#plot-connection')
+  const plotsResp = getData('filters/get-all')
+  plotsResp.then(plots => {
+    const plotsSelect = document.querySelector('#route__plot')
+    const plotsConnection = document.querySelector('#plot-connection')
 
-        console.log(plotI)
-        plots.data.forEach(plot => {
-            plotsSelect.insertAdjacentHTML('beforeend', `
+    console.log(plotI)
+    plots.data.forEach(plot => {
+      plotsSelect.insertAdjacentHTML('beforeend', `
                 <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>
             `)
 
-            plotsConnection.insertAdjacentHTML('beforeend', `
+      plotsConnection.insertAdjacentHTML('beforeend', `
                 <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.plot}</option>
             `)
-        })
-
-        if (plotI) {
-            drawUsers(plotsConnection.querySelector('option[selected]').textContent, user)
-        }
     })
+
+    if (plotI) {
+      drawUsers(plotsConnection.querySelector('option[selected]').textContent, user)
+    }
+  })
 }
 
 const drawUsers = (plotName, userI) => {
-    const usersSelect = document.querySelector('#route__user')
-    usersSelect.querySelectorAll('option').forEach(elem => {
-        // if (!elem.hasAttribute('disabled'))
-        elem.remove()
-    })
+  const usersSelect = document.querySelector('#route__user')
+  usersSelect.querySelectorAll('option').forEach(elem => {
+    // if (!elem.hasAttribute('disabled'))
+    elem.remove()
+  })
 
-    const usersResp = getData('users/get-all-operators')
-    usersResp.then(users => {
-        if (plotName) {
-            users.data = users.data.filter(u => u.plot === plotName)
-        }
+  const usersResp = getData('users/get-all-operators')
+  usersResp.then(users => {
+    if (plotName) {
+      users.data = users.data.filter(u => u.plot === plotName)
+    }
 
-        users.data.forEach(user => {
-            usersSelect.insertAdjacentHTML('beforeend', `
+    users.data.forEach(user => {
+      usersSelect.insertAdjacentHTML('beforeend', `
                 <option ${String(userI) === String(user.nickname) ? 'selected' : ''} value='${user.nickname}'>${user.nickname}</option>
             `)
-        })
     })
+  })
 
-    usersSelect.insertAdjacentHTML(`beforeend`, `
+  usersSelect.insertAdjacentHTML(`beforeend`, `
         <option selected disabled>Выберите оператора</option>
     `)
 
-    // if (userI) {
-    //     usersSelect.querySelector('option[disabled]').remove()
-    // }
+  // if (userI) {
+  //     usersSelect.querySelector('option[disabled]').remove()
+  // }
 
-    activateNextStage('route__select--user')
+  activateNextStage('route__select--user')
 }
 
 const controlQuantityAccess = (routeQuantity) => {
-    if (state['adminCheck'] || state['techCheck']) {
-        routeQuantity.removeAttribute('readonly')
-        routeQuantity.style.cursor = 'text'
-    }
+  if (state['adminCheck'] || state['techCheck']) {
+    routeQuantity.removeAttribute('readonly')
+    routeQuantity.style.cursor = 'text'
+  }
 }
 
 const controlCommentAccess = (commentInput) => {
-    commentInput.removeAttribute('readonly')
-    commentInput.style.cursor = 'text'
+  commentInput.removeAttribute('readonly')
+  commentInput.style.cursor = 'text'
 }
