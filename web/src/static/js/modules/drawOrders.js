@@ -32,181 +32,181 @@ export const drawOrders = async (d, data, users) => {
   const orderCompleted = d.quantity && d.issued && d.issued >= d.quantity
 
   table.insertAdjacentHTML(`afterbegin`, `
-                <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
-                <ul class='main-table__item'>
-                    <li class='table-body_cell table__db'>
-                        <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
+      <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
+        <ul class='main-table__item'>
+            <li class='table-body_cell table__db'>
+                <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table__timestamp'>
+                <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex='-1' autocomplete='off'>
+            </li>
+             <li class='table-body_cell hidden-input'>
+                <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table__files'>
+                <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li data-title="${d.number}" class='table-body_cell ${d.number ? "table-body__attr" : ""}  table__number'>
+                <input 
+                ${state['inputAdmManGroupper']}
+                id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table__sample'>
+                <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
+            </li>
+            <li data-title="${d.client}" class='table-body_cell ${d.client ? "table-body__attr" : ""} table__client'>
+                <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li data-title="${d.name}" class='table-body_cell ${d.name ? "table-body__attr" : ""} table__name'>
+                <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li data-title="${d.material}" class='table-body_cell ${d.material ? "table-body__attr" : ""} table__material'>
+                <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table__quantity'>
+                <input ${state['inputAdmManGroupper']} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
+            </li>
+            <ul class="table__issueds">
+                <li class="table-body_cell table__issued">
+                    <input ${state["inputAdmTechGroupper"]} class="table__data ${orderCompleted && !state["isArchive"] ? "table__issued--done tr" : ""}" tabindex="-1"
+                    type="number" 
+                    name="issued" 
+                    required  autocomplete="off"
+                    value="${d.issued}">
+                </li>
+            </ul>
+            <li class="table-body_cell hidden__input table__finished">
+                <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
+            </li>
+            <li data-title="${d.m}" class="table-body_cell ${d.m ? "table-body__attr" : ""}  table__m">
+                <select ${state["selectAdmManGroupper"]} class="table__data table-m-select main__button" name="m" id="">
+                    <option selected value=""></option>
+                </select>
+            </li>
+            <li class="table-body_cell table__endtime">
+                <input class="main__button table__data "
+                ${state["inputAdmManTechGroupper"]} 
+                name="end_time" 
+                type="text"
+                placeholder=" " 
+                value="${d.end_time.split("T")[0]}" 
+                onfocus="this.type='date'"
+                onblur="(this.type='text')"
+                tabindex="-1" 
+                autocomplete="off">
+            </li>
+            <li class="table__routes table-routes">
+                <input readonly type="text" class="hidden__input" name="routes_json">
+                <ul class="table-routes__wrapper">
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__timestamp'>
-                        <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                     <li class='table-body_cell hidden-input'>
-                        <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__files'>
-                        <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__number'>
-                        <input 
-                        ${state['inputAdmManGroupper']}
-                        id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__sample'>
-                        <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__client'>
-                        <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__name'>
-                        <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__material'>
-                        <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class='table-body_cell table__quantity'>
-                        <input ${state['inputAdmManGroupper']} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
-                    </li>
-                    <ul class="table__issueds">
-                        <li class="table-body_cell table__issued">
-                            <input ${state["inputAdmTechGroupper"]} class="table__data ${orderCompleted && !state["isArchive"] ? "table__issued--done tr" : ""}" tabindex="-1"
-                            type="number" 
-                            name="issued" 
-                            required  autocomplete="off"
-                            value="${d.issued}">
-                        </li>
-                    </ul>
-                    <li class="table-body_cell hidden__input table__finished">
-                        <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
-                    </li>
-                    <li class="table-body_cell table__m">
-                        <select ${state["selectAdmManGroupper"]} class="table__data table-m-select main__button" name="m" id="">
-                            <option selected value=""></option>
-                        </select>
-                    </li>
-                    <li class="table-body_cell table__endtime">
-                        <input class="main__button table__data "
-                        ${state["inputAdmManTechGroupper"]} 
-                        name="end_time" 
-                        type="text"
-                        placeholder=" " 
-                        value="${d.end_time.split("T")[0]}" 
-                        onfocus="this.type='date'"
-                        onblur="(this.type='text')"
-                        tabindex="-1" 
-                        autocomplete="off">
-                    </li>
-                    <li class="table__routes table-routes">
-                        <input readonly type="text" class="hidden__input" name="routes_json">
-                        <ul class="table-routes__wrapper">
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                        </ul>
-                        <ul class="table-routes__wrapper hidden__input table-routes__issued">
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="table-body_cell table__p">
-                        <select ${state["selectAdmManTechGroupper"]} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
-                            <option selected value=""></option>
-                        </select>
-                    </li>
-                    <li class="table-body_cell hidden-input table__comment">
-                        <input class="table__data hidden-input table__data--ro" 
-                            name="comments" 
-                            type="text"
-                            value="" 
-                            readonly 
-                            autocomplete="off"
-                            tabindex="-1">
-                    </li>
-                    <li class="table-body_cell hidden-input table__comment">
-                        <input class="table__data  hidden-input table__data--ro" 
-                            name="all_comments" 
-                            type="text"
-                            value="${d.comments ? d.comments.join(".-.") : ""}" 
-                            readonly 
-                            autocomplete="off"
-                            tabindex="-1">
-                    </li>
-                    
-                    <li class="table-body_cell table__comment">
-                        <input ${state["inputAdmManTechGroupper"]} class="main__button table__data click-chose table__data--ro" tabindex="-1"
-                            name="comment" 
-                            type="text" 
-                            value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
-                            autocomplete="off"
-                            readonly>
+                    <li class="table-body_cell table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                 </ul>
-            </form>
-    `)
+                <ul class="table-routes__wrapper hidden__input table-routes__issued">
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                </ul>
+            </li>
+            <li class="table-body_cell table__p">
+                <select ${state["selectAdmManTechGroupper"]} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                    <option selected value=""></option>
+                </select>
+            </li>
+            <li class="table-body_cell hidden-input table__comment">
+                <input class="table__data hidden-input table__data--ro" 
+                    name="comments" 
+                    type="text"
+                    value="" 
+                    readonly 
+                    autocomplete="off"
+                    tabindex="-1">
+            </li>
+            <li class="table-body_cell hidden-input table__comment">
+                <input class="table__data  hidden-input table__data--ro" 
+                    name="all_comments" 
+                    type="text"
+                    value="${d.comments ? d.comments.join(".-.") : ""}" 
+                    readonly 
+                    autocomplete="off"
+                    tabindex="-1">
+            </li>
+            
+            <li data-title='${d.comments ? d.comments[d.comments.length - 1] : ""}' class="table-body_cell ${d.comments ? "table-body__attr" : ""} table__comment">
+                <input ${state["inputAdmManTechGroupper"]} class="main__button table__data click-chose table__data--ro" tabindex="-1"
+                    name="comment" 
+                    type="text" 
+                    value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
+                    autocomplete="off"
+                    readonly>
+            </li>
+        </ul>
+    </form>
+  `)
 
   const currentOrder = document.getElementById(`form-${d.id}`)
   const routes = d["db_routes"]
@@ -280,10 +280,17 @@ export const drawOrders = async (d, data, users) => {
         const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
 
         if (dataInput) {
-          const routeInfo = dataInput.parentNode.querySelector(`input[value="-"]`)
+          const infoParent = dataInput.parentNode
+          const routeInfo = infoParent.querySelector(`input[value="-"]`)
 
           dataInput.value = JSON.stringify(route)
           routeInfo.value = route.plot
+
+          if (route.comments) {
+            const lastComm = route.comments[route.comments.length - 1]
+            infoParent.setAttribute('data-title', `${lastComm.date} ${lastComm.value}`)
+            infoParent.classList.add('table-body__trattr')
+          }
 
           if (route.start_time && !route.end_time) {
             routeInfo.classList.add('route--started')
@@ -301,6 +308,7 @@ export const drawOrders = async (d, data, users) => {
 
             if (route.error_msg) {
               routeInfo.style.color = "red"
+              infoParent.setAttribute('data-title', route.error_msg)
             } else if (route.quantity && route.issued < route.quantity) {
               routeInfo.style.color = "yellow"
             } else {
@@ -310,6 +318,7 @@ export const drawOrders = async (d, data, users) => {
 
           if (route.error_msg && !route.end_time) {
             routeInfo.classList.add('route--error')
+            infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
 
             if (route.start_time) {
               routeInfo.style.color = "black"

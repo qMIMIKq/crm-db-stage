@@ -1,12 +1,9 @@
 export const drawManagers = (target, managers, manager) => {
-    const block = document.querySelector(target)
+  const block = document.querySelector(target)
 
-    managers.forEach(man => {
-        let name = man.name.split(' ')
-        name = name[0][0] + name[1][0]
-
-        block.insertAdjacentHTML('beforeend', `
-             <option ${manager === man.name ? 'selected' : ''} value='${man.name}'>${name}</option>
+  managers.forEach(man => {
+    block.insertAdjacentHTML('beforeend', `
+             <option ${manager === man.nickname ? 'selected' : ''} value='${man.nickname}'>${man.nickname}</option>
         `)
-    })
+  })
 }

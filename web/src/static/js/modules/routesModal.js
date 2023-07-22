@@ -436,8 +436,6 @@ export const triggerRoutesModal = e => {
     const errM = routeInfo['error_msg']
     let comments = routeInfo['comments']
 
-    console.log(user)
-
     if (routeInfo['issued']) {
       issued.value = routeInfo['issued']
     }
@@ -520,8 +518,10 @@ export const triggerRoutesModal = e => {
       }
     }
 
-    issuedToday.classList.add('text-input')
-    issuedToday.removeAttribute('disabled')
+    if (start) {
+      issuedToday.classList.add('text-input')
+      issuedToday.removeAttribute('disabled')
+    }
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
     drawPlots()
