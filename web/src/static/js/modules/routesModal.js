@@ -675,15 +675,14 @@ const drawPlots = (plotI, user) => {
     const plotsSelect = document.querySelector('#route__plot')
     const plotsConnection = document.querySelector('#plot-connection')
 
-    console.log(plotI)
     plots.data.forEach(plot => {
       plotsSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>
-            `)
+          <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>
+      `)
 
       plotsConnection.insertAdjacentHTML('beforeend', `
-                <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.plot}</option>
-            `)
+          <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.plot}</option>
+      `)
     })
 
     if (plotI) {

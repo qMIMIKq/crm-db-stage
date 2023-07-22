@@ -6,190 +6,213 @@ import {deleteOrders, getOrders} from "./orders";
 import {bindOrdersListeners} from "./bindListeners";
 
 export const startFilter = (filters) => {
-    state['orders'].forEach(order => {
-        let check = false
+  state['orders'].forEach(order => {
+    let check = false
 
-        if (order.db_routes) {
-            order.db_routes.forEach(route => {
-                if (route.start_time) {
-                    if (filters.length) {
-                        if (filters.includes(route.plot)) {
-                            check = true
-                        }
-                    } else {
-                        check = true
-                    }
-                }
-            })
-        }
-
-        if (check) {
-            console.log(order)
-            if (state['filtered'] && filters.length) {
-                globalFilterOrders(order)
-                filterData()
-            } else if (state['filtered']) {
-                globalFilterOrders(order)
-            } else {
-                drawOrders(order, state['filteredOrders'], state['managers'])
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.start_time && !route.end_time) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true
             }
+          } else {
+            check = true
+          }
         }
+      })
+    }
 
-        return check
-    })
 
-    bindOrdersListeners()
+    return checkDoFilter(check, order)
+  })
+
+  bindOrdersListeners()
 }
 
 export const errFilter = (filters) => {
-    state['orders'].forEach(order => {
-        let check = false
+  state['orders'].forEach(order => {
+    let check = false
 
-        if (order.db_routes) {
-            order.db_routes.forEach(route => {
-                if (route.error_msg) {
-                    if (filters.length) {
-                        if (filters.includes(route.plot)) {
-                            check = true
-                        }
-                    } else {
-                        check = true
-                    }
-
-                }
-            })
-        }
-
-        if (check) {
-            if (state['filtered'] && filters.length) {
-                globalFilterOrders(order)
-                filterData()
-            } else if (state['filtered']) {
-                console.log('table filters')
-                globalFilterOrders(order)
-            } else {
-                drawOrders(order, state['filteredOrders'], state['managers'])
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.error_msg) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true
             }
+          } else {
+            check = true
+          }
+
         }
+      })
+    }
 
-    })
+    return checkDoFilter(check, order)
+  })
 
-    bindOrdersListeners()
+  bindOrdersListeners()
 }
 
-export const uncompletedFilter = (filters) => {
-    state['orders'].forEach(order => {
-        let check = false
+export const completedFilter = (filters) => {
+  state['orders'].forEach(order => {
+    let check = false
 
-        if (order.db_routes) {
-            order.db_routes.forEach(route => {
-                if (route.issued && route.quantity) {
-                    if (route.issued >= route.quantity) {
-
-                    } else {
-                        if (filters.length) {
-                            if (filters.includes(route.plot)) {
-                                check = true
-                            }
-                        } else {
-                            check = true
-                        }
-                    }
-                } else {
-                    if (filters.length) {
-                        if (filters.includes(route.plot)) {
-                            check = true
-                        }
-                    } else {
-                        check = true
-                    }
-                }
-            })
-        }
-
-        if (check) {
-            if (state['filtered'] && filters.length) {
-                globalFilterOrders(order)
-                filterData()
-            } else if (state['filtered']) {
-                console.log('table filters')
-                globalFilterOrders(order)
-            } else {
-                drawOrders(order, state['filteredOrders'], state['managers'])
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.end_time) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true
             }
+          } else {
+            check = true
+          }
         }
+      })
+    }
+    return checkDoFilter(check, order)
+  })
 
-    })
-
-    bindOrdersListeners()
+  bindOrdersListeners()
 }
+
+export const notInWorkFilter = filters => {
+  state['orders'].forEach(order => {
+    let check = false
+
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (!route.start_time) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true
+            }
+          } else {
+            check = true
+          }
+        }
+      })
+    }
+    return checkDoFilter(check, order)
+  })
+
+  bindOrdersListeners()
+}
+
+const checkDoFilter = (check, order) => {
+  if (check) {
+    if (state['filtered'] && filters.length) {
+      globalFilterOrders(order)
+      filterData()
+    } else if (state['filtered']) {
+      console.log('table filters')
+      globalFilterOrders(order)
+    } else {
+      drawOrders(order, state['filteredOrders'], state['managers'])
+    }
+  }
+
+  return check
+}
+
 
 export const tableRoutesFiltersHandler = () => {
-    const inWorkBtn = document.querySelector(".header-routes__work")
-    const inErrorBtn = document.querySelector(".header-routes__error")
-    const uncompletedBtn = document.querySelector(".header-routes__uncompleted")
+  const inWorkBtn = document.querySelector(".header-routes__work")
+  const notWorkBtn = document.querySelector(".header-routes__unwork")
+  const inErrorBtn = document.querySelector(".header-routes__error")
+  const completedBtn = document.querySelector(".header-routes__completed")
 
-    inWorkBtn.addEventListener('click', e => {
-        if (inWorkBtn.classList.contains('route__filter--chosen')) {
-            inWorkBtn.classList.remove('route__filter--chosen')
-            state['routesFilters'].started = false
-            getOrders()
-            return
-        }
+  inWorkBtn.addEventListener('click', e => {
+    if (inWorkBtn.classList.contains('route__filter--chosen')) {
+      inWorkBtn.classList.remove('route__filter--chosen')
+      state['routesFilters'].started = false
+      getOrders()
+      return
+    }
 
-        inErrorBtn.classList.remove('route__filter--chosen')
-        uncompletedBtn.classList.remove('route__filter--chosen')
-        inWorkBtn.classList.add('route__filter--chosen')
+    inErrorBtn.classList.remove('route__filter--chosen')
+    completedBtn.classList.remove('route__filter--chosen')
+    notWorkBtn.classList.remove('route__filter--chosen')
+    inWorkBtn.classList.add('route__filter--chosen')
 
-        state['routesFilters'].started = true
-        state['routesFilters'].error = false
-        state['routesFilters'].uncompleted = false
+    state['routesFilters'].started = true
+    state['routesFilters'].error = false
+    state['routesFilters'].completed = false
 
-        deleteOrders()
-        const filters = state['currentTopFilters'].map(filter => filter.name)
-        startFilter(filters)
-    })
+    deleteOrders()
+    const filters = state['currentTopFilters'].map(filter => filter.name)
+    startFilter(filters)
+  })
 
-    inErrorBtn.addEventListener('click', e => {
-        if (inErrorBtn.classList.contains('route__filter--chosen')) {
-            inErrorBtn.classList.remove('route__filter--chosen')
-            state['routesFilters'].error = false
-            getOrders()
-            return
-        }
+  notWorkBtn.addEventListener('click', () => {
+    if (notWorkBtn.classList.contains('route__filter--chosen')) {
+      notWorkBtn.classList.remove('route__filter--chosen')
+      state['routesFilters'].started = false
+      getOrders()
+      return
+    }
 
-        state['routesFilters'].error = true
-        state['routesFilters'].started = false
-        state['routesFilters'].uncompleted = false
+    inErrorBtn.classList.remove('route__filter--chosen')
+    completedBtn.classList.remove('route__filter--chosen')
+    inWorkBtn.classList.remove('route__filter--chosen')
+    notWorkBtn.classList.add('route__filter--chosen')
 
-        inWorkBtn.classList.remove('route__filter--chosen')
-        uncompletedBtn.classList.remove('route__filter--chosen')
-        inErrorBtn.classList.add('route__filter--chosen')
+    state['routesFilters'].unstarted = true
+    state['routesFilters'].started = false
+    state['routesFilters'].error = false
+    state['routesFilters'].completed = false
 
-        deleteOrders()
-        const filters = state['currentTopFilters'].map(filter => filter.name)
-        errFilter(filters)
-    })
+    deleteOrders()
+    const filters = state['currentTopFilters'].map(filter => filter.name)
+    notInWorkFilter(filters)
+  })
 
-    uncompletedBtn.addEventListener('click', e => {
-        if (uncompletedBtn.classList.contains('route__filter--chosen')) {
-            uncompletedBtn.classList.remove('route__filter--chosen')
-            state['routesFilters'].error = false
-            getOrders()
-            return
-        }
+  inErrorBtn.addEventListener('click', e => {
+    if (inErrorBtn.classList.contains('route__filter--chosen')) {
+      inErrorBtn.classList.remove('route__filter--chosen')
+      state['routesFilters'].error = false
+      getOrders()
+      return
+    }
 
-        inErrorBtn.classList.remove('route__filter--chosen')
-        inWorkBtn.classList.remove('route__filter--chosen')
-        uncompletedBtn.classList.add('route__filter--chosen')
+    state['routesFilters'].error = true
+    state['routesFilters'].started = false
+    state['routesFilters'].unstarted = false
+    state['routesFilters'].completed = false
 
-        state['routesFilters'].uncompleted = true
-        state['routesFilters'].started = false
-        state['routesFilters'].error = false
+    inWorkBtn.classList.remove('route__filter--chosen')
+    completedBtn.classList.remove('route__filter--chosen')
+    notWorkBtn.classList.remove('route__filter--chosen')
+    inErrorBtn.classList.add('route__filter--chosen')
 
-        deleteOrders()
-        const filters = state['currentTopFilters'].map(filter => filter.name)
-        uncompletedFilter(filters)
-    })
+    deleteOrders()
+    const filters = state['currentTopFilters'].map(filter => filter.name)
+    errFilter(filters)
+  })
+
+  completedBtn.addEventListener('click', e => {
+    if (completedBtn.classList.contains('route__filter--chosen')) {
+      completedBtn.classList.remove('route__filter--chosen')
+      state['routesFilters'].error = false
+      getOrders()
+      return
+    }
+
+    inErrorBtn.classList.remove('route__filter--chosen')
+    inWorkBtn.classList.remove('route__filter--chosen')
+    notWorkBtn.classList.remove('route__filter--chosen')
+    completedBtn.classList.add('route__filter--chosen')
+
+    state['routesFilters'].completed = true
+    state['routesFilters'].unstarted = false
+    state['routesFilters'].started = false
+    state['routesFilters'].error = false
+
+    deleteOrders()
+    const filters = state['currentTopFilters'].map(filter => filter.name)
+    completedFilter(filters)
+  })
 }
 

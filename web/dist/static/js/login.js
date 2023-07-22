@@ -93,7 +93,8 @@ let state = {
   'routesFilters': {
     'started': false,
     'error': false,
-    'uncompleted': false
+    'completed': false,
+    'unstarted': false
   }
 };
 if (userInf) {

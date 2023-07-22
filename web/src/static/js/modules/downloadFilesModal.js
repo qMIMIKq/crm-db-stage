@@ -27,130 +27,130 @@ export const filesModal = `
 
 const DATA_SOURCE = `${appAddr}/assets/uploads/`
 const deleteFiles = () => {
-    const files = document.querySelectorAll('.data__file')
-    if (files[0] !== null) {
-        files.forEach(file => {
-            file.remove()
-        })
-    }
+  const files = document.querySelectorAll('.data__file')
+  if (files[0] !== null) {
+    files.forEach(file => {
+      file.remove()
+    })
+  }
 }
 
 const sendFiles = (files, filesInput, old) => {
-    const formData = new FormData()
-    for (let file of files) {
-        formData.append('files', file)
+  const formData = new FormData()
+  for (let file of files) {
+    formData.append('files', file)
+  }
+
+  const drop = document.querySelector('.modal__trigger')
+  drop.textContent = 'Идет загрузка файлов'
+
+  fetch(`${appAddr}/api/files/save-files`, {
+    method: 'POST',
+    body: formData
+  }).then(res => res.json()).then(data => {
+    const currentData = filesInput.value.split(', ')
+    let newData = currentData.concat(data.data).filter(file => file !== '')
+    newData = [...new Set(newData)]
+    filesInput.value = newData.join(', ')
+    const parent = filesInput.closest('form')
+    drop.classList.add('success')
+    drop.textContent = 'Файлы успешно загружены'
+    deleteFiles()
+    drawFiles(document.querySelector('.modal'), filesInput.value)
+    if (parent.classList.contains('table-form--old')) {
+      parent.classList.remove('table-form--old')
+      parent.classList.add('table-form--upd')
     }
+    setTimeout(() => {
+      drop.classList.remove('success')
+      drop.textContent = 'Укажите файлы для загрузки'
+    }, 1000)
 
-    const drop = document.querySelector('.modal__trigger')
-    drop.textContent = 'Идет загрузка файлов'
-
-    fetch(`${appAddr}/api/files/save-files`, {
-        method: 'POST',
-        body: formData
-    }).then(res => res.json()).then(data => {
-        const currentData = filesInput.value.split(', ')
-        let newData = currentData.concat(data.data).filter(file => file !== '')
-        newData = [...new Set(newData)]
-        filesInput.value = newData.join(', ')
-        const parent = filesInput.closest('form')
-        drop.classList.add('success')
-        drop.textContent = 'Файлы успешно загружены'
-        deleteFiles()
-        drawFiles(document.querySelector('.modal'), filesInput.value)
-        if (parent.classList.contains('table-form--old')) {
-            parent.classList.remove('table-form--old')
-            parent.classList.add('table-form--upd')
-        }
-        setTimeout(() => {
-            drop.classList.remove('success')
-            drop.textContent = 'Укажите файлы для загрузки'
-        }, 1000)
-
-        if (old) {
-            // submitData()
-        } else {
-            drawSubmit()
-        }
-    })
+    if (old) {
+      // submitData()
+    } else {
+      drawSubmit()
+    }
+  })
 }
 
 export function triggerFilesModal(e) {
-    const parent = e.target.closest('ul')
-    const old = parent.parentNode.classList.contains('table-form--old')
-    const filesInputData = parent.querySelector('input[name="files"]')
-    const db = parent.querySelector('#db_id').value
-    const enter = parent.querySelector('#timestamp').value
-    const number = parent.querySelector('#number').value
-    const modalElem = showModal(filesModal)
-    const modalHeader = modalElem.querySelector('.modal__header')
-    modalHeader.querySelector('.modal-header__db').textContent = '№' + db
-    modalHeader.querySelector('.modal-header__number').textContent = '№ заказа ' + number
-    modalHeader.querySelector('.modal-header__enter').textContent = enter
+  const parent = e.target.closest('ul')
+  const old = parent.parentNode.classList.contains('table-form--old')
+  const filesInputData = parent.querySelector('input[name="files"]')
+  const db = parent.querySelector('#db_id').value
+  const enter = parent.querySelector('#timestamp').value
+  const number = parent.querySelector('#number').value
+  const modalElem = showModal(filesModal)
+  const modalHeader = modalElem.querySelector('.modal__header')
+  modalHeader.querySelector('.modal-header__db').textContent = '№' + db
+  modalHeader.querySelector('.modal-header__number').textContent = '№ заказа ' + number
+  modalHeader.querySelector('.modal-header__enter').textContent = enter
 
-    modalElem.addEventListener('click', ev => {
-        if (ev.target === modalElem) {
-            if (old) {
-                submitData()
-            }
-        }
+  modalElem.addEventListener('click', ev => {
+    if (ev.target === modalElem) {
+      if (old) {
+        submitData()
+      }
+    }
+  })
+
+  const downloadTrigger = document.querySelector('.modal__trigger')
+
+  if (!state['operCheck'] && !state['isArchive']) {
+    downloadTrigger.addEventListener('click', e => {
+      const filesInput = document.querySelector('.modal__files')
+      filesInput.addEventListener('change', e => {
+        const files = e.target.files
+        sendFiles(files, filesInputData, old)
+      })
+      filesInput.click()
     })
 
-    const downloadTrigger = document.querySelector('.modal__trigger')
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      downloadTrigger.addEventListener(eventName, e => {
+        e.preventDefault()
+        e.stopPropagation()
+      })
+    })
 
-    if (!state['operCheck'] && !state['isArchive']) {
-        downloadTrigger.addEventListener('click', e => {
-            const filesInput = document.querySelector('.modal__files')
-            filesInput.addEventListener('change', e => {
-                const files = e.target.files
-                sendFiles(files, filesInputData, old)
-            })
-            filesInput.click()
-        })
+    downloadTrigger.addEventListener('drop', e => {
+      let dt = e.dataTransfer
+      let files = dt.files
+      sendFiles(files, filesInputData, old)
+    })
 
-        ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            downloadTrigger.addEventListener(eventName, e => {
-                e.preventDefault()
-                e.stopPropagation()
-            })
-        })
-
-        downloadTrigger.addEventListener('drop', e => {
-            let dt = e.dataTransfer
-            let files = dt.files
-            sendFiles(files, filesInputData, old)
-        })
-
-        modalElem.querySelector('.order__files').addEventListener('submit', e => {
-            e.preventDefault()
-            const filesData = document.querySelector('.modal__files')
-            sendFiles(filesData.files, filesInputData, old)
-        })
-    } else {
-        downloadTrigger.remove()
-    }
-    drawFiles(modalElem, filesInputData.value, db, parent)
+    modalElem.querySelector('.order__files').addEventListener('submit', e => {
+      e.preventDefault()
+      const filesData = document.querySelector('.modal__files')
+      sendFiles(filesData.files, filesInputData, old)
+    })
+  } else {
+    downloadTrigger.remove()
+  }
+  drawFiles(modalElem, filesInputData.value, db, parent)
 }
 
 export const drawFiles = (modal, files, id, parent) => {
-    const data = modal.querySelector('.data')
-    if (files.length) {
-        const fileNames = []
-        files.split(', ').map(file => {
-            const arrDotFile = file.split('.')
-            const fileType = arrDotFile[arrDotFile.length - 1]
-            const arrSlashFile = file.split('/')
-            arrSlashFile.splice(0, 3)
-            const fileName = arrSlashFile.join('')
-            let fileNameWithoutType = fileName.split('.')
-            fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
+  const data = modal.querySelector('.data')
+  if (files.length) {
+    const fileNames = []
+    files.split(', ').map(file => {
+      const arrDotFile = file.split('.')
+      const fileType = arrDotFile[arrDotFile.length - 1]
+      const arrSlashFile = file.split('/')
+      arrSlashFile.splice(0, 3)
+      const fileName = arrSlashFile.join('')
+      let fileNameWithoutType = fileName.split('.')
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
 
-            switch (fileType) {
-                case 'pdf':
-                case 'PDF':
-                case 'dxf':
-                case 'DXF':
-                    fileNames.push(fileNameWithoutType)
-                    data.insertAdjacentHTML(`beforeend`, `
+      switch (fileType) {
+        case 'pdf':
+        case 'PDF':
+        case 'dxf':
+        case 'DXF':
+          fileNames.push(fileNameWithoutType)
+          data.insertAdjacentHTML(`beforeend`, `
                       <div class='data__file'>
                         <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>Оригинал</a>
                         <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.png'>
@@ -168,10 +168,10 @@ export const drawFiles = (modal, files, id, parent) => {
                         <p class='file__name'>${fileName}</p>
                       </div>
                     `)
-                    break
-                default:
-                    if (!fileNames.includes(fileNameWithoutType)) {
-                        data.insertAdjacentHTML(`beforeend`, `
+          break
+        default:
+          if (!fileNames.includes(fileNameWithoutType)) {
+            data.insertAdjacentHTML(`beforeend`, `
                           <div class='data__file'>
                                 <a target='_blank' class='link__preview' href='${appAddr}/${file}'>
                                     <img class='file__preview' src='${appAddr}/${file}' alt=>
@@ -188,41 +188,41 @@ export const drawFiles = (modal, files, id, parent) => {
                                 <p class='file__name'>${fileName}</p>
                           </div>
                     `)
-                    }
+          }
+      }
+    })
+    document.querySelectorAll(".file__remove").forEach(btn => {
+      btn.addEventListener('click', e => {
+        const file = e.target.parentNode
+        const drop = modal.querySelector('.modal__trigger')
+
+        sendData(`${appAddr}/api/files/remove-file/${id}/${file.querySelector('.file__name').textContent}`, 'POST', null)
+          .then(res => {
+            if (res.ok) {
+              drop.textContent = 'Файл успешно удалён'
+              drop.classList.add('success')
+              file.remove()
+
+              setTimeout(() => {
+                drop.classList.remove('success')
+                drop.textContent = 'Укажите файлы для загрузки'
+              }, 1000)
             }
-        })
-        document.querySelectorAll(".file__remove").forEach(btn => {
-            btn.addEventListener('click', e => {
-                const file = e.target.parentNode
-                const drop = modal.querySelector('.modal__trigger')
+          })
+      })
+    })
 
-                sendData(`${appAddr}/api/files/remove-file/${id}/${file.querySelector('.file__name').textContent}`, 'POST', null)
-                    .then(res => {
-                        if (res.ok) {
-                            drop.textContent = 'Файл успешно удалён'
-                            drop.classList.add('success')
-                            file.remove()
-
-                            setTimeout(() => {
-                                drop.classList.remove('success')
-                                drop.textContent = 'Укажите файлы для загрузки'
-                            }, 1000)
-                        }
-                    })
-            })
-        })
-
-        const btn = modal.querySelector('.file__all')
-        if (btn !== null) {
-            btn.remove()
-        }
-        data.closest('.modal_content').insertAdjacentHTML('beforeend', `
+    const btn = modal.querySelector('.file__all')
+    if (btn !== null) {
+      btn.remove()
+    }
+    data.closest('.modal_content').insertAdjacentHTML('beforeend', `
             <button class='file__all main__button'>Скачать всё</button>
         `)
-        document.querySelector('.file__all').addEventListener('click', () => {
-            document.querySelectorAll('.file__download').forEach(file => {
-                file.click()
-            })
-        })
-    }
+    document.querySelector('.file__all').addEventListener('click', () => {
+      document.querySelectorAll('.file__download').forEach(file => {
+        file.click()
+      })
+    })
+  }
 }
