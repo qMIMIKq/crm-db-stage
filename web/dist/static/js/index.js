@@ -2204,7 +2204,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // let addr = process.env.CHECK
 // console.log(addr)
-let appAddr = 'http://172.20.10.7:8182';
+let appAddr = 'http://192.168.1.231:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
