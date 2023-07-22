@@ -247,7 +247,7 @@ input.tr {
       content: attr(data-title);
       position: absolute; /* Абсолютное позиционирование */
       left: 0;
-      top: 115%; /* Положение подсказки */
+      top: 130%; /* Положение подсказки */
       z-index: 1; /* Отображаем подсказку поверх других элементов */
       background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */
       font-family: Arial, sans-serif; /* Гарнитура шрифта */
@@ -267,7 +267,7 @@ input.tr {
       content: attr(data-title);
       position: absolute; /* Абсолютное позиционирование */
       left: 0;
-      top: 115%; /* Положение подсказки */
+      top: 130%; /* Положение подсказки */
       z-index: 1; /* Отображаем подсказку поверх других элементов */
       background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */
       font-family: Arial, sans-serif; /* Гарнитура шрифта */
@@ -367,3 +367,4 @@ input.tr {
     color: white;
   }
 }
+

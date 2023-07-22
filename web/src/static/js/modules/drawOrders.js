@@ -388,7 +388,7 @@ export const orderHTML = `
                     </li>
                     <li class="table-body_cell table__m">
                         <select class="table__data table-m-select main__button" name="m" id="">
-                            <option disabled selected value="">М</option>
+                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell table__endtime">

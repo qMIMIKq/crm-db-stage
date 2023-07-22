@@ -8,7 +8,7 @@
   border: 1px solid black;
   border-bottom: none;
   border-radius: 5px 5px 0 0;
-  padding: 10px 30px;
+  padding: 5px 30px;
   //margin-bottom: 30px;
 
   &__title {
@@ -32,15 +32,15 @@
 
 .header-routes {
   &__work {
-    margin-right: 15px;
+    margin-right: 10px;
   }
 
   &__error {
-    margin-right: 15px;
+    margin-right: 10px;
   }
 
   &__unwork {
-    margin-right: 15px;
+    margin-right: 10px;
   }
 }
 

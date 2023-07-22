@@ -30,15 +30,26 @@ const routeModal = `
                         <select disabled class='route__select main__button main__select route__select--user' name='user' id='route__user'>
                             <option selected disabled>Выберите оператора</option>
                         </select>
-                    </div>      
+                    </div>
+                    
+                    <div class='route__block endtime__block'>
+                        <label class='route__label' for='route__teorend'>Теоретическое</label>
+                        <input style='cursor: default;text-align: center' readonly class='route__input--top table__data--ro main__input' name='quantity' type='text' value="2023-07-21 09:16" id='route__teorend'>
+                        <label class='route__label' for='route__dynend'>Динамиечское</label>
+                        <input style='cursor: default;text-align: center' readonly class='route__input--top table__data--ro main__input' name='issued' type='text' value="2023-07-21 09:16" id='route__dynend'>
+                    </div>
+                    
                     <div class='route__block progress-block'>
                         <label class='route__label' for='route__quantity'>Тираж</label>
-                        <input style='cursor: default' readonly class='text-input progress-block__input main__input' name='quantity' type='number' id='quantity'>
+                        <div class="quantity-block">
+                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='quantity' type='number' id='quantity' placeholder="Тираж">
+                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='day_quantity' type='number' id='day_quantity' placeholder="В день">
+                        </div>
                         <label class='route__label' for='route__issued'>Выдано</label>
-                        <input readonly class='table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
+                        <input readonly class='route__input--top table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
                     </div>
                 </div>
-                
+               
                 <div class='route__section start-route'>
                     <input 
                     readonly
@@ -361,12 +372,14 @@ export const triggerRoutesModal = e => {
     // errTime.addEventListener('focus', errTimeHandler)
     errInput.classList.remove('text-input')
     errInput.classList.add('clickable')
-    errInput.addEventListener('focus', errInputHandler)
+    // errInput.addEventListener('focus', errInputHandler)
     errBtn.classList.add('hidden__input')
     errCloseBtn.classList.remove('hidden__input')
     activateNextStage('error-route__close')
     disableBtn('error-route__btn')
+    errInput.setAttribute('disabled', '')
   })
+
   const errCloseBtn = document.querySelector('.error-route__close')
   errCloseBtn.addEventListener('click', e => {
     errTime.removeEventListener('focus', errTimeHandler)
@@ -377,6 +390,7 @@ export const triggerRoutesModal = e => {
     errInput.classList.remove('hidden___input')
     errInput.classList.remove('clickable')
     errInput.classList.add('text-input')
+    errInput.removeAttribute('disabled')
     errCloseBtn.classList.add('hidden__input')
     errBtn.classList.remove('hidden__input')
     disableBtn('error-route__close')
@@ -511,6 +525,7 @@ export const triggerRoutesModal = e => {
     if (errM) {
       errInput.classList.remove('hidden__input')
       errTime.classList.add('hidden__input')
+      errInput.setAttribute('disabled', '')
 
       if (state['adminCheck'] || state['techCheck']) {
         errCloseBtn.classList.remove('hidden__input')
@@ -524,6 +539,7 @@ export const triggerRoutesModal = e => {
     }
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
+    controlQuantityAccess(routeQuantity)
     drawPlots()
   }
 
@@ -706,8 +722,8 @@ const drawUsers = (plotName, userI) => {
 
     users.data.forEach(user => {
       usersSelect.insertAdjacentHTML('beforeend', `
-                <option ${String(userI) === String(user.nickname) ? 'selected' : ''} value='${user.nickname}'>${user.nickname}</option>
-            `)
+          <option ${String(userI) === String(user.nickname) ? 'selected' : ''} value='${user.nickname}'>${user.nickname}</option>
+      `)
     })
   })
 
@@ -724,6 +740,7 @@ const drawUsers = (plotName, userI) => {
 
 const controlQuantityAccess = (routeQuantity) => {
   if (state['adminCheck'] || state['techCheck']) {
+    console.log('wtf')
     routeQuantity.removeAttribute('readonly')
     routeQuantity.style.cursor = 'text'
   }
