@@ -61,8 +61,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 		routesQuery := fmt.Sprintf(`
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
 													issued, start_time, end_time,
-													otk_time, error_time, error_value)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+													otk_time, error_time, error_value, day_quantity)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 			RETURNING route_id
 		`)
 
@@ -81,8 +81,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			routesUpdateQuery := fmt.Sprintf(`
 				UPDATE routes SET worker = $1, plot_id = $2, quantity = $3,
 						   issued = $4, start_time = $5, end_time = $6,
-							 otk_time = $7, error_time = $8, error_value = $9
-			   WHERE order_id = $10 AND route_position = $11
+							 otk_time = $7, error_time = $8, error_value = $9, day_quantity = $10
+			   WHERE order_id = $11 AND route_position = $12
 			`)
 
 			var dbRoutePos []domain.CheckRoute
@@ -91,11 +91,10 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			if len(dbRoutePos) > 0 {
 				_, err = o.db.Exec(routesUpdateQuery, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime,
-					route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, order.ID, routePos)
+					route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity, order.ID, routePos)
 
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
-					log.Info().Msgf("Comment %s", comment)
 					if len(comment.Date) > 0 {
 						_, err = o.db.Exec(routeCommentsQuery, dbRoutePos[0].RouteID, comment.Date, comment.Value)
 					}
@@ -103,7 +102,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			} else {
 				err = o.db.QueryRow(routesQuery, order.ID,
 					routePos, route.User, route.Plot,
-					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg).Scan(&routeID)
+					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity).Scan(&routeID)
 
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
@@ -144,7 +143,7 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 	routesQuery := fmt.Sprintf(`
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
 													issued, start_time, end_time,
-													otk_time, error_time, error_value)
+													otk_time, error_time, error_value, day_quantity)
 						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 			RETURNING route_id
 		`)
@@ -179,7 +178,7 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 			routePos := strings.Split(name, "-")[1]
 			err = o.db.QueryRow(routesQuery, id,
 				routePos, route.User, route.Plot,
-				route.Quantity, route.Issued, route.StartTime, route.OtkTime, route.EndTime, route.ErrorTime, route.ErrorMsg).Scan(&routeID)
+				route.Quantity, route.Issued, route.StartTime, route.OtkTime, route.EndTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity).Scan(&routeID)
 
 			for _, comment := range route.Comments {
 				if len(comment.Date) > 0 {
@@ -254,10 +253,6 @@ func (o OrdersPG) GetOrders(old bool) ([]*domain.Order, error) {
 		err = o.db.Select(&order.Files, queryFiles, order.ID)
 		err = o.db.Select(&order.Comments, queryComments, order.ID)
 		err = o.db.Select(&order.DbRoutes, queryRoutes, order.ID)
-		if err != nil {
-			log.Err(err).Msg("ERROR")
-		}
-		log.Info().Interface("Routes", order.DbRoutes).Msg("Routes")
 		for _, route := range order.DbRoutes {
 			err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
 		}

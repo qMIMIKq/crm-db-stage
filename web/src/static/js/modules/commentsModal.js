@@ -3,6 +3,7 @@ import {showModal} from './showModal';
 import {user} from '../table';
 import {submitData} from "./submitOrdersData";
 import {state} from "./state";
+import {getTime} from "./getTime";
 
 const commentModal = `
    <div id='modal' class='modal modal--comment bounceIn'>
@@ -33,8 +34,8 @@ const drawComments = (list, comments) => {
 
     if (comm.length >= 4 && comm[3] !== '') {
       list.insertAdjacentHTML('afterbegin', `
-                <li class='comments-list__item'>${comment}</li>
-            `)
+        <li class='comments-list__item'>${comment}</li>
+      `)
     }
   })
 }
@@ -54,8 +55,7 @@ export const triggerCommentsModal = e => {
   const saveBtn = document.querySelector('.comment__button')
   saveBtn.addEventListener('click', ev => {
     let value = commentElem.value
-    let today = new Date(Date.now()).toISOString()
-    today = today.substring(0, today.length - 8).split("T").join(" ")
+    const today = getTime()
     const old = parent.classList.contains('table-form--old')
 
     value = `${today} ${user.nickname} ${value}`

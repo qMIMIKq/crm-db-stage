@@ -210,6 +210,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./getTime */ "./web/src/static/js/modules/getTime.js");
+
 
 
 
@@ -241,8 +243,8 @@ const drawComments = (list, comments) => {
     let comm = comment.split(' ');
     if (comm.length >= 4 && comm[3] !== '') {
       list.insertAdjacentHTML('afterbegin', `
-                <li class='comments-list__item'>${comment}</li>
-            `);
+        <li class='comments-list__item'>${comment}</li>
+      `);
     }
   });
 };
@@ -260,8 +262,7 @@ const triggerCommentsModal = e => {
   const saveBtn = document.querySelector('.comment__button');
   saveBtn.addEventListener('click', ev => {
     let value = commentElem.value;
-    let today = new Date(Date.now()).toISOString();
-    today = today.substring(0, today.length - 8).split("T").join(" ");
+    const today = (0,_getTime__WEBPACK_IMPORTED_MODULE_5__.getTime)();
     const old = parent.classList.contains('table-form--old');
     value = `${today} ${_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname} ${value}`;
     commentsArr.push(value);
@@ -1222,6 +1223,29 @@ const getData = async url => {
 
 /***/ }),
 
+/***/ "./web/src/static/js/modules/getTime.js":
+/*!**********************************************!*\
+  !*** ./web/src/static/js/modules/getTime.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getTime": () => (/* binding */ getTime)
+/* harmony export */ });
+const getTime = () => {
+  let check = new Date().toLocaleString();
+  check = check.split('/');
+  check[2] = check[2].split(',');
+  [check[0], check[2][0]] = [check[2][0], check[0]];
+  check[2] = check[2].join(',');
+  check = check.join('/');
+  return check.replaceAll('/', '-').slice(0, check.length - 3).split(',').join(' ').replace(' ', '');
+};
+
+/***/ }),
+
 /***/ "./web/src/static/js/modules/orders.js":
 /*!*********************************************!*\
   !*** ./web/src/static/js/modules/orders.js ***!
@@ -1377,6 +1401,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
 /* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./getTime */ "./web/src/static/js/modules/getTime.js");
+
 
 
 
@@ -1421,7 +1447,7 @@ const routeModal = `
                         <label class='route__label' for='route__quantity'>Тираж</label>
                         <div class="quantity-block">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='quantity' type='number' id='quantity' placeholder="Тираж">
-                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='day_quantity' type='number' id='day_quantity' placeholder="В день">
+                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В день">
                         </div>
                         <label class='route__label' for='route__issued'>Выдано</label>
                         <input readonly class='route__input--top table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
@@ -1602,8 +1628,7 @@ const saveData = (data, selector) => {
   return dataInput;
 };
 const addLog = (name, log, selector) => {
-  let today = new Date(Date.now()).toISOString();
-  today = today.substring(0, today.length - 8).split("T").join(" ");
+  const today = (0,_getTime__WEBPACK_IMPORTED_MODULE_8__.getTime)();
   let logMsg = `${today}    ${name} ${log}`;
   const visible = saveData(logMsg, selector);
   saveData(logMsg, '#route__comments');
@@ -1618,14 +1643,14 @@ const activateOnInput = (e, cls) => {
   }
 };
 const setDateToInput = inputId => {
-  let today = new Date(Date.now()).toISOString();
-  today = today.substring(0, today.length - 8).split("T").join(" ");
+  const today = (0,_getTime__WEBPACK_IMPORTED_MODULE_8__.getTime)();
   const timeInput = document.querySelector('#' + inputId);
   timeInput.value = today;
 };
 const activateNextStage = btnClass => {
   const btn = document.querySelector('.' + btnClass);
   btn.removeAttribute('disabled');
+  btn.removeAttribute('readonly');
   btn.classList.add('clickable');
 };
 const disableBtn = btnClass => {
@@ -1690,12 +1715,18 @@ const triggerRoutesModal = e => {
   }
   const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode;
   const routeQuantity = modalElem.querySelector('#quantity');
+  const routeDayQuantity = modalElem.querySelector('#day_quantity');
+  controlQuantityAccess(routeQuantity);
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub');
+    controlQuantityAccess(routeDayQuantity);
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments');
   });
+  routeDayQuantity.addEventListener('change', e => {
+    activateOnInput(e, 'section-finish__sub');
+    addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments');
+  });
   const issued = modalElem.querySelector('#route__issued');
-  const logsData = document.querySelector('#route__comments');
   const visibleLogs = document.querySelector("#visible__comments");
   const issuedToday = modalElem.querySelector('#route-issued__today');
   const reportBtn = modalElem.querySelector('.report-sub--route__btn');
@@ -1722,12 +1753,8 @@ const triggerRoutesModal = e => {
     addLog(logName, logMsg, '#visible__comments');
     setDateToInput('error__time');
     activateNextStage('error__time');
-    // errInput.classList.add('hidden__input')
-    // errTime.classList.remove('hidden__input')
-    // errTime.addEventListener('focus', errTimeHandler)
     errInput.classList.remove('text-input');
     errInput.classList.add('clickable');
-    // errInput.addEventListener('focus', errInputHandler)
     errBtn.classList.add('hidden__input');
     errCloseBtn.classList.remove('hidden__input');
     activateNextStage('error-route__close');
@@ -1788,6 +1815,7 @@ const triggerRoutesModal = e => {
   if (info) {
     const id = routeInfo['route_id'];
     const quantity = routeInfo['quantity'];
+    const dayQuantity = routeInfo['day_quantity'];
     const plot = routeInfo['plot'];
     const user = routeInfo['user'];
     const start = routeInfo['start_time'];
@@ -1816,7 +1844,6 @@ const triggerRoutesModal = e => {
     }
     drawPlots(plot, user);
     activateNextStage('route__select--user');
-    controlQuantityAccess(routeQuantity);
     if (logName !== '') {
       controlCommentAccess(commentInput);
     }
@@ -1845,8 +1872,13 @@ const triggerRoutesModal = e => {
     activateNextStage('section-finish__cancel');
     if (quantity) {
       routeQuantity.value = quantity;
+      controlQuantityAccess(routeDayQuantity);
     } else {
       routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value;
+    }
+    if (dayQuantity) {
+      controlQuantityAccess(routeDayQuantity);
+      routeDayQuantity.value = dayQuantity;
     }
     if (end) {
       disableBtn('end-route__btn');
@@ -1869,7 +1901,6 @@ const triggerRoutesModal = e => {
     }
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value;
-    controlQuantityAccess(routeQuantity);
     drawPlots();
   }
   const dbID = currentOrder.querySelector('#db_id').value;
@@ -2044,7 +2075,6 @@ const drawUsers = (plotName, userI) => {
 };
 const controlQuantityAccess = routeQuantity => {
   if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
-    console.log('wtf');
     routeQuantity.removeAttribute('readonly');
     routeQuantity.style.cursor = 'text';
   }

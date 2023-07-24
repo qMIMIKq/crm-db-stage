@@ -6,6 +6,7 @@ import {submitData} from "./submitOrdersData";
 import {sendData} from "./sendData";
 import {showResult} from "./submitControl";
 import {getOrders} from "./orders";
+import {getTime} from "./getTime";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -43,7 +44,7 @@ const routeModal = `
                         <label class='route__label' for='route__quantity'>Тираж</label>
                         <div class="quantity-block">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='quantity' type='number' id='quantity' placeholder="Тираж">
-                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='day_quantity' type='number' id='day_quantity' placeholder="В день">
+                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В день">
                         </div>
                         <label class='route__label' for='route__issued'>Выдано</label>
                         <input readonly class='route__input--top table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
@@ -229,8 +230,7 @@ const saveData = (data, selector) => {
 }
 
 const addLog = (name, log, selector) => {
-  let today = new Date(Date.now()).toISOString()
-  today = today.substring(0, today.length - 8).split("T").join(" ")
+  const today = getTime()
   let logMsg = `${today}    ${name} ${log}`
   const visible = saveData(logMsg, selector)
   saveData(logMsg, '#route__comments')
@@ -247,8 +247,7 @@ const activateOnInput = (e, cls) => {
 }
 
 const setDateToInput = inputId => {
-  let today = new Date(Date.now()).toISOString()
-  today = today.substring(0, today.length - 8).split("T").join(" ")
+  const today = getTime()
   const timeInput = document.querySelector('#' + inputId)
   timeInput.value = today
 }
@@ -256,6 +255,7 @@ const setDateToInput = inputId => {
 const activateNextStage = btnClass => {
   const btn = document.querySelector('.' + btnClass)
   btn.removeAttribute('disabled')
+  btn.removeAttribute('readonly')
   btn.classList.add('clickable')
 }
 
@@ -330,12 +330,22 @@ export const triggerRoutesModal = e => {
 
   const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
   const routeQuantity = modalElem.querySelector('#quantity')
+  const routeDayQuantity = modalElem.querySelector('#day_quantity')
+  controlQuantityAccess(routeQuantity)
+
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
+    controlQuantityAccess(routeDayQuantity)
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
   })
+
+  routeDayQuantity.addEventListener('change', e => {
+    activateOnInput(e, 'section-finish__sub')
+    addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
+  })
+
+
   const issued = modalElem.querySelector('#route__issued')
-  const logsData = document.querySelector('#route__comments')
   const visibleLogs = document.querySelector("#visible__comments")
   const issuedToday = modalElem.querySelector('#route-issued__today')
   const reportBtn = modalElem.querySelector('.report-sub--route__btn')
@@ -367,12 +377,8 @@ export const triggerRoutesModal = e => {
     addLog(logName, logMsg, '#visible__comments')
     setDateToInput('error__time')
     activateNextStage('error__time')
-    // errInput.classList.add('hidden__input')
-    // errTime.classList.remove('hidden__input')
-    // errTime.addEventListener('focus', errTimeHandler)
     errInput.classList.remove('text-input')
     errInput.classList.add('clickable')
-    // errInput.addEventListener('focus', errInputHandler)
     errBtn.classList.add('hidden__input')
     errCloseBtn.classList.remove('hidden__input')
     activateNextStage('error-route__close')
@@ -441,6 +447,7 @@ export const triggerRoutesModal = e => {
   if (info) {
     const id = routeInfo['route_id']
     const quantity = routeInfo['quantity']
+    const dayQuantity = routeInfo['day_quantity']
     const plot = routeInfo['plot']
     const user = routeInfo['user']
     const start = routeInfo['start_time']
@@ -474,7 +481,7 @@ export const triggerRoutesModal = e => {
 
     drawPlots(plot, user)
     activateNextStage('route__select--user')
-    controlQuantityAccess(routeQuantity)
+
     if (logName !== '') {
       controlCommentAccess(commentInput)
     }
@@ -510,8 +517,14 @@ export const triggerRoutesModal = e => {
 
     if (quantity) {
       routeQuantity.value = quantity
+      controlQuantityAccess(routeDayQuantity)
     } else {
       routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
+    }
+
+    if (dayQuantity) {
+      controlQuantityAccess(routeDayQuantity)
+      routeDayQuantity.value = dayQuantity
     }
 
     if (end) {
@@ -539,7 +552,6 @@ export const triggerRoutesModal = e => {
     }
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
-    controlQuantityAccess(routeQuantity)
     drawPlots()
   }
 
@@ -740,7 +752,6 @@ const drawUsers = (plotName, userI) => {
 
 const controlQuantityAccess = (routeQuantity) => {
   if (state['adminCheck'] || state['techCheck']) {
-    console.log('wtf')
     routeQuantity.removeAttribute('readonly')
     routeQuantity.style.cursor = 'text'
   }

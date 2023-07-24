@@ -77,7 +77,7 @@ VALUES (1, 1, 1);
 CREATE table orders
 (
     order_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    order_timestamp timestamp    default CURRENT_TIMESTAMP::timestamp,
+    order_timestamp timestamptz  default CURRENT_TIMESTAMP::timestamptz,
     order_number    varchar(255),
     order_sample    varchar(255),
     order_client    varchar(255),
