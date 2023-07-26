@@ -185,7 +185,7 @@ export const tableRoutesFiltersHandler = () => {
   notWorkBtn.addEventListener('click', () => {
     if (notWorkBtn.classList.contains('route__filter--chosen')) {
       notWorkBtn.classList.remove('route__filter--chosen')
-      state['routesFilters'].started = false
+      state['routesFilters'].unstarted = false
       getOrders()
       return
     }
@@ -235,7 +235,7 @@ export const tableRoutesFiltersHandler = () => {
   completedBtn.addEventListener('click', e => {
     if (completedBtn.classList.contains('route__filter--chosen')) {
       completedBtn.classList.remove('route__filter--chosen')
-      state['routesFilters'].error = false
+      state['routesFilters'].completed = false
       getOrders()
       return
     }

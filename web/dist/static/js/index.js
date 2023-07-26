@@ -2416,7 +2416,9 @@ if (userInf) {
   state['inputAdmTechGroupper'] = admTechCheck ? '' : 'readonly';
   state['selectAdmManGroupper'] = admManCheck ? '' : 'disabled';
   state['selectAdmManTechGroupper'] = admManTechCheck ? '' : 'disabled';
-  document.querySelector('.admin-form__user').textContent = userInf.nickname;
+  try {
+    document.querySelector('.admin-form__user').textContent = userInf.nickname;
+  } catch {}
 }
 
 
@@ -2973,7 +2975,7 @@ const tableRoutesFiltersHandler = () => {
   notWorkBtn.addEventListener('click', () => {
     if (notWorkBtn.classList.contains('route__filter--chosen')) {
       notWorkBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
       (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
       return;
     }
@@ -3013,7 +3015,7 @@ const tableRoutesFiltersHandler = () => {
   completedBtn.addEventListener('click', e => {
     if (completedBtn.classList.contains('route__filter--chosen')) {
       completedBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
       (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
       return;
     }
