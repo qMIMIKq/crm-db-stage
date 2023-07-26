@@ -10568,10 +10568,10 @@ loginForm.addEventListener("submit", e => {
       });
     } else if (errBlock === null) {
       loginForm.insertAdjacentHTML("beforeend", `
-                    <div class="user-form__block user-form__error">
-                        <h3>Неверное имя пользователя или пароль</h3>
-                    </div>
-                `);
+          <div class="user-form__block user-form__error">
+              <h3>Неверное имя пользователя или пароль</h3>
+          </div>
+      `);
     }
   });
 });

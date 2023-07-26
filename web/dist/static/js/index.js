@@ -3033,7 +3033,7 @@ const tableRoutesFiltersHandler = () => {
   inPlanBtn.addEventListener('click', e => {
     if (inPlanBtn.classList.contains('route__filter--chosen')) {
       inPlanBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
       (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
       return;
     }

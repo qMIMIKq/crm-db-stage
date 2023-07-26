@@ -260,7 +260,7 @@ export const tableRoutesFiltersHandler = () => {
   inPlanBtn.addEventListener('click', e => {
     if (inPlanBtn.classList.contains('route__filter--chosen')) {
       inPlanBtn.classList.remove('route__filter--chosen')
-      state['routesFilters'].started = false
+      state['routesFilters'].planned = false
       getOrders()
       return
     }
