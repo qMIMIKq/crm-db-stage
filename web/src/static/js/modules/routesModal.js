@@ -35,19 +35,41 @@ const routeModal = `
                     
                     <div class='route__block endtime__block'>
                         <label class='route__label' for='route__teorend'>Теоретическое</label>
-                        <input style='cursor: default;text-align: center' readonly class='route__input--top table__data--ro main__input' name='quantity' type='text' value="2023-07-21 09:16" id='route__teorend'>
-                        <label class='route__label' for='route__dynend'>Динамиечское</label>
-                        <input style='cursor: default;text-align: center' readonly class='route__input--top table__data--ro main__input' name='issued' type='text' value="2023-07-21 09:16" id='route__dynend'>
+                        <input style='cursor: default;text-align: center' readonly class='route__input--top table__data--ro main__input' name='theor_end' type='text' value="" id='route__teorend'>
+                        <label class='route__label' for='route__dynend'>В план</label>
+                        <input id="plan_start" type="text" class="hidden__input" name="plan_start">
+                
+                        <input class="main__button route__input--top route-plan__date" 
+                            name="plan_date"
+                            disabled 
+                            id="route-plan__date"
+                            type="text"
+                            placeholder="Назначить в план" 
+                            value="" 
+                            onfocus="this.type='date'"
+                            onblur="(this.type='text')"
+                            tabindex="-1" 
+                            autocomplete="off">
                     </div>
                     
                     <div class='route__block progress-block'>
-                        <label class='route__label' for='route__quantity'>Тираж</label>
+                        <div class="quantity-block__labels">
+                            <label class='route__label quantity-block__label' for='route__quantity'>Тираж</label>
+                            <label class='route__label' for='day_quantity'>Выдано</label>
+                        </div>
                         <div class="quantity-block">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='quantity' type='number' id='quantity' placeholder="Тираж">
-                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В день">
+                          <input readonly class='route__input--top route__input--small table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
                         </div>
-                        <label class='route__label' for='route__issued'>Выдано</label>
-                        <input readonly class='route__input--top table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
+                        
+                        <div class="quantity-block__labels">
+                            <label class='route__label quantity-block__shifts' for='shifts'>Смен</label>
+                            <label class='route__label quantity-block__inshifts' for='day_quantity'>В смену</label>
+                        </div>
+                        <div class="quantity-block">
+                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
+                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В смену">
+                        </div>
                     </div>
                 </div>
                
@@ -183,7 +205,7 @@ const issuedModal = `
    </div>
 `
 const drawLogs = data => {
-  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел']
+  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут']
 
   const logsList = document.querySelector('.section-logs__list')
   const logsItems = logsList.querySelectorAll('.section-logs__item')
@@ -337,11 +359,13 @@ export const triggerRoutesModal = e => {
     activateOnInput(e, 'section-finish__sub')
     controlQuantityAccess(routeDayQuantity)
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
   })
 
   routeDayQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
   })
 
 
@@ -352,6 +376,35 @@ export const triggerRoutesModal = e => {
   const startTime = document.querySelector('.start-route__time')
   const endTime = document.querySelector('.end-route__time')
   const deleteBtn = document.querySelector('#route__delete')
+  const theorEndInp = document.querySelector('#route__teorend')
+  const shifts = document.querySelector('#shifts')
+
+  // const dynEndInp = document.querySelector('#route__dynend')
+
+  let today = getTime()
+  today = today.substring(0, today.length - 6)
+  today = today.split('-')
+
+  let tmrw = new Date(today[0], today[1], today[2])
+  tmrw.setDate(tmrw.getDate() + 1)
+
+  tmrw = tmrw.toLocaleString().split(", ")[0].split('/')
+  ;[tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]]
+  tmrw = tmrw.join('-')
+
+
+  const planDateInputStart = document.querySelector('#plan_start')
+  const planDateInput = document.querySelector('#route-plan__date')
+  planDateInput.setAttribute('min', tmrw)
+  planDateInput.addEventListener('change', e => {
+    const logMsg = `Поставил маршрут в план до ${e.target.value}`
+    addLog(logName, logMsg, '#visible__comments')
+
+    if (planDateInputStart.value === '') {
+      planDateInputStart.value = tmrw
+    }
+  })
+
 
   const errInput = document.querySelector('#error-route__msg')
   errInput.addEventListener('input', e => {
@@ -407,6 +460,7 @@ export const triggerRoutesModal = e => {
   if (state['adminCheck'] || state['techCheck']) {
     activateNextStage('start-route__time')
     activateNextStage('route__select--plot')
+    planDateInput.removeAttribute('disabled')
 
     startTime.addEventListener('click', e => {
       confirmChangeTimeHandler(e, () => {
@@ -455,6 +509,9 @@ export const triggerRoutesModal = e => {
     const otk = routeInfo['otk_time']
     const errT = routeInfo['error_time']
     const errM = routeInfo['error_msg']
+    const theorEnd = routeInfo['theor_end']
+    // const dynEnd = routeInfo['dyn_end']
+    const planDate = routeInfo['plan_date']
     let comments = routeInfo['comments']
 
     if (routeInfo['issued']) {
@@ -502,6 +559,10 @@ export const triggerRoutesModal = e => {
     document.querySelector('#error-route__msg').value = errM
     document.querySelector('#error__time').value = errT
 
+    theorEndInp.value = theorEnd ? theorEnd : ''
+    // dynEndInp.value = dynEnd ? dynEnd : ''
+    planDateInput.value = planDate ? planDate : ''
+
     if (comments) {
       comments = comments.map(c => `${c['date']}    ${c['value']}`)
       comments = comments.join('---')
@@ -525,6 +586,10 @@ export const triggerRoutesModal = e => {
     if (dayQuantity) {
       controlQuantityAccess(routeDayQuantity)
       routeDayQuantity.value = dayQuantity
+    }
+
+    if (quantity && dayQuantity) {
+      shifts.value = Math.ceil(routeQuantity.value / routeDayQuantity.value)
     }
 
     if (end) {
@@ -595,6 +660,8 @@ export const triggerRoutesModal = e => {
     addLog(routeUser.value, 'Начал', '#visible__comments')
     issuedToday.classList.add('text-input')
     issuedToday.removeAttribute('disabled')
+
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
   })
 
   // END
@@ -619,7 +686,7 @@ export const triggerRoutesModal = e => {
   // REPORT
   reportBtn.addEventListener('click', () => {
     issued.value = String(Number(issued.value) + Number(issuedToday.value))
-    let logMsg = addLog(routeUser.value, `За смену ${issuedToday.value}`, '#visible__comments')
+    let logMsg = addLog(routeUser.value, `${routePlot.value} За смену ${issuedToday.value}`, '#visible__comments')
     saveData(logMsg, '#issued_report')
     issuedToday.value = ''
   })
@@ -674,6 +741,32 @@ export const triggerRoutesModal = e => {
     modalElem.querySelectorAll('select').forEach(sel => {
       sel.setAttribute('disabled', 'true')
     })
+  }
+}
+
+const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts) => {
+  if (routeQuantity && routeDayQuantity) {
+    shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
+  }
+
+  if (routeQuantity && routeDayQuantity && startTime) {
+    const timeInfo = {
+      'quantity': Number(routeQuantity),
+      'day_quantity': Number(routeDayQuantity),
+      'issued': Number(issued),
+      'start_time': startTime,
+      'machine_start': '08:00',
+      'machine_end': '20:00'
+    }
+
+    sendData(`${appAddr}/api/time/theoretic`, 'POST', JSON.stringify(timeInfo))
+      .then(res => {
+        return res.json()
+      })
+      .then(data => {
+        theorEndInp.value = data.result
+        // dynEndInp.value = data.result
+      })
   }
 }
 

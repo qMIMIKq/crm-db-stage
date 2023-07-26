@@ -13,7 +13,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
   }
 
@@ -32,6 +32,9 @@
     }
   }
 
+  &-plan__date {
+    margin-right: 0 !important;
+  }
 
   &__label {
     text-align: center;
@@ -59,6 +62,7 @@
     }
 
     &--top {
+      text-align: center;
       margin-bottom: 10px;
       height: 28px;
     }
@@ -68,7 +72,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
   }
 }
 
@@ -201,6 +205,25 @@
 
 .quantity-block {
   display: flex;
+
+  &__labels {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__label {
+    margin-right: 35px;
+  }
+
+  &__shifts {
+    margin-right: 33px;
+  }
+
+  &__inshifts {
+    position: relative;
+    right: -5px;
+  }
 }
 
 #route__delete:disabled {

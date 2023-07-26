@@ -31,16 +31,10 @@
 }
 
 .header-routes {
-  &__work {
-    margin-right: 10px;
-  }
-
-  &__error {
-    margin-right: 10px;
-  }
-
-  &__unwork {
-    margin-right: 10px;
+  &__filter {
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
   }
 }
 

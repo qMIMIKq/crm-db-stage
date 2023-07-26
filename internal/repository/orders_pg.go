@@ -61,8 +61,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 		routesQuery := fmt.Sprintf(`
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
 													issued, start_time, end_time,
-													otk_time, error_time, error_value, day_quantity)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+													otk_time, error_time, error_value, day_quantity, theor_end, dyn_end, plan_date)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 			RETURNING route_id
 		`)
 
@@ -81,8 +81,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			routesUpdateQuery := fmt.Sprintf(`
 				UPDATE routes SET worker = $1, plot_id = $2, quantity = $3,
 						   issued = $4, start_time = $5, end_time = $6,
-							 otk_time = $7, error_time = $8, error_value = $9, day_quantity = $10
-			   WHERE order_id = $11 AND route_position = $12
+							 otk_time = $7, error_time = $8, error_value = $9, day_quantity = $10, theor_end = $11, dyn_end = $12, plan_date = $13
+			   WHERE order_id = $14 AND route_position = $15
 			`)
 
 			var dbRoutePos []domain.CheckRoute
@@ -91,7 +91,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			if len(dbRoutePos) > 0 {
 				_, err = o.db.Exec(routesUpdateQuery, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime,
-					route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity, order.ID, routePos)
+					route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate, order.ID, routePos)
 
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
@@ -99,11 +99,15 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						_, err = o.db.Exec(routeCommentsQuery, dbRoutePos[0].RouteID, comment.Date, comment.Value)
 					}
 				}
+
+				log.Err(err).Caller().Msg("Error")
 			} else {
+				log.Info().Interface("route", route).Msgf("Route")
+
 				err = o.db.QueryRow(routesQuery, order.ID,
 					routePos, route.User, route.Plot,
-					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity).Scan(&routeID)
-
+					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.OtkTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate).Scan(&routeID)
+				log.Err(err).Caller().Msg("Error")
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
 						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
@@ -143,8 +147,8 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 	routesQuery := fmt.Sprintf(`
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
 													issued, start_time, end_time,
-													otk_time, error_time, error_value, day_quantity)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+													otk_time, error_time, error_value, day_quantity, theor_end, dyn_end, plan_date)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 			RETURNING route_id
 		`)
 
@@ -178,7 +182,11 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 			routePos := strings.Split(name, "-")[1]
 			err = o.db.QueryRow(routesQuery, id,
 				routePos, route.User, route.Plot,
-				route.Quantity, route.Issued, route.StartTime, route.OtkTime, route.EndTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity).Scan(&routeID)
+				route.Quantity, route.Issued, route.StartTime, route.OtkTime, route.EndTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate).Scan(&routeID)
+
+			if err != nil {
+				fmt.Println(err)
+			}
 
 			for _, comment := range route.Comments {
 				if len(comment.Date) > 0 {
@@ -186,7 +194,6 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 				}
 			}
 		}
-
 	}
 
 	return err

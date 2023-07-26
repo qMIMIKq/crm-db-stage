@@ -38,7 +38,8 @@ func (f FiltersPG) CreateFilter(filter domain.FilterInfo) (int, error) {
 
 func (f FiltersPG) GetFilters() ([]domain.FilterInfo, error) {
 	query := fmt.Sprintf(`
-			SELECT f.filter_id, f.filter_name, 
+			SELECT f.filter_id, f.filter_name,
+             f.start_time, f.end_time,
 						 f.plot_id, p.plot_name
 			  FROM filters f
 						 JOIN plots p USING(plot_id)	 						

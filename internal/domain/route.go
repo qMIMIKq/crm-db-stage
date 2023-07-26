@@ -15,6 +15,10 @@ type Route struct {
 	DayQuantity   string   `json:"day_quantity" db:"day_quantity"`
 	Issued        string   `json:"issued" db:"issued"`
 	OrderID       string   `json:"order_id" db:"order_id"`
+	TheorEnd      string   `json:"theor_end" db:"theor_end"`
+	DynEnd        string   `json:"dyn_end" db:"dyn_end"`
+	PlanDate      string   `json:"plan_date" db:"plan_date"`
+	PlanStart     string   `json:"plan_start" db:"plan_start"`
 }
 
 type Report struct {

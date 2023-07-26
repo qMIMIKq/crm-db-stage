@@ -25,7 +25,6 @@ export const topFiltersHandler = () => {
     data.forEach(d => {
       let condition = !checkExt(extensions, d.name)
       if (condition) {
-        console.log(d.name)
         if (short) {
           block.insertAdjacentHTML('beforeend', `
                     <li class='nav-filters__item'>
@@ -230,7 +229,7 @@ export const filterData = () => {
             }
           } else if (state['routesFilters'].unstarted) {
             if (!route.start_time) {
-                flag = true
+              flag = true
             }
           } else {
             console.log(route)

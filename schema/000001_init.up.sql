@@ -29,7 +29,8 @@ CREATE TABLE plots
 (
     plot_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
     plot_name      VARCHAR(255)              NOT NULL,
-    plot_shortname VARCHAR(255)
+    plot_shortname VARCHAR(255),
+    nickname       varchar(255) DEFAULT ''
 );
 
 INSERT INTO plots (plot_name)
@@ -43,8 +44,10 @@ CREATE TABLE filters
     filter_id   SERIAL UNIQUE PRIMARY KEY                        NOT NULL,
     filter_name VARCHAR(255)                                     NOT NULL,
     plot_id     INT REFERENCES plots (plot_id) ON DELETE CASCADE NOT NULL,
-    start_time  varchar(255) default 'нет данных',
-    end_time    varchar(255) default 'нет данных'
+    start_time  varchar(255) default '08:20',
+    end_time    varchar(255) default '20:00',
+    nickname    varchar(255) default '',
+    position    integer      default 0
 );
 
 CREATE TABLE users
@@ -52,7 +55,9 @@ CREATE TABLE users
     user_id   SERIAL UNIQUE PRIMARY KEY NOT NULL,
     user_name VARCHAR(255),
     login     VARCHAR(255),
-    password  VARCHAR(255)
+    password  VARCHAR(255),
+    nickname  VARCHAR(255),
+    disable   boolean DEFAULT FALSE
 );
 
 CREATE TABLE users_rights
@@ -69,8 +74,8 @@ CREATE TABLE clients
     client_name VARCHAR(255) UNIQUE       NOT NULL
 );
 
-INSERT INTO users (user_name, login, password)
-VALUES ('Админ А', 'admin', '61736461333132646173011c945f30ce2cbafc452f39840f025693339c42');
+INSERT INTO users (user_name, login, password, nickname)
+VALUES ('Админ А', 'admin', '61736461333132646173011c945f30ce2cbafc452f39840f025693339c42', 'SuperAdmin');
 INSERT INTO users_rights (user_id, group_id, plot_id)
 VALUES (1, 1, 1);
 
@@ -105,7 +110,11 @@ CREATE TABLE routes
     end_time       varchar(255),
     otk_time       varchar(255),
     error_time     varchar(255),
-    error_value    varchar(255)
+    error_value    varchar(255),
+    day_quantity   varchar(255) default '',
+    theor_end      varchar(255) default '',
+    dyn_end        varchar(255) default '',
+    plan_date      varchar(255) default ''
 );
 
 create table route_comments

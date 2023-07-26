@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="../../static/css/iconer/iconer.png" type="image/png">
+    <link rel="icon" href="../../static/css/favicon/favicon.png" type="image/png">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{.Title}}</title>
-<script defer src="../../static/js/index.js"></script></head>
+    <script defer src="../../static/js/index.js"></script></head>
 <body>
 <div class="container">
     <header class="header">
@@ -20,7 +20,8 @@
                 {{end}}
 
                 {{if eq .GroupID "1"}}
-                    <a class="admin-form__button" target="_blank" href="http://172.20.10.7:8192/panel">Администрирование</a>
+                    <a class="admin-form__button" target="_blank"
+                       href="http://91.142.94.150:8192/panel">Администрирование</a>
                 {{end}}
 
                 <ul class="nav-filters__list nav-filters__plots"></ul>
@@ -45,10 +46,11 @@
             </div>
 
             <div class="main-header__routes header-routes">
-                <button class="main__button header-routes__work">В работе</button>
-                <button class="main__button header-routes__unwork">Не в работе</button>
-                <button class="main__button header-routes__error">Ошибка</button>
-                <button class="main__button header-routes__completed">Сдал</button>
+                <button class="main__button header-routes__filter header-routes__work">В работе</button>
+                <button class="main__button header-routes__filter header-routes__unwork">Не в работе</button>
+                <button class="main__button header-routes__filter header-routes__error">Ошибка</button>
+                <button class="main__button header-routes__filter header-routes__completed">Сдал</button>
+                <button class="main__button header-routes__filter header-routes__planned">В плане</button>
             </div>
 
             <div class="main-header__search search">

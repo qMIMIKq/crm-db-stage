@@ -132,9 +132,10 @@ export const tableRoutesFiltersHandler = () => {
       return
     }
 
-    inErrorBtn.classList.remove('route__filter--chosen')
-    completedBtn.classList.remove('route__filter--chosen')
-    notWorkBtn.classList.remove('route__filter--chosen')
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+    } catch {
+    }
     inWorkBtn.classList.add('route__filter--chosen')
 
     state['routesFilters'].started = true
@@ -154,9 +155,10 @@ export const tableRoutesFiltersHandler = () => {
       return
     }
 
-    inErrorBtn.classList.remove('route__filter--chosen')
-    completedBtn.classList.remove('route__filter--chosen')
-    inWorkBtn.classList.remove('route__filter--chosen')
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+    } catch {
+    }
     notWorkBtn.classList.add('route__filter--chosen')
 
     state['routesFilters'].unstarted = true
@@ -182,9 +184,10 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].unstarted = false
     state['routesFilters'].completed = false
 
-    inWorkBtn.classList.remove('route__filter--chosen')
-    completedBtn.classList.remove('route__filter--chosen')
-    notWorkBtn.classList.remove('route__filter--chosen')
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+    } catch {
+    }
     inErrorBtn.classList.add('route__filter--chosen')
 
     deleteOrders()
@@ -200,9 +203,10 @@ export const tableRoutesFiltersHandler = () => {
       return
     }
 
-    inErrorBtn.classList.remove('route__filter--chosen')
-    inWorkBtn.classList.remove('route__filter--chosen')
-    notWorkBtn.classList.remove('route__filter--chosen')
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+    } catch {
+    }
     completedBtn.classList.add('route__filter--chosen')
 
     state['routesFilters'].completed = true

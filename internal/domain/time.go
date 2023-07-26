@@ -1,0 +1,15 @@
+package domain
+
+type TimeInfo struct {
+	Start        string `json:"start_time"`
+	MachineStart string `json:"machine_start"`
+	MachineEnd   string `json:"machine_end"`
+	Quantity     int    `json:"quantity"`
+	DayQuantity  int    `json:"day_quantity"`
+	Issued       int    `json:"issued"`
+}
+
+type TimeResult struct {
+	TheoreticEnd string `json:"theoretic_end" db:"theoretic_end"`
+	DynamicEnd   string `json:"dynamic_end" db:"dynamic_end"`
+}

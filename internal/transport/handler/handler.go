@@ -55,6 +55,12 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 		{
 			routes.POST("/delete/:id", h.deleteRoute)
 		}
+
+		time := api.Group("/time")
+		{
+			time.POST("/theoretic", h.theoreticTime)
+			time.POST("/dynamic", h.dynamicTime)
+		}
 	}
 }
 

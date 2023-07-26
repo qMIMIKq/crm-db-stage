@@ -41,6 +41,11 @@ type Routes interface {
 	DeleteRoute(routeID string) error
 }
 
+type Time interface {
+	CalcTheoreticTime(time domain.TimeInfo) string
+	CalcDynamicTime(time domain.TimeInfo) string
+}
+
 type Services struct {
 	Routes
 	Files
@@ -49,6 +54,7 @@ type Services struct {
 	Plots
 	Users
 	Orders
+	Time
 }
 
 func NewService(repos *repository.Repository) *Services {
@@ -60,5 +66,6 @@ func NewService(repos *repository.Repository) *Services {
 		Files:         NewFilesService(repos.Files),
 		Orders:        NewOrdersService(repos.Orders),
 		Routes:        NewRoutesService(repos.Routes),
+		Time:          NewTimeService(),
 	}
 }
