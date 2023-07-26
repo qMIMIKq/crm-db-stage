@@ -354,10 +354,10 @@ export const triggerRoutesModal = e => {
   const routeQuantity = modalElem.querySelector('#quantity')
   const routeDayQuantity = modalElem.querySelector('#day_quantity')
   controlQuantityAccess(routeQuantity)
+  controlQuantityAccess(routeDayQuantity)
 
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
-    controlQuantityAccess(routeDayQuantity)
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
     getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
   })
@@ -383,11 +383,9 @@ export const triggerRoutesModal = e => {
 
   let today = getTime()
   today = today.substring(0, today.length - 6)
-  today = today.split('-')
 
-  let tmrw = new Date(today[0], today[1], today[2])
+  let tmrw = new Date(today)
   tmrw.setDate(tmrw.getDate() + 1)
-
   tmrw = tmrw.toLocaleString().split(", ")[0].split('/')
   ;[tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]]
   tmrw = tmrw.join('-')
@@ -401,6 +399,7 @@ export const triggerRoutesModal = e => {
     addLog(logName, logMsg, '#visible__comments')
 
     if (planDateInputStart.value === '') {
+      console.log('hi')
       planDateInputStart.value = tmrw
     }
   })
@@ -512,6 +511,7 @@ export const triggerRoutesModal = e => {
     const theorEnd = routeInfo['theor_end']
     // const dynEnd = routeInfo['dyn_end']
     const planDate = routeInfo['plan_date']
+    const planDateStart = routeInfo['plan_start']
     let comments = routeInfo['comments']
 
     if (routeInfo['issued']) {
@@ -562,6 +562,7 @@ export const triggerRoutesModal = e => {
     theorEndInp.value = theorEnd ? theorEnd : ''
     // dynEndInp.value = dynEnd ? dynEnd : ''
     planDateInput.value = planDate ? planDate : ''
+    planDateInputStart.value = planDateStart ? planDateStart : ''
 
     if (comments) {
       comments = comments.map(c => `${c['date']}    ${c['value']}`)
@@ -717,17 +718,20 @@ export const triggerRoutesModal = e => {
     formData.forEach((value, key) => {
       obj[key] = value
     })
+
     obj['plot'] = routeForm.querySelector('#route__plot').value
-
     obj['comments'] = createReportObj(obj['comments'])
-    routeInput.value = JSON.stringify(obj)
+    obj['error_msg'] = errInput.value
 
+    routeInput.value = JSON.stringify(obj)
     const parent = routeInput.closest('.table-form--old')
 
     if (!(parent === null)) {
       parent.classList.remove('table-form--old')
       parent.classList.add('table-form--upd')
     }
+
+    console.log(obj.error_msg)
 
     submitData()
     document.querySelector('.modal--route').remove()

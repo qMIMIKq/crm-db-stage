@@ -231,6 +231,23 @@ export const filterData = () => {
             if (!route.start_time) {
               flag = true
             }
+          } else if (state['routesFilters'].planned) {
+            console.log('hi')
+            if (route.plan_date) {
+              let planDate = new Date(route.plan_date).getTime()
+              let planStart = new Date(route.plan_start).getTime()
+
+              if (planStart <= today && today <= planDate) {
+                if (filters.length) {
+                  if (filters.includes(route.plot)) {
+                    flag = true
+                  }
+                } else {
+                  flag = true
+                }
+              }
+            }
+
           } else {
             console.log(route)
             flag = true

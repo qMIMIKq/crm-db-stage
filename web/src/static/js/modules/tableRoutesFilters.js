@@ -4,6 +4,7 @@ import {filterData} from "./topFilters";
 import {drawOrders} from "./drawOrders";
 import {deleteOrders, getOrders} from "./orders";
 import {bindOrdersListeners} from "./bindListeners";
+import {getTime} from "./getTime";
 
 export const startFilter = (filters) => {
   state['orders'].forEach(order => {
@@ -117,12 +118,44 @@ const checkDoFilter = (check, order) => {
   return check
 }
 
+export const plannedFilter = filters => {
+  let today = getTime()
+  today = today.substring(0, today.length - 6)
+  today = new Date(today).getTime()
+
+  state['orders'].forEach(order => {
+    let check = false
+
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.plan_date) {
+          let planDate = new Date(route.plan_date).getTime()
+          let planStart = new Date(route.plan_start).getTime()
+
+          if (planStart <= today && today <= planDate) {
+            if (filters.length) {
+              if (filters.includes(route.plot)) {
+                check = true
+              }
+            } else {
+              check = true
+            }
+          }
+        }
+      })
+    }
+    return checkDoFilter(check, order)
+  })
+
+  bindOrdersListeners()
+}
 
 export const tableRoutesFiltersHandler = () => {
   const inWorkBtn = document.querySelector(".header-routes__work")
   const notWorkBtn = document.querySelector(".header-routes__unwork")
   const inErrorBtn = document.querySelector(".header-routes__error")
   const completedBtn = document.querySelector(".header-routes__completed")
+  const inPlanBtn = document.querySelector(".header-routes__planned")
 
   inWorkBtn.addEventListener('click', e => {
     if (inWorkBtn.classList.contains('route__filter--chosen')) {
@@ -139,8 +172,10 @@ export const tableRoutesFiltersHandler = () => {
     inWorkBtn.classList.add('route__filter--chosen')
 
     state['routesFilters'].started = true
+    state['routesFilters'].unstarted = false
     state['routesFilters'].error = false
     state['routesFilters'].completed = false
+    state['routesFilters'].planned = false
 
     deleteOrders()
     const filters = state['currentTopFilters'].map(filter => filter.name)
@@ -165,6 +200,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].started = false
     state['routesFilters'].error = false
     state['routesFilters'].completed = false
+    state['routesFilters'].planned = false
 
     deleteOrders()
     const filters = state['currentTopFilters'].map(filter => filter.name)
@@ -183,6 +219,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].started = false
     state['routesFilters'].unstarted = false
     state['routesFilters'].completed = false
+    state['routesFilters'].planned = false
 
     try {
       document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
@@ -213,10 +250,36 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].unstarted = false
     state['routesFilters'].started = false
     state['routesFilters'].error = false
+    state['routesFilters'].planned = false
 
     deleteOrders()
     const filters = state['currentTopFilters'].map(filter => filter.name)
     completedFilter(filters)
+  })
+
+  inPlanBtn.addEventListener('click', e => {
+    if (inPlanBtn.classList.contains('route__filter--chosen')) {
+      inPlanBtn.classList.remove('route__filter--chosen')
+      state['routesFilters'].started = false
+      getOrders()
+      return
+    }
+
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+    } catch {
+    }
+    inPlanBtn.classList.add('route__filter--chosen')
+
+    state['routesFilters'].planned = true
+    state['routesFilters'].started = false
+    state['routesFilters'].unstarted = false
+    state['routesFilters'].error = false
+    state['routesFilters'].completed = false
+
+    deleteOrders()
+    const filters = state['currentTopFilters'].map(filter => filter.name)
+    plannedFilter(filters)
   })
 }
 

@@ -164,17 +164,38 @@ button:disabled {
   }
 }
 
-.admin-form__button {
-  width: 130px;
-  transition: color .3s;
-  position: absolute;
-  right: 24px;
-
-  &:hover {
+.admin-form {
+  &__button {
+    width: 130px;
     transition: color .3s;
-    color: $hover_aqua;
+    position: absolute;
+    right: 24px;
+
+    &:hover {
+      transition: color .3s;
+      color: $hover_aqua;
+    }
+  }
+
+  &__user {
+    margin-right: 10px;
+  }
+
+  &__exit {
+    transition: color .3s;
+
+    &:hover {
+      transition: color .3s;
+      color: $hover_aqua;
+    }
   }
 }
+
+.header-user__block {
+  position: absolute;
+  display: flex;
+}
+
 
 .search {
   display: flex;

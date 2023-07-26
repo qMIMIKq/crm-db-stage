@@ -18,7 +18,7 @@ import {getData} from './getData';
 import {globalFilterOrders} from "./filterOrders";
 import {drawOrders} from "./drawOrders";
 import {filterData} from "./topFilters";
-import {errFilter, startFilter} from "./tableRoutesFilters";
+import {completedFilter, errFilter, notInWorkFilter, plannedFilter, startFilter} from "./tableRoutesFilters";
 
 export const getOrders = (postfix = 'get-all') => {
   state['isArchive'] = postfix !== 'get-all'
@@ -86,6 +86,15 @@ export const getOrders = (postfix = 'get-all') => {
             } else if (state['routesFilters'].error) {
               deleteOrders()
               errFilter(filters)
+            } else if (state['routesFilters'].completed) {
+              deleteOrders()
+              completedFilter(filters)
+            } else if (state['routesFilters'].planned) {
+              deleteOrders()
+              plannedFilter(filters)
+            } else if (state['routesFilters'].unstarted) {
+              deleteOrders()
+              notInWorkFilter(filters)
             }
           }
         })

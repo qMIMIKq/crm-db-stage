@@ -4,7 +4,9 @@ import {state} from "../modules/state";
 //192.168.1.231
 //172.20.10.7
 //91.142.94.150
-const appAddr = "http://91.142.94.150:8182"
+const appAddr = 'http://91.142.94.150:8182'
+// const appAddr = 'http://192.168.1.231:8182'
+// const appAddr = 'http://172.20.10.7:8182'
 
 const loginForm = document.querySelector(".login-form")
 loginForm.addEventListener("submit", e => {
@@ -39,10 +41,10 @@ loginForm.addEventListener("submit", e => {
 
     } else if (errBlock === null) {
       loginForm.insertAdjacentHTML("beforeend", `
-                    <div class="user-form__block user-form__error">
-                        <h3>Неверное имя пользователя или пароль</h3>
-                    </div>
-                `)
+          <div class="user-form__block user-form__error">
+              <h3>Неверное имя пользователя или пароль</h3>
+          </div>
+      `)
     }
   })
 })

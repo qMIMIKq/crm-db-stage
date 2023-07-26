@@ -10,8 +10,13 @@ import {drawManagers} from './drawManagers';
 import {submitData} from "./submitOrdersData";
 import {drawSubmit} from "./submitControl";
 import {deleteOrdersHandler} from "./deleteOrdersHandler";
+import {getTime} from "./getTime";
 
 export const table = document.querySelector('.main-table')
+
+let today = getTime()
+today = today.substring(0, today.length - 6)
+today = new Date(today).getTime()
 
 export const drawOrders = async (d, data, users) => {
   controlFiltersReset()
@@ -276,65 +281,75 @@ export const drawOrders = async (d, data, users) => {
 
     if (routes) {
       routes.forEach(route => {
-        const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
-        const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
+          const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
+          const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
 
-        if (dataInput) {
-          const infoParent = dataInput.parentNode
-          const routeInfo = infoParent.querySelector(`input[value="-"]`)
+          if (dataInput) {
+            const infoParent = dataInput.parentNode
+            const routeInfo = infoParent.querySelector(`input[value="-"]`)
 
-          dataInput.value = JSON.stringify(route)
-          routeInfo.value = route.plot
+            dataInput.value = JSON.stringify(route)
+            routeInfo.value = route.plot
 
-          if (route.comments) {
-            const lastComm = route.comments[route.comments.length - 1]
-            infoParent.setAttribute('data-title', `${lastComm.date} ${lastComm.value}`)
-            infoParent.classList.add('table-body__trattr')
-          }
+            if (route.plan_date) {
+              let planDate = new Date(route.plan_date).getTime()
+              let planStart = new Date(route.plan_start).getTime()
 
-          if (route.start_time && !route.end_time) {
-            routeInfo.classList.add('route--started')
-
-            if (route.issued && route.quantity && route.issued >= route.quantity) {
-              routeInfo.style.color = "rgb(0 207 0)"
-            } else {
-              routeInfo.style.color = "black"
+              if (planStart <= today && today <= planDate) {
+                routeInfo.classList.add('route--planned')
+              }
             }
-          }
 
-          if (route.end_time) {
-            routeInfo.classList.add('route--completed')
-            routeInfo.classList.remove('route--started')
-
-            if (route.error_msg) {
-              routeInfo.style.color = "red"
-              infoParent.setAttribute('data-title', route.error_msg)
-            } else if (route.quantity && route.issued < route.quantity) {
-              routeInfo.style.color = "yellow"
-            } else {
-              routeInfo.style.color = "black"
+            if (route.comments) {
+              const lastComm = route.comments[route.comments.length - 1]
+              infoParent.setAttribute('data-title', `${lastComm.date} ${lastComm.value}`)
+              infoParent.classList.add('table-body__trattr')
             }
-          }
 
-          if (route.error_msg && !route.end_time) {
-            routeInfo.classList.add('route--error')
-            infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
-
-            if (route.start_time) {
-              routeInfo.style.color = "black"
-              routeInfo.classList.remove('route--started')
+            if (route.start_time && !route.end_time) {
+              routeInfo.classList.add('route--started')
 
               if (route.issued && route.quantity && route.issued >= route.quantity) {
-                routeInfo.style.color = "#07e807"
+                routeInfo.style.color = "rgb(0 207 0)"
+              } else {
+                routeInfo.style.color = "black"
+              }
+            }
+
+            if (route.end_time) {
+              routeInfo.classList.add('route--completed')
+              routeInfo.classList.remove('route--started')
+
+              if (route.error_msg) {
+                routeInfo.style.color = "red"
+                infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
+              } else if (route.quantity && route.issued < route.quantity) {
+                routeInfo.style.color = "yellow"
+              } else {
+                routeInfo.style.color = "black"
+              }
+            }
+
+            if (route.error_msg && !route.end_time) {
+              routeInfo.classList.add('route--error')
+              infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
+
+              if (route.start_time) {
+                routeInfo.style.color = "black"
+                routeInfo.classList.remove('route--started')
+
+                if (route.issued && route.quantity && route.issued >= route.quantity) {
+                  routeInfo.style.color = "#07e807"
+                }
               }
             }
           }
-        }
 
-        if (dataIssuedInput) {
-          dataIssuedInput.value = route["issued"]
+          if (dataIssuedInput) {
+            dataIssuedInput.value = route["issued"]
+          }
         }
-      })
+      )
     } else {
       deleteOrdersHandler(currentOrder, d.issued, false, d.id)
     }
