@@ -2114,7 +2114,6 @@ const drawPlots = (plotI, user) => {
     const plotsSelect = document.querySelector('#route__plot');
     const plotsConnection = document.querySelector('#plot-connection');
     plots.data.forEach(plot => {
-      // console.log(plot)
       plotsSelect.insertAdjacentHTML('beforeend', `
           <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>
       `);
@@ -2328,10 +2327,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 //192.168.1.231
 //172.20.10.7
+//91.142.94.150
 
 // let addr = process.env.CHECK
 // console.log(addr)
-let appAddr = 'http://172.20.10.7:8182';
+let appAddr = 'http://91.142.94.150:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
