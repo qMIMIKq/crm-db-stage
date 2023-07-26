@@ -65,7 +65,9 @@ if (userInf) {
   state['selectAdmManGroupper'] = admManCheck ? '' : 'disabled'
   state['selectAdmManTechGroupper'] = admManTechCheck ? '' : 'disabled'
 
-  document.querySelector('.admin-form__user').textContent = userInf.nickname
+  try {
+    document.querySelector('.admin-form__user').textContent = userInf.nickname
+  } catch {}
 }
 
 export {state}
