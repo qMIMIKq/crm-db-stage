@@ -77,7 +77,7 @@
 }
 
 .report-route__btn {
-  margin-right: 30px;
+  //margin-right: 30px;
 }
 
 .section-logs {
@@ -217,12 +217,27 @@
   }
 
   &__shifts {
-    margin-right: 33px;
+    //margin-right: 33px;
   }
 
   &__inshifts {
+    margin-right: 22px;
     position: relative;
-    right: -5px;
+    right: 13px;
+  }
+}
+
+.route-type {
+  &__error {
+    border: 2px solid red;
+  }
+
+  &__start {
+    border: 2px solid #ffff4e;
+  }
+
+  &__finish {
+    border: 2px solid green;
   }
 }
 
@@ -232,5 +247,46 @@
 
   &:hover {
     color: gray !important;
+  }
+}
+
+.modal-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__input {
+    margin-right: 0;
+    width: 90%;
+    height: 50px;
+    margin-bottom: 15px;
+  }
+
+  &__title {
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+}
+
+.modal-issued {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__date {
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+
+  &__input {
+    margin-right: 0;
+    width: 20%;
+    height: 28px;
+    margin-bottom: 15px;
+  }
+
+  &__title {
+    margin-top: 10px;
+    margin-bottom: 15px;
   }
 }

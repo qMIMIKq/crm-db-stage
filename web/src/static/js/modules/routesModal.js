@@ -7,6 +7,9 @@ import {sendData} from "./sendData";
 import {showResult} from "./submitControl";
 import {getOrders} from "./orders";
 import {getTime} from "./getTime";
+import {planDateHandler} from "./planModal";
+import {changeErrorHandler} from "./errorModal";
+import {issuedHandler} from "./issuedModal";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -65,12 +68,12 @@ const routeModal = `
                         </div>
                         
                         <div class="quantity-block__labels">
-                            <label class='route__label quantity-block__shifts' for='shifts'>Смен</label>
                             <label class='route__label quantity-block__inshifts' for='day_quantity'>В смену</label>
+                            <label class='route__label quantity-block__shifts' for='shifts'>Смен</label>
                         </div>
                         <div class="quantity-block">
-                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В смену">
+                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
                         </div>
                     </div>
                 </div>
@@ -125,17 +128,17 @@ const routeModal = `
                     
                     <input 
                     type='text'
-                    placeholder='Описание ошибки!'
-                    class='route__input text-input main__input main__input'
+                    class='route__input hidden__input text-input main__input main__input'
                     name='error_msg' 
                     id='error-route__msg'>
                     
-                    <button disabled type='button' class='route__btn main__button error-route__btn'>Ошибка!</button>
+                    <button type='button' class='route__btn route__input main__button issued-modal_trigger'>За смену</button>
+                    <button type='button' class='route__btn main__button error-route__btn'>Ошибка!</button>
                     <button type='button' class='route__btn main__button hidden__input error-route__close'>Сбросить ошибку</button>
                 </div>
                 
                 <div class='route__section route__section--report section-report'>
-                    <button type='button' class='clickable main__button route__btn report-route__btn'>Отчет по сменам</button>
+                    <button style="align-self: flex-start" type='button' class='clickable main__button route__btn report-route__btn'>Отчет по сменам</button>
                     
                     <div class='section-report__issued'>
                         <input 
@@ -144,18 +147,17 @@ const routeModal = `
                         id='issued_report'
                         name='issued_report'>
                         
-                        <input type='text'
-                        class='hidden__input'
-                        id='issued__all'>
-                        
                         <input
                         disabled
                         id='route-issued__today'
                         name='issued_today'
                         placeholder='За смену'
-                        class='route__input main__button main__input issued-route__num' 
+                        class='route__input main__button hidden__input main__input issued-route__num' 
                         type='number'>
-                       <button disabled type='button' class='route__btn main__button report-sub--route__btn'>ОК</button>
+                        
+                        <input type='text'
+                        class='hidden__input'
+                        id='issued__all'>
                     </div>
                 </div>
                 
@@ -253,7 +255,7 @@ const saveData = (data, selector) => {
   return dataInput
 }
 
-const addLog = (name, log, selector) => {
+export const addLog = (name, log, selector) => {
   const today = getTime()
   let logMsg = `${today}    ${name} ${log}`
   const visible = saveData(logMsg, selector)
@@ -340,194 +342,6 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
   })
 }
 
-const planDateModal = `
-    <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>
-      <div class='modal_content modal-plan modal_content--confirm' style='width: 400px'>
-        <h2 class='confirm__title confirm__title--plan'>Назначить этап в план</h2>
-        <div class="modal-plan__section">
-            <div class="modal-plan__data">
-                <label class="modal-plan__label">В план</label>
-                <input type="date" class="main__button modal-plan__end">
-            </div>
-            <div class="modal-plan__check">
-                <label>Срочно</label>
-                <input type="checkbox" class="modal-plan__urgently"> 
-            </div>
-        </div>
-        
-        <h2 class="confirm__title confirm__title--plan">Удалить этап из плана</h2>
-        <div class="modal-plan__section">
-            <ul class="modal-plan__exclude">
-            </ul>
-            <input type="date" class="main__button modal-plan__exclude-chose">
-        </div>
-        
-        <div class='confirm__section'>
-            <button class='main__button confirm__button confirm__button--ok'>Да</button>
-            <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
-        </div>
-      </div>
-   </div>
-`
-
-const planDateHandler = (e, planObj, dateEndInput) => {
-  const modal = showModal(planDateModal)
-  const dateInput = modal.querySelector('.modal-plan__end')
-  const dateUrgently = modal.querySelector('.modal-plan__urgently')
-  const excludeSelect = modal.querySelector('.modal-plan__exclude')
-  const excludeDateChose = modal.querySelector('.modal-plan__exclude-chose')
-
-  let today = getTime()
-  today = today.substring(0, today.length - 6)
-  let tmrw = new Date(today)
-  tmrw.setDate(tmrw.getDate() + 1)
-  tmrw = tmrw.toLocaleString().split(", ")[0].split('/')
-  ;[tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]]
-  tmrw = tmrw.join('-')
-
-  const getDays = (start, end) => {
-    const oneDay = 1000 * 60 * 60 * 24
-    let diff = end.getTime() - start.getTime()
-
-    return Math.round(diff / oneDay)
-  }
-
-  let exclude = []
-  if (planObj.planEnd) {
-    dateInput.value = planObj.planEnd
-    exclude = planObj.exclude ? planObj.exclude.split('__') : []
-    const endDate = new Date(dateInput.value)
-    const startDate = new Date(planObj.planStart)
-
-    excludeDateChose.setAttribute('min', today)
-    if (planObj.faster) {
-      dateUrgently.setAttribute('checked', '')
-    }
-
-    if (startDate.getTime() < new Date(today).getTime()) {
-      dateUrgently.setAttribute('disabled', '')
-    }
-
-    drawData(startDate, endDate)
-    excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option ${exclude.includes(planObj.planStart) ? 'exclude-date' : 'include-date'}">${planObj.planStart}</li>  
-    `)
-    addHandler()
-  } else {
-    dateInput.setAttribute('min', tmrw)
-  }
-
-  function addHandler() {
-    modal.querySelectorAll('.modal-plan__exclude-option').forEach(option => {
-      option.addEventListener('click', () => {
-        option.classList.toggle('exclude-date')
-        option.classList.toggle('include-date')
-
-        if (option.classList.contains('exclude-date')) {
-          exclude.push(option.textContent)
-        } else {
-          exclude = exclude.filter(ex => ex !== option.textContent)
-        }
-      })
-    })
-  }
-
-  function drawData(startDate, endDate) {
-    let res = getDays(startDate, endDate)
-    for (let i = res + 1; i > 2; i--) {
-      endDate.setDate(endDate.getDate() - 1)
-      let date = endDate.toISOString().split('T')[0]
-
-      excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option ${exclude.includes(date) ? 'exclude-date' : 'include-date'}">${date}</li>  
-      `)
-    }
-
-    excludeDateChose.setAttribute('max', dateInput.value)
-    excludeSelect.insertAdjacentHTML('beforeend', `
-        <li class="modal-plan__exclude-option ${exclude.includes(dateInput.value) ? 'exclude-date' : 'include-date'}">${dateInput.value}</li>  
-    `)
-  }
-
-  if (dateInput.value) {
-    excludeDateChose.removeAttribute('disabled')
-  } else {
-    excludeDateChose.setAttribute('disabled', '')
-  }
-
-  dateInput.addEventListener('change', e => {
-    excludeDateChose.removeAttribute('disabled')
-    const endDate = new Date(dateInput.value)
-    const startDate = new Date(today)
-
-    excludeSelect.querySelectorAll('li').forEach(date => {
-      date.remove()
-    })
-
-    drawData(startDate, endDate)
-
-    if (dateUrgently.checked) {
-      excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option ${exclude.includes(today) ? 'exclude-date' : 'include-date'}">${today}</li>  
-      `)
-      excludeDateChose.setAttribute('min', today)
-    } else {
-      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent)
-    }
-
-    addHandler()
-  })
-
-  dateUrgently.addEventListener('change', e => {
-    if (dateUrgently.checked) {
-      excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option include-date">${today}</li>  
-      `)
-
-      excludeSelect.querySelector('li').addEventListener('click', e => {
-        e.target.classList.toggle('exclude-date')
-        e.target.classList.toggle('include-date')
-
-        if (e.target.classList.contains('exclude-date')) {
-          exclude.push(e.target.textContent)
-        } else {
-          exclude = exclude.filter(ex => ex !== e.target.textContent)
-        }
-      })
-
-      excludeDateChose.setAttribute('min', today)
-    } else {
-      excludeSelect.querySelector('li').remove()
-      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent)
-    }
-  })
-
-  excludeDateChose.addEventListener('change', () => {
-    excludeSelect.querySelectorAll('li').forEach(date => {
-      if (date.textContent === excludeDateChose.value) {
-        date.classList.add('exclude-date')
-      }
-    })
-
-    excludeDateChose.value = ''
-  })
-
-  const okBtn = modal.querySelector('.confirm__button--ok')
-  const cnclBtn = modal.querySelector('.confirm__button--cncl')
-
-  okBtn.addEventListener('click', () => {
-    planObj.exclude = exclude.join('__')
-    planObj.planStart = excludeSelect.querySelector('li').textContent
-    planObj.planEnd = dateInput.value
-    planObj.faster = dateUrgently.checked
-
-    dateEndInput.value = planObj.planEnd
-    modal.click()
-  })
-
-  cnclBtn.addEventListener('click', () => modal.click())
-}
-
 export const triggerRoutesModal = e => {
   const routeInput = e.target.parentNode.querySelector('.hidden__input')
   const modalElem = showModal(routeModal)
@@ -546,6 +360,8 @@ export const triggerRoutesModal = e => {
   controlQuantityAccess(routeQuantity)
   controlQuantityAccess(routeDayQuantity)
 
+  console.log(currentOrder.querySelector('input[name="name"]').value)
+
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
@@ -558,16 +374,21 @@ export const triggerRoutesModal = e => {
     getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
   })
 
-
+  const routeForm = modalElem.querySelector('.route__config')
   const issued = modalElem.querySelector('#route__issued')
   const visibleLogs = document.querySelector("#visible__comments")
   const issuedToday = modalElem.querySelector('#route-issued__today')
-  const reportBtn = modalElem.querySelector('.report-sub--route__btn')
   const startTime = document.querySelector('.start-route__time')
   const endTime = document.querySelector('.end-route__time')
   const deleteBtn = document.querySelector('#route__delete')
   const theorEndInp = document.querySelector('#route__teorend')
   const shifts = document.querySelector('#shifts')
+  const startBtn = routeForm.querySelector('.start-route__btn')
+  const endBTn = routeForm.querySelector('.end-route__btn')
+  const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
+  issuedBtn.addEventListener('click', e => {
+    issuedHandler(e, issued, routePlot.value, routeUser.value)
+  })
 
   // const dynEndInp = document.querySelector('#route__dynend')
 
@@ -585,55 +406,11 @@ export const triggerRoutesModal = e => {
   })
 
   const errInput = document.querySelector('#error-route__msg')
-  errInput.addEventListener('input', e => {
-    activateOnInput(e, 'error-route__btn')
-  })
-
   const errTime = document.querySelector('.error__time')
-  const errTimeHandler = () => {
-    errTime.classList.add('hidden__input')
-    errInput.classList.remove('hidden__input')
-  }
-  const errInputHandler = () => {
-    errInput.classList.add('hidden__input')
-    errTime.classList.remove('hidden__input')
-  }
-
-  const routeForm = modalElem.querySelector('.route__config')
-
   const errBtn = routeForm.querySelector('.error-route__btn')
-  errBtn.addEventListener('click', () => {
-    let logMsg = `ОШИБКА ${document.querySelector('#error-route__msg').value}`
-
-    addLog(logName, logMsg, '#visible__comments')
-    setDateToInput('error__time')
-    activateNextStage('error__time')
-    errInput.classList.remove('text-input')
-    errInput.classList.add('clickable')
-    errBtn.classList.add('hidden__input')
-    errCloseBtn.classList.remove('hidden__input')
-    activateNextStage('error-route__close')
-    disableBtn('error-route__btn')
-    errInput.setAttribute('disabled', '')
+  errBtn.addEventListener('click', e => {
+    changeErrorHandler(e, errInput, errTime)
   })
-
-  const errCloseBtn = document.querySelector('.error-route__close')
-  errCloseBtn.addEventListener('click', e => {
-    errTime.removeEventListener('focus', errTimeHandler)
-    errTime.value = ''
-    errTime.classList.add('hidden___input')
-    errInput.removeEventListener('focus', errInputHandler)
-    errInput.value = ''
-    errInput.classList.remove('hidden___input')
-    errInput.classList.remove('clickable')
-    errInput.classList.add('text-input')
-    errInput.removeAttribute('disabled')
-    errCloseBtn.classList.add('hidden__input')
-    errBtn.classList.remove('hidden__input')
-    disableBtn('error-route__close')
-    addLog(logName, 'Сбросил ошибку', '#visible__comments')
-  })
-
 
   if (state['adminCheck'] || state['techCheck']) {
     activateNextStage('start-route__time')
@@ -643,6 +420,8 @@ export const triggerRoutesModal = e => {
     startTime.addEventListener('click', e => {
       confirmChangeTimeHandler(e, () => {
         activateNextStage('start-route__btn')
+        startBtn.classList.remove('route-type__start')
+        endBTn.classList.remove('route-type__finish')
         endTime.value = ''
         document.querySelector('#otk-route__time').value = ''
         disableBtn('end-route__btn')
@@ -652,6 +431,7 @@ export const triggerRoutesModal = e => {
 
     endTime.addEventListener('click', e => {
       confirmChangeTimeHandler(e, () => {
+        endBTn.classList.remove('route-type__finish')
         activateNextStage('end-route__btn')
         disableBtn('otk-route__btn')
       })
@@ -739,6 +519,7 @@ export const triggerRoutesModal = e => {
       activateNextStage('start-route__btn')
     } else {
       activateNextStage('end-route__btn')
+      startBtn.classList.add('route-type__start')
     }
 
     startTime.value = start
@@ -787,16 +568,14 @@ export const triggerRoutesModal = e => {
       if (state['adminCheck'] || state['techCheck']) {
         activateNextStage('otk-route__btn')
       }
+      endBTn.classList.add('route-type__finish')
     }
 
     if (errM) {
-      errInput.classList.remove('hidden__input')
-      errTime.classList.add('hidden__input')
       errInput.setAttribute('disabled', '')
+      errBtn.classList.add('route-type__error')
 
       if (state['adminCheck'] || state['techCheck']) {
-        errCloseBtn.classList.remove('hidden__input')
-        errBtn.classList.add('hidden__input')
       }
     }
 
@@ -838,7 +617,6 @@ export const triggerRoutesModal = e => {
   })
 
   drawLogs(visibleLogs)
-  const startBtn = routeForm.querySelector('.start-route__btn')
   startBtn.addEventListener('click', () => {
     setDateToInput('start-route__time')
     activateNextStage('end-route__btn')
@@ -849,18 +627,19 @@ export const triggerRoutesModal = e => {
     addLog(routeUser.value, 'Начал', '#visible__comments')
     issuedToday.classList.add('text-input')
     issuedToday.removeAttribute('disabled')
+    startBtn.classList.add('route-type__start')
 
     getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
   })
 
   // END
-  const endBTn = routeForm.querySelector('.end-route__btn')
   endBTn.addEventListener('click', () => {
     setDateToInput('end-route__time')
     if (state['adminCheck'] || state['techCheck']) {
       activateNextStage('otk-route__btn')
     }
     disableBtn('end-route__btn')
+    endBTn.classList.add('route-type__finish')
     addLog(routeUser.value, 'Закончил', '#visible__comments')
   })
 
@@ -873,12 +652,12 @@ export const triggerRoutesModal = e => {
   })
 
   // REPORT
-  reportBtn.addEventListener('click', () => {
-    issued.value = String(Number(issued.value) + Number(issuedToday.value))
-    let logMsg = addLog(routeUser.value, `${routePlot.value} За смену ${issuedToday.value}`, '#visible__comments')
-    saveData(logMsg, '#issued_report')
-    issuedToday.value = ''
-  })
+  // reportBtn.addEventListener('click', () => {
+  //   issued.value = String(Number(issued.value) + Number(issuedToday.value))
+  //   let logMsg = addLog(routeUser.value, `${routePlot.value} За смену ${issuedToday.value}`, '#visible__comments')
+  //   saveData(logMsg, '#issued_report')
+  //   issuedToday.value = ''
+  // })
 
   issuedToday.addEventListener('input', e => {
     activateOnInput(e, 'report-sub--route__btn')
@@ -985,7 +764,7 @@ const createReportObj = (data) => {
   return res
 }
 
-const drawPlots = (plotI, user) => {
+export const drawPlots = (plotI, user) => {
   const plotsResp = getData('filters/get-all')
   plotsResp.then(plots => {
     const plotsSelect = document.querySelector('#route__plot')
@@ -1007,7 +786,7 @@ const drawPlots = (plotI, user) => {
   })
 }
 
-const drawUsers = (plotName, userI) => {
+export const drawUsers = (plotName, userI) => {
   const usersSelect = document.querySelector('#route__user')
   usersSelect.querySelectorAll('option').forEach(elem => {
     // if (!elem.hasAttribute('disabled'))
