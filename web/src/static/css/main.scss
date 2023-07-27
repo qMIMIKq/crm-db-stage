@@ -209,3 +209,24 @@ button:disabled {
 .orders__total {
   margin-right: 10px;
 }
+
+.table__db {
+  position: relative;
+}
+
+.check-helper {
+  text-align: center;
+  z-index: 1;
+  position: absolute;
+  min-width: 100%;
+  //bottom: -33px;
+  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */
+  font-family: Arial, sans-serif; /* Гарнитура шрифта */
+  font-size: 11px; /* Размер текста подсказки */
+  padding: 5px 5px; /* Поля */
+  border: 1px solid #333;
+
+  &--long {
+    min-width: 300%;
+  }
+}

@@ -1,3 +1,5 @@
+SET timezone = 'Europe/Moscow';
+
 CREATE TABLE groups
 (
     group_id   SERIAL UNIQUE PRIMARY KEY NOT NULL,
@@ -27,10 +29,9 @@ VALUES (1, 'супер админ'),
 
 CREATE TABLE plots
 (
-    plot_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    plot_name      VARCHAR(255)              NOT NULL,
-    plot_shortname VARCHAR(255),
-    nickname       varchar(255) DEFAULT ''
+    plot_id   SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    plot_name VARCHAR(255)              NOT NULL,
+    nickname  varchar(255) DEFAULT ''
 );
 
 INSERT INTO plots (plot_name)
@@ -47,7 +48,8 @@ CREATE TABLE filters
     start_time  varchar(255) default '08:20',
     end_time    varchar(255) default '20:00',
     nickname    varchar(255) default '',
-    position    integer      default 0
+    position    integer      default 0,
+    disable     boolean      default false
 );
 
 CREATE TABLE users
@@ -99,22 +101,25 @@ CREATE table orders
 
 CREATE TABLE routes
 (
-    route_id       SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    route_position int,
-    plot_id        varchar(255),
-    order_id       int references orders (order_id) on delete cascade,
-    worker         varchar(255),
-    quantity       varchar(255),
-    issued         varchar(255),
-    start_time     varchar(255),
-    end_time       varchar(255),
-    otk_time       varchar(255),
-    error_time     varchar(255),
-    error_value    varchar(255),
-    day_quantity   varchar(255) default '',
-    theor_end      varchar(255) default '',
-    dyn_end        varchar(255) default '',
-    plan_date      varchar(255) default ''
+    route_id          SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    route_position    int,
+    plot_id           varchar(255),
+    order_id          int references orders (order_id) on delete cascade,
+    worker            varchar(255),
+    quantity          varchar(255),
+    issued            varchar(255),
+    start_time        varchar(255),
+    end_time          varchar(255),
+    otk_time          varchar(255),
+    error_time        varchar(255),
+    error_value       varchar(255),
+    day_quantity      varchar(255) default '',
+    theor_end         varchar(255) default '',
+    dyn_end           varchar(255) default '',
+    plan_date         varchar(255) default '',
+    plan_start        varchar(255) default '',
+    plan_exclude_days text         default '',
+    plan_faster       boolean      default false
 );
 
 create table route_comments

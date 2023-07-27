@@ -121,7 +121,7 @@ const checkDoFilter = (check, order) => {
 export const plannedFilter = filters => {
   let today = getTime()
   today = today.substring(0, today.length - 6)
-  today = new Date(today).getTime()
+  let dateToday = new Date(today).getTime()
 
   state['orders'].forEach(order => {
     let check = false
@@ -132,7 +132,7 @@ export const plannedFilter = filters => {
           let planDate = new Date(route.plan_date).getTime()
           let planStart = new Date(route.plan_start).getTime()
 
-          if (planStart <= today && today <= planDate) {
+          if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
             if (filters.length) {
               if (filters.includes(route.plot)) {
                 check = true

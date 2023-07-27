@@ -16,7 +16,7 @@ export const table = document.querySelector('.main-table')
 
 let today = getTime()
 today = today.substring(0, today.length - 6)
-today = new Date(today).getTime()
+const dateToday = new Date(today).getTime()
 
 export const drawOrders = async (d, data, users) => {
   controlFiltersReset()
@@ -33,8 +33,10 @@ export const drawOrders = async (d, data, users) => {
       uniqueFileNames.push(fileNameWithoutType)
     })
   }
+
   uniqueFileNames = [...new Set(uniqueFileNames)]
-  const orderCompleted = d.quantity && d.issued && d.issued >= d.quantity
+  const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity)
+  console.log(d.quantity, d.issued)
 
   table.insertAdjacentHTML(`afterbegin`, `
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
@@ -51,21 +53,21 @@ export const drawOrders = async (d, data, users) => {
             <li class='table-body_cell table__files'>
                 <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.number}" class='table-body_cell ${d.number ? "table-body__attr" : ""}  table__number'>
+            <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
                 <input 
                 ${state['inputAdmManGroupper']}
                 id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
             </li>
-            <li class='table-body_cell table__sample'>
+            <li class='table-body_cell table-body__helper table__sample'>
                 <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.client}" class='table-body_cell ${d.client ? "table-body__attr" : ""} table__client'>
+            <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
                 <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.name}" class='table-body_cell ${d.name ? "table-body__attr" : ""} table__name'>
+            <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
                 <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.material}" class='table-body_cell ${d.material ? "table-body__attr" : ""} table__material'>
+            <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
                 <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__quantity'>
@@ -83,7 +85,7 @@ export const drawOrders = async (d, data, users) => {
             <li class="table-body_cell hidden__input table__finished">
                 <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
             </li>
-            <li data-title="${d.m}" class="table-body_cell ${d.m ? "table-body__attr" : ""}  table__m">
+            <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
                 <select ${state["selectAdmManGroupper"]} class="table__data table-m-select main__button" name="m" id="">
                     <option selected value=""></option>
                 </select>
@@ -103,86 +105,86 @@ export const drawOrders = async (d, data, users) => {
             <li class="table__routes table-routes">
                 <input readonly type="text" class="hidden__input" name="routes_json">
                 <ul class="table-routes__wrapper">
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                 </ul>
                 <ul class="table-routes__wrapper hidden__input table-routes__issued">
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                 </ul>
             </li>
-            <li class="table-body_cell table__p">
+            <li class="table-body_cell table-body__helper table__p">
                 <select ${state["selectAdmManTechGroupper"]} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                     <option selected value=""></option>
                 </select>
             </li>
-            <li class="table-body_cell hidden-input table__comment">
+            <li class="table-body_cell table-body__helper hidden-input table__comment">
                 <input class="table__data hidden-input table__data--ro" 
                     name="comments" 
                     type="text"
@@ -191,7 +193,7 @@ export const drawOrders = async (d, data, users) => {
                     autocomplete="off"
                     tabindex="-1">
             </li>
-            <li class="table-body_cell hidden-input table__comment">
+            <li class="table-body_cell table-body__helper hidden-input table__comment">
                 <input class="table__data  hidden-input table__data--ro" 
                     name="all_comments" 
                     type="text"
@@ -201,7 +203,7 @@ export const drawOrders = async (d, data, users) => {
                     tabindex="-1">
             </li>
             
-            <li data-title='${d.comments ? d.comments[d.comments.length - 1] : ""}' class="table-body_cell ${d.comments ? "table-body__attr" : ""} table__comment">
+            <li class="table-body_cell table-body__helper ${d.comments ? "table-body__attr" : ""} table__comment">
                 <input ${state["inputAdmManTechGroupper"]} class="main__button table__data click-chose table__data--ro" tabindex="-1"
                     name="comment" 
                     type="text" 
@@ -219,7 +221,7 @@ export const drawOrders = async (d, data, users) => {
   const completedBlock = currentOrder.querySelector('.table__issued--done')
   if (completedBlock && !state['isArchive']) {
     completedBlock.insertAdjacentHTML(`afterend`, `
-            <li class="table-body_cell hidden__input table__complete">
+            <li class="table-body_cell table-body__helper hidden__input table__complete">
                 <input class="table__data main__button tr" tabindex="-1"
                 readonly
                 type="text" 
@@ -295,7 +297,7 @@ export const drawOrders = async (d, data, users) => {
               let planDate = new Date(route.plan_date).getTime()
               let planStart = new Date(route.plan_start).getTime()
 
-              if (planStart <= today && today <= planDate) {
+              if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
                 routeInfo.classList.add('route--planned')
               }
             }
@@ -322,7 +324,8 @@ export const drawOrders = async (d, data, users) => {
 
               if (route.error_msg) {
                 routeInfo.style.color = "red"
-                infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
+                infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}\n`)
+                // console.log(route.comments)
               } else if (route.quantity && route.issued < route.quantity) {
                 routeInfo.style.color = "yellow"
               } else {
@@ -333,6 +336,7 @@ export const drawOrders = async (d, data, users) => {
             if (route.error_msg && !route.end_time) {
               routeInfo.classList.add('route--error')
               infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
+              // console.log(route.comments)
 
               if (route.start_time) {
                 routeInfo.style.color = "black"
@@ -355,6 +359,66 @@ export const drawOrders = async (d, data, users) => {
     }
   }
 
+  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
+    if (!cell.classList.contains('table__route')) {
+      const valElem = cell.querySelector('.table__data')
+      const value = valElem.value
+
+      if ((valElem.classList.contains('table-m-select') && value.length > 2) || (valElem.scrollWidth > valElem.offsetWidth)) {
+        cell.addEventListener('mouseenter', () => {
+          if (value) {
+            cell.insertAdjacentHTML('beforeend', `
+                <div class="check-helper">${value}</div>
+            `)
+
+            const helper = cell.querySelector('.check-helper')
+            if (helper) {
+              const helperHeight = helper.clientHeight
+              if (helperHeight > 23) {
+                helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px'
+              } else {
+                helper.style.bottom = '-35px'
+              }
+            }
+          }
+        })
+
+        cell.addEventListener('mouseleave', e => {
+          try {
+            cell.querySelector('.check-helper').remove()
+          } catch {
+          }
+        })
+      }
+    } else {
+      const value = cell.getAttribute('data-title')
+      cell.addEventListener('mouseenter', () => {
+        if (value) {
+          cell.insertAdjacentHTML('beforeend', `
+                <div class="check-helper check-helper--long">${value}</div>
+            `)
+
+          const helper = cell.querySelector('.check-helper')
+          if (helper) {
+            const helperHeight = helper.clientHeight
+            if (helperHeight > 23) {
+              helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px'
+            } else {
+              helper.style.bottom = '-35px'
+            }
+          }
+        }
+      })
+
+      cell.addEventListener('mouseleave', e => {
+        try {
+          cell.querySelector('.check-helper').remove()
+        } catch {
+        }
+      })
+    }
+  })
+
   addTriggers(".table__files", triggerFilesModal)
   addTriggers(".table__route", triggerRoutesModal)
   addTriggers(".table__comment", triggerCommentsModal)
@@ -364,49 +428,49 @@ export const drawOrders = async (d, data, users) => {
 export const orderHTML = `
 <form class="table-form table-form--new" method="POST">
             <ul class="main-table__item">
-                    <li class="table-body_cell table__db">
+                    <li class="table-body_cell table-body__helper table__db">
                         <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__timestamp">
+                    <li class="table-body_cell table-body__helper table__timestamp">
                         <input id="timestamp" class="table__data   table__data--ro" name="timestamp" type="text" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
-                     <li class="table-body_cell hidden-input">
+                     <li class="table-body_cell table-body__helper hidden-input">
                         <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__files">
+                    <li class="table-body_cell table-body__helper table__files">
                         <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__number">
+                    <li class="table-body_cell table-body__helper table__number">
                         <input id="number" class="table__data " name="number" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__sample">
+                    <li class="table-body_cell table-body__helper table__sample">
                         <input class="table__data   table__data--ro" name="sample" type="text" value="" readonly tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__client">
+                    <li class="table-body_cell table-body__helper table__client">
                         <input class="table__data " type="text" name="client" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__name">
+                    <li class="table-body_cell table-body__helper table__name">
                         <input class="table__data " type="text" name="name" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__material">
+                    <li class="table-body_cell table-body__helper table__material">
                         <input class="table__data " type="text" name="material" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__quantity">
+                    <li class="table-body_cell table-body__helper table__quantity">
                         <input class="table__data " type="number" name="quantity" required value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__issued">
+                    <li class="table-body_cell table-body__helper table__issued">
                         <input class="table__data" tabindex="-1"
                         type="number" 
                         name="issued" 
                         required  autocomplete="off"
                         value="">
                     </li>
-                    <li class="table-body_cell table__m">
+                    <li class="table-body_cell table-body__helper table__m">
                         <select class="table__data table-m-select main__button" name="m" id="">
                             <option selected value=""></option>
                         </select>
                     </li>
-                    <li class="table-body_cell table__endtime">
+                    <li class="table-body_cell table-body__helper table__endtime">
                         <input class="main__button table__data " 
                         name="end_time" 
                         type="text"
@@ -420,86 +484,86 @@ export const orderHTML = `
                     <li class="table__routes table-routes">
                         <input readonly type="text" class="hidden__input" name="routes_json">
                         <ul class="table-routes__wrapper">
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
                         </ul>
                         <ul class="table-routes__wrapper hidden__input table-routes__issued">
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
                         </ul>
                     </li>
-                    <li class="table-body_cell table__p">
+                    <li class="table-body_cell table-body__helper table__p">
                         <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                             <option selected value=""></option>
                         </select>
                     </li>
-                    <li class="table-body_cell hidden-input table__comment">
+                    <li class="table-body_cell table-body__helper hidden-input table__comment">
                         <input class="table__data hidden-input table__data--ro" 
                             name="comments" 
                             type="text"
@@ -508,7 +572,7 @@ export const orderHTML = `
                             autocomplete="off"
                             tabindex="-1">
                     </li>
-                    <li class="table-body_cell hidden-input table__comment">
+                    <li class="table-body_cell table-body__helper hidden-input table__comment">
                         <input class="table__data  hidden-input table__data--ro" 
                             name="all_comments" 
                             type="text"
@@ -518,7 +582,7 @@ export const orderHTML = `
                             tabindex="-1">
                     </li>
                     
-                    <li class="table-body_cell table__comment">
+                    <li class="table-body_cell table-body__helper table__comment">
                         <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 

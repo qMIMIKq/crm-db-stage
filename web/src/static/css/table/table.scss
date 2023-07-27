@@ -4,6 +4,7 @@
 @import "files_modal";
 @import "route_modal";
 @import "comments_modal";
+@import "planModal";
 
 .main-table {
   &__header {
@@ -236,46 +237,46 @@ input.tr {
 }
 
 .table-body {
-  &__trattr {
-    position: relative;
-
-    &:hover:after {
-      box-sizing: border-box;
-      min-width: 300%;
-      width: auto;
-      text-align: center;
-      content: attr(data-title);
-      position: absolute; /* Абсолютное позиционирование */
-      left: 0;
-      top: 130%; /* Положение подсказки */
-      z-index: 1; /* Отображаем подсказку поверх других элементов */
-      background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */
-      font-family: Arial, sans-serif; /* Гарнитура шрифта */
-      font-size: 11px; /* Размер текста подсказки */
-      padding: 5px 5px; /* Поля */
-      border: 1px solid #333;
-    }
-  }
-
-  &__attr {
-    position: relative;
-
-    &:hover:after {
-      box-sizing: border-box;
-      min-width: 100%;
-      text-align: center;
-      content: attr(data-title);
-      position: absolute; /* Абсолютное позиционирование */
-      left: 0;
-      top: 130%; /* Положение подсказки */
-      z-index: 1; /* Отображаем подсказку поверх других элементов */
-      background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */
-      font-family: Arial, sans-serif; /* Гарнитура шрифта */
-      font-size: 11px; /* Размер текста подсказки */
-      padding: 5px 5px; /* Поля */
-      border: 1px solid #333;
-    }
-  }
+  //&__trattr {
+  //  position: relative;
+  //
+  //  &:hover:after {
+  //    box-sizing: border-box;
+  //    min-width: 260%;
+  //    width: auto;
+  //    text-align: center;
+  //    content: attr(data-title);
+  //    position: absolute; /* Абсолютное позиционирование */
+  //    left: 0;
+  //    top: 130%; /* Положение подсказки */
+  //    z-index: 1; /* Отображаем подсказку поверх других элементов */
+  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */
+  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */
+  //    font-size: 11px; /* Размер текста подсказки */
+  //    padding: 5px 5px; /* Поля */
+  //    border: 1px solid #333;
+  //  }
+  //}
+  //
+  //&__attr {
+  //  position: relative;
+  //
+  //  &:hover:after {
+  //    box-sizing: border-box;
+  //    min-width: 100%;
+  //    text-align: center;
+  //    content: attr(data-title);
+  //    position: absolute; /* Абсолютное позиционирование */
+  //    left: 0;
+  //    top: 130%; /* Положение подсказки */
+  //    z-index: 1; /* Отображаем подсказку поверх других элементов */
+  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */
+  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */
+  //    font-size: 11px; /* Размер текста подсказки */
+  //    padding: 5px 5px; /* Поля */
+  //    border: 1px solid #333;
+  //  }
+  //}
 
 
   &_cell {
@@ -283,6 +284,7 @@ input.tr {
     font-size: 16px;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
+    position: relative;
 
     &:last-child {
       border-right: none;

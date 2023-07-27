@@ -692,7 +692,7 @@ __webpack_require__.r(__webpack_exports__);
 const table = document.querySelector('.main-table');
 let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_12__.getTime)();
 today = today.substring(0, today.length - 6);
-today = new Date(today).getTime();
+const dateToday = new Date(today).getTime();
 const drawOrders = async (d, data, users) => {
   (0,_tableFilters__WEBPACK_IMPORTED_MODULE_1__.controlFiltersReset)();
   let uniqueFileNames = [];
@@ -709,7 +709,8 @@ const drawOrders = async (d, data, users) => {
     });
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
-  const orderCompleted = d.quantity && d.issued && d.issued >= d.quantity;
+  const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity);
+  console.log(d.quantity, d.issued);
   table.insertAdjacentHTML(`afterbegin`, `
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
         <ul class='main-table__item'>
@@ -725,21 +726,21 @@ const drawOrders = async (d, data, users) => {
             <li class='table-body_cell table__files'>
                 <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.number}" class='table-body_cell ${d.number ? "table-body__attr" : ""}  table__number'>
+            <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
                 <input 
                 ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper}
                 id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
             </li>
-            <li class='table-body_cell table__sample'>
+            <li class='table-body_cell table-body__helper table__sample'>
                 <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.client}" class='table-body_cell ${d.client ? "table-body__attr" : ""} table__client'>
+            <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
                 <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.name}" class='table-body_cell ${d.name ? "table-body__attr" : ""} table__name'>
+            <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
                 <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
             </li>
-            <li data-title="${d.material}" class='table-body_cell ${d.material ? "table-body__attr" : ""} table__material'>
+            <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
                 <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__quantity'>
@@ -757,7 +758,7 @@ const drawOrders = async (d, data, users) => {
             <li class="table-body_cell hidden__input table__finished">
                 <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
             </li>
-            <li data-title="${d.m}" class="table-body_cell ${d.m ? "table-body__attr" : ""}  table__m">
+            <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
                 <select ${_state__WEBPACK_IMPORTED_MODULE_7__.state.selectAdmManGroupper} class="table__data table-m-select main__button" name="m" id="">
                     <option selected value=""></option>
                 </select>
@@ -777,86 +778,86 @@ const drawOrders = async (d, data, users) => {
             <li class="table__routes table-routes">
                 <input readonly type="text" class="hidden__input" name="routes_json">
                 <ul class="table-routes__wrapper">
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route">
+                    <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                 </ul>
                 <ul class="table-routes__wrapper hidden__input table-routes__issued">
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__route--issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                 </ul>
             </li>
-            <li class="table-body_cell table__p">
+            <li class="table-body_cell table-body__helper table__p">
                 <select ${_state__WEBPACK_IMPORTED_MODULE_7__.state.selectAdmManTechGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                     <option selected value=""></option>
                 </select>
             </li>
-            <li class="table-body_cell hidden-input table__comment">
+            <li class="table-body_cell table-body__helper hidden-input table__comment">
                 <input class="table__data hidden-input table__data--ro" 
                     name="comments" 
                     type="text"
@@ -865,7 +866,7 @@ const drawOrders = async (d, data, users) => {
                     autocomplete="off"
                     tabindex="-1">
             </li>
-            <li class="table-body_cell hidden-input table__comment">
+            <li class="table-body_cell table-body__helper hidden-input table__comment">
                 <input class="table__data  hidden-input table__data--ro" 
                     name="all_comments" 
                     type="text"
@@ -875,7 +876,7 @@ const drawOrders = async (d, data, users) => {
                     tabindex="-1">
             </li>
             
-            <li data-title='${d.comments ? d.comments[d.comments.length - 1] : ""}' class="table-body_cell ${d.comments ? "table-body__attr" : ""} table__comment">
+            <li class="table-body_cell table-body__helper ${d.comments ? "table-body__attr" : ""} table__comment">
                 <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
                     name="comment" 
                     type="text" 
@@ -891,7 +892,7 @@ const drawOrders = async (d, data, users) => {
   const completedBlock = currentOrder.querySelector('.table__issued--done');
   if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_7__.state.isArchive) {
     completedBlock.insertAdjacentHTML(`afterend`, `
-            <li class="table-body_cell hidden__input table__complete">
+            <li class="table-body_cell table-body__helper hidden__input table__complete">
                 <input class="table__data main__button tr" tabindex="-1"
                 readonly
                 type="text" 
@@ -953,7 +954,7 @@ const drawOrders = async (d, data, users) => {
           if (route.plan_date) {
             let planDate = new Date(route.plan_date).getTime();
             let planStart = new Date(route.plan_start).getTime();
-            if (planStart <= today && today <= planDate) {
+            if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
               routeInfo.classList.add('route--planned');
             }
           }
@@ -975,7 +976,8 @@ const drawOrders = async (d, data, users) => {
             routeInfo.classList.remove('route--started');
             if (route.error_msg) {
               routeInfo.style.color = "red";
-              infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`);
+              infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}\n`);
+              // console.log(route.comments)
             } else if (route.quantity && route.issued < route.quantity) {
               routeInfo.style.color = "yellow";
             } else {
@@ -985,6 +987,8 @@ const drawOrders = async (d, data, users) => {
           if (route.error_msg && !route.end_time) {
             routeInfo.classList.add('route--error');
             infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`);
+            // console.log(route.comments)
+
             if (route.start_time) {
               routeInfo.style.color = "black";
               routeInfo.classList.remove('route--started');
@@ -1002,6 +1006,58 @@ const drawOrders = async (d, data, users) => {
       (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
     }
   }
+  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
+    if (!cell.classList.contains('table__route')) {
+      const valElem = cell.querySelector('.table__data');
+      const value = valElem.value;
+      if (valElem.classList.contains('table-m-select') && value.length > 2 || valElem.scrollWidth > valElem.offsetWidth) {
+        cell.addEventListener('mouseenter', () => {
+          if (value) {
+            cell.insertAdjacentHTML('beforeend', `
+                <div class="check-helper">${value}</div>
+            `);
+            const helper = cell.querySelector('.check-helper');
+            if (helper) {
+              const helperHeight = helper.clientHeight;
+              if (helperHeight > 23) {
+                helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
+              } else {
+                helper.style.bottom = '-35px';
+              }
+            }
+          }
+        });
+        cell.addEventListener('mouseleave', e => {
+          try {
+            cell.querySelector('.check-helper').remove();
+          } catch {}
+        });
+      }
+    } else {
+      const value = cell.getAttribute('data-title');
+      cell.addEventListener('mouseenter', () => {
+        if (value) {
+          cell.insertAdjacentHTML('beforeend', `
+                <div class="check-helper check-helper--long">${value}</div>
+            `);
+          const helper = cell.querySelector('.check-helper');
+          if (helper) {
+            const helperHeight = helper.clientHeight;
+            if (helperHeight > 23) {
+              helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
+            } else {
+              helper.style.bottom = '-35px';
+            }
+          }
+        }
+      });
+      cell.addEventListener('mouseleave', e => {
+        try {
+          cell.querySelector('.check-helper').remove();
+        } catch {}
+      });
+    }
+  });
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__files", _downloadFilesModal__WEBPACK_IMPORTED_MODULE_0__.triggerFilesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__route", _routesModal__WEBPACK_IMPORTED_MODULE_3__.triggerRoutesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_5__.triggerCommentsModal);
@@ -1010,49 +1066,49 @@ const drawOrders = async (d, data, users) => {
 const orderHTML = `
 <form class="table-form table-form--new" method="POST">
             <ul class="main-table__item">
-                    <li class="table-body_cell table__db">
+                    <li class="table-body_cell table-body__helper table__db">
                         <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__timestamp">
+                    <li class="table-body_cell table-body__helper table__timestamp">
                         <input id="timestamp" class="table__data   table__data--ro" name="timestamp" type="text" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
-                     <li class="table-body_cell hidden-input">
+                     <li class="table-body_cell table-body__helper hidden-input">
                         <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__files">
+                    <li class="table-body_cell table-body__helper table__files">
                         <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__number">
+                    <li class="table-body_cell table-body__helper table__number">
                         <input id="number" class="table__data " name="number" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__sample">
+                    <li class="table-body_cell table-body__helper table__sample">
                         <input class="table__data   table__data--ro" name="sample" type="text" value="" readonly tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__client">
+                    <li class="table-body_cell table-body__helper table__client">
                         <input class="table__data " type="text" name="client" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__name">
+                    <li class="table-body_cell table-body__helper table__name">
                         <input class="table__data " type="text" name="name" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__material">
+                    <li class="table-body_cell table-body__helper table__material">
                         <input class="table__data " type="text" name="material" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__quantity">
+                    <li class="table-body_cell table-body__helper table__quantity">
                         <input class="table__data " type="number" name="quantity" required value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <li class="table-body_cell table__issued">
+                    <li class="table-body_cell table-body__helper table__issued">
                         <input class="table__data" tabindex="-1"
                         type="number" 
                         name="issued" 
                         required  autocomplete="off"
                         value="">
                     </li>
-                    <li class="table-body_cell table__m">
+                    <li class="table-body_cell table-body__helper table__m">
                         <select class="table__data table-m-select main__button" name="m" id="">
                             <option selected value=""></option>
                         </select>
                     </li>
-                    <li class="table-body_cell table__endtime">
+                    <li class="table-body_cell table-body__helper table__endtime">
                         <input class="main__button table__data " 
                         name="end_time" 
                         type="text"
@@ -1066,86 +1122,86 @@ const orderHTML = `
                     <li class="table__routes table-routes">
                         <input readonly type="text" class="hidden__input" name="routes_json">
                         <ul class="table-routes__wrapper">
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route">
+                            <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
                         </ul>
                         <ul class="table-routes__wrapper hidden__input table-routes__issued">
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
-                            <li class="table-body_cell table__route--issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
                         </ul>
                     </li>
-                    <li class="table-body_cell table__p">
+                    <li class="table-body_cell table-body__helper table__p">
                         <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                             <option selected value=""></option>
                         </select>
                     </li>
-                    <li class="table-body_cell hidden-input table__comment">
+                    <li class="table-body_cell table-body__helper hidden-input table__comment">
                         <input class="table__data hidden-input table__data--ro" 
                             name="comments" 
                             type="text"
@@ -1154,7 +1210,7 @@ const orderHTML = `
                             autocomplete="off"
                             tabindex="-1">
                     </li>
-                    <li class="table-body_cell hidden-input table__comment">
+                    <li class="table-body_cell table-body__helper hidden-input table__comment">
                         <input class="table__data  hidden-input table__data--ro" 
                             name="all_comments" 
                             type="text"
@@ -1164,7 +1220,7 @@ const orderHTML = `
                             tabindex="-1">
                     </li>
                     
-                    <li class="table-body_cell table__comment">
+                    <li class="table-body_cell table-body__helper table__comment">
                         <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
                             name="comment" 
                             type="text" 
@@ -1464,20 +1520,22 @@ const routeModal = `
                     <div class='route__block endtime__block'>
                         <label class='route__label' for='route__teorend'>Теоретическое</label>
                         <input style='cursor: default;text-align: center' readonly class='route__input--top table__data--ro main__input' name='theor_end' type='text' value="" id='route__teorend'>
-                        <label class='route__label' for='route__dynend'>В план</label>
+                        
+                        <label class='route__label label-plan__date' for='route__dynend'>В план</label>
                         <input id="plan_start" type="text" class="hidden__input" name="plan_start">
-                
                         <input class="main__button route__input--top route-plan__date" 
                             name="plan_date"
-                            disabled 
+                            readonly
                             id="route-plan__date"
                             type="text"
-                            placeholder="Назначить в план" 
+                            placeholder="Назначить" 
                             value="" 
-                            onfocus="this.type='date'"
-                            onblur="(this.type='text')"
                             tabindex="-1" 
                             autocomplete="off">
+                            <!--                            disabled -->
+              <!--                            onfocus="this.type='date'"-->
+<!--                            onblur="(this.type='text')"-->
+<!--                            <input type="checkbox" name="route__urgently" id="route-plan__urgently">-->
                     </div>
                     
                     <div class='route__block progress-block'>
@@ -1750,6 +1808,164 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
     modal.click();
   });
 };
+const planDateModal = `
+    <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>
+      <div class='modal_content modal-plan modal_content--confirm' style='width: 400px'>
+        <h2 class='confirm__title confirm__title--plan'>Назначить этап в план</h2>
+        <div class="modal-plan__section">
+            <div class="modal-plan__data">
+                <label class="modal-plan__label">В план</label>
+                <input type="date" class="main__button modal-plan__end">
+            </div>
+            <div class="modal-plan__check">
+                <label>Срочно</label>
+                <input type="checkbox" class="modal-plan__urgently"> 
+            </div>
+        </div>
+        
+        <h2 class="confirm__title confirm__title--plan">Удалить этап из плана</h2>
+        <div class="modal-plan__section">
+            <ul class="modal-plan__exclude">
+            </ul>
+            <input type="date" class="main__button modal-plan__exclude-chose">
+        </div>
+        
+        <div class='confirm__section'>
+            <button class='main__button confirm__button confirm__button--ok'>Да</button>
+            <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
+        </div>
+      </div>
+   </div>
+`;
+const planDateHandler = (e, planObj, dateEndInput) => {
+  const modal = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(planDateModal);
+  const dateInput = modal.querySelector('.modal-plan__end');
+  const dateUrgently = modal.querySelector('.modal-plan__urgently');
+  const excludeSelect = modal.querySelector('.modal-plan__exclude');
+  const excludeDateChose = modal.querySelector('.modal-plan__exclude-chose');
+  let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_8__.getTime)();
+  today = today.substring(0, today.length - 6);
+  let tmrw = new Date(today);
+  tmrw.setDate(tmrw.getDate() + 1);
+  tmrw = tmrw.toLocaleString().split(", ")[0].split('/');
+  [tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]];
+  tmrw = tmrw.join('-');
+  const getDays = (start, end) => {
+    const oneDay = 1000 * 60 * 60 * 24;
+    let diff = end.getTime() - start.getTime();
+    return Math.round(diff / oneDay);
+  };
+  let exclude = [];
+  if (planObj.planEnd) {
+    dateInput.value = planObj.planEnd;
+    exclude = planObj.exclude ? planObj.exclude.split('__') : [];
+    const endDate = new Date(dateInput.value);
+    const startDate = new Date(planObj.planStart);
+    excludeDateChose.setAttribute('min', today);
+    if (planObj.faster) {
+      dateUrgently.setAttribute('checked', '');
+    }
+    if (startDate.getTime() < new Date(today).getTime()) {
+      dateUrgently.setAttribute('disabled', '');
+    }
+    drawData(startDate, endDate);
+    excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option ${exclude.includes(planObj.planStart) ? 'exclude-date' : 'include-date'}">${planObj.planStart}</li>  
+    `);
+    addHandler();
+  } else {
+    dateInput.setAttribute('min', tmrw);
+  }
+  function addHandler() {
+    modal.querySelectorAll('.modal-plan__exclude-option').forEach(option => {
+      option.addEventListener('click', () => {
+        option.classList.toggle('exclude-date');
+        option.classList.toggle('include-date');
+        if (option.classList.contains('exclude-date')) {
+          exclude.push(option.textContent);
+        } else {
+          exclude = exclude.filter(ex => ex !== option.textContent);
+        }
+      });
+    });
+  }
+  function drawData(startDate, endDate) {
+    let res = getDays(startDate, endDate);
+    for (let i = res + 1; i > 2; i--) {
+      endDate.setDate(endDate.getDate() - 1);
+      let date = endDate.toISOString().split('T')[0];
+      excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option ${exclude.includes(date) ? 'exclude-date' : 'include-date'}">${date}</li>  
+      `);
+    }
+    excludeDateChose.setAttribute('max', dateInput.value);
+    excludeSelect.insertAdjacentHTML('beforeend', `
+        <li class="modal-plan__exclude-option ${exclude.includes(dateInput.value) ? 'exclude-date' : 'include-date'}">${dateInput.value}</li>  
+    `);
+  }
+  if (dateInput.value) {
+    excludeDateChose.removeAttribute('disabled');
+  } else {
+    excludeDateChose.setAttribute('disabled', '');
+  }
+  dateInput.addEventListener('change', e => {
+    excludeDateChose.removeAttribute('disabled');
+    const endDate = new Date(dateInput.value);
+    const startDate = new Date(today);
+    excludeSelect.querySelectorAll('li').forEach(date => {
+      date.remove();
+    });
+    drawData(startDate, endDate);
+    if (dateUrgently.checked) {
+      excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option ${exclude.includes(today) ? 'exclude-date' : 'include-date'}">${today}</li>  
+      `);
+      excludeDateChose.setAttribute('min', today);
+    } else {
+      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent);
+    }
+    addHandler();
+  });
+  dateUrgently.addEventListener('change', e => {
+    if (dateUrgently.checked) {
+      excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option include-date">${today}</li>  
+      `);
+      excludeSelect.querySelector('li').addEventListener('click', e => {
+        e.target.classList.toggle('exclude-date');
+        e.target.classList.toggle('include-date');
+        if (e.target.classList.contains('exclude-date')) {
+          exclude.push(e.target.textContent);
+        } else {
+          exclude = exclude.filter(ex => ex !== e.target.textContent);
+        }
+      });
+      excludeDateChose.setAttribute('min', today);
+    } else {
+      excludeSelect.querySelector('li').remove();
+      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent);
+    }
+  });
+  excludeDateChose.addEventListener('change', () => {
+    excludeSelect.querySelectorAll('li').forEach(date => {
+      if (date.textContent === excludeDateChose.value) {
+        date.classList.add('exclude-date');
+      }
+    });
+    excludeDateChose.value = '';
+  });
+  const okBtn = modal.querySelector('.confirm__button--ok');
+  const cnclBtn = modal.querySelector('.confirm__button--cncl');
+  okBtn.addEventListener('click', () => {
+    planObj.exclude = exclude.join('__');
+    planObj.planStart = excludeSelect.querySelector('li').textContent;
+    planObj.planEnd = dateInput.value;
+    planObj.faster = dateUrgently.checked;
+    dateEndInput.value = planObj.planEnd;
+    modal.click();
+  });
+  cnclBtn.addEventListener('click', () => modal.click());
+};
 const triggerRoutesModal = e => {
   const routeInput = e.target.parentNode.querySelector('.hidden__input');
   const modalElem = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(routeModal);
@@ -1787,23 +2003,16 @@ const triggerRoutesModal = e => {
 
   // const dynEndInp = document.querySelector('#route__dynend')
 
-  let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_8__.getTime)();
-  today = today.substring(0, today.length - 6);
-  let tmrw = new Date(today);
-  tmrw.setDate(tmrw.getDate() + 1);
-  tmrw = tmrw.toLocaleString().split(", ")[0].split('/');
-  [tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]];
-  tmrw = tmrw.join('-');
   const planDateInputStart = document.querySelector('#plan_start');
   const planDateInput = document.querySelector('#route-plan__date');
-  planDateInput.setAttribute('min', tmrw);
-  planDateInput.addEventListener('change', e => {
-    const logMsg = `Поставил маршрут в план до ${e.target.value}`;
-    addLog(logName, logMsg, '#visible__comments');
-    if (planDateInputStart.value === '') {
-      console.log('hi');
-      planDateInputStart.value = tmrw;
-    }
+  let planObj = {
+    'exclude': '',
+    'planStart': '',
+    'planEnd': '',
+    'faster': false
+  };
+  planDateInput.addEventListener('click', e => {
+    planDateHandler(e, planObj, planDateInput);
   });
   const errInput = document.querySelector('#error-route__msg');
   errInput.addEventListener('input', e => {
@@ -1900,7 +2109,15 @@ const triggerRoutesModal = e => {
     // const dynEnd = routeInfo['dyn_end']
     const planDate = routeInfo['plan_date'];
     const planDateStart = routeInfo['plan_start'];
+    const excludeDays = routeInfo['exclude_days'];
+    const faster = routeInfo['plan_faster'];
     let comments = routeInfo['comments'];
+    planObj = {
+      'exclude': excludeDays,
+      'planStart': planDateStart,
+      'planEnd': planDate,
+      'faster': faster
+    };
     if (routeInfo['issued']) {
       issued.value = routeInfo['issued'];
     }
@@ -2078,13 +2295,16 @@ const triggerRoutesModal = e => {
     obj['plot'] = routeForm.querySelector('#route__plot').value;
     obj['comments'] = createReportObj(obj['comments']);
     obj['error_msg'] = errInput.value;
+    obj['plan_date'] = planObj.planEnd;
+    obj['plan_start'] = planObj.planStart;
+    obj['plan_faster'] = planObj.faster;
+    obj['exclude_days'] = planObj.exclude;
     routeInput.value = JSON.stringify(obj);
     const parent = routeInput.closest('.table-form--old');
     if (!(parent === null)) {
       parent.classList.remove('table-form--old');
       parent.classList.add('table-form--upd');
     }
-    console.log(obj.error_msg);
     (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_4__.submitData)();
     document.querySelector('.modal--route').remove();
     window.removeEventListener('keydown', subCommentByEnter);
@@ -2359,9 +2579,9 @@ __webpack_require__.r(__webpack_exports__);
 //91.142.94.150
 
 // let addr = process.env.CHECK
-let appAddr = 'http://91.142.94.150:8182';
+// export let appAddr = 'http://91.142.94.150:8182'
 // export let appAddr = 'http://192.168.1.231:8182'
-// export let appAddr = 'http://172.20.10.7:8182'
+let appAddr = 'http://172.20.10.7:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'filtered': false,
@@ -2922,7 +3142,7 @@ const checkDoFilter = (check, order) => {
 const plannedFilter = filters => {
   let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_6__.getTime)();
   today = today.substring(0, today.length - 6);
-  today = new Date(today).getTime();
+  let dateToday = new Date(today).getTime();
   _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
     let check = false;
     if (order.db_routes) {
@@ -2930,7 +3150,7 @@ const plannedFilter = filters => {
         if (route.plan_date) {
           let planDate = new Date(route.plan_date).getTime();
           let planStart = new Date(route.plan_start).getTime();
-          if (planStart <= today && today <= planDate) {
+          if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
             if (filters.length) {
               if (filters.includes(route.plot)) {
                 check = true;
@@ -12440,7 +12660,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 68vh;\n  overflow: scroll;\n  margin-bottom: 5px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n}\n@media screen and (max-width: 1200px) {\n  .main-table__data {\n    height: 65vh;\n  }\n}\n@media screen and (min-width: 1500px) {\n  .main-table__data {\n    height: 73vh;\n  }\n}\n@media screen and (min-width: 1920px) {\n  .main-table__data {\n    height: 77vh;\n  }\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n.admin-form__user {\n  margin-right: 10px;\n}\n.admin-form__exit {\n  transition: color 0.3s;\n}\n.admin-form__exit:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n@media screen and (max-width: 1200px) {\n  .search {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 5px;\n  margin-bottom: 5px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  margin-top: 15px;\n  border-bottom: 1px solid black;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__reset {\n  width: 131px;\n  display: block;\n  align-self: center;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n.header-routes__filter:not(:last-child) {\n  margin-right: 10px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  color: #13d9d9;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: #447e9b !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route-plan__date {\n  margin-right: 0 !important;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__input--small {\n  width: 48%;\n}\n.route__input--small:not(:last-child) {\n  margin-right: 2%;\n}\n.route__input--top {\n  text-align: center;\n  margin-bottom: 10px;\n  height: 28px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 15px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n}\n.quantity-block__labels {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.quantity-block__label {\n  margin-right: 35px;\n}\n.quantity-block__shifts {\n  margin-right: 33px;\n}\n.quantity-block__inshifts {\n  position: relative;\n  right: -5px;\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 6px;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n  position: relative;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body__trattr {\n  position: relative;\n}\n.table-body__trattr:hover:after {\n  box-sizing: border-box;\n  min-width: 300%;\n  width: auto;\n  text-align: center;\n  content: attr(data-title);\n  position: absolute; /* Абсолютное позиционирование */\n  left: 0;\n  top: 130%; /* Положение подсказки */\n  z-index: 1; /* Отображаем подсказку поверх других элементов */\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n}\n.table-body__attr {\n  position: relative;\n}\n.table-body__attr:hover:after {\n  box-sizing: border-box;\n  min-width: 100%;\n  text-align: center;\n  content: attr(data-title);\n  position: absolute; /* Абсолютное позиционирование */\n  left: 0;\n  top: 130%; /* Положение подсказки */\n  z-index: 1; /* Отображаем подсказку поверх других элементов */\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n}\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route {\n  color: black;\n}\n.route--planned {\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.route--started {\n  background: #ffff4e;\n}\n.route--error {\n  background: #de1313;\n}\n.route--completed {\n  background: #09d009;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n    position: relative;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      text-decoration: underline;\n      font-style: italic;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__route {\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  &__trattr {\n    position: relative;\n\n    &:hover:after {\n      box-sizing: border-box;\n      min-width: 300%;\n      width: auto;\n      text-align: center;\n      content: attr(data-title);\n      position: absolute; /* Абсолютное позиционирование */\n      left: 0;\n      top: 130%; /* Положение подсказки */\n      z-index: 1; /* Отображаем подсказку поверх других элементов */\n      background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n      font-family: Arial, sans-serif; /* Гарнитура шрифта */\n      font-size: 11px; /* Размер текста подсказки */\n      padding: 5px 5px; /* Поля */\n      border: 1px solid #333;\n    }\n  }\n\n  &__attr {\n    position: relative;\n\n    &:hover:after {\n      box-sizing: border-box;\n      min-width: 100%;\n      text-align: center;\n      content: attr(data-title);\n      position: absolute; /* Абсолютное позиционирование */\n      left: 0;\n      top: 130%; /* Положение подсказки */\n      z-index: 1; /* Отображаем подсказку поверх других элементов */\n      background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n      font-family: Arial, sans-serif; /* Гарнитура шрифта */\n      font-size: 11px; /* Размер текста подсказки */\n      padding: 5px 5px; /* Поля */\n      border: 1px solid #333;\n    }\n  }\n\n\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  color: black;\n\n  &--planned {\n    text-decoration: underline;\n    font-style: italic;\n  }\n\n  &--started {\n    background: #ffff4e;\n  }\n\n  &--error {\n    background: #de1313;\n  }\n\n  &--completed {\n    background: #09d009;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n","@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 68vh;\n    overflow: scroll;\n    margin-bottom: 5px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n\n    @media screen and (max-width: 1200px) {\n      height: 65vh;\n    }\n\n    @media screen and (min-width: 1500px) {\n      height: 73vh;\n    }\n\n    @media screen and (min-width: 1920px) {\n      height: 77vh;\n    }\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form {\n  &__button {\n    width: 130px;\n    transition: color .3s;\n    position: absolute;\n    right: 24px;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n\n  &__user {\n    margin-right: 10px;\n  }\n\n  &__exit {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n\n.search {\n  display: flex;\n  align-items: center;\n\n  @media screen and (max-width: 1200px) {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 5px;\n      margin-bottom: 5px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    margin-top: 15px;\n    border-bottom: 1px solid black;\n  }\n  &__filters {\n    margin-bottom: 0 !important;\n  }\n\n  &__reset {\n    width: 131px;\n    display: block;\n    align-self: center;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n.header-routes {\n  &__filter {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  //background: #f3efef;\n  color: #13d9d9;\n}",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  //margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $button_color !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n  &-plan__date {\n    margin-right: 0 !important;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n\n    &--small {\n      width: 48%;\n\n      &:not(:last-child) {\n        margin-right: 2%;\n      }\n    }\n\n    &--top {\n      text-align: center;\n      margin-bottom: 10px;\n      height: 28px;\n    }\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 15px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued,\n{\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n\n  &__labels {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n  }\n\n  &__label {\n    margin-right: 35px;\n  }\n\n  &__shifts {\n    margin-right: 33px;\n  }\n\n  &__inshifts {\n    position: relative;\n    right: -5px;\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 6px;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 68vh;\n  overflow: scroll;\n  margin-bottom: 5px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n}\n@media screen and (max-width: 1200px) {\n  .main-table__data {\n    height: 65vh;\n  }\n}\n@media screen and (min-width: 1500px) {\n  .main-table__data {\n    height: 73vh;\n  }\n}\n@media screen and (min-width: 1920px) {\n  .main-table__data {\n    height: 77vh;\n  }\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n.admin-form__user {\n  margin-right: 10px;\n}\n.admin-form__exit {\n  transition: color 0.3s;\n}\n.admin-form__exit:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n@media screen and (max-width: 1200px) {\n  .search {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n}\n.check-helper--long {\n  min-width: 300%;\n}\n\n.nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 5px;\n  margin-bottom: 5px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  margin-top: 15px;\n  border-bottom: 1px solid black;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__reset {\n  width: 131px;\n  display: block;\n  align-self: center;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n.header-routes__filter:not(:last-child) {\n  margin-right: 10px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  color: #13d9d9;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: #447e9b !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route-plan__date {\n  margin-right: 0 !important;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__input--small {\n  width: 48%;\n}\n.route__input--small:not(:last-child) {\n  margin-right: 2%;\n}\n.route__input--top {\n  text-align: center;\n  margin-bottom: 10px;\n  height: 28px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 15px;\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n}\n.quantity-block__labels {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.quantity-block__label {\n  margin-right: 35px;\n}\n.quantity-block__shifts {\n  margin-right: 33px;\n}\n.quantity-block__inshifts {\n  position: relative;\n  right: -5px;\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 6px;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.modal-plan {\n  padding: 5px;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-plan__section {\n  width: 250px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.modal-plan__section:not(:last-child) {\n  margin-bottom: 10px;\n}\n.modal-plan__data {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__input {\n  width: 120px;\n}\n.modal-plan__check {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__exclude {\n  text-align: center;\n  height: 100px;\n}\n.modal-plan__exclude-option {\n  text-align: center;\n  padding: 2px;\n}\n.modal-plan__exclude-option:hover {\n  cursor: pointer;\n}\n\n.confirm__title--plan {\n  margin-bottom: 15px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n  position: relative;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n  position: relative;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route {\n  color: black;\n}\n.route--planned {\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.route--started {\n  background: #ffff4e;\n}\n.route--error {\n  background: #de1313;\n}\n.route--completed {\n  background: #09d009;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss","webpack://./web/src/static/css/table/planModal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n@import \"planModal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n    position: relative;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      text-decoration: underline;\n      font-style: italic;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__route {\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  //&__trattr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 260%;\n  //    width: auto;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n  //\n  //&__attr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 100%;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n\n\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n    position: relative;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  color: black;\n\n  &--planned {\n    text-decoration: underline;\n    font-style: italic;\n  }\n\n  &--started {\n    background: #ffff4e;\n  }\n\n  &--error {\n    background: #de1313;\n  }\n\n  &--completed {\n    background: #09d009;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n","@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 68vh;\n    overflow: scroll;\n    margin-bottom: 5px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n\n    @media screen and (max-width: 1200px) {\n      height: 65vh;\n    }\n\n    @media screen and (min-width: 1500px) {\n      height: 73vh;\n    }\n\n    @media screen and (min-width: 1920px) {\n      height: 77vh;\n    }\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form {\n  &__button {\n    width: 130px;\n    transition: color .3s;\n    position: absolute;\n    right: 24px;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n\n  &__user {\n    margin-right: 10px;\n  }\n\n  &__exit {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n\n.search {\n  display: flex;\n  align-items: center;\n\n  @media screen and (max-width: 1200px) {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  //bottom: -33px;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n\n  &--long {\n    min-width: 300%;\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 5px;\n      margin-bottom: 5px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    margin-top: 15px;\n    border-bottom: 1px solid black;\n  }\n  &__filters {\n    margin-bottom: 0 !important;\n  }\n\n  &__reset {\n    width: 131px;\n    display: block;\n    align-self: center;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n.header-routes {\n  &__filter {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  //background: #f3efef;\n  color: #13d9d9;\n}",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  //margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $button_color !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n  &-plan__date {\n    margin-right: 0 !important;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n\n    &--small {\n      width: 48%;\n\n      &:not(:last-child) {\n        margin-right: 2%;\n      }\n    }\n\n    &--top {\n      text-align: center;\n      margin-bottom: 10px;\n      height: 28px;\n    }\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 15px;\n  }\n}\n\n.report-route__btn {\n  margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued,\n{\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n\n  &__labels {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n  }\n\n  &__label {\n    margin-right: 35px;\n  }\n\n  &__shifts {\n    margin-right: 33px;\n  }\n\n  &__inshifts {\n    position: relative;\n    right: -5px;\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 6px;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}",".modal {\n  &-plan__date {\n\n  }\n\n  &-plan {\n    padding: 5px;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n\n    &__section {\n      width: 250px;\n      display: flex;\n      flex-direction: column;\n      justify-content: space-between;\n      //align-items: center;\n\n      &:not(:last-child) {\n        margin-bottom: 10px;\n      }\n    }\n\n    &__data {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__input {\n      width: 120px;\n    }\n\n    &__check {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__exclude {\n      text-align: center;\n      height: 100px;\n\n      &-option {\n        text-align: center;\n        padding: 2px;\n\n        &:hover {\n          cursor: pointer;\n        }\n      }\n    }\n  }\n}\n\n.confirm__title--plan {\n  margin-bottom: 15px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

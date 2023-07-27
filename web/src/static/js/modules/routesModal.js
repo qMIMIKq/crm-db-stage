@@ -36,20 +36,22 @@ const routeModal = `
                     <div class='route__block endtime__block'>
                         <label class='route__label' for='route__teorend'>Теоретическое</label>
                         <input style='cursor: default;text-align: center' readonly class='route__input--top table__data--ro main__input' name='theor_end' type='text' value="" id='route__teorend'>
-                        <label class='route__label' for='route__dynend'>В план</label>
+                        
+                        <label class='route__label label-plan__date' for='route__dynend'>В план</label>
                         <input id="plan_start" type="text" class="hidden__input" name="plan_start">
-                
                         <input class="main__button route__input--top route-plan__date" 
                             name="plan_date"
-                            disabled 
+                            readonly
                             id="route-plan__date"
                             type="text"
-                            placeholder="Назначить в план" 
+                            placeholder="Назначить" 
                             value="" 
-                            onfocus="this.type='date'"
-                            onblur="(this.type='text')"
                             tabindex="-1" 
                             autocomplete="off">
+                            <!--                            disabled -->
+              <!--                            onfocus="this.type='date'"-->
+<!--                            onblur="(this.type='text')"-->
+<!--                            <input type="checkbox" name="route__urgently" id="route-plan__urgently">-->
                     </div>
                     
                     <div class='route__block progress-block'>
@@ -338,6 +340,194 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
   })
 }
 
+const planDateModal = `
+    <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>
+      <div class='modal_content modal-plan modal_content--confirm' style='width: 400px'>
+        <h2 class='confirm__title confirm__title--plan'>Назначить этап в план</h2>
+        <div class="modal-plan__section">
+            <div class="modal-plan__data">
+                <label class="modal-plan__label">В план</label>
+                <input type="date" class="main__button modal-plan__end">
+            </div>
+            <div class="modal-plan__check">
+                <label>Срочно</label>
+                <input type="checkbox" class="modal-plan__urgently"> 
+            </div>
+        </div>
+        
+        <h2 class="confirm__title confirm__title--plan">Удалить этап из плана</h2>
+        <div class="modal-plan__section">
+            <ul class="modal-plan__exclude">
+            </ul>
+            <input type="date" class="main__button modal-plan__exclude-chose">
+        </div>
+        
+        <div class='confirm__section'>
+            <button class='main__button confirm__button confirm__button--ok'>Да</button>
+            <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
+        </div>
+      </div>
+   </div>
+`
+
+const planDateHandler = (e, planObj, dateEndInput) => {
+  const modal = showModal(planDateModal)
+  const dateInput = modal.querySelector('.modal-plan__end')
+  const dateUrgently = modal.querySelector('.modal-plan__urgently')
+  const excludeSelect = modal.querySelector('.modal-plan__exclude')
+  const excludeDateChose = modal.querySelector('.modal-plan__exclude-chose')
+
+  let today = getTime()
+  today = today.substring(0, today.length - 6)
+  let tmrw = new Date(today)
+  tmrw.setDate(tmrw.getDate() + 1)
+  tmrw = tmrw.toLocaleString().split(", ")[0].split('/')
+  ;[tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]]
+  tmrw = tmrw.join('-')
+
+  const getDays = (start, end) => {
+    const oneDay = 1000 * 60 * 60 * 24
+    let diff = end.getTime() - start.getTime()
+
+    return Math.round(diff / oneDay)
+  }
+
+  let exclude = []
+  if (planObj.planEnd) {
+    dateInput.value = planObj.planEnd
+    exclude = planObj.exclude ? planObj.exclude.split('__') : []
+    const endDate = new Date(dateInput.value)
+    const startDate = new Date(planObj.planStart)
+
+    excludeDateChose.setAttribute('min', today)
+    if (planObj.faster) {
+      dateUrgently.setAttribute('checked', '')
+    }
+
+    if (startDate.getTime() < new Date(today).getTime()) {
+      dateUrgently.setAttribute('disabled', '')
+    }
+
+    drawData(startDate, endDate)
+    excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option ${exclude.includes(planObj.planStart) ? 'exclude-date' : 'include-date'}">${planObj.planStart}</li>  
+    `)
+    addHandler()
+  } else {
+    dateInput.setAttribute('min', tmrw)
+  }
+
+  function addHandler() {
+    modal.querySelectorAll('.modal-plan__exclude-option').forEach(option => {
+      option.addEventListener('click', () => {
+        option.classList.toggle('exclude-date')
+        option.classList.toggle('include-date')
+
+        if (option.classList.contains('exclude-date')) {
+          exclude.push(option.textContent)
+        } else {
+          exclude = exclude.filter(ex => ex !== option.textContent)
+        }
+      })
+    })
+  }
+
+  function drawData(startDate, endDate) {
+    let res = getDays(startDate, endDate)
+    for (let i = res + 1; i > 2; i--) {
+      endDate.setDate(endDate.getDate() - 1)
+      let date = endDate.toISOString().split('T')[0]
+
+      excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option ${exclude.includes(date) ? 'exclude-date' : 'include-date'}">${date}</li>  
+      `)
+    }
+
+    excludeDateChose.setAttribute('max', dateInput.value)
+    excludeSelect.insertAdjacentHTML('beforeend', `
+        <li class="modal-plan__exclude-option ${exclude.includes(dateInput.value) ? 'exclude-date' : 'include-date'}">${dateInput.value}</li>  
+    `)
+  }
+
+  if (dateInput.value) {
+    excludeDateChose.removeAttribute('disabled')
+  } else {
+    excludeDateChose.setAttribute('disabled', '')
+  }
+
+  dateInput.addEventListener('change', e => {
+    excludeDateChose.removeAttribute('disabled')
+    const endDate = new Date(dateInput.value)
+    const startDate = new Date(today)
+
+    excludeSelect.querySelectorAll('li').forEach(date => {
+      date.remove()
+    })
+
+    drawData(startDate, endDate)
+
+    if (dateUrgently.checked) {
+      excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option ${exclude.includes(today) ? 'exclude-date' : 'include-date'}">${today}</li>  
+      `)
+      excludeDateChose.setAttribute('min', today)
+    } else {
+      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent)
+    }
+
+    addHandler()
+  })
+
+  dateUrgently.addEventListener('change', e => {
+    if (dateUrgently.checked) {
+      excludeSelect.insertAdjacentHTML('afterbegin', `
+        <li class="modal-plan__exclude-option include-date">${today}</li>  
+      `)
+
+      excludeSelect.querySelector('li').addEventListener('click', e => {
+        e.target.classList.toggle('exclude-date')
+        e.target.classList.toggle('include-date')
+
+        if (e.target.classList.contains('exclude-date')) {
+          exclude.push(e.target.textContent)
+        } else {
+          exclude = exclude.filter(ex => ex !== e.target.textContent)
+        }
+      })
+
+      excludeDateChose.setAttribute('min', today)
+    } else {
+      excludeSelect.querySelector('li').remove()
+      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent)
+    }
+  })
+
+  excludeDateChose.addEventListener('change', () => {
+    excludeSelect.querySelectorAll('li').forEach(date => {
+      if (date.textContent === excludeDateChose.value) {
+        date.classList.add('exclude-date')
+      }
+    })
+
+    excludeDateChose.value = ''
+  })
+
+  const okBtn = modal.querySelector('.confirm__button--ok')
+  const cnclBtn = modal.querySelector('.confirm__button--cncl')
+
+  okBtn.addEventListener('click', () => {
+    planObj.exclude = exclude.join('__')
+    planObj.planStart = excludeSelect.querySelector('li').textContent
+    planObj.planEnd = dateInput.value
+    planObj.faster = dateUrgently.checked
+
+    dateEndInput.value = planObj.planEnd
+    modal.click()
+  })
+
+  cnclBtn.addEventListener('click', () => modal.click())
+}
+
 export const triggerRoutesModal = e => {
   const routeInput = e.target.parentNode.querySelector('.hidden__input')
   const modalElem = showModal(routeModal)
@@ -381,29 +571,18 @@ export const triggerRoutesModal = e => {
 
   // const dynEndInp = document.querySelector('#route__dynend')
 
-  let today = getTime()
-  today = today.substring(0, today.length - 6)
-
-  let tmrw = new Date(today)
-  tmrw.setDate(tmrw.getDate() + 1)
-  tmrw = tmrw.toLocaleString().split(", ")[0].split('/')
-  ;[tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]]
-  tmrw = tmrw.join('-')
-
-
   const planDateInputStart = document.querySelector('#plan_start')
   const planDateInput = document.querySelector('#route-plan__date')
-  planDateInput.setAttribute('min', tmrw)
-  planDateInput.addEventListener('change', e => {
-    const logMsg = `Поставил маршрут в план до ${e.target.value}`
-    addLog(logName, logMsg, '#visible__comments')
+  let planObj = {
+    'exclude': '',
+    'planStart': '',
+    'planEnd': '',
+    'faster': false
+  }
 
-    if (planDateInputStart.value === '') {
-      console.log('hi')
-      planDateInputStart.value = tmrw
-    }
+  planDateInput.addEventListener('click', e => {
+    planDateHandler(e, planObj, planDateInput)
   })
-
 
   const errInput = document.querySelector('#error-route__msg')
   errInput.addEventListener('input', e => {
@@ -512,7 +691,16 @@ export const triggerRoutesModal = e => {
     // const dynEnd = routeInfo['dyn_end']
     const planDate = routeInfo['plan_date']
     const planDateStart = routeInfo['plan_start']
+    const excludeDays = routeInfo['exclude_days']
+    const faster = routeInfo['plan_faster']
     let comments = routeInfo['comments']
+
+    planObj = {
+      'exclude': excludeDays,
+      'planStart': planDateStart,
+      'planEnd': planDate,
+      'faster': faster
+    }
 
     if (routeInfo['issued']) {
       issued.value = routeInfo['issued']
@@ -722,6 +910,10 @@ export const triggerRoutesModal = e => {
     obj['plot'] = routeForm.querySelector('#route__plot').value
     obj['comments'] = createReportObj(obj['comments'])
     obj['error_msg'] = errInput.value
+    obj['plan_date'] = planObj.planEnd
+    obj['plan_start'] = planObj.planStart
+    obj['plan_faster'] = planObj.faster
+    obj['exclude_days'] = planObj.exclude
 
     routeInput.value = JSON.stringify(obj)
     const parent = routeInput.closest('.table-form--old')
@@ -731,7 +923,6 @@ export const triggerRoutesModal = e => {
       parent.classList.add('table-form--upd')
     }
 
-    console.log(obj.error_msg)
 
     submitData()
     document.querySelector('.modal--route').remove()
