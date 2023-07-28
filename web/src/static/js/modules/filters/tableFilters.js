@@ -1,6 +1,6 @@
-import {deleteOrders, getOrders} from './orders';
-import {state} from './state';
-import {bindOrdersListeners} from "./bindListeners";
+import {deleteOrders, getOrders} from '../orders';
+import {state} from '../state';
+import {bindOrdersListeners} from "../bindListeners";
 import {globalFilterOrders} from "./filterOrders";
 import {filterData} from "./topFilters";
 

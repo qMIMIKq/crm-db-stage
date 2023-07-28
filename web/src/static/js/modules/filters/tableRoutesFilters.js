@@ -1,10 +1,10 @@
-import {state} from "./state";
+import {state} from "../state";
 import {globalFilterOrders} from "./filterOrders";
 import {filterData} from "./topFilters";
-import {drawOrders} from "./drawOrders";
-import {deleteOrders, getOrders} from "./orders";
-import {bindOrdersListeners} from "./bindListeners";
-import {getTime} from "./getTime";
+import {drawOrders} from "../drawOrders";
+import {deleteOrders, getOrders} from "../orders";
+import {bindOrdersListeners} from "../bindListeners";
+import {getTime} from "../getTime";
 
 export const startFilter = (filters) => {
   state['orders'].forEach(order => {
@@ -118,10 +118,8 @@ const checkDoFilter = (check, order) => {
   return check
 }
 
-export const plannedFilter = filters => {
-  let today = getTime()
-  today = today.substring(0, today.length - 6)
-  let dateToday = new Date(today).getTime()
+export const plannedFilter = (filters, date) => {
+  let dateToday = new Date(date).getTime()
 
   state['orders'].forEach(order => {
     let check = false
@@ -132,7 +130,7 @@ export const plannedFilter = filters => {
           let planDate = new Date(route.plan_date).getTime()
           let planStart = new Date(route.plan_start).getTime()
 
-          if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
+          if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(date)) {
             if (filters.length) {
               if (filters.includes(route.plot)) {
                 check = true
@@ -156,6 +154,7 @@ export const tableRoutesFiltersHandler = () => {
   const inErrorBtn = document.querySelector(".header-routes__error")
   const completedBtn = document.querySelector(".header-routes__completed")
   const inPlanBtn = document.querySelector(".header-routes__planned")
+  const inPlanDate = document.querySelector('.header-routes__planned-date')
 
   inWorkBtn.addEventListener('click', e => {
     if (inWorkBtn.classList.contains('route__filter--chosen')) {
@@ -257,6 +256,14 @@ export const tableRoutesFiltersHandler = () => {
     completedFilter(filters)
   })
 
+  inPlanDate.addEventListener('change', () => {
+    state.inPlanDate = inPlanDate.value
+  })
+
+  let today = getTime()
+  today = today.substring(0, today.length - 6)
+  inPlanDate.value = today
+  state.plannedDate = inPlanDate.value
   inPlanBtn.addEventListener('click', e => {
     if (inPlanBtn.classList.contains('route__filter--chosen')) {
       inPlanBtn.classList.remove('route__filter--chosen')
@@ -279,7 +286,7 @@ export const tableRoutesFiltersHandler = () => {
 
     deleteOrders()
     const filters = state['currentTopFilters'].map(filter => filter.name)
-    plannedFilter(filters)
+    plannedFilter(filters, inPlanDate.value)
   })
 }
 

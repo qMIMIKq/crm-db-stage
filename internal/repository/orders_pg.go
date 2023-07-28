@@ -257,6 +257,7 @@ func (o OrdersPG) GetOrders(old bool) ([]*domain.Order, error) {
 		SELECT date, value
 		  FROM route_comments
 		 WHERE route_id = $1
+     ORDER BY comment_id
 	`)
 
 	var err error

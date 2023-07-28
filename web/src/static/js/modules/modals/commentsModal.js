@@ -1,9 +1,9 @@
-import {drawSubmit} from './submitControl';
+import {drawSubmit} from '../submitControl';
 import {showModal} from './showModal';
-import {user} from '../table';
-import {submitData} from "./submitOrdersData";
-import {state} from "./state";
-import {getTime} from "./getTime";
+import {user} from '../../table';
+import {submitData} from "../submitOrdersData";
+import {state} from "../state";
+import {getTime} from "../getTime";
 
 const commentModal = `
    <div id='modal' class='modal modal--comment bounceIn'>

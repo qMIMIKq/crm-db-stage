@@ -1,8 +1,8 @@
-import {getData} from './getData';
-import {state} from "./state";
-import {deleteOrders, getOrders} from "./orders";
+import {getData} from '../getData';
+import {state} from "../state";
+import {deleteOrders, getOrders} from "../orders";
 import {globalFilterOrders} from "./filterOrders";
-import {bindOrdersListeners} from "./bindListeners";
+import {bindOrdersListeners} from "../bindListeners";
 
 export const topFiltersHandler = () => {
   let filtered

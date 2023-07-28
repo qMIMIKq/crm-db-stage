@@ -1,22 +1,19 @@
-import {triggerFilesModal} from './downloadFilesModal';
-import {controlFiltersReset} from './tableFilters';
+import {controlFiltersReset} from './filters/tableFilters';
 import {addTriggers} from './addTriggers';
-import {triggerRoutesModal} from './routesModal';
 import {showRoutesIssued} from "./showFull";
-import {triggerCommentsModal} from './commentsModal';
 import {drawDeadlineP} from './drawDeadlineP';
 import {state} from './state';
 import {drawManagers} from './drawManagers';
 import {submitData} from "./submitOrdersData";
 import {drawSubmit} from "./submitControl";
 import {deleteOrdersHandler} from "./deleteOrdersHandler";
-import {getTime} from "./getTime";
+import {colorRoutes} from "./drawe/routesDraw";
+import {drawHelpers} from "./drawe/helpersDraw";
+import {triggerFilesModal} from "./modals/downloadFilesModal";
+import {triggerRoutesModal} from "./modals/routesModal";
+import {triggerCommentsModal} from "./modals/commentsModal";
 
 export const table = document.querySelector('.main-table')
-
-let today = getTime()
-today = today.substring(0, today.length - 6)
-const dateToday = new Date(today).getTime()
 
 export const drawOrders = async (d, data, users) => {
   controlFiltersReset()
@@ -274,155 +271,22 @@ export const drawOrders = async (d, data, users) => {
     })
   }
 
-  const routesWrapper = document.querySelector(".table-routes__wrapper")
-  const routesIssuedWrapper = document.querySelector(".table-routes__issued")
-
   if (!state['isArchive']) {
     drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
     drawManagers(".table-m-select", users, d.m)
 
     if (routes) {
-      routes.forEach(route => {
-          const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
-          const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
-
-          if (dataInput) {
-            const infoParent = dataInput.parentNode
-            const routeInfo = infoParent.querySelector(`input[value="-"]`)
-
-            dataInput.value = JSON.stringify(route)
-            routeInfo.value = route.plot
-
-            if (route.plan_date) {
-              let planDate = new Date(route.plan_date).getTime()
-              let planStart = new Date(route.plan_start).getTime()
-
-              if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
-                routeInfo.classList.add('route--planned')
-              }
-            }
-
-            if (route.comments) {
-              const lastComm = route.comments[route.comments.length - 1]
-              infoParent.setAttribute('data-title', `${lastComm.date} ${lastComm.value}`)
-              infoParent.classList.add('table-body__trattr')
-            }
-
-            if (route.start_time && !route.end_time) {
-              routeInfo.classList.add('route--started')
-
-              if (route.issued && route.quantity && route.issued >= route.quantity) {
-                routeInfo.style.color = "rgb(0 207 0)"
-              } else {
-                routeInfo.style.color = "black"
-              }
-            }
-
-            if (route.end_time) {
-              routeInfo.classList.add('route--completed')
-              routeInfo.classList.remove('route--started')
-
-              if (route.error_msg) {
-                routeInfo.style.color = "red"
-                infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}\n`)
-                // console.log(route.comments)
-              } else if (route.quantity && route.issued < route.quantity) {
-                routeInfo.style.color = "yellow"
-              } else {
-                routeInfo.style.color = "black"
-              }
-            }
-
-            if (route.error_msg && !route.end_time) {
-              routeInfo.classList.add('route--error')
-              infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
-              // console.log(route.comments)
-
-              if (route.start_time) {
-                routeInfo.style.color = "black"
-                routeInfo.classList.remove('route--started')
-
-                if (route.issued && route.quantity && route.issued >= route.quantity) {
-                  routeInfo.style.color = "#07e807"
-                }
-              }
-            }
-          }
-
-          if (dataIssuedInput) {
-            dataIssuedInput.value = route["issued"]
-          }
-        }
-      )
+      colorRoutes(routes)
     } else {
       deleteOrdersHandler(currentOrder, d.issued, false, d.id)
     }
   }
 
-  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
-    if (!cell.classList.contains('table__route')) {
-      const valElem = cell.querySelector('.table__data')
-      const value = valElem.value
-
-      if ((valElem.classList.contains('table-m-select') && value.length > 2) || (valElem.scrollWidth > valElem.offsetWidth)) {
-        cell.addEventListener('mouseenter', () => {
-          if (value) {
-            cell.insertAdjacentHTML('beforeend', `
-                <div class="check-helper">${value}</div>
-            `)
-
-            const helper = cell.querySelector('.check-helper')
-            if (helper) {
-              const helperHeight = helper.clientHeight
-              if (helperHeight > 23) {
-                helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px'
-              } else {
-                helper.style.bottom = '-35px'
-              }
-            }
-          }
-        })
-
-        cell.addEventListener('mouseleave', e => {
-          try {
-            cell.querySelector('.check-helper').remove()
-          } catch {
-          }
-        })
-      }
-    } else {
-      const value = cell.getAttribute('data-title')
-      cell.addEventListener('mouseenter', () => {
-        if (value) {
-          cell.insertAdjacentHTML('beforeend', `
-                <div class="check-helper check-helper--long">${value}</div>
-            `)
-
-          const helper = cell.querySelector('.check-helper')
-          if (helper) {
-            const helperHeight = helper.clientHeight
-            if (helperHeight > 23) {
-              helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px'
-            } else {
-              helper.style.bottom = '-35px'
-            }
-          }
-        }
-      })
-
-      cell.addEventListener('mouseleave', e => {
-        try {
-          cell.querySelector('.check-helper').remove()
-        } catch {
-        }
-      })
-    }
-  })
-
+  drawHelpers(currentOrder)
+  addTriggers("#db_id", showRoutesIssued)
   addTriggers(".table__files", triggerFilesModal)
   addTriggers(".table__route", triggerRoutesModal)
   addTriggers(".table__comment", triggerCommentsModal)
-  addTriggers("#db_id", showRoutesIssued)
 }
 
 export const orderHTML = `

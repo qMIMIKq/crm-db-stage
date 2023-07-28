@@ -1,5 +1,5 @@
 import {showModal} from "./showModal";
-import {getTime} from "./getTime";
+import {getTime} from "../getTime";
 
 const planDateModal = `
     <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>

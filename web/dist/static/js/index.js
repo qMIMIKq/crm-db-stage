@@ -194,10 +194,1508 @@ const setChooseListeners = (label, listener, action, cls) => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/commentsModal.js":
+/***/ "./web/src/static/js/modules/deleteOrdersHandler.js":
+/*!**********************************************************!*\
+  !*** ./web/src/static/js/modules/deleteOrdersHandler.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "deleteOrdersHandler": () => (/* binding */ deleteOrdersHandler)
+/* harmony export */ });
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _modals_showModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modals/showModal */ "./web/src/static/js/modules/modals/showModal.js");
+
+
+
+
+const confirmDeleteOrderModal = `
+    <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
+        <div class='modal_content modal_content--confirm' style='width: 350px'>
+            <h2 class='confirm__title'></h2>
+            <div class='confirm__section'>
+                <button class='main__button confirm__button confirm__button--ok'>Да</button>
+                <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
+            </div>
+        </div>
+   </div>
+`;
+const confirmDeleteHandler = (e, operation, titleText) => {
+  const modal = (0,_modals_showModal__WEBPACK_IMPORTED_MODULE_3__.showModal)(confirmDeleteOrderModal);
+  const okBtn = modal.querySelector('.confirm__button--ok');
+  const cnclBtn = modal.querySelector('.confirm__button--cncl');
+  const title = modal.querySelector('.confirm__title');
+  title.textContent = titleText;
+  okBtn.addEventListener('click', () => {
+    operation();
+    modal.click();
+  });
+  cnclBtn.addEventListener('click', ev => {
+    modal.click();
+  });
+};
+const deleteOrdersHandler = function (currentOrder, issued, routes, id) {
+  let hidden = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+  if (issued == 0 && _state__WEBPACK_IMPORTED_MODULE_0__.state.adminCheck && !routes) {
+    // console.log('hi')
+    if (hidden) {
+      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
+                <input class="order__delete hidden__input table__data--ro" id='order__delete' type="button" value="X" readonly>
+            `);
+    } else {
+      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
+                <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
+            `);
+    }
+    document.querySelector('.order__delete').addEventListener('click', e => {
+      confirmDeleteHandler(e, () => {
+        (0,_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/orders/delete/${id}`, 'POST', null).then(() => {
+          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)();
+        });
+      }, `Подвтердить удаление заказа №${id}?`);
+    });
+  }
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/drawDeadlineP.js":
 /*!****************************************************!*\
-  !*** ./web/src/static/js/modules/commentsModal.js ***!
+  !*** ./web/src/static/js/modules/drawDeadlineP.js ***!
   \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "drawDeadlineP": () => (/* binding */ drawDeadlineP)
+/* harmony export */ });
+const drawDeadlineP = (target, deadlines, chosenDeadline) => {
+  const block = document.querySelector(target);
+  deadlines.forEach(deadline => {
+    block.insertAdjacentHTML('beforeend', `
+             <option ${Number(chosenDeadline) === Number(deadline) ? 'selected' : ''} value='${deadline}'>${deadline}дн</option>
+        `);
+  });
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/drawManagers.js":
+/*!***************************************************!*\
+  !*** ./web/src/static/js/modules/drawManagers.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "drawManagers": () => (/* binding */ drawManagers)
+/* harmony export */ });
+const drawManagers = (target, managers, manager) => {
+  const block = document.querySelector(target);
+  managers.forEach(man => {
+    block.insertAdjacentHTML('beforeend', `
+             <option ${manager === man.nickname ? 'selected' : ''} value='${man.nickname}'>${man.nickname}</option>
+        `);
+  });
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/drawOrders.js":
+/*!*************************************************!*\
+  !*** ./web/src/static/js/modules/drawOrders.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "drawOrders": () => (/* binding */ drawOrders),
+/* harmony export */   "orderHTML": () => (/* binding */ orderHTML),
+/* harmony export */   "table": () => (/* binding */ table)
+/* harmony export */ });
+/* harmony import */ var _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
+/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./addTriggers */ "./web/src/static/js/modules/addTriggers.js");
+/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./showFull */ "./web/src/static/js/modules/showFull.js");
+/* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawDeadlineP.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
+/* harmony import */ var _deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./deleteOrdersHandler */ "./web/src/static/js/modules/deleteOrdersHandler.js");
+/* harmony import */ var _drawe_routesDraw__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./drawe/routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
+/* harmony import */ var _drawe_helpersDraw__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./drawe/helpersDraw */ "./web/src/static/js/modules/drawe/helpersDraw.js");
+/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
+/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const table = document.querySelector('.main-table');
+const drawOrders = async (d, data, users) => {
+  (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.controlFiltersReset)();
+  let uniqueFileNames = [];
+  if (d.files !== null) {
+    d.files.forEach(file => {
+      const arrDotFile = file.split('.');
+      const fileType = arrDotFile[arrDotFile.length - 1];
+      const arrSlashFile = file.split('/');
+      arrSlashFile.splice(0, 3);
+      const fileName = arrSlashFile.join('');
+      let fileNameWithoutType = fileName.split('.');
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
+      uniqueFileNames.push(fileNameWithoutType);
+    });
+  }
+  uniqueFileNames = [...new Set(uniqueFileNames)];
+  const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity);
+  console.log(d.quantity, d.issued);
+  table.insertAdjacentHTML(`afterbegin`, `
+      <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
+        <ul class='main-table__item'>
+            <li class='table-body_cell table__db'>
+                <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table__timestamp'>
+                <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex='-1' autocomplete='off'>
+            </li>
+             <li class='table-body_cell hidden-input'>
+                <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table__files'>
+                <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
+                <input 
+                ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmManGroupper}
+                id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table-body__helper table__sample'>
+                <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
+            </li>
+            <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+            </li>
+            <li class='table-body_cell table__quantity'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
+            </li>
+            <ul class="table__issueds">
+                <li class="table-body_cell table__issued">
+                    <input ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmTechGroupper} class="table__data ${orderCompleted && !_state__WEBPACK_IMPORTED_MODULE_4__.state.isArchive ? "table__issued--done tr" : ""}" tabindex="-1"
+                    type="number" 
+                    name="issued" 
+                    required  autocomplete="off"
+                    value="${d.issued}">
+                </li>
+            </ul>
+            <li class="table-body_cell hidden__input table__finished">
+                <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
+            </li>
+            <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
+                <select ${_state__WEBPACK_IMPORTED_MODULE_4__.state.selectAdmManGroupper} class="table__data table-m-select main__button" name="m" id="">
+                    <option selected value=""></option>
+                </select>
+            </li>
+            <li class="table-body_cell table__endtime">
+                <input class="main__button table__data "
+                ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmManTechGroupper} 
+                name="end_time" 
+                type="text"
+                placeholder=" " 
+                value="${d.end_time.split("T")[0]}" 
+                onfocus="this.type='date'"
+                onblur="(this.type='text')"
+                tabindex="-1" 
+                autocomplete="off">
+            </li>
+            <li class="table__routes table-routes">
+                <input readonly type="text" class="hidden__input" name="routes_json">
+                <ul class="table-routes__wrapper">
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route">
+                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                        <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                </ul>
+                <ul class="table-routes__wrapper hidden__input table-routes__issued">
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__route--issued">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                </ul>
+            </li>
+            <li class="table-body_cell table-body__helper table__p">
+                <select ${_state__WEBPACK_IMPORTED_MODULE_4__.state.selectAdmManTechGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                    <option selected value=""></option>
+                </select>
+            </li>
+            <li class="table-body_cell table-body__helper hidden-input table__comment">
+                <input class="table__data hidden-input table__data--ro" 
+                    name="comments" 
+                    type="text"
+                    value="" 
+                    readonly 
+                    autocomplete="off"
+                    tabindex="-1">
+            </li>
+            <li class="table-body_cell table-body__helper hidden-input table__comment">
+                <input class="table__data  hidden-input table__data--ro" 
+                    name="all_comments" 
+                    type="text"
+                    value="${d.comments ? d.comments.join(".-.") : ""}" 
+                    readonly 
+                    autocomplete="off"
+                    tabindex="-1">
+            </li>
+            
+            <li class="table-body_cell table-body__helper ${d.comments ? "table-body__attr" : ""} table__comment">
+                <input ${_state__WEBPACK_IMPORTED_MODULE_4__.state.inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
+                    name="comment" 
+                    type="text" 
+                    value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
+                    autocomplete="off"
+                    readonly>
+            </li>
+        </ul>
+    </form>
+  `);
+  const currentOrder = document.getElementById(`form-${d.id}`);
+  const routes = d["db_routes"];
+  const completedBlock = currentOrder.querySelector('.table__issued--done');
+  if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_4__.state.isArchive) {
+    completedBlock.insertAdjacentHTML(`afterend`, `
+            <li class="table-body_cell table-body__helper hidden__input table__complete">
+                <input class="table__data main__button tr" tabindex="-1"
+                readonly
+                type="text" 
+                autocomplete="off"
+                value="В архив">
+            </li>  
+        `);
+    currentOrder.querySelector('.table__complete').addEventListener('click', e => {
+      currentOrder.querySelector('#completed').value = true;
+      const parent = e.target.closest('.table-form--old');
+      if (parent !== null) {
+        parent.classList.remove('table-form--old');
+        parent.classList.add('table-form--upd');
+        (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_6__.submitData)();
+      } else {
+        (0,_submitControl__WEBPACK_IMPORTED_MODULE_7__.drawSubmit)();
+      }
+    });
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_4__.state.openedOrders.includes(String(d.id))) {
+    currentOrder.querySelectorAll('.table__data').forEach(item => {
+      if (!item.classList.contains('tr')) {
+        if (!item.classList.contains('table__data--opened')) {
+          item.classList.add('table__data--opened');
+        }
+      } else {
+        item.classList.add('table__data--chosen');
+      }
+    });
+    (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_8__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id, false);
+    try {
+      currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input');
+      const complete = currentOrder.querySelector('.table__complete');
+      complete.classList.remove('hidden__input');
+      complete.querySelector('.tr').classList.add('table-data__chosen');
+    } catch {}
+  }
+  if (String(d.id) === _state__WEBPACK_IMPORTED_MODULE_4__.state.currentOrder) {
+    currentOrder.querySelectorAll('.table__data').forEach(item => {
+      if (!item.classList.contains('table__data--opened')) {
+        item.classList.add('table__data--chosen');
+      }
+    });
+  }
+  if (!_state__WEBPACK_IMPORTED_MODULE_4__.state.isArchive) {
+    (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_3__.drawDeadlineP)(".table-p-select", _state__WEBPACK_IMPORTED_MODULE_4__.state.deadlinesP, d.p);
+    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_5__.drawManagers)(".table-m-select", users, d.m);
+    if (routes) {
+      (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_9__.colorRoutes)(routes);
+    } else {
+      (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_8__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
+    }
+  }
+  (0,_drawe_helpersDraw__WEBPACK_IMPORTED_MODULE_10__.drawHelpers)(currentOrder);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_1__.addTriggers)("#db_id", _showFull__WEBPACK_IMPORTED_MODULE_2__.showRoutesIssued);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_1__.addTriggers)(".table__files", _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_11__.triggerFilesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_1__.addTriggers)(".table__route", _modals_routesModal__WEBPACK_IMPORTED_MODULE_12__.triggerRoutesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_1__.addTriggers)(".table__comment", _modals_commentsModal__WEBPACK_IMPORTED_MODULE_13__.triggerCommentsModal);
+};
+const orderHTML = `
+<form class="table-form table-form--new" method="POST">
+            <ul class="main-table__item">
+                    <li class="table-body_cell table-body__helper table__db">
+                        <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__timestamp">
+                        <input id="timestamp" class="table__data   table__data--ro" name="timestamp" type="text" readonly value="" tabindex="-1" autocomplete="off">
+                    </li>
+                     <li class="table-body_cell table-body__helper hidden-input">
+                        <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__files">
+                        <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__number">
+                        <input id="number" class="table__data " name="number" type="text" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__sample">
+                        <input class="table__data   table__data--ro" name="sample" type="text" value="" readonly tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__client">
+                        <input class="table__data " type="text" name="client" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__name">
+                        <input class="table__data " type="text" name="name" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__material">
+                        <input class="table__data " type="text" name="material" value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__quantity">
+                        <input class="table__data " type="number" name="quantity" required value="" tabindex="-1" autocomplete="off">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__issued">
+                        <input class="table__data" tabindex="-1"
+                        type="number" 
+                        name="issued" 
+                        required  autocomplete="off"
+                        value="">
+                    </li>
+                    <li class="table-body_cell table-body__helper table__m">
+                        <select class="table__data table-m-select main__button" name="m" id="">
+                            <option selected value=""></option>
+                        </select>
+                    </li>
+                    <li class="table-body_cell table-body__helper table__endtime">
+                        <input class="main__button table__data " 
+                        name="end_time" 
+                        type="text"
+                        placeholder=" " 
+                        value="" 
+                        onfocus="this.type='date'"
+                        onblur="(this.type='text')"
+                        tabindex="-1" 
+                        autocomplete="off">
+                    </li>
+                    <li class="table__routes table-routes">
+                        <input readonly type="text" class="hidden__input" name="routes_json">
+                        <ul class="table-routes__wrapper">
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route">
+                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+                                <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                        </ul>
+                        <ul class="table-routes__wrapper hidden__input table-routes__issued">
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                            <li class="table-body_cell table-body__helper table__route--issued">
+                                <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="table-body_cell table-body__helper table__p">
+                        <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                            <option selected value=""></option>
+                        </select>
+                    </li>
+                    <li class="table-body_cell table-body__helper hidden-input table__comment">
+                        <input class="table__data hidden-input table__data--ro" 
+                            name="comments" 
+                            type="text"
+                            value="" 
+                            readonly 
+                            autocomplete="off"
+                            tabindex="-1">
+                    </li>
+                    <li class="table-body_cell table-body__helper hidden-input table__comment">
+                        <input class="table__data  hidden-input table__data--ro" 
+                            name="all_comments" 
+                            type="text"
+                            value="" 
+                            readonly 
+                            autocomplete="off"
+                            tabindex="-1">
+                    </li>
+                    
+                    <li class="table-body_cell table-body__helper table__comment">
+                        <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
+                            name="comment" 
+                            type="text" 
+                            value="" 
+                            autocomplete="off"
+                            readonly>
+                    </li>
+                </ul>
+        </form>
+`;
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/drawe/helpersDraw.js":
+/*!********************************************************!*\
+  !*** ./web/src/static/js/modules/drawe/helpersDraw.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "drawHelpers": () => (/* binding */ drawHelpers)
+/* harmony export */ });
+const drawHelpers = currentOrder => {
+  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
+    if (!cell.classList.contains('table__route')) {
+      const valElem = cell.querySelector('.table__data');
+      const value = valElem.value;
+      if (valElem.classList.contains('table-m-select') && value.length > 2 || valElem.scrollWidth > valElem.offsetWidth) {
+        cell.addEventListener('mouseenter', () => {
+          if (value) {
+            cell.insertAdjacentHTML('beforeend', `
+                <div class="check-helper">${value}</div>
+            `);
+            const helper = cell.querySelector('.check-helper');
+            if (helper) {
+              const helperHeight = helper.clientHeight;
+              if (helperHeight > 23) {
+                helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
+              } else {
+                helper.style.bottom = '-35px';
+              }
+            }
+          }
+        });
+        cell.addEventListener('mouseleave', e => {
+          try {
+            cell.querySelector('.check-helper').remove();
+          } catch {}
+        });
+      }
+    } else {
+      const value = cell.getAttribute('data-title');
+      cell.addEventListener('mouseenter', () => {
+        if (value) {
+          cell.insertAdjacentHTML('beforeend', `
+                <div class="check-helper check-helper--long">${value}</div>
+            `);
+          const helper = cell.querySelector('.check-helper');
+          if (helper) {
+            const helperHeight = helper.clientHeight;
+            if (helperHeight > 23) {
+              helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
+            } else {
+              helper.style.bottom = '-35px';
+            }
+          }
+        }
+      });
+      cell.addEventListener('mouseleave', e => {
+        try {
+          cell.querySelector('.check-helper').remove();
+        } catch {}
+      });
+    }
+  });
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/drawe/routesDraw.js":
+/*!*******************************************************!*\
+  !*** ./web/src/static/js/modules/drawe/routesDraw.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "colorRoutes": () => (/* binding */ colorRoutes)
+/* harmony export */ });
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+
+
+const colorRoutes = routes => {
+  const routesWrapper = document.querySelector(".table-routes__wrapper");
+  const routesIssuedWrapper = document.querySelector(".table-routes__issued");
+  let date;
+  if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.inPlanDate) {
+    date = (0,_getTime__WEBPACK_IMPORTED_MODULE_0__.getTime)();
+    date = date.substring(0, date.length - 6);
+  } else {
+    date = _state__WEBPACK_IMPORTED_MODULE_1__.state.inPlanDate;
+  }
+  const dateToday = new Date(date).getTime();
+  routes.forEach(route => {
+    const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`);
+    const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`);
+    if (dataInput) {
+      const infoParent = dataInput.parentNode;
+      const routeInfo = infoParent.querySelector(`input[value="-"]`);
+      dataInput.value = JSON.stringify(route);
+      routeInfo.value = route.plot;
+      if (route.plan_date) {
+        let planDate = new Date(route.plan_date).getTime();
+        let planStart = new Date(route.plan_start).getTime();
+        if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(date)) {
+          routeInfo.classList.add('route--planned');
+        }
+      }
+      if (route.comments) {
+        const lastComm = route.comments[route.comments.length - 1];
+        infoParent.setAttribute('data-title', `${lastComm.date} ${lastComm.value}`);
+        infoParent.classList.add('table-body__trattr');
+      }
+      if (route.start_time && !route.end_time) {
+        routeInfo.classList.add('route--started');
+        if (route.issued && route.quantity && route.issued >= route.quantity) {
+          routeInfo.style.color = "rgb(0 207 0)";
+        } else {
+          routeInfo.style.color = "black";
+        }
+      }
+      if (route.end_time) {
+        routeInfo.classList.add('route--completed');
+        routeInfo.classList.remove('route--started');
+        if (route.error_msg) {
+          routeInfo.style.color = "red";
+          infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}\n`);
+          // console.log(route.comments)
+        } else if (route.quantity && route.issued < route.quantity) {
+          routeInfo.style.color = "yellow";
+        } else {
+          routeInfo.style.color = "black";
+        }
+      }
+      if (route.error_msg && !route.end_time) {
+        routeInfo.classList.add('route--error');
+        infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`);
+        // console.log(route.comments)
+
+        if (route.start_time) {
+          routeInfo.style.color = "black";
+          routeInfo.classList.remove('route--started');
+          if (route.issued && route.quantity && route.issued >= route.quantity) {
+            routeInfo.style.color = "#07e807";
+          }
+        }
+      }
+    }
+    if (dataIssuedInput) {
+      dataIssuedInput.value = route["issued"];
+    }
+  });
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/filters/filterOrders.js":
+/*!***********************************************************!*\
+  !*** ./web/src/static/js/modules/filters/filterOrders.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "globalFilterOrders": () => (/* binding */ globalFilterOrders)
+/* harmony export */ });
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+
+
+const globalFilterOrders = (order, topFilters) => {
+  let flag = true;
+  for (let type in _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters) {
+    const filter = _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type];
+    if (filter === 'все') {} else if (filter) {
+      if (!(order[type].trim() === _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type].trim())) {
+        flag = false;
+        break;
+      }
+    }
+  }
+  if (flag) {
+    (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+  }
+  return flag;
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/filters/tableFilters.js":
+/*!***********************************************************!*\
+  !*** ./web/src/static/js/modules/filters/tableFilters.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "bindTableFilters": () => (/* binding */ bindTableFilters),
+/* harmony export */   "clientsFilter": () => (/* binding */ clientsFilter),
+/* harmony export */   "controlFiltersReset": () => (/* binding */ controlFiltersReset),
+/* harmony export */   "deadlineFilter": () => (/* binding */ deadlineFilter),
+/* harmony export */   "deleteTableFilters": () => (/* binding */ deleteTableFilters),
+/* harmony export */   "drawTableFilter": () => (/* binding */ drawTableFilter),
+/* harmony export */   "issuedFilter": () => (/* binding */ issuedFilter),
+/* harmony export */   "managerFilter": () => (/* binding */ managerFilter),
+/* harmony export */   "materialsFilter": () => (/* binding */ materialsFilter),
+/* harmony export */   "namesFilter": () => (/* binding */ namesFilter),
+/* harmony export */   "numsFilter": () => (/* binding */ numsFilter),
+/* harmony export */   "quantityFilter": () => (/* binding */ quantityFilter),
+/* harmony export */   "tableFiltersWrapper": () => (/* binding */ tableFiltersWrapper),
+/* harmony export */   "timestampFilter": () => (/* binding */ timestampFilter)
+/* harmony export */ });
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filters/filterOrders.js");
+/* harmony import */ var _topFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./topFilters */ "./web/src/static/js/modules/filters/topFilters.js");
+
+
+
+
+
+const tableFiltersWrapper = document.querySelector('.main-table__header');
+const numsFilter = tableFiltersWrapper.querySelector('#numbers');
+const clientsFilter = tableFiltersWrapper.querySelector('#clients');
+const materialsFilter = tableFiltersWrapper.querySelector('#materials');
+const namesFilter = tableFiltersWrapper.querySelector("#name");
+const quantityFilter = tableFiltersWrapper.querySelector("#quantity");
+const issuedFilter = tableFiltersWrapper.querySelector("#issued");
+const managerFilter = tableFiltersWrapper.querySelector("#m");
+const deadlineFilter = tableFiltersWrapper.querySelector("#end_time");
+const timestampFilter = tableFiltersWrapper.querySelector("#timestamp");
+const deleteTableFilters = () => {
+  const filters = document.querySelectorAll('.table__filter--new');
+  if (filters[0] !== null) {
+    filters.forEach(filter => filter.remove());
+  }
+};
+const drawTableFilter = (data, target) => {
+  data.forEach(d => {
+    target.insertAdjacentHTML('beforeend', `
+            <option class='table__filter--new' value='${d}'>${d}</option>
+        `);
+  });
+};
+const bindTableFilters = () => {
+  const tableFilters = document.querySelectorAll('.table__filter');
+  const filterWrappers = document.querySelectorAll('.table__use label');
+  filterWrappers.forEach(wrapper => {
+    wrapper.addEventListener('click', e => {
+      const select = wrapper.parentNode.querySelector('select');
+      wrapper.classList.add('hidden__input');
+      select.classList.remove('hidden__input');
+    });
+  });
+  tableFilters.forEach(filter => {
+    filter.addEventListener('blur', e => {
+      showFilter(e);
+    });
+  });
+  bindFilter(numsFilter);
+  bindFilter(clientsFilter);
+  bindFilter(materialsFilter);
+  bindFilter(namesFilter);
+  bindFilter(quantityFilter);
+  bindFilter(issuedFilter);
+  bindFilter(managerFilter);
+  bindFilter(deadlineFilter);
+  bindFilter(timestampFilter);
+};
+const showFilter = e => {
+  const target = e.target;
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
+  const label = target.parentNode.querySelector('label');
+  target.classList.add('hidden__input');
+  label.classList.remove('hidden__input');
+};
+const filterOrders = (type, filter) => {
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters[type] = filter;
+  console.log(type, filter);
+  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters);
+  (0,_orders__WEBPACK_IMPORTED_MODULE_0__.deleteOrders)();
+  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.forEach(o => {
+    (0,_filterOrders__WEBPACK_IMPORTED_MODULE_3__.globalFilterOrders)(o, filters);
+  });
+  if (filters.length) {
+    (0,_topFilters__WEBPACK_IMPORTED_MODULE_4__.filterData)();
+  }
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
+};
+const bindFilter = elem => {
+  elem.removeEventListener('change', filterListener);
+  elem.addEventListener('change', filterListener);
+};
+const filterListener = e => {
+  showFilter(e);
+  filterOrders(e.target.parentNode.querySelector(".filter__type").value, e.target.value);
+  setChosenFilter(e);
+};
+const controlFiltersReset = () => {
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+    const nav = document.querySelector('.main-header__nav');
+    const resetBtn = nav.querySelector('.header-button__reset');
+    if (resetBtn === null) {
+      nav.insertAdjacentHTML('beforeend', `
+                <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
+            `);
+      nav.querySelector('.header-button__reset').addEventListener('click', e => {
+        document.querySelector('#search__input').value = '';
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters = {};
+        document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'));
+        tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+          cell.style.textDecoration = 'none';
+        });
+        (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)('get-all');
+      });
+    }
+  } else {
+    const resetBtn = document.querySelector('.header-button__reset');
+    if (resetBtn !== null) {
+      resetBtn.remove();
+    }
+  }
+};
+const setChosenFilter = e => {
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+    e.target.parentNode.querySelector('label').style.textDecoration = 'underline';
+  } else {
+    e.target.parentNode.querySelector('label').style.textDecoration = 'none';
+  }
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/filters/tableRoutesFilters.js":
+/*!*****************************************************************!*\
+  !*** ./web/src/static/js/modules/filters/tableRoutesFilters.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "completedFilter": () => (/* binding */ completedFilter),
+/* harmony export */   "errFilter": () => (/* binding */ errFilter),
+/* harmony export */   "notInWorkFilter": () => (/* binding */ notInWorkFilter),
+/* harmony export */   "plannedFilter": () => (/* binding */ plannedFilter),
+/* harmony export */   "startFilter": () => (/* binding */ startFilter),
+/* harmony export */   "tableRoutesFiltersHandler": () => (/* binding */ tableRoutesFiltersHandler)
+/* harmony export */ });
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filters/filterOrders.js");
+/* harmony import */ var _topFilters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./topFilters */ "./web/src/static/js/modules/filters/topFilters.js");
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
+
+
+
+
+
+
+
+const startFilter = filters => {
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.start_time && !route.end_time) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true;
+            }
+          } else {
+            check = true;
+          }
+        }
+      });
+    }
+    return checkDoFilter(check, order);
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const errFilter = filters => {
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.error_msg) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true;
+            }
+          } else {
+            check = true;
+          }
+        }
+      });
+    }
+    return checkDoFilter(check, order);
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const completedFilter = filters => {
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.end_time) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true;
+            }
+          } else {
+            check = true;
+          }
+        }
+      });
+    }
+    return checkDoFilter(check, order);
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const notInWorkFilter = filters => {
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (!route.start_time) {
+          if (filters.length) {
+            if (filters.includes(route.plot)) {
+              check = true;
+            }
+          } else {
+            check = true;
+          }
+        }
+      });
+    }
+    return checkDoFilter(check, order);
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const checkDoFilter = (check, order) => {
+  if (check) {
+    if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered && filters.length) {
+      (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+      (0,_topFilters__WEBPACK_IMPORTED_MODULE_2__.filterData)();
+    } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered) {
+      console.log('table filters');
+      (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
+    } else {
+      (0,_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+    }
+  }
+  return check;
+};
+const plannedFilter = (filters, date) => {
+  let dateToday = new Date(date).getTime();
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+    let check = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (route.plan_date) {
+          let planDate = new Date(route.plan_date).getTime();
+          let planStart = new Date(route.plan_start).getTime();
+          if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(date)) {
+            if (filters.length) {
+              if (filters.includes(route.plot)) {
+                check = true;
+              }
+            } else {
+              check = true;
+            }
+          }
+        }
+      });
+    }
+    return checkDoFilter(check, order);
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
+};
+const tableRoutesFiltersHandler = () => {
+  const inWorkBtn = document.querySelector(".header-routes__work");
+  const notWorkBtn = document.querySelector(".header-routes__unwork");
+  const inErrorBtn = document.querySelector(".header-routes__error");
+  const completedBtn = document.querySelector(".header-routes__completed");
+  const inPlanBtn = document.querySelector(".header-routes__planned");
+  const inPlanDate = document.querySelector('.header-routes__planned-date');
+  inWorkBtn.addEventListener('click', e => {
+    if (inWorkBtn.classList.contains('route__filter--chosen')) {
+      inWorkBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
+    } catch {}
+    inWorkBtn.classList.add('route__filter--chosen');
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    startFilter(filters);
+  });
+  notWorkBtn.addEventListener('click', () => {
+    if (notWorkBtn.classList.contains('route__filter--chosen')) {
+      notWorkBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
+    } catch {}
+    notWorkBtn.classList.add('route__filter--chosen');
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    notInWorkFilter(filters);
+  });
+  inErrorBtn.addEventListener('click', e => {
+    if (inErrorBtn.classList.contains('route__filter--chosen')) {
+      inErrorBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
+    } catch {}
+    inErrorBtn.classList.add('route__filter--chosen');
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    errFilter(filters);
+  });
+  completedBtn.addEventListener('click', e => {
+    if (completedBtn.classList.contains('route__filter--chosen')) {
+      completedBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
+    } catch {}
+    completedBtn.classList.add('route__filter--chosen');
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    completedFilter(filters);
+  });
+  inPlanDate.addEventListener('change', () => {
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.inPlanDate = inPlanDate.value;
+  });
+  let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_6__.getTime)();
+  today = today.substring(0, today.length - 6);
+  inPlanDate.value = today;
+  _state__WEBPACK_IMPORTED_MODULE_0__.state.plannedDate = inPlanDate.value;
+  inPlanBtn.addEventListener('click', e => {
+    if (inPlanBtn.classList.contains('route__filter--chosen')) {
+      inPlanBtn.classList.remove('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
+      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
+      return;
+    }
+    try {
+      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
+    } catch {}
+    inPlanBtn.classList.add('route__filter--chosen');
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = true;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
+    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
+    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+    plannedFilter(filters, inPlanDate.value);
+  });
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/filters/topFilters.js":
+/*!*********************************************************!*\
+  !*** ./web/src/static/js/modules/filters/topFilters.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "filterData": () => (/* binding */ filterData),
+/* harmony export */   "topFiltersHandler": () => (/* binding */ topFiltersHandler)
+/* harmony export */ });
+/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filters/filterOrders.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+
+
+
+
+
+const topFiltersHandler = () => {
+  let filtered;
+  const plotFilters = document.querySelector('.nav-filters__plots');
+  const filterFilters = document.querySelector('.nav-filters__filters');
+  const selectUser = document.querySelector('.select-user');
+  const nav = document.querySelector('.nav-filters');
+  const extensions = ['все'];
+  const checkExt = (extensions, ext) => {
+    let flag = false;
+    extensions.forEach(d => {
+      if (d === ext) {
+        flag = true;
+      }
+    });
+    return flag;
+  };
+  const drawTopPanel = (data, block, short) => {
+    data.forEach(d => {
+      let condition = !checkExt(extensions, d.name);
+      if (condition) {
+        if (short) {
+          block.insertAdjacentHTML('beforeend', `
+                    <li class='nav-filters__item'>
+                        <button class='nav-filters__button main__button'>${d.short_name}</button>
+                        <input class='hidden__input' value="${d.name}"/>
+                     </li>
+                    `);
+        } else {
+          block.insertAdjacentHTML('beforeend', `
+                    <li class='nav-filters__item'>
+                        <button class='nav-filters__button main__button'>${d.name}</button>
+                     </li>
+                    `);
+        }
+      }
+    });
+  };
+  const removeData = block => {
+    block.innerHTML = '';
+  };
+  const plotListener = block => {
+    const btns = block.querySelectorAll('button');
+    btns.forEach(btn => {
+      btn.addEventListener('click', e => {
+        const target = e.target;
+        const plot = target.parentNode.querySelector('input').value;
+        if (!target.classList.contains('chosen__plot')) {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.push(plot);
+        } else {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.filter(cP => cP !== plot);
+        }
+        target.classList.toggle('chosen__plot');
+        target.classList.toggle('nav-filters__button--chosen');
+        filterByPlots();
+        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
+          filterData();
+          filtered = true;
+          controlFilterReset();
+        } else {
+          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
+          filtered = false;
+          controlFilterReset();
+        }
+      });
+    });
+  };
+  const filterByPlots = () => {
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters.filter(filt => _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.includes(filt.plot));
+    removeData(filterFilters);
+    if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
+      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters, filterFilters);
+    } else {
+      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters, filterFilters);
+    }
+    filterListener(filterFilters);
+  };
+  const removePlotsByUser = (plot, plots) => {
+    const newPlots = [];
+    plots.forEach(f => {
+      console.log(f);
+      if (f.name === plot) {
+        newPlots.push(f);
+      }
+    });
+    removeData(plotFilters);
+    drawTopPanel(newPlots, plotFilters);
+  };
+  const filterListener = block => {
+    block.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const target = e.target;
+        const filter = target.textContent;
+        if (!target.classList.contains('chosen__filter')) {
+          if (!document.querySelector('.chosen__plot')) {
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.push({
+              'name': filter
+            });
+          } else {
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = [{
+              'name': filter
+            }];
+          }
+        } else {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.filter(cF => cF.name !== filter);
+        }
+        target.classList.toggle('chosen__filter');
+        target.classList.toggle('nav-filters__button--chosen');
+        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
+          filterData();
+          filtered = true;
+          controlFilterReset();
+        } else {
+          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
+          filtered = false;
+          controlFilterReset();
+        }
+      });
+    });
+  };
+  const controlFilterReset = () => {
+    const resetBtn = document.querySelector('.nav-filters__reset');
+    if (filtered) {
+      if (!resetBtn) {
+        nav.insertAdjacentHTML('beforeend', `
+                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+                `);
+        document.querySelector('.nav-filters__reset').addEventListener('click', () => {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = [];
+          document.querySelector('.nav-filters__reset').remove();
+          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
+          nav.querySelectorAll('.nav-filters__button').forEach(btn => {
+            console.log(btn);
+            btn.classList.remove('nav-filters__button--chosen');
+            btn.classList.remove('chosen__plot');
+            btn.classList.remove('chosen__filter');
+          });
+        });
+      }
+    } else {
+      document.querySelector('.nav-filters__reset').remove();
+    }
+  };
+  const drawUsers = users => {
+    users.forEach(u => {
+      document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
+            <option value='${u.id}'>
+                ${u.name}
+            </option>
+        `);
+    });
+  };
+  const draw = async () => {
+    let plots = [];
+    let filters = [];
+    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('filters/get-all').then(data => {
+      drawTopPanel(data.data, filterFilters);
+      filters = data.data;
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = filters;
+    }).then(_ => filterListener(filterFilters));
+    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('plots/get-all').then(data => {
+      drawTopPanel(data.data, plotFilters, true);
+      plots = data.data;
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = plots;
+    }).then(_ => plotListener(plotFilters));
+    if (selectUser !== null) {
+      await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('users/get-operators').then(data => {
+        drawUsers(data.data);
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots = data.data[0].plot;
+        removePlotsByUser(data.data[0].plot, _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots);
+        filterByPlots();
+        plotListener(plotFilters);
+      });
+    }
+  };
+  draw();
+};
+const filterData = () => {
+  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(order => {
+    let flag = false;
+    if (order.db_routes) {
+      order.db_routes.forEach(route => {
+        if (filters.includes(route.plot)) {
+          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.started) {
+            console.log('started');
+            if (route.start_time && !route.end_time) {
+              flag = true;
+            }
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.error) {
+            console.log('error');
+            if (route.error_msg) {
+              flag = true;
+            }
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.completed) {
+            if (route.end_time) {
+              flag = true;
+            }
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.unstarted) {
+            if (!route.start_time) {
+              flag = true;
+            }
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.planned) {
+            console.log('hi');
+            if (route.plan_date) {
+              let planDate = new Date(route.plan_date).getTime();
+              let planStart = new Date(route.plan_start).getTime();
+              if (planStart <= today && today <= planDate) {
+                if (filters.length) {
+                  if (filters.includes(route.plot)) {
+                    flag = true;
+                  }
+                } else {
+                  flag = true;
+                }
+              }
+            }
+          } else {
+            console.log(route);
+            flag = true;
+          }
+        }
+      });
+    }
+    return flag;
+  });
+  (0,_orders__WEBPACK_IMPORTED_MODULE_2__.deleteOrders)();
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
+    (0,_filterOrders__WEBPACK_IMPORTED_MODULE_3__.globalFilterOrders)(order);
+  });
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/getData.js":
+/*!**********************************************!*\
+  !*** ./web/src/static/js/modules/getData.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getData": () => (/* binding */ getData)
+/* harmony export */ });
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+
+const getData = async url => {
+  const resp = await fetch(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/${url}`);
+  if (!resp.ok) {
+    console.log('beda');
+  }
+  return await resp.json();
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/getTime.js":
+/*!**********************************************!*\
+  !*** ./web/src/static/js/modules/getTime.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getTime": () => (/* binding */ getTime)
+/* harmony export */ });
+const getTime = () => {
+  let check = new Date().toLocaleString();
+  if (check[2] === '.') {
+    check = check.split('.');
+  } else if (check[2] === '/') {
+    check = check.split('/');
+  }
+  check[2] = check[2].split(',');
+  [check[0], check[2][0]] = [check[2][0], check[0]];
+  check[2] = check[2].join(',');
+  check = check.join('/');
+  return check.replaceAll('/', '-').slice(0, check.length - 3).split(',').join(' ').replace(' ', '');
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/modals/commentsModal.js":
+/*!***********************************************************!*\
+  !*** ./web/src/static/js/modules/modals/commentsModal.js ***!
+  \***********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -205,12 +1703,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "triggerCommentsModal": () => (/* binding */ triggerCommentsModal)
 /* harmony export */ });
-/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
-/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
-/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../submitControl */ "./web/src/static/js/modules/submitControl.js");
+/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
+/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../table */ "./web/src/static/js/table/index.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
 
 
 
@@ -308,79 +1806,10 @@ const triggerCommentsModal = e => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/deleteOrdersHandler.js":
-/*!**********************************************************!*\
-  !*** ./web/src/static/js/modules/deleteOrdersHandler.js ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "deleteOrdersHandler": () => (/* binding */ deleteOrdersHandler)
-/* harmony export */ });
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
-/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
-
-
-
-
-const confirmDeleteOrderModal = `
-    <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
-        <div class='modal_content modal_content--confirm' style='width: 350px'>
-            <h2 class='confirm__title'></h2>
-            <div class='confirm__section'>
-                <button class='main__button confirm__button confirm__button--ok'>Да</button>
-                <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
-            </div>
-        </div>
-   </div>
-`;
-const confirmDeleteHandler = (e, operation, titleText) => {
-  const modal = (0,_showModal__WEBPACK_IMPORTED_MODULE_3__.showModal)(confirmDeleteOrderModal);
-  const okBtn = modal.querySelector('.confirm__button--ok');
-  const cnclBtn = modal.querySelector('.confirm__button--cncl');
-  const title = modal.querySelector('.confirm__title');
-  title.textContent = titleText;
-  okBtn.addEventListener('click', () => {
-    operation();
-    modal.click();
-  });
-  cnclBtn.addEventListener('click', ev => {
-    modal.click();
-  });
-};
-const deleteOrdersHandler = function (currentOrder, issued, routes, id) {
-  let hidden = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
-  if (issued == 0 && _state__WEBPACK_IMPORTED_MODULE_0__.state.adminCheck && !routes) {
-    // console.log('hi')
-    if (hidden) {
-      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="order__delete hidden__input table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `);
-    } else {
-      currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `);
-    }
-    document.querySelector('.order__delete').addEventListener('click', e => {
-      confirmDeleteHandler(e, () => {
-        (0,_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/orders/delete/${id}`, 'POST', null).then(() => {
-          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)();
-        });
-      }, `Подвтердить удаление заказа №${id}?`);
-    });
-  }
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/downloadFilesModal.js":
-/*!*********************************************************!*\
-  !*** ./web/src/static/js/modules/downloadFilesModal.js ***!
-  \*********************************************************/
+/***/ "./web/src/static/js/modules/modals/downloadFilesModal.js":
+/*!****************************************************************!*\
+  !*** ./web/src/static/js/modules/modals/downloadFilesModal.js ***!
+  \****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -390,11 +1819,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "filesModal": () => (/* binding */ filesModal),
 /* harmony export */   "triggerFilesModal": () => (/* binding */ triggerFilesModal)
 /* harmony export */ });
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
-/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
-/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../submitControl */ "./web/src/static/js/modules/submitControl.js");
+/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
+/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../sendData */ "./web/src/static/js/modules/sendData.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
 
 
 
@@ -606,638 +2035,10 @@ const drawFiles = (modal, files, id, parent) => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/drawDeadlineP.js":
-/*!****************************************************!*\
-  !*** ./web/src/static/js/modules/drawDeadlineP.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "drawDeadlineP": () => (/* binding */ drawDeadlineP)
-/* harmony export */ });
-const drawDeadlineP = (target, deadlines, chosenDeadline) => {
-  const block = document.querySelector(target);
-  deadlines.forEach(deadline => {
-    block.insertAdjacentHTML('beforeend', `
-             <option ${Number(chosenDeadline) === Number(deadline) ? 'selected' : ''} value='${deadline}'>${deadline}дн</option>
-        `);
-  });
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/drawManagers.js":
-/*!***************************************************!*\
-  !*** ./web/src/static/js/modules/drawManagers.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "drawManagers": () => (/* binding */ drawManagers)
-/* harmony export */ });
-const drawManagers = (target, managers, manager) => {
-  const block = document.querySelector(target);
-  managers.forEach(man => {
-    block.insertAdjacentHTML('beforeend', `
-             <option ${manager === man.nickname ? 'selected' : ''} value='${man.nickname}'>${man.nickname}</option>
-        `);
-  });
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/drawOrders.js":
-/*!*************************************************!*\
-  !*** ./web/src/static/js/modules/drawOrders.js ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "drawOrders": () => (/* binding */ drawOrders),
-/* harmony export */   "orderHTML": () => (/* binding */ orderHTML),
-/* harmony export */   "table": () => (/* binding */ table)
-/* harmony export */ });
-/* harmony import */ var _downloadFilesModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./downloadFilesModal */ "./web/src/static/js/modules/downloadFilesModal.js");
-/* harmony import */ var _tableFilters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tableFilters */ "./web/src/static/js/modules/tableFilters.js");
-/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./addTriggers */ "./web/src/static/js/modules/addTriggers.js");
-/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/routesModal.js");
-/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./showFull */ "./web/src/static/js/modules/showFull.js");
-/* harmony import */ var _commentsModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./commentsModal */ "./web/src/static/js/modules/commentsModal.js");
-/* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawDeadlineP.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
-/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./deleteOrdersHandler */ "./web/src/static/js/modules/deleteOrdersHandler.js");
-/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./getTime */ "./web/src/static/js/modules/getTime.js");
-
-
-
-
-
-
-
-
-
-
-
-
-
-const table = document.querySelector('.main-table');
-let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_12__.getTime)();
-today = today.substring(0, today.length - 6);
-const dateToday = new Date(today).getTime();
-const drawOrders = async (d, data, users) => {
-  (0,_tableFilters__WEBPACK_IMPORTED_MODULE_1__.controlFiltersReset)();
-  let uniqueFileNames = [];
-  if (d.files !== null) {
-    d.files.forEach(file => {
-      const arrDotFile = file.split('.');
-      const fileType = arrDotFile[arrDotFile.length - 1];
-      const arrSlashFile = file.split('/');
-      arrSlashFile.splice(0, 3);
-      const fileName = arrSlashFile.join('');
-      let fileNameWithoutType = fileName.split('.');
-      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
-      uniqueFileNames.push(fileNameWithoutType);
-    });
-  }
-  uniqueFileNames = [...new Set(uniqueFileNames)];
-  const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity);
-  console.log(d.quantity, d.issued);
-  table.insertAdjacentHTML(`afterbegin`, `
-      <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
-        <ul class='main-table__item'>
-            <li class='table-body_cell table__db'>
-                <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
-            </li>
-            <li class='table-body_cell table__timestamp'>
-                <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex='-1' autocomplete='off'>
-            </li>
-             <li class='table-body_cell hidden-input'>
-                <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
-            </li>
-            <li class='table-body_cell table__files'>
-                <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
-            </li>
-            <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
-                <input 
-                ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper}
-                id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
-            </li>
-            <li class='table-body_cell table-body__helper table__sample'>
-                <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
-            </li>
-            <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
-            </li>
-            <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
-            </li>
-            <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
-            </li>
-            <li class='table-body_cell table__quantity'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
-            </li>
-            <ul class="table__issueds">
-                <li class="table-body_cell table__issued">
-                    <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmTechGroupper} class="table__data ${orderCompleted && !_state__WEBPACK_IMPORTED_MODULE_7__.state.isArchive ? "table__issued--done tr" : ""}" tabindex="-1"
-                    type="number" 
-                    name="issued" 
-                    required  autocomplete="off"
-                    value="${d.issued}">
-                </li>
-            </ul>
-            <li class="table-body_cell hidden__input table__finished">
-                <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
-            </li>
-            <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
-                <select ${_state__WEBPACK_IMPORTED_MODULE_7__.state.selectAdmManGroupper} class="table__data table-m-select main__button" name="m" id="">
-                    <option selected value=""></option>
-                </select>
-            </li>
-            <li class="table-body_cell table__endtime">
-                <input class="main__button table__data "
-                ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManTechGroupper} 
-                name="end_time" 
-                type="text"
-                placeholder=" " 
-                value="${d.end_time.split("T")[0]}" 
-                onfocus="this.type='date'"
-                onblur="(this.type='text')"
-                tabindex="-1" 
-                autocomplete="off">
-            </li>
-            <li class="table__routes table-routes">
-                <input readonly type="text" class="hidden__input" name="routes_json">
-                <ul class="table-routes__wrapper">
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route">
-                        <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                        <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                </ul>
-                <ul class="table-routes__wrapper hidden__input table-routes__issued">
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                </ul>
-            </li>
-            <li class="table-body_cell table-body__helper table__p">
-                <select ${_state__WEBPACK_IMPORTED_MODULE_7__.state.selectAdmManTechGroupper} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
-                    <option selected value=""></option>
-                </select>
-            </li>
-            <li class="table-body_cell table-body__helper hidden-input table__comment">
-                <input class="table__data hidden-input table__data--ro" 
-                    name="comments" 
-                    type="text"
-                    value="" 
-                    readonly 
-                    autocomplete="off"
-                    tabindex="-1">
-            </li>
-            <li class="table-body_cell table-body__helper hidden-input table__comment">
-                <input class="table__data  hidden-input table__data--ro" 
-                    name="all_comments" 
-                    type="text"
-                    value="${d.comments ? d.comments.join(".-.") : ""}" 
-                    readonly 
-                    autocomplete="off"
-                    tabindex="-1">
-            </li>
-            
-            <li class="table-body_cell table-body__helper ${d.comments ? "table-body__attr" : ""} table__comment">
-                <input ${_state__WEBPACK_IMPORTED_MODULE_7__.state.inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
-                    name="comment" 
-                    type="text" 
-                    value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
-                    autocomplete="off"
-                    readonly>
-            </li>
-        </ul>
-    </form>
-  `);
-  const currentOrder = document.getElementById(`form-${d.id}`);
-  const routes = d["db_routes"];
-  const completedBlock = currentOrder.querySelector('.table__issued--done');
-  if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_7__.state.isArchive) {
-    completedBlock.insertAdjacentHTML(`afterend`, `
-            <li class="table-body_cell table-body__helper hidden__input table__complete">
-                <input class="table__data main__button tr" tabindex="-1"
-                readonly
-                type="text" 
-                autocomplete="off"
-                value="В архив">
-            </li>  
-        `);
-    currentOrder.querySelector('.table__complete').addEventListener('click', e => {
-      currentOrder.querySelector('#completed').value = true;
-      const parent = e.target.closest('.table-form--old');
-      if (parent !== null) {
-        parent.classList.remove('table-form--old');
-        parent.classList.add('table-form--upd');
-        (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_9__.submitData)();
-      } else {
-        (0,_submitControl__WEBPACK_IMPORTED_MODULE_10__.drawSubmit)();
-      }
-    });
-  }
-  if (_state__WEBPACK_IMPORTED_MODULE_7__.state.openedOrders.includes(String(d.id))) {
-    currentOrder.querySelectorAll('.table__data').forEach(item => {
-      if (!item.classList.contains('tr')) {
-        if (!item.classList.contains('table__data--opened')) {
-          item.classList.add('table__data--opened');
-        }
-      } else {
-        item.classList.add('table__data--chosen');
-      }
-    });
-    (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id, false);
-    try {
-      currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input');
-      const complete = currentOrder.querySelector('.table__complete');
-      complete.classList.remove('hidden__input');
-      complete.querySelector('.tr').classList.add('table-data__chosen');
-    } catch {}
-  }
-  if (String(d.id) === _state__WEBPACK_IMPORTED_MODULE_7__.state.currentOrder) {
-    currentOrder.querySelectorAll('.table__data').forEach(item => {
-      if (!item.classList.contains('table__data--opened')) {
-        item.classList.add('table__data--chosen');
-      }
-    });
-  }
-  const routesWrapper = document.querySelector(".table-routes__wrapper");
-  const routesIssuedWrapper = document.querySelector(".table-routes__issued");
-  if (!_state__WEBPACK_IMPORTED_MODULE_7__.state.isArchive) {
-    (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_6__.drawDeadlineP)(".table-p-select", _state__WEBPACK_IMPORTED_MODULE_7__.state.deadlinesP, d.p);
-    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_8__.drawManagers)(".table-m-select", users, d.m);
-    if (routes) {
-      routes.forEach(route => {
-        const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`);
-        const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`);
-        if (dataInput) {
-          const infoParent = dataInput.parentNode;
-          const routeInfo = infoParent.querySelector(`input[value="-"]`);
-          dataInput.value = JSON.stringify(route);
-          routeInfo.value = route.plot;
-          if (route.plan_date) {
-            let planDate = new Date(route.plan_date).getTime();
-            let planStart = new Date(route.plan_start).getTime();
-            if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
-              routeInfo.classList.add('route--planned');
-            }
-          }
-          if (route.comments) {
-            const lastComm = route.comments[route.comments.length - 1];
-            infoParent.setAttribute('data-title', `${lastComm.date} ${lastComm.value}`);
-            infoParent.classList.add('table-body__trattr');
-          }
-          if (route.start_time && !route.end_time) {
-            routeInfo.classList.add('route--started');
-            if (route.issued && route.quantity && route.issued >= route.quantity) {
-              routeInfo.style.color = "rgb(0 207 0)";
-            } else {
-              routeInfo.style.color = "black";
-            }
-          }
-          if (route.end_time) {
-            routeInfo.classList.add('route--completed');
-            routeInfo.classList.remove('route--started');
-            if (route.error_msg) {
-              routeInfo.style.color = "red";
-              infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}\n`);
-              // console.log(route.comments)
-            } else if (route.quantity && route.issued < route.quantity) {
-              routeInfo.style.color = "yellow";
-            } else {
-              routeInfo.style.color = "black";
-            }
-          }
-          if (route.error_msg && !route.end_time) {
-            routeInfo.classList.add('route--error');
-            infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`);
-            // console.log(route.comments)
-
-            if (route.start_time) {
-              routeInfo.style.color = "black";
-              routeInfo.classList.remove('route--started');
-              if (route.issued && route.quantity && route.issued >= route.quantity) {
-                routeInfo.style.color = "#07e807";
-              }
-            }
-          }
-        }
-        if (dataIssuedInput) {
-          dataIssuedInput.value = route["issued"];
-        }
-      });
-    } else {
-      (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_11__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
-    }
-  }
-  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
-    if (!cell.classList.contains('table__route')) {
-      const valElem = cell.querySelector('.table__data');
-      const value = valElem.value;
-      if (valElem.classList.contains('table-m-select') && value.length > 2 || valElem.scrollWidth > valElem.offsetWidth) {
-        cell.addEventListener('mouseenter', () => {
-          if (value) {
-            cell.insertAdjacentHTML('beforeend', `
-                <div class="check-helper">${value}</div>
-            `);
-            const helper = cell.querySelector('.check-helper');
-            if (helper) {
-              const helperHeight = helper.clientHeight;
-              if (helperHeight > 23) {
-                helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
-              } else {
-                helper.style.bottom = '-35px';
-              }
-            }
-          }
-        });
-        cell.addEventListener('mouseleave', e => {
-          try {
-            cell.querySelector('.check-helper').remove();
-          } catch {}
-        });
-      }
-    } else {
-      const value = cell.getAttribute('data-title');
-      cell.addEventListener('mouseenter', () => {
-        if (value) {
-          cell.insertAdjacentHTML('beforeend', `
-                <div class="check-helper check-helper--long">${value}</div>
-            `);
-          const helper = cell.querySelector('.check-helper');
-          if (helper) {
-            const helperHeight = helper.clientHeight;
-            if (helperHeight > 23) {
-              helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
-            } else {
-              helper.style.bottom = '-35px';
-            }
-          }
-        }
-      });
-      cell.addEventListener('mouseleave', e => {
-        try {
-          cell.querySelector('.check-helper').remove();
-        } catch {}
-      });
-    }
-  });
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__files", _downloadFilesModal__WEBPACK_IMPORTED_MODULE_0__.triggerFilesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__route", _routesModal__WEBPACK_IMPORTED_MODULE_3__.triggerRoutesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)(".table__comment", _commentsModal__WEBPACK_IMPORTED_MODULE_5__.triggerCommentsModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_2__.addTriggers)("#db_id", _showFull__WEBPACK_IMPORTED_MODULE_4__.showRoutesIssued);
-};
-const orderHTML = `
-<form class="table-form table-form--new" method="POST">
-            <ul class="main-table__item">
-                    <li class="table-body_cell table-body__helper table__db">
-                        <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__timestamp">
-                        <input id="timestamp" class="table__data   table__data--ro" name="timestamp" type="text" readonly value="" tabindex="-1" autocomplete="off">
-                    </li>
-                     <li class="table-body_cell table-body__helper hidden-input">
-                        <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__files">
-                        <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__number">
-                        <input id="number" class="table__data " name="number" type="text" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__sample">
-                        <input class="table__data   table__data--ro" name="sample" type="text" value="" readonly tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__client">
-                        <input class="table__data " type="text" name="client" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__name">
-                        <input class="table__data " type="text" name="name" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__material">
-                        <input class="table__data " type="text" name="material" value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__quantity">
-                        <input class="table__data " type="number" name="quantity" required value="" tabindex="-1" autocomplete="off">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__issued">
-                        <input class="table__data" tabindex="-1"
-                        type="number" 
-                        name="issued" 
-                        required  autocomplete="off"
-                        value="">
-                    </li>
-                    <li class="table-body_cell table-body__helper table__m">
-                        <select class="table__data table-m-select main__button" name="m" id="">
-                            <option selected value=""></option>
-                        </select>
-                    </li>
-                    <li class="table-body_cell table-body__helper table__endtime">
-                        <input class="main__button table__data " 
-                        name="end_time" 
-                        type="text"
-                        placeholder=" " 
-                        value="" 
-                        onfocus="this.type='date'"
-                        onblur="(this.type='text')"
-                        tabindex="-1" 
-                        autocomplete="off">
-                    </li>
-                    <li class="table__routes table-routes">
-                        <input readonly type="text" class="hidden__input" name="routes_json">
-                        <ul class="table-routes__wrapper">
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-2" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-3" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-4" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-5" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-6" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-7" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-8" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-9" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route">
-                                <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
-                                <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                        </ul>
-                        <ul class="table-routes__wrapper hidden__input table-routes__issued">
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-2-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-3-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-4-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-5-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-6-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-7-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-8-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                            <li class="table-body_cell table-body__helper table__route--issued">
-                                <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="table-body_cell table-body__helper table__p">
-                        <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
-                            <option selected value=""></option>
-                        </select>
-                    </li>
-                    <li class="table-body_cell table-body__helper hidden-input table__comment">
-                        <input class="table__data hidden-input table__data--ro" 
-                            name="comments" 
-                            type="text"
-                            value="" 
-                            readonly 
-                            autocomplete="off"
-                            tabindex="-1">
-                    </li>
-                    <li class="table-body_cell table-body__helper hidden-input table__comment">
-                        <input class="table__data  hidden-input table__data--ro" 
-                            name="all_comments" 
-                            type="text"
-                            value="" 
-                            readonly 
-                            autocomplete="off"
-                            tabindex="-1">
-                    </li>
-                    
-                    <li class="table-body_cell table-body__helper table__comment">
-                        <input class="main__button table__data click-chose table__data--ro" tabindex="-1"
-                            name="comment" 
-                            type="text" 
-                            value="" 
-                            autocomplete="off"
-                            readonly>
-                    </li>
-                </ul>
-        </form>
-`;
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/errorModal.js":
-/*!*************************************************!*\
-  !*** ./web/src/static/js/modules/errorModal.js ***!
-  \*************************************************/
+/***/ "./web/src/static/js/modules/modals/errorModal.js":
+/*!********************************************************!*\
+  !*** ./web/src/static/js/modules/modals/errorModal.js ***!
+  \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1245,8 +2046,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "changeErrorHandler": () => (/* binding */ changeErrorHandler)
 /* harmony export */ });
-/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
-/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
+/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
+/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../table */ "./web/src/static/js/table/index.js");
+/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+
 
 
 const changeErrorModal = `
@@ -1276,109 +2079,25 @@ const changeErrorHandler = (e, errorText, errorTime) => {
   okBtn.addEventListener('click', () => {
     e.target.classList.add('route-type__error');
     errorText.value = errInput.value;
-    setDateToInput('error__time');
-    addLog(_table__WEBPACK_IMPORTED_MODULE_1__.user.nickname, `ОШИБКА ${errInput.value}`, '#visible__comments');
+    (0,_routesModal__WEBPACK_IMPORTED_MODULE_2__.setDateToInput)('error__time');
+    (0,_routesModal__WEBPACK_IMPORTED_MODULE_2__.addLog)(_table__WEBPACK_IMPORTED_MODULE_1__.user.nickname, `ОШИБКА ${errInput.value}`, '#visible__comments');
     modal.click();
   });
   cnclBtn.addEventListener('click', () => {
     e.target.classList.remove('route-type__error');
     errorText.value = '';
     errorTime.value = '';
-    addLog(_table__WEBPACK_IMPORTED_MODULE_1__.user.nickname, `Сбросил ошибку`, '#visible__comments');
+    (0,_routesModal__WEBPACK_IMPORTED_MODULE_2__.addLog)(_table__WEBPACK_IMPORTED_MODULE_1__.user.nickname, `Сбросил ошибку`, '#visible__comments');
     modal.click();
   });
 };
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/filterOrders.js":
-/*!***************************************************!*\
-  !*** ./web/src/static/js/modules/filterOrders.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "globalFilterOrders": () => (/* binding */ globalFilterOrders)
-/* harmony export */ });
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
-
-
-const globalFilterOrders = (order, topFilters) => {
-  let flag = true;
-  for (let type in _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters) {
-    const filter = _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type];
-    if (filter === 'все') {} else if (filter) {
-      if (!(order[type].trim() === _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type].trim())) {
-        flag = false;
-        break;
-      }
-    }
-  }
-  if (flag) {
-    (0,_drawOrders__WEBPACK_IMPORTED_MODULE_1__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-  }
-  return flag;
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/getData.js":
-/*!**********************************************!*\
-  !*** ./web/src/static/js/modules/getData.js ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getData": () => (/* binding */ getData)
-/* harmony export */ });
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-
-const getData = async url => {
-  const resp = await fetch(`${_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/${url}`);
-  if (!resp.ok) {
-    console.log('beda');
-  }
-  return await resp.json();
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/getTime.js":
-/*!**********************************************!*\
-  !*** ./web/src/static/js/modules/getTime.js ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getTime": () => (/* binding */ getTime)
-/* harmony export */ });
-const getTime = () => {
-  let check = new Date().toLocaleString();
-  if (check[2] === '.') {
-    check = check.split('.');
-  } else if (check[2] === '/') {
-    check = check.split('/');
-  }
-  check[2] = check[2].split(',');
-  [check[0], check[2][0]] = [check[2][0], check[0]];
-  check[2] = check[2].join(',');
-  check = check.join('/');
-  return check.replaceAll('/', '-').slice(0, check.length - 3).split(',').join(' ').replace(' ', '');
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/issuedModal.js":
-/*!**************************************************!*\
-  !*** ./web/src/static/js/modules/issuedModal.js ***!
-  \**************************************************/
+/***/ "./web/src/static/js/modules/modals/issuedModal.js":
+/*!*********************************************************!*\
+  !*** ./web/src/static/js/modules/modals/issuedModal.js ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1386,10 +2105,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "issuedHandler": () => (/* binding */ issuedHandler)
 /* harmony export */ });
-/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
-/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/routesModal.js");
-/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
+/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../table */ "./web/src/static/js/table/index.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
 
 
 
@@ -1458,154 +2177,10 @@ const issuedHandler = (e, issuedInput, plotI, userI) => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/orders.js":
-/*!*********************************************!*\
-  !*** ./web/src/static/js/modules/orders.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "deleteOrders": () => (/* binding */ deleteOrders),
-/* harmony export */   "getOrders": () => (/* binding */ getOrders)
-/* harmony export */ });
-/* harmony import */ var _tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tableFilters */ "./web/src/static/js/modules/tableFilters.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
-/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
-/* harmony import */ var _topFilters__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./topFilters */ "./web/src/static/js/modules/topFilters.js");
-/* harmony import */ var _tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tableRoutesFilters */ "./web/src/static/js/modules/tableRoutesFilters.js");
-
-
-
-
-
-
-
-
-const getOrders = function () {
-  let postfix = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'get-all';
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive = postfix !== 'get-all';
-  document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
-        <h3 class="warning">Обновляем таблицу...</h3>
-    `);
-  document.querySelector('.table__archive').classList.add('hidden__input');
-  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
-  console.time('get orders');
-  fetch(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/${postfix}`).then(res => res.json()).then(data => {
-    const nums = [];
-    const clients = [];
-    const materials = [];
-    const names = [];
-    const quantity = [];
-    const issued = [];
-    const managers = [];
-    const deadlines = [];
-    const timestamps = [];
-    (0,_getData__WEBPACK_IMPORTED_MODULE_3__.getData)('users/get-users').then(res => {
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
-      deleteOrders();
-      data.data.forEach(d => {
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
-        nums.push(d.number);
-        clients.push(d.client);
-        materials.push(d.material);
-        names.push(d.name);
-        quantity.push(d.quantity);
-        issued.push(d.issued);
-        managers.push(d.m);
-        deadlines.push(d.end_time);
-        timestamps.push(d.timestamp.split('T')[0]);
-        if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
-        }
-        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered && filters.length) {
-          // console.log('big filter')
-          (0,_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)(d, filters);
-          (0,_topFilters__WEBPACK_IMPORTED_MODULE_6__.filterData)();
-        } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-          console.log('table filter');
-          (0,_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)(d);
-        } else if (filters.length) {
-          // console.log('top filter')
-          (0,_topFilters__WEBPACK_IMPORTED_MODULE_6__.filterData)();
-        } else {
-          // console.log('draw only')
-          (0,_drawOrders__WEBPACK_IMPORTED_MODULE_5__.drawOrders)(d, data, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
-        }
-        if (!filters.length) {
-          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.started) {
-            deleteOrders();
-            (0,_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.startFilter)(filters);
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.error) {
-            deleteOrders();
-            (0,_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.errFilter)(filters);
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.completed) {
-            deleteOrders();
-            (0,_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.completedFilter)(filters);
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.planned) {
-            deleteOrders();
-            (0,_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.plannedFilter)(filters);
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.unstarted) {
-            deleteOrders();
-            (0,_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.notInWorkFilter)(filters);
-          }
-        }
-      });
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(nums)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(clients)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(materials)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(names)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(quantity)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.quantityFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(issued)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.issuedFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(managers)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.managerFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(deadlines)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(timestamps)], _tableFilters__WEBPACK_IMPORTED_MODULE_0__.timestampFilter);
-      document.querySelector('.table-info').querySelector('.warning').remove();
-      const totalOrders = document.querySelector('.orders__total');
-      if (totalOrders === null) {
-        document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
-                        <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
-                    `);
-      } else {
-        totalOrders.textContent = `Всего в работе ${data.data.length}`;
-      }
-      document.querySelector('.table__archive').classList.remove('hidden__input');
-      (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
-      (0,_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
-      if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
-        document.querySelectorAll('.table__data').forEach(field => {
-          field.setAttribute("readonly", "true");
-        });
-      }
-      console.timeEnd('get orders');
-      document.querySelectorAll(".table-form").forEach(form => {
-        form.addEventListener('click', e => {
-          console.log("I am form hi)");
-        });
-      });
-    });
-  });
-};
-const deleteOrders = () => {
-  const orders = document.querySelectorAll('.table-form');
-  // document.querySelector('.orders__total').remove()
-
-  orders.forEach(order => {
-    order.remove();
-  });
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/planModal.js":
-/*!************************************************!*\
-  !*** ./web/src/static/js/modules/planModal.js ***!
-  \************************************************/
+/***/ "./web/src/static/js/modules/modals/planModal.js":
+/*!*******************************************************!*\
+  !*** ./web/src/static/js/modules/modals/planModal.js ***!
+  \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1613,8 +2188,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "planDateHandler": () => (/* binding */ planDateHandler)
 /* harmony export */ });
-/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
-/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
 
 
 const planDateModal = `
@@ -1779,10 +2354,10 @@ const planDateHandler = (e, planObj, dateEndInput) => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/routesModal.js":
-/*!**************************************************!*\
-  !*** ./web/src/static/js/modules/routesModal.js ***!
-  \**************************************************/
+/***/ "./web/src/static/js/modules/modals/routesModal.js":
+/*!*********************************************************!*\
+  !*** ./web/src/static/js/modules/modals/routesModal.js ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1791,21 +2366,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addLog": () => (/* binding */ addLog),
 /* harmony export */   "drawPlots": () => (/* binding */ drawPlots),
 /* harmony export */   "drawUsers": () => (/* binding */ drawUsers),
+/* harmony export */   "setDateToInput": () => (/* binding */ setDateToInput),
 /* harmony export */   "subCommentByEnter": () => (/* binding */ subCommentByEnter),
 /* harmony export */   "triggerRoutesModal": () => (/* binding */ triggerRoutesModal)
 /* harmony export */ });
-/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/showModal.js");
-/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../table */ "./web/src/static/js/table/index.js");
-/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
-/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
-/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./getTime */ "./web/src/static/js/modules/getTime.js");
-/* harmony import */ var _planModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./planModal */ "./web/src/static/js/modules/planModal.js");
-/* harmony import */ var _errorModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./errorModal */ "./web/src/static/js/modules/errorModal.js");
-/* harmony import */ var _issuedModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./issuedModal */ "./web/src/static/js/modules/issuedModal.js");
+/* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
+/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../table */ "./web/src/static/js/table/index.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../sendData */ "./web/src/static/js/modules/sendData.js");
+/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../submitControl */ "./web/src/static/js/modules/submitControl.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _planModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./planModal */ "./web/src/static/js/modules/modals/planModal.js");
+/* harmony import */ var _errorModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./errorModal */ "./web/src/static/js/modules/modals/errorModal.js");
+/* harmony import */ var _issuedModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./issuedModal */ "./web/src/static/js/modules/modals/issuedModal.js");
 
 
 
@@ -2016,7 +2592,6 @@ const issuedModal = `
    </div>
 `;
 const drawLogs = data => {
-  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут'];
   const logsList = document.querySelector('.section-logs__list');
   const logsItems = logsList.querySelectorAll('.section-logs__item');
   if (logsItems !== null) {
@@ -2027,7 +2602,7 @@ const drawLogs = data => {
   data.value.split('---').reverse().forEach(log => {
     if (log.trim() !== '') {
       let flag = true;
-      systemWords.forEach(word => {
+      _state__WEBPACK_IMPORTED_MODULE_2__.state.systemWords.forEach(word => {
         if (log.includes(word)) {
           flag = false;
         }
@@ -2398,18 +2973,6 @@ const triggerRoutesModal = e => {
     disableBtn('otk-route__btn');
     addLog(routeUser.value, 'Прошел ОТК', '#visible__comments');
   });
-
-  // REPORT
-  // reportBtn.addEventListener('click', () => {
-  //   issued.value = String(Number(issued.value) + Number(issuedToday.value))
-  //   let logMsg = addLog(routeUser.value, `${routePlot.value} За смену ${issuedToday.value}`, '#visible__comments')
-  //   saveData(logMsg, '#issued_report')
-  //   issuedToday.value = ''
-  // })
-
-  issuedToday.addEventListener('input', e => {
-    activateOnInput(e, 'report-sub--route__btn');
-  });
   const reportIssued = document.querySelector('.report-route__btn');
   reportIssued.addEventListener('click', () => {
     (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(issuedModal);
@@ -2417,8 +2980,8 @@ const triggerRoutesModal = e => {
     document.querySelector('#issued__all').value.split('---').forEach(rep => {
       if (rep.trim() !== '') {
         dataPlace.insertAdjacentHTML(`beforeend`, `
-                    <li style='text-align: center' class='comment__item'>${rep}</li>   
-                `);
+            <li style='text-align: center' class='comment__item'>${rep}</li>   
+        `);
       }
     });
     addLog(logName, 'Просмотрел отчет по сменам', '#visible__comments');
@@ -2553,6 +3116,199 @@ const controlCommentAccess = commentInput => {
 
 /***/ }),
 
+/***/ "./web/src/static/js/modules/modals/showModal.js":
+/*!*******************************************************!*\
+  !*** ./web/src/static/js/modules/modals/showModal.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "showModal": () => (/* binding */ showModal)
+/* harmony export */ });
+/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+
+const showModal = modal => {
+  const body = window.document.body;
+  // let modalElem = document.querySelector('.modal')
+  // if (modalElem === null) {
+  body.insertAdjacentHTML('afterbegin', modal);
+  // }
+
+  const modalElem = document.querySelector('.modal');
+  modalElem.classList.add('modal_vis');
+  modalElem.classList.remove('bounceOutDown');
+  body.classList.add('body_block');
+  modalElem.addEventListener('click', ev => {
+    const target = ev.target;
+    if (target === modalElem) {
+      modalElem.classList.add('bounceOutDown');
+      modalElem.classList.remove('modal_vis');
+      body.classList.remove('body_block');
+      modalElem.remove();
+      window.removeEventListener('keydown', _routesModal__WEBPACK_IMPORTED_MODULE_0__.subCommentByEnter);
+    }
+  });
+  return modalElem;
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/orders.js":
+/*!*********************************************!*\
+  !*** ./web/src/static/js/modules/orders.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "deleteOrders": () => (/* binding */ deleteOrders),
+/* harmony export */   "getOrders": () => (/* binding */ getOrders)
+/* harmony export */ });
+/* harmony import */ var _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _filters_filterOrders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filters/filterOrders */ "./web/src/static/js/modules/filters/filterOrders.js");
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
+/* harmony import */ var _filters_topFilters__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./filters/topFilters */ "./web/src/static/js/modules/filters/topFilters.js");
+/* harmony import */ var _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
+/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./addTriggers */ "./web/src/static/js/modules/addTriggers.js");
+/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
+/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
+/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./showFull */ "./web/src/static/js/modules/showFull.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+const getOrders = function () {
+  let postfix = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'get-all';
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive = postfix !== 'get-all';
+  document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
+        <h3 class="warning">Обновляем таблицу...</h3>
+    `);
+  document.querySelector('.table__archive').classList.add('hidden__input');
+  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
+  console.time('get orders');
+  fetch(`${_state__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/orders/${postfix}`).then(res => res.json()).then(data => {
+    const nums = [];
+    const clients = [];
+    const materials = [];
+    const names = [];
+    const quantity = [];
+    const issued = [];
+    const managers = [];
+    const deadlines = [];
+    const timestamps = [];
+    (0,_getData__WEBPACK_IMPORTED_MODULE_3__.getData)('users/get-users').then(res => {
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
+      deleteOrders();
+      data.data.forEach(d => {
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
+        nums.push(d.number);
+        clients.push(d.client);
+        materials.push(d.material);
+        names.push(d.name);
+        quantity.push(d.quantity);
+        issued.push(d.issued);
+        managers.push(d.m);
+        deadlines.push(d.end_time);
+        timestamps.push(d.timestamp.split('T')[0]);
+        if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
+        }
+        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered && filters.length) {
+          // console.log('big filter')
+          (0,_filters_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)(d, filters);
+          (0,_filters_topFilters__WEBPACK_IMPORTED_MODULE_6__.filterData)();
+        } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+          console.log('table filter');
+          (0,_filters_filterOrders__WEBPACK_IMPORTED_MODULE_4__.globalFilterOrders)(d);
+        } else if (filters.length) {
+          // console.log('top filter')
+          (0,_filters_topFilters__WEBPACK_IMPORTED_MODULE_6__.filterData)();
+        } else {
+          // console.log('draw only')
+          (0,_drawOrders__WEBPACK_IMPORTED_MODULE_5__.drawOrders)(d, data, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
+        }
+        if (!filters.length) {
+          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.started) {
+            deleteOrders();
+            (0,_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.startFilter)(filters);
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.error) {
+            deleteOrders();
+            (0,_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.errFilter)(filters);
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.completed) {
+            deleteOrders();
+            (0,_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.completedFilter)(filters);
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.planned) {
+            deleteOrders();
+            (0,_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.plannedFilter)(filters);
+          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.unstarted) {
+            deleteOrders();
+            (0,_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_7__.notInWorkFilter)(filters);
+          }
+        }
+      });
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(nums)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(clients)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(materials)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(names)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(quantity)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.quantityFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(issued)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.issuedFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(managers)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.managerFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(deadlines)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(timestamps)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.timestampFilter);
+      document.querySelector('.table-info').querySelector('.warning').remove();
+      const totalOrders = document.querySelector('.orders__total');
+      if (totalOrders === null) {
+        document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
+                        <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
+                    `);
+      } else {
+        totalOrders.textContent = `Всего в работе ${data.data.length}`;
+      }
+      document.querySelector('.table__archive').classList.remove('hidden__input');
+      (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
+      if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+        document.querySelectorAll('.table__data').forEach(field => {
+          field.setAttribute("readonly", "true");
+        });
+      }
+      console.timeEnd('get orders');
+      document.querySelectorAll(".table-form").forEach(form => {
+        form.addEventListener('click', e => {
+          console.log("I am form hi)");
+        });
+      });
+    });
+  });
+};
+const deleteOrders = () => {
+  const orders = document.querySelectorAll('.table-form');
+  // document.querySelector('.orders__total').remove()
+
+  orders.forEach(order => {
+    order.remove();
+  });
+};
+
+/***/ }),
+
 /***/ "./web/src/static/js/modules/search.js":
 /*!*********************************************!*\
   !*** ./web/src/static/js/modules/search.js ***!
@@ -2661,45 +3417,6 @@ const showRoutesIssued = e => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/showModal.js":
-/*!************************************************!*\
-  !*** ./web/src/static/js/modules/showModal.js ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "showModal": () => (/* binding */ showModal)
-/* harmony export */ });
-/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/routesModal.js");
-
-const showModal = modal => {
-  const body = window.document.body;
-  // let modalElem = document.querySelector('.modal')
-  // if (modalElem === null) {
-  body.insertAdjacentHTML('afterbegin', modal);
-  // }
-
-  const modalElem = document.querySelector('.modal');
-  modalElem.classList.add('modal_vis');
-  modalElem.classList.remove('bounceOutDown');
-  body.classList.add('body_block');
-  modalElem.addEventListener('click', ev => {
-    const target = ev.target;
-    if (target === modalElem) {
-      modalElem.classList.add('bounceOutDown');
-      modalElem.classList.remove('modal_vis');
-      body.classList.remove('body_block');
-      modalElem.remove();
-      window.removeEventListener('keydown', _routesModal__WEBPACK_IMPORTED_MODULE_0__.subCommentByEnter);
-    }
-  });
-  return modalElem;
-};
-
-/***/ }),
-
 /***/ "./web/src/static/js/modules/state.js":
 /*!********************************************!*\
   !*** ./web/src/static/js/modules/state.js ***!
@@ -2722,6 +3439,8 @@ __webpack_require__.r(__webpack_exports__);
 let appAddr = 'http://172.20.10.7:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
+  'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут'],
+  'inPlanDate': '',
   'filtered': false,
   'inWork': false,
   'newOrders': false,
@@ -2802,9 +3521,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 /* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
 /* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./addTriggers */ "./web/src/static/js/modules/addTriggers.js");
-/* harmony import */ var _downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./downloadFilesModal */ "./web/src/static/js/modules/downloadFilesModal.js");
-/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/routesModal.js");
-/* harmony import */ var _commentsModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./commentsModal */ "./web/src/static/js/modules/commentsModal.js");
+/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
+/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawManagers.js");
@@ -2897,9 +3616,9 @@ addOrder.addEventListener('click', e => {
   (0,_drawManagers__WEBPACK_IMPORTED_MODULE_9__.drawManagers)('.table-m-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.managers, 'adfasdfsdfsdada');
   (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_10__.drawDeadlineP)('.table-p-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.deadlinesP, 'adfasdfsdfsdada');
   (0,_bindListeners__WEBPACK_IMPORTED_MODULE_1__.bindOrdersListeners)();
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__files', _downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__route', _routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__comment', _commentsModal__WEBPACK_IMPORTED_MODULE_6__.triggerCommentsModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__route', _modals_routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_6__.triggerCommentsModal);
 });
 const finallyForOrders = success => {
   deleteSubmitBtn();
@@ -3004,672 +3723,6 @@ function submitData() {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/tableFilters.js":
-/*!***************************************************!*\
-  !*** ./web/src/static/js/modules/tableFilters.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "bindTableFilters": () => (/* binding */ bindTableFilters),
-/* harmony export */   "clientsFilter": () => (/* binding */ clientsFilter),
-/* harmony export */   "controlFiltersReset": () => (/* binding */ controlFiltersReset),
-/* harmony export */   "deadlineFilter": () => (/* binding */ deadlineFilter),
-/* harmony export */   "deleteTableFilters": () => (/* binding */ deleteTableFilters),
-/* harmony export */   "drawTableFilter": () => (/* binding */ drawTableFilter),
-/* harmony export */   "issuedFilter": () => (/* binding */ issuedFilter),
-/* harmony export */   "managerFilter": () => (/* binding */ managerFilter),
-/* harmony export */   "materialsFilter": () => (/* binding */ materialsFilter),
-/* harmony export */   "namesFilter": () => (/* binding */ namesFilter),
-/* harmony export */   "numsFilter": () => (/* binding */ numsFilter),
-/* harmony export */   "quantityFilter": () => (/* binding */ quantityFilter),
-/* harmony export */   "tableFiltersWrapper": () => (/* binding */ tableFiltersWrapper),
-/* harmony export */   "timestampFilter": () => (/* binding */ timestampFilter)
-/* harmony export */ });
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
-/* harmony import */ var _topFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./topFilters */ "./web/src/static/js/modules/topFilters.js");
-
-
-
-
-
-const tableFiltersWrapper = document.querySelector('.main-table__header');
-const numsFilter = tableFiltersWrapper.querySelector('#numbers');
-const clientsFilter = tableFiltersWrapper.querySelector('#clients');
-const materialsFilter = tableFiltersWrapper.querySelector('#materials');
-const namesFilter = tableFiltersWrapper.querySelector("#name");
-const quantityFilter = tableFiltersWrapper.querySelector("#quantity");
-const issuedFilter = tableFiltersWrapper.querySelector("#issued");
-const managerFilter = tableFiltersWrapper.querySelector("#m");
-const deadlineFilter = tableFiltersWrapper.querySelector("#end_time");
-const timestampFilter = tableFiltersWrapper.querySelector("#timestamp");
-const deleteTableFilters = () => {
-  const filters = document.querySelectorAll('.table__filter--new');
-  if (filters[0] !== null) {
-    filters.forEach(filter => filter.remove());
-  }
-};
-const drawTableFilter = (data, target) => {
-  data.forEach(d => {
-    target.insertAdjacentHTML('beforeend', `
-            <option class='table__filter--new' value='${d}'>${d}</option>
-        `);
-  });
-};
-const bindTableFilters = () => {
-  const tableFilters = document.querySelectorAll('.table__filter');
-  const filterWrappers = document.querySelectorAll('.table__use label');
-  filterWrappers.forEach(wrapper => {
-    wrapper.addEventListener('click', e => {
-      const select = wrapper.parentNode.querySelector('select');
-      wrapper.classList.add('hidden__input');
-      select.classList.remove('hidden__input');
-    });
-  });
-  tableFilters.forEach(filter => {
-    filter.addEventListener('blur', e => {
-      showFilter(e);
-    });
-  });
-  bindFilter(numsFilter);
-  bindFilter(clientsFilter);
-  bindFilter(materialsFilter);
-  bindFilter(namesFilter);
-  bindFilter(quantityFilter);
-  bindFilter(issuedFilter);
-  bindFilter(managerFilter);
-  bindFilter(deadlineFilter);
-  bindFilter(timestampFilter);
-};
-const showFilter = e => {
-  const target = e.target;
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
-  const label = target.parentNode.querySelector('label');
-  target.classList.add('hidden__input');
-  label.classList.remove('hidden__input');
-};
-const filterOrders = (type, filter) => {
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters[type] = filter;
-  console.log(type, filter);
-  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters);
-  (0,_orders__WEBPACK_IMPORTED_MODULE_0__.deleteOrders)();
-  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.forEach(o => {
-    (0,_filterOrders__WEBPACK_IMPORTED_MODULE_3__.globalFilterOrders)(o, filters);
-  });
-  if (filters.length) {
-    (0,_topFilters__WEBPACK_IMPORTED_MODULE_4__.filterData)();
-  }
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
-};
-const bindFilter = elem => {
-  elem.removeEventListener('change', filterListener);
-  elem.addEventListener('change', filterListener);
-};
-const filterListener = e => {
-  showFilter(e);
-  filterOrders(e.target.parentNode.querySelector(".filter__type").value, e.target.value);
-  setChosenFilter(e);
-};
-const controlFiltersReset = () => {
-  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-    const nav = document.querySelector('.main-header__nav');
-    const resetBtn = nav.querySelector('.header-button__reset');
-    if (resetBtn === null) {
-      nav.insertAdjacentHTML('beforeend', `
-                <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
-            `);
-      nav.querySelector('.header-button__reset').addEventListener('click', e => {
-        document.querySelector('#search__input').value = '';
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters = {};
-        document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'));
-        tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
-          cell.style.textDecoration = 'none';
-        });
-        (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)('get-all');
-      });
-    }
-  } else {
-    const resetBtn = document.querySelector('.header-button__reset');
-    if (resetBtn !== null) {
-      resetBtn.remove();
-    }
-  }
-};
-const setChosenFilter = e => {
-  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-    e.target.parentNode.querySelector('label').style.textDecoration = 'underline';
-  } else {
-    e.target.parentNode.querySelector('label').style.textDecoration = 'none';
-  }
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/tableRoutesFilters.js":
-/*!*********************************************************!*\
-  !*** ./web/src/static/js/modules/tableRoutesFilters.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "completedFilter": () => (/* binding */ completedFilter),
-/* harmony export */   "errFilter": () => (/* binding */ errFilter),
-/* harmony export */   "notInWorkFilter": () => (/* binding */ notInWorkFilter),
-/* harmony export */   "plannedFilter": () => (/* binding */ plannedFilter),
-/* harmony export */   "startFilter": () => (/* binding */ startFilter),
-/* harmony export */   "tableRoutesFiltersHandler": () => (/* binding */ tableRoutesFiltersHandler)
-/* harmony export */ });
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
-/* harmony import */ var _topFilters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./topFilters */ "./web/src/static/js/modules/topFilters.js");
-/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawOrders.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./getTime */ "./web/src/static/js/modules/getTime.js");
-
-
-
-
-
-
-
-const startFilter = filters => {
-  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-    let check = false;
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.start_time && !route.end_time) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true;
-            }
-          } else {
-            check = true;
-          }
-        }
-      });
-    }
-    return checkDoFilter(check, order);
-  });
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
-};
-const errFilter = filters => {
-  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-    let check = false;
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.error_msg) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true;
-            }
-          } else {
-            check = true;
-          }
-        }
-      });
-    }
-    return checkDoFilter(check, order);
-  });
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
-};
-const completedFilter = filters => {
-  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-    let check = false;
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.end_time) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true;
-            }
-          } else {
-            check = true;
-          }
-        }
-      });
-    }
-    return checkDoFilter(check, order);
-  });
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
-};
-const notInWorkFilter = filters => {
-  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-    let check = false;
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (!route.start_time) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true;
-            }
-          } else {
-            check = true;
-          }
-        }
-      });
-    }
-    return checkDoFilter(check, order);
-  });
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
-};
-const checkDoFilter = (check, order) => {
-  if (check) {
-    if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered && filters.length) {
-      (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
-      (0,_topFilters__WEBPACK_IMPORTED_MODULE_2__.filterData)();
-    } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered) {
-      console.log('table filters');
-      (0,_filterOrders__WEBPACK_IMPORTED_MODULE_1__.globalFilterOrders)(order);
-    } else {
-      (0,_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-    }
-  }
-  return check;
-};
-const plannedFilter = filters => {
-  let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_6__.getTime)();
-  today = today.substring(0, today.length - 6);
-  let dateToday = new Date(today).getTime();
-  _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-    let check = false;
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.plan_date) {
-          let planDate = new Date(route.plan_date).getTime();
-          let planStart = new Date(route.plan_start).getTime();
-          if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(today)) {
-            if (filters.length) {
-              if (filters.includes(route.plot)) {
-                check = true;
-              }
-            } else {
-              check = true;
-            }
-          }
-        }
-      });
-    }
-    return checkDoFilter(check, order);
-  });
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_5__.bindOrdersListeners)();
-};
-const tableRoutesFiltersHandler = () => {
-  const inWorkBtn = document.querySelector(".header-routes__work");
-  const notWorkBtn = document.querySelector(".header-routes__unwork");
-  const inErrorBtn = document.querySelector(".header-routes__error");
-  const completedBtn = document.querySelector(".header-routes__completed");
-  const inPlanBtn = document.querySelector(".header-routes__planned");
-  inWorkBtn.addEventListener('click', e => {
-    if (inWorkBtn.classList.contains('route__filter--chosen')) {
-      inWorkBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
-      return;
-    }
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-    } catch {}
-    inWorkBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
-    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
-    startFilter(filters);
-  });
-  notWorkBtn.addEventListener('click', () => {
-    if (notWorkBtn.classList.contains('route__filter--chosen')) {
-      notWorkBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
-      return;
-    }
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-    } catch {}
-    notWorkBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
-    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
-    notInWorkFilter(filters);
-  });
-  inErrorBtn.addEventListener('click', e => {
-    if (inErrorBtn.classList.contains('route__filter--chosen')) {
-      inErrorBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
-      return;
-    }
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-    } catch {}
-    inErrorBtn.classList.add('route__filter--chosen');
-    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
-    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
-    errFilter(filters);
-  });
-  completedBtn.addEventListener('click', e => {
-    if (completedBtn.classList.contains('route__filter--chosen')) {
-      completedBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
-      return;
-    }
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-    } catch {}
-    completedBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
-    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
-    completedFilter(filters);
-  });
-  inPlanBtn.addEventListener('click', e => {
-    if (inPlanBtn.classList.contains('route__filter--chosen')) {
-      inPlanBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
-      return;
-    }
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-    } catch {}
-    inPlanBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    (0,_orders__WEBPACK_IMPORTED_MODULE_4__.deleteOrders)();
-    const filters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
-    plannedFilter(filters);
-  });
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/modules/topFilters.js":
-/*!*************************************************!*\
-  !*** ./web/src/static/js/modules/topFilters.js ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "filterData": () => (/* binding */ filterData),
-/* harmony export */   "topFiltersHandler": () => (/* binding */ topFiltersHandler)
-/* harmony export */ });
-/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
-/* harmony import */ var _filterOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filterOrders */ "./web/src/static/js/modules/filterOrders.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-
-
-
-
-
-const topFiltersHandler = () => {
-  let filtered;
-  const plotFilters = document.querySelector('.nav-filters__plots');
-  const filterFilters = document.querySelector('.nav-filters__filters');
-  const selectUser = document.querySelector('.select-user');
-  const nav = document.querySelector('.nav-filters');
-  const extensions = ['все'];
-  const checkExt = (extensions, ext) => {
-    let flag = false;
-    extensions.forEach(d => {
-      if (d === ext) {
-        flag = true;
-      }
-    });
-    return flag;
-  };
-  const drawTopPanel = (data, block, short) => {
-    data.forEach(d => {
-      let condition = !checkExt(extensions, d.name);
-      if (condition) {
-        if (short) {
-          block.insertAdjacentHTML('beforeend', `
-                    <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button'>${d.short_name}</button>
-                        <input class='hidden__input' value="${d.name}"/>
-                     </li>
-                    `);
-        } else {
-          block.insertAdjacentHTML('beforeend', `
-                    <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button'>${d.name}</button>
-                     </li>
-                    `);
-        }
-      }
-    });
-  };
-  const removeData = block => {
-    block.innerHTML = '';
-  };
-  const plotListener = block => {
-    const btns = block.querySelectorAll('button');
-    btns.forEach(btn => {
-      btn.addEventListener('click', e => {
-        const target = e.target;
-        const plot = target.parentNode.querySelector('input').value;
-        if (!target.classList.contains('chosen__plot')) {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.push(plot);
-        } else {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.filter(cP => cP !== plot);
-        }
-        target.classList.toggle('chosen__plot');
-        target.classList.toggle('nav-filters__button--chosen');
-        filterByPlots();
-        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
-          filterData();
-          filtered = true;
-          controlFilterReset();
-        } else {
-          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
-          filtered = false;
-          controlFilterReset();
-        }
-      });
-    });
-  };
-  const filterByPlots = () => {
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters.filter(filt => _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.includes(filt.plot));
-    removeData(filterFilters);
-    if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
-      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters, filterFilters);
-    } else {
-      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters, filterFilters);
-    }
-    filterListener(filterFilters);
-  };
-  const removePlotsByUser = (plot, plots) => {
-    const newPlots = [];
-    plots.forEach(f => {
-      console.log(f);
-      if (f.name === plot) {
-        newPlots.push(f);
-      }
-    });
-    removeData(plotFilters);
-    drawTopPanel(newPlots, plotFilters);
-  };
-  const filterListener = block => {
-    block.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const target = e.target;
-        const filter = target.textContent;
-        if (!target.classList.contains('chosen__filter')) {
-          if (!document.querySelector('.chosen__plot')) {
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.push({
-              'name': filter
-            });
-          } else {
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = [{
-              'name': filter
-            }];
-          }
-        } else {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.filter(cF => cF.name !== filter);
-        }
-        target.classList.toggle('chosen__filter');
-        target.classList.toggle('nav-filters__button--chosen');
-        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
-          filterData();
-          filtered = true;
-          controlFilterReset();
-        } else {
-          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
-          filtered = false;
-          controlFilterReset();
-        }
-      });
-    });
-  };
-  const controlFilterReset = () => {
-    const resetBtn = document.querySelector('.nav-filters__reset');
-    if (filtered) {
-      if (!resetBtn) {
-        nav.insertAdjacentHTML('beforeend', `
-                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
-                `);
-        document.querySelector('.nav-filters__reset').addEventListener('click', () => {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = [];
-          document.querySelector('.nav-filters__reset').remove();
-          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
-          nav.querySelectorAll('.nav-filters__button').forEach(btn => {
-            console.log(btn);
-            btn.classList.remove('nav-filters__button--chosen');
-            btn.classList.remove('chosen__plot');
-            btn.classList.remove('chosen__filter');
-          });
-        });
-      }
-    } else {
-      document.querySelector('.nav-filters__reset').remove();
-    }
-  };
-  const drawUsers = users => {
-    users.forEach(u => {
-      document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
-            <option value='${u.id}'>
-                ${u.name}
-            </option>
-        `);
-    });
-  };
-  const draw = async () => {
-    let plots = [];
-    let filters = [];
-    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('filters/get-all').then(data => {
-      drawTopPanel(data.data, filterFilters);
-      filters = data.data;
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = filters;
-    }).then(_ => filterListener(filterFilters));
-    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('plots/get-all').then(data => {
-      drawTopPanel(data.data, plotFilters, true);
-      plots = data.data;
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = plots;
-    }).then(_ => plotListener(plotFilters));
-    if (selectUser !== null) {
-      await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('users/get-operators').then(data => {
-        drawUsers(data.data);
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots = data.data[0].plot;
-        removePlotsByUser(data.data[0].plot, _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots);
-        filterByPlots();
-        plotListener(plotFilters);
-      });
-    }
-  };
-  draw();
-};
-const filterData = () => {
-  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(order => {
-    let flag = false;
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (filters.includes(route.plot)) {
-          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.started) {
-            console.log('started');
-            if (route.start_time && !route.end_time) {
-              flag = true;
-            }
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.error) {
-            console.log('error');
-            if (route.error_msg) {
-              flag = true;
-            }
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.completed) {
-            if (route.end_time) {
-              flag = true;
-            }
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.unstarted) {
-            if (!route.start_time) {
-              flag = true;
-            }
-          } else if (_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters.planned) {
-            console.log('hi');
-            if (route.plan_date) {
-              let planDate = new Date(route.plan_date).getTime();
-              let planStart = new Date(route.plan_start).getTime();
-              if (planStart <= today && today <= planDate) {
-                if (filters.length) {
-                  if (filters.includes(route.plot)) {
-                    flag = true;
-                  }
-                } else {
-                  flag = true;
-                }
-              }
-            }
-          } else {
-            console.log(route);
-            flag = true;
-          }
-        }
-      });
-    }
-    return flag;
-  });
-  (0,_orders__WEBPACK_IMPORTED_MODULE_2__.deleteOrders)();
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders.forEach(order => {
-    (0,_filterOrders__WEBPACK_IMPORTED_MODULE_3__.globalFilterOrders)(order);
-  });
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
-};
-
-/***/ }),
-
 /***/ "./web/src/static/js/table/index.js":
 /*!******************************************!*\
   !*** ./web/src/static/js/table/index.js ***!
@@ -3684,9 +3737,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_table_table_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css/table/table.scss */ "./web/src/static/css/table/table.scss");
 /* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/orders */ "./web/src/static/js/modules/orders.js");
 /* harmony import */ var _modules_search__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/search */ "./web/src/static/js/modules/search.js");
-/* harmony import */ var _modules_topFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/topFilters */ "./web/src/static/js/modules/topFilters.js");
+/* harmony import */ var _modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/filters/topFilters */ "./web/src/static/js/modules/filters/topFilters.js");
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _modules_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/tableRoutesFilters */ "./web/src/static/js/modules/tableRoutesFilters.js");
+/* harmony import */ var _modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
 
 
 
@@ -3694,7 +3747,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const user = JSON.parse(sessionStorage.getItem("user"));
-(0,_modules_topFilters__WEBPACK_IMPORTED_MODULE_3__.topFiltersHandler)();
+(0,_modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_3__.topFiltersHandler)();
 (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
 (0,_modules_search__WEBPACK_IMPORTED_MODULE_2__.searchModule)();
 const subBtn = document.querySelector(".header-button__add");
@@ -3714,7 +3767,7 @@ archive.addEventListener('click', e => {
     e.target.textContent = 'Архив';
   }
 });
-(0,_modules_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_5__.tableRoutesFiltersHandler)();
+(0,_modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_5__.tableRoutesFiltersHandler)();
 const updateMainTableData = () => {
   setInterval(_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders, 1000);
 };
@@ -12798,7 +12851,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 68vh;\n  overflow: scroll;\n  margin-bottom: 5px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n}\n@media screen and (max-width: 1200px) {\n  .main-table__data {\n    height: 65vh;\n  }\n}\n@media screen and (min-width: 1500px) {\n  .main-table__data {\n    height: 73vh;\n  }\n}\n@media screen and (min-width: 1920px) {\n  .main-table__data {\n    height: 77vh;\n  }\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n.admin-form__user {\n  margin-right: 10px;\n}\n.admin-form__exit {\n  transition: color 0.3s;\n}\n.admin-form__exit:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n@media screen and (max-width: 1200px) {\n  .search {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n}\n.check-helper--long {\n  min-width: 300%;\n}\n\n.nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 5px;\n  margin-bottom: 5px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  margin-top: 15px;\n  border-bottom: 1px solid black;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__reset {\n  width: 131px;\n  display: block;\n  align-self: center;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n.header-routes__filter:not(:last-child) {\n  margin-right: 10px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  color: #13d9d9;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: #447e9b !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route-plan__date {\n  margin-right: 0 !important;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__input--small {\n  width: 48%;\n}\n.route__input--small:not(:last-child) {\n  margin-right: 2%;\n}\n.route__input--top {\n  text-align: center;\n  margin-bottom: 10px;\n  height: 28px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 15px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n}\n.quantity-block__labels {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.quantity-block__label {\n  margin-right: 35px;\n}\n.quantity-block__inshifts {\n  margin-right: 22px;\n  position: relative;\n  right: 13px;\n}\n\n.route-type__error {\n  border: 2px solid red;\n}\n.route-type__start {\n  border: 2px solid #ffff4e;\n}\n.route-type__finish {\n  border: 2px solid green;\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-error__input {\n  margin-right: 0;\n  width: 90%;\n  height: 50px;\n  margin-bottom: 15px;\n}\n.modal-error__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-issued__date {\n  margin-bottom: 10px;\n  margin-right: 0;\n}\n.modal-issued__input {\n  margin-right: 0;\n  width: 20%;\n  height: 28px;\n  margin-bottom: 15px;\n}\n.modal-issued__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 6px;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.modal-plan {\n  padding: 5px;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-plan__section {\n  width: 250px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.modal-plan__section:not(:last-child) {\n  margin-bottom: 10px;\n}\n.modal-plan__data {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__input {\n  width: 120px;\n}\n.modal-plan__check {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__exclude {\n  text-align: center;\n  height: 100px;\n}\n.modal-plan__exclude-option {\n  text-align: center;\n  padding: 2px;\n}\n.modal-plan__exclude-option:hover {\n  cursor: pointer;\n}\n\n.confirm__title--plan {\n  margin-bottom: 15px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n  position: relative;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n  position: relative;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route {\n  color: black;\n}\n.route--planned {\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.route--started {\n  background: #ffff4e;\n}\n.route--error {\n  background: #de1313;\n}\n.route--completed {\n  background: #09d009;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss","webpack://./web/src/static/css/table/planModal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n@import \"planModal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n    position: relative;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      text-decoration: underline;\n      font-style: italic;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__route {\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  //&__trattr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 260%;\n  //    width: auto;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n  //\n  //&__attr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 100%;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n\n\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n    position: relative;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  color: black;\n\n  &--planned {\n    text-decoration: underline;\n    font-style: italic;\n  }\n\n  &--started {\n    background: #ffff4e;\n  }\n\n  &--error {\n    background: #de1313;\n  }\n\n  &--completed {\n    background: #09d009;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n","@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 68vh;\n    overflow: scroll;\n    margin-bottom: 5px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n\n    @media screen and (max-width: 1200px) {\n      height: 65vh;\n    }\n\n    @media screen and (min-width: 1500px) {\n      height: 73vh;\n    }\n\n    @media screen and (min-width: 1920px) {\n      height: 77vh;\n    }\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form {\n  &__button {\n    width: 130px;\n    transition: color .3s;\n    position: absolute;\n    right: 24px;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n\n  &__user {\n    margin-right: 10px;\n  }\n\n  &__exit {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n\n.search {\n  display: flex;\n  align-items: center;\n\n  @media screen and (max-width: 1200px) {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  //bottom: -33px;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n\n  &--long {\n    min-width: 300%;\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 5px;\n      margin-bottom: 5px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    margin-top: 15px;\n    border-bottom: 1px solid black;\n  }\n  &__filters {\n    margin-bottom: 0 !important;\n  }\n\n  &__reset {\n    width: 131px;\n    display: block;\n    align-self: center;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n.header-routes {\n  &__filter {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  //background: #f3efef;\n  color: #13d9d9;\n}",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  //margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $button_color !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n  &-plan__date {\n    margin-right: 0 !important;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n\n    &--small {\n      width: 48%;\n\n      &:not(:last-child) {\n        margin-right: 2%;\n      }\n    }\n\n    &--top {\n      text-align: center;\n      margin-bottom: 10px;\n      height: 28px;\n    }\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 15px;\n  }\n}\n\n.report-route__btn {\n  //margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued,\n{\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n\n  &__labels {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n  }\n\n  &__label {\n    margin-right: 35px;\n  }\n\n  &__shifts {\n    //margin-right: 33px;\n  }\n\n  &__inshifts {\n    margin-right: 22px;\n    position: relative;\n    right: 13px;\n  }\n}\n\n.route-type {\n  &__error {\n    border: 2px solid red;\n  }\n\n  &__start {\n    border: 2px solid #ffff4e;\n  }\n\n  &__finish {\n    border: 2px solid green;\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n\n  &__input {\n    margin-right: 0;\n    width: 90%;\n    height: 50px;\n    margin-bottom: 15px;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n\n  &__date {\n    margin-bottom: 10px;\n    margin-right: 0;\n  }\n\n  &__input {\n    margin-right: 0;\n    width: 20%;\n    height: 28px;\n    margin-bottom: 15px;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 6px;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}",".modal {\n  &-plan__date {\n\n  }\n\n  &-plan {\n    padding: 5px;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n\n    &__section {\n      width: 250px;\n      display: flex;\n      flex-direction: column;\n      justify-content: space-between;\n      //align-items: center;\n\n      &:not(:last-child) {\n        margin-bottom: 10px;\n      }\n    }\n\n    &__data {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__input {\n      width: 120px;\n    }\n\n    &__check {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__exclude {\n      text-align: center;\n      height: 100px;\n\n      &-option {\n        text-align: center;\n        padding: 2px;\n\n        &:hover {\n          cursor: pointer;\n        }\n      }\n    }\n  }\n}\n\n.confirm__title--plan {\n  margin-bottom: 15px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: #447e9b;\n  margin-bottom: 15px;\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: #447e9b;\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: #447e9b;\n}\n.main-table__data {\n  width: 100%;\n  height: 68vh;\n  overflow: scroll;\n  margin-bottom: 5px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n}\n@media screen and (max-width: 1200px) {\n  .main-table__data {\n    height: 65vh;\n  }\n}\n@media screen and (min-width: 1500px) {\n  .main-table__data {\n    height: 73vh;\n  }\n}\n@media screen and (min-width: 1920px) {\n  .main-table__data {\n    height: 77vh;\n  }\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n.admin-form__user {\n  margin-right: 10px;\n}\n.admin-form__exit {\n  transition: color 0.3s;\n}\n.admin-form__exit:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n@media screen and (max-width: 1200px) {\n  .search {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n}\n.check-helper--long {\n  min-width: 300%;\n}\n\n.nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n  display: flex;\n  flex-direction: column;\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__list:not(:last-child) {\n  padding-bottom: 5px;\n  margin-bottom: 5px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: #f3efef;\n  color: #13d9d9;\n}\n\n.nav-filters__plots {\n  margin-top: 15px;\n  border-bottom: 1px solid black;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__reset {\n  width: 131px;\n  display: block;\n  align-self: center;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #f3efef;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n}\n.main-header__title {\n  height: 34px;\n  color: #447e9b;\n  margin-right: 20px;\n  font-size: 27px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button:not(:last-child) {\n  margin-right: 20px;\n}\n\n.header-routes__filter:not(:last-child) {\n  margin-right: 10px;\n}\n.header-routes__planned-date {\n  width: 120px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  color: #13d9d9;\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  background: white;\n  border: 1px solid black;\n  border-radius: 5px;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: #f3efef;\n  color: #447e9b;\n  height: 30px;\n  text-align: center;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: #447e9b;\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: #447e9b !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: #13d9d9 !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: #447e9b !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: #447e9b !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: #13d9d9 !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: #447e9b;\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route__config {\n  padding: 0 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route-plan__date {\n  margin-right: 0 !important;\n}\n.route__label {\n  text-align: center;\n}\n.route__btn {\n  width: 170px;\n}\n.route__select {\n  width: 170px;\n  margin-bottom: 10px;\n}\n.route__input {\n  width: 170px;\n  margin-right: 30px;\n}\n.route__input--small {\n  width: 48%;\n}\n.route__input--small:not(:last-child) {\n  margin-right: 2%;\n}\n.route__input--top {\n  text-align: center;\n  margin-bottom: 10px;\n  height: 28px;\n}\n.route__section {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-bottom: 15px;\n}\n\n.section-logs {\n  width: 100%;\n  background: #f3efef;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  margin-bottom: 30px;\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__item {\n  color: #13d9d9;\n  margin-bottom: 5px;\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__title {\n  color: #447e9b;\n  text-align: center;\n  margin-bottom: 30px;\n}\n.comment__prev {\n  overflow-y: scroll;\n  background: #f3efef;\n  height: 100%;\n}\n.comment__item {\n  color: #13d9d9;\n  font-size: 17px;\n}\n.comment__item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.confirm__title {\n  margin-top: 10px;\n  text-align: center;\n  color: #447e9b;\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n}\n.quantity-block__labels {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.quantity-block__label {\n  margin-right: 35px;\n}\n.quantity-block__inshifts {\n  margin-right: 22px;\n  position: relative;\n  right: 13px;\n}\n\n.route-type__error {\n  border: 2px solid red;\n}\n.route-type__start {\n  border: 2px solid #ffff4e;\n}\n.route-type__finish {\n  border: 2px solid green;\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-error__input {\n  margin-right: 0;\n  width: 90%;\n  height: 50px;\n  margin-bottom: 15px;\n}\n.modal-error__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-issued__date {\n  margin-bottom: 10px;\n  margin-right: 0;\n}\n.modal-issued__input {\n  margin-right: 0;\n  width: 20%;\n  height: 28px;\n  margin-bottom: 15px;\n}\n.modal-issued__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.modal--comment .modal_content {\n  width: 650px;\n  height: 450px;\n  padding: 10px;\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n}\n.comments-list__item {\n  color: #13d9d9;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 6px;\n  min-height: 28px;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}\n\n.modal-plan {\n  padding: 5px;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-plan__section {\n  width: 250px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.modal-plan__section:not(:last-child) {\n  margin-bottom: 10px;\n}\n.modal-plan__data {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__input {\n  width: 120px;\n}\n.modal-plan__check {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__exclude {\n  text-align: center;\n  height: 100px;\n}\n.modal-plan__exclude-option {\n  text-align: center;\n  padding: 2px;\n}\n.modal-plan__exclude-option:hover {\n  cursor: pointer;\n}\n\n.confirm__title--plan {\n  margin-bottom: 15px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-size: 16px;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: #13d9d9;\n  transition: color 0.3s;\n}\n.table__data {\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n  position: relative;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--opened {\n  height: 56px;\n  border-bottom: 1px solid black;\n  font-size: 15px;\n  background: #f3efef;\n  color: #447e9b;\n}\n.table__data--current {\n  color: #13d9d9;\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  animation: issued-ready infinite 4s;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 130px;\n  max-width: 130px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 400px;\n  max-width: 400px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n  position: relative;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route {\n  color: black;\n}\n.route--planned {\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  font-style: italic;\n}\n.route--started {\n  background: #ffff4e;\n}\n.route--error {\n  background: #de1313;\n}\n.route--completed {\n  background: #09d009;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss","webpack://./web/src/static/css/table/planModal.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n@import \"planModal\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-size: 16px;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $hover_aqua;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n    position: relative;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      font-size: 15px;\n      background: $gray_bg;\n      color: $button_color;\n    }\n\n    &--opened {\n      height: 56px;\n      border-bottom: 1px solid black;\n      font-size: 15px;\n      background: #f3efef;\n      color: #447e9b;\n    }\n\n    &--current {\n      color: $hover_aqua;\n      text-decoration: underline;\n      font-style: italic;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 130px;\n    max-width: 130px;\n  }\n\n  &__route {\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 400px;\n    max-width: 400px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  //&__trattr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 260%;\n  //    width: auto;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n  //\n  //&__attr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 100%;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n\n\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n    position: relative;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  color: black;\n\n  &--planned {\n    text-decoration: underline;\n    font-style: italic;\n  }\n\n  &--started {\n    background: #ffff4e;\n  }\n\n  &--error {\n    background: #de1313;\n  }\n\n  &--completed {\n    background: #09d009;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n","@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\n.container {\n  padding: 0 15px;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $button_color;\n  margin-bottom: 15px;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $button_color;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $hover_aqua;\n      transition: color .3s;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $button_color;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 68vh;\n    overflow: scroll;\n    margin-bottom: 5px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n\n    @media screen and (max-width: 1200px) {\n      height: 65vh;\n    }\n\n    @media screen and (min-width: 1500px) {\n      height: 73vh;\n    }\n\n    @media screen and (min-width: 1920px) {\n      height: 77vh;\n    }\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form {\n  &__button {\n    width: 130px;\n    transition: color .3s;\n    position: absolute;\n    right: 24px;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n\n  &__user {\n    margin-right: 10px;\n  }\n\n  &__exit {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n\n.search {\n  display: flex;\n  align-items: center;\n\n  @media screen and (max-width: 1200px) {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  //bottom: -33px;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n\n  &--long {\n    min-width: 300%;\n  }\n}","$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  margin-top: 10px;\n  margin-bottom: 15px;\n  position: relative;\n\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    &:not(:last-child) {\n      padding-bottom: 5px;\n      margin-bottom: 5px;\n    }\n  }\n\n  &__item {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $gray_bg;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.nav-filters {\n  &__plots {\n    margin-top: 15px;\n    border-bottom: 1px solid black;\n  }\n  &__filters {\n    margin-bottom: 0 !important;\n  }\n\n  &__reset {\n    width: 131px;\n    display: block;\n    align-self: center;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 5px 5px 0 0;\n  padding: 5px 30px;\n  //margin-bottom: 30px;\n\n  &__title {\n    height: 34px;\n    color: $button_color;\n    margin-right: 20px;\n    font-size: 27px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n  }\n\n  &__button {\n    &:not(:last-child) {\n      margin-right: 20px;\n    }\n  }\n}\n\n.header-routes {\n  &__filter {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__planned {\n    &-date {\n      width: 120px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  //background: #f3efef;\n  color: #13d9d9;\n}",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    background: white;\n    border: 1px solid black;\n    border-radius: 5px;\n  }\n\n  &-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $gray_bg;\n    color: $button_color;\n    height: 30px;\n    text-align: center;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $button_color;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  //margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $button_color !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $button_color !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: $hover_aqua !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $button_color;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 615px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 0 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n  &-plan__date {\n    margin-right: 0 !important;\n  }\n\n  &__label {\n    text-align: center;\n  }\n\n  &__btn {\n    width: 170px;\n  }\n\n  &__select {\n    width: 170px;\n    margin-bottom: 10px;\n  }\n\n  &__input {\n    width: 170px;\n    margin-right: 30px;\n\n    &--small {\n      width: 48%;\n\n      &:not(:last-child) {\n        margin-right: 2%;\n      }\n    }\n\n    &--top {\n      text-align: center;\n      margin-bottom: 10px;\n      height: 28px;\n    }\n  }\n\n  &__section {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 15px;\n  }\n}\n\n.report-route__btn {\n  //margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: $gray_bg;\n  border: 1px solid black;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 30px;\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    margin-bottom: 30px;\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    margin-bottom: 5px;\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued,\n{\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__title {\n    color: $button_color;\n    text-align: center;\n    margin-bottom: 30px;\n  }\n\n  &__prev {\n    overflow-y: scroll;\n    background: $gray_bg;\n    height: 100%;\n  }\n\n  &__item {\n    color: $hover_aqua;\n    font-size: 17px;\n\n    &:not(:last-child) {\n      margin-bottom: 6px;\n    }\n  }\n}\n\n.confirm {\n  &__title {\n    margin-top: 10px;\n    text-align: center;\n    color: $button_color;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n.progress-block {\n  width: 170px;\n}\n\n.quantity-block {\n  display: flex;\n\n  &__labels {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n  }\n\n  &__label {\n    margin-right: 35px;\n  }\n\n  &__shifts {\n    //margin-right: 33px;\n  }\n\n  &__inshifts {\n    margin-right: 22px;\n    position: relative;\n    right: 13px;\n  }\n}\n\n.route-type {\n  &__error {\n    border: 2px solid red;\n  }\n\n  &__start {\n    border: 2px solid #ffff4e;\n  }\n\n  &__finish {\n    border: 2px solid green;\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n\n  &__input {\n    margin-right: 0;\n    width: 90%;\n    height: 50px;\n    margin-bottom: 15px;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n\n  &__date {\n    margin-bottom: 10px;\n    margin-right: 0;\n  }\n\n  &__input {\n    margin-right: 0;\n    width: 20%;\n    height: 28px;\n    margin-bottom: 15px;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}",".modal--comment {\n  .modal_content {\n    width: 650px;\n    height: 450px;\n    padding: 10px;\n  }\n}\n\n.comments-list {\n  height: 250px;\n  overflow-y: scroll;\n\n  &__item {\n    color: $hover_aqua;\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 6px;\n    min-height: 28px;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n  margin-bottom: 25px;\n}\n\n.comments__prev {\n  margin-bottom: 25px;\n}\n\n.comments__yours {\n  margin-bottom: 25px;\n}",".modal {\n  &-plan__date {\n\n  }\n\n  &-plan {\n    padding: 5px;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n\n    &__section {\n      width: 250px;\n      display: flex;\n      flex-direction: column;\n      justify-content: space-between;\n      //align-items: center;\n\n      &:not(:last-child) {\n        margin-bottom: 10px;\n      }\n    }\n\n    &__data {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__input {\n      width: 120px;\n    }\n\n    &__check {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__exclude {\n      text-align: center;\n      height: 100px;\n\n      &-option {\n        text-align: center;\n        padding: 2px;\n\n        &:hover {\n          cursor: pointer;\n        }\n      }\n    }\n  }\n}\n\n.confirm__title--plan {\n  margin-bottom: 15px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

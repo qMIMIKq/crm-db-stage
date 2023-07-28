@@ -1,5 +1,5 @@
-import {state} from "./state";
-import {drawOrders} from "./drawOrders";
+import {state} from "../state";
+import {drawOrders} from "../drawOrders";
 
 export const globalFilterOrders = (order, topFilters) => {
   let flag = true

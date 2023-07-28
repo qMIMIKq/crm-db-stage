@@ -9,6 +9,8 @@ export let appAddr = 'http://172.20.10.7:8182'
 const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
+  'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут'],
+  'inPlanDate': '',
   'filtered': false,
   'inWork': false,
   'newOrders': false,
@@ -67,7 +69,8 @@ if (userInf) {
 
   try {
     document.querySelector('.admin-form__user').textContent = userInf.nickname
-  } catch {}
+  } catch {
+  }
 }
 
 export {state}

@@ -11,14 +11,19 @@ import {
   numsFilter,
   quantityFilter,
   timestampFilter
-} from './tableFilters';
+} from './filters/tableFilters';
 import {appAddr, state} from './state';
 import {bindOrdersListeners} from './bindListeners';
 import {getData} from './getData';
-import {globalFilterOrders} from "./filterOrders";
+import {globalFilterOrders} from "./filters/filterOrders";
 import {drawOrders} from "./drawOrders";
-import {filterData} from "./topFilters";
-import {completedFilter, errFilter, notInWorkFilter, plannedFilter, startFilter} from "./tableRoutesFilters";
+import {filterData} from "./filters/topFilters";
+import {completedFilter, errFilter, notInWorkFilter, plannedFilter, startFilter} from "./filters/tableRoutesFilters";
+import {addTriggers} from "./addTriggers";
+import {triggerFilesModal} from "./modals/downloadFilesModal";
+import {triggerRoutesModal} from "./modals/routesModal";
+import {triggerCommentsModal} from "./modals/commentsModal";
+import {showRoutesIssued} from "./showFull";
 
 export const getOrders = (postfix = 'get-all') => {
   state['isArchive'] = postfix !== 'get-all'

@@ -1,5 +1,6 @@
 import {showModal} from "./showModal";
-import {user} from "../table";
+import {user} from "../../table";
+import {addLog, setDateToInput} from "./routesModal";
 
 const changeErrorModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>

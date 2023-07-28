@@ -36,6 +36,12 @@
       margin-right: 10px;
     }
   }
+
+  &__planned {
+    &-date {
+      width: 120px;
+    }
+  }
 }
 
 #search__target {

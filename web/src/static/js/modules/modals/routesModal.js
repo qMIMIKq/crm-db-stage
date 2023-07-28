@@ -1,12 +1,12 @@
 import {showModal} from './showModal';
-import {getData} from './getData';
-import {appAddr, state} from './state';
-import {user} from '../table';
-import {submitData} from "./submitOrdersData";
-import {sendData} from "./sendData";
-import {showResult} from "./submitControl";
-import {getOrders} from "./orders";
-import {getTime} from "./getTime";
+import {getData} from '../getData';
+import {appAddr, state} from '../state';
+import {user} from '../../table';
+import {submitData} from "../submitOrdersData";
+import {sendData} from "../sendData";
+import {showResult} from "../submitControl";
+import {getOrders} from "../orders";
+import {getTime} from "../getTime";
 import {planDateHandler} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
@@ -209,8 +209,6 @@ const issuedModal = `
    </div>
 `
 const drawLogs = data => {
-  const systemWords = ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут']
-
   const logsList = document.querySelector('.section-logs__list')
   const logsItems = logsList.querySelectorAll('.section-logs__item')
   if (logsItems !== null) {
@@ -218,11 +216,12 @@ const drawLogs = data => {
       item.remove()
     })
   }
+
   data.value.split('---').reverse().forEach(log => {
     if (log.trim() !== '') {
       let flag = true
 
-      systemWords.forEach(word => {
+      state.systemWords.forEach(word => {
         if (log.includes(word)) {
           flag = false
         }
@@ -272,7 +271,7 @@ const activateOnInput = (e, cls) => {
   }
 }
 
-const setDateToInput = inputId => {
+export const setDateToInput = inputId => {
   const today = getTime()
   const timeInput = document.querySelector('#' + inputId)
   timeInput.value = today
@@ -651,17 +650,6 @@ export const triggerRoutesModal = e => {
     addLog(routeUser.value, 'Прошел ОТК', '#visible__comments')
   })
 
-  // REPORT
-  // reportBtn.addEventListener('click', () => {
-  //   issued.value = String(Number(issued.value) + Number(issuedToday.value))
-  //   let logMsg = addLog(routeUser.value, `${routePlot.value} За смену ${issuedToday.value}`, '#visible__comments')
-  //   saveData(logMsg, '#issued_report')
-  //   issuedToday.value = ''
-  // })
-
-  issuedToday.addEventListener('input', e => {
-    activateOnInput(e, 'report-sub--route__btn')
-  })
   const reportIssued = document.querySelector('.report-route__btn')
   reportIssued.addEventListener('click', () => {
     showModal(issuedModal)
@@ -669,8 +657,8 @@ export const triggerRoutesModal = e => {
     document.querySelector('#issued__all').value.split('---').forEach(rep => {
       if (rep.trim() !== '') {
         dataPlace.insertAdjacentHTML(`beforeend`, `
-                    <li style='text-align: center' class='comment__item'>${rep}</li>   
-                `)
+            <li style='text-align: center' class='comment__item'>${rep}</li>   
+        `)
       }
     })
 
@@ -678,7 +666,6 @@ export const triggerRoutesModal = e => {
   })
 
   window.addEventListener('keydown', subCommentByEnter)
-
   document.querySelector('.section-finish__sub').addEventListener('click', () => {
     const formData = new FormData(routeForm)
     const obj = {}
@@ -701,7 +688,6 @@ export const triggerRoutesModal = e => {
       parent.classList.remove('table-form--old')
       parent.classList.add('table-form--upd')
     }
-
 
     submitData()
     document.querySelector('.modal--route').remove()

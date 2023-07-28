@@ -1,7 +1,7 @@
 import {showModal} from "./showModal";
 import {addLog, drawPlots} from "./routesModal";
-import {user} from "../table";
-import {state} from "./state";
+import {user} from "../../table";
+import {state} from "../state";
 
 const changeIssuedModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>

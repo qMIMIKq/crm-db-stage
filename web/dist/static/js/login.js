@@ -62,6 +62,8 @@ __webpack_require__.r(__webpack_exports__);
 let appAddr = 'http://172.20.10.7:8182';
 const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
+  'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут'],
+  'inPlanDate': '',
   'filtered': false,
   'inWork': false,
   'newOrders': false,
