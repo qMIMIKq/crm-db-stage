@@ -398,7 +398,9 @@ export const triggerRoutesModal = e => {
       pauseBtn.textContent = 'Пауза'
       pauseTimeInput.value = ''
       addLog(user.nickname, `Сбросил паузу`, '#visible__comments')
-      activateNextStage('end-route__btn')
+      if (startTime.value) {
+        activateNextStage('end-route__btn')
+      }
     }
   })
 
@@ -536,7 +538,7 @@ export const triggerRoutesModal = e => {
 
     if (!routeInfo['start_time'] && routeInfo.user) {
       activateNextStage('start-route__btn')
-    } else if (routeInfo.start_time){
+    } else if (routeInfo.start_time) {
       activateNextStage('end-route__btn')
       startBtn.classList.add('route-type__start')
     }
@@ -653,7 +655,10 @@ export const triggerRoutesModal = e => {
   drawLogs(visibleLogs)
   startBtn.addEventListener('click', () => {
     setDateToInput('start-route__time')
-    activateNextStage('end-route__btn')
+    if (!pauseTimeInput.value) {
+      activateNextStage('end-route__btn')
+    }
+
     activateNextStage('pause-route__btn')
     activateNextStage('section-finish__sub')
     activateNextStage('section-finish__cancel')
