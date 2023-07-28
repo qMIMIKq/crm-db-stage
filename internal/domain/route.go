@@ -7,8 +7,8 @@ type Route struct {
 	RoutePosition   string   `json:"route_position" db:"route_position"`
 	Comments        []Report `json:"comments"`
 	StartTime       string   `json:"start_time" db:"start_time"`
-	OtkTime         string   `json:"otk_time" db:"otk_time"`
 	EndTime         string   `json:"end_time" db:"end_time"`
+	PauseTime       string   `json:"pause_time" db:"pause_time"`
 	ErrorTime       string   `json:"error_time" db:"error_time"`
 	ErrorMsg        string   `json:"error_msg" db:"error_value"`
 	Quantity        string   `json:"quantity" db:"quantity"`

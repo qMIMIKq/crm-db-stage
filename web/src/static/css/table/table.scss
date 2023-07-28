@@ -341,7 +341,11 @@ input.tr {
 
   &--planned {
     text-decoration: underline;
-    font-style: italic;
+    //font-style: italic;
+  }
+
+  &--paused {
+    background: orange;
   }
 
   &--started {

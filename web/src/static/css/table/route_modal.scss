@@ -228,6 +228,10 @@
 }
 
 .route-type {
+  &__paused {
+    border: 2px solid orange;
+  }
+
   &__error {
     border: 2px solid red;
   }

@@ -1,15 +1,12 @@
 export const getTime = () => {
-  let check = new Date().toLocaleString()
-  if (check[2] === '.') {
-    check = check.split('.')
-  } else if (check[2] === '/') {
-    check = check.split('/')
-  }
+  let today = new Date();
+  let dd = String(today.getDate()).padStart(2, '0');
+  let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = today.getFullYear();
+  let hh = today.getHours()
+  let mmm = today.getMinutes()
+  mmm = String(mmm.length).length === 1 ? '0' + mmm : mmm
 
-  check[2] = check[2].split(',')
-  ;[check[0], check[2][0]] = [check[2][0], check[0]]
-  check[2] = check[2].join(',')
-  check = check.join('/')
-
-  return check.replaceAll('/', '-').slice(0, check.length - 3).split(',').join(' ').replace(' ', '')
+  today = `${yyyy}-${mm}-${dd} ${hh}:${mmm}`
+  return today
 }

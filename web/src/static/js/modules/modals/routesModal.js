@@ -47,8 +47,7 @@ const routeModal = `
                             readonly
                             id="route-plan__date"
                             type="text"
-                            placeholder="дд.мм" 
-                            value="" 
+                            value="гггг.дд.мм"
                             tabindex="-1" 
                             autocomplete="off">
                             <!--                            disabled -->
@@ -107,17 +106,18 @@ const routeModal = `
                     <button disabled type='button' class='route__btn main__button end-route__btn'>Сдал</button>
                 </div>
                 
-                <div class='route__section otk-route'>
+                <div class='route__section pause-route'>
                     <input 
+                    style="cursor: default; text-align: center"
                     readonly
                     type='text'
-                    placeholder='Время ОТК'
+                    placeholder='Время паузы'
                     onblur='(this.type="text")'
-                    class='route__input main__button main__input otk-route__time'
-                    name='otk_time' 
-                    id='otk-route__time'>
+                    class='route__input main__input pause-route__time'
+                    name='pause_time' 
+                    id='pause-route__time'>
                     
-                    <button disabled type='button' class='route__btn main__button otk-route__btn'>ОТК</button>
+                    <button disabled type='button' class='route__btn main__button pause-route__btn'>Пауза</button>
                 </div>
                 
                 <div class='route__section error-route'>
@@ -132,8 +132,8 @@ const routeModal = `
                     name='error_msg' 
                     id='error-route__msg'>
                     
-                    <button type='button' class='route__btn route__input main__button issued-modal_trigger'>За смену</button>
-                    <button type='button' class='route__btn main__button error-route__btn'>Ошибка!</button>
+                    <button disabled type='button' class='route__btn route__input main__button issued-modal_trigger'>За смену</button>
+                    <button disabled type='button' class='route__btn main__button error-route__btn'>Ошибка!</button>
                     <button type='button' class='route__btn main__button hidden__input error-route__close'>Сбросить ошибку</button>
                 </div>
                 
@@ -325,8 +325,8 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
       case 'end_time':
         logMsg = 'Сбросил время сдачи'
         break
-      case 'otk_time':
-        logMsg = 'Сбросил время ОТК'
+      case 'pause_time':
+        logMsg = 'Сбросил время паузы'
         break
     }
 
@@ -382,6 +382,26 @@ export const triggerRoutesModal = e => {
   const deleteBtn = document.querySelector('#route__delete')
   const theorEndInp = document.querySelector('#route__teorend')
   const shifts = document.querySelector('#shifts')
+
+  const pauseBtn = routeForm.querySelector('.pause-route__btn')
+  const pauseTimeInput = routeForm.querySelector('.pause-route__time')
+
+  pauseBtn.addEventListener('click', () => {
+    if (!pauseBtn.classList.contains('route-type__paused')) {
+      pauseBtn.classList.add('route-type__paused')
+      pauseBtn.textContent = 'Сбросить паузу'
+      setDateToInput('pause-route__time')
+      disableBtn('end-route__btn')
+      addLog(logName, `Нажал паузу`, '#visible__comments')
+    } else {
+      pauseBtn.classList.remove('route-type__paused')
+      pauseBtn.textContent = 'Пауза'
+      pauseTimeInput.value = ''
+      addLog(user.nickname, `Сбросил паузу`, '#visible__comments')
+      activateNextStage('end-route__btn')
+    }
+  })
+
   const startBtn = routeForm.querySelector('.start-route__btn')
   const endBTn = routeForm.querySelector('.end-route__btn')
   const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
@@ -412,7 +432,7 @@ export const triggerRoutesModal = e => {
   })
 
   if (state['adminCheck'] || state['techCheck']) {
-    activateNextStage('start-route__time')
+    document.querySelector('.start-route__time').removeAttribute('disabled')
     activateNextStage('route__select--plot')
     planDateInput.removeAttribute('disabled')
 
@@ -422,9 +442,7 @@ export const triggerRoutesModal = e => {
         startBtn.classList.remove('route-type__start')
         endBTn.classList.remove('route-type__finish')
         endTime.value = ''
-        document.querySelector('#otk-route__time').value = ''
         disableBtn('end-route__btn')
-        disableBtn('otk-route__btn')
       })
     })
 
@@ -432,7 +450,6 @@ export const triggerRoutesModal = e => {
       confirmChangeTimeHandler(e, () => {
         endBTn.classList.remove('route-type__finish')
         activateNextStage('end-route__btn')
-        disableBtn('otk-route__btn')
       })
     })
   }
@@ -490,6 +507,8 @@ export const triggerRoutesModal = e => {
 
     drawPlots(routeInfo['plot'], routeInfo['user'])
     activateNextStage('route__select--user')
+    activateNextStage('pause-route__btn')
+    activateNextStage('error-route__btn')
 
     if (logName !== '') {
       controlCommentAccess(commentInput)
@@ -497,6 +516,7 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['user']) {
       controlCommentAccess(commentInput)
+      activateNextStage('issued-modal_trigger')
     }
 
     if (!routeInfo['start_time']) {
@@ -508,7 +528,6 @@ export const triggerRoutesModal = e => {
 
     startTime.value = routeInfo['start_time']
     endTime.value = routeInfo['end_time']
-    document.querySelector('#otk-route__time').value = routeInfo['otk_time']
     errInput.value = routeInfo['error_msg']
     errTime.value = routeInfo['error_time']
 
@@ -555,10 +574,7 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['end_time']) {
       disableBtn('end-route__btn')
-
-      if (state['adminCheck'] || state['techCheck']) {
-        activateNextStage('otk-route__btn')
-      }
+      disableBtn('pause-route__btn')
       endBTn.classList.add('route-type__finish')
     }
 
@@ -574,6 +590,14 @@ export const triggerRoutesModal = e => {
       issuedToday.classList.add('text-input')
       issuedToday.removeAttribute('disabled')
     }
+
+    if (routeInfo['pause_time']) {
+      pauseTimeInput.value = routeInfo['pause_time']
+      disableBtn('end-route__btn')
+      pauseBtn.textContent = 'Сбросить паузу'
+      pauseBtn.classList.add('route-type__paused')
+    }
+
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
     drawPlots()
@@ -597,6 +621,9 @@ export const triggerRoutesModal = e => {
     addLog(logName, `Выбрал этап ${routePlot.value}`, '#visible__comments')
     drawUsers(plotName, null)
     activateNextStage('section-finish__sub')
+    activateNextStage('pause-route__btn')
+    activateNextStage('error-route__btn')
+    activateNextStage('section-logs__input')
     controlQuantityAccess(routeQuantity)
     controlCommentAccess(commentInput)
   })
@@ -611,6 +638,7 @@ export const triggerRoutesModal = e => {
   startBtn.addEventListener('click', () => {
     setDateToInput('start-route__time')
     activateNextStage('end-route__btn')
+    activateNextStage('pause-route__btn')
     activateNextStage('section-finish__sub')
     activateNextStage('section-finish__cancel')
     disableBtn('start-route__btn')
@@ -626,22 +654,14 @@ export const triggerRoutesModal = e => {
   // END
   endBTn.addEventListener('click', () => {
     setDateToInput('end-route__time')
-    if (state['adminCheck'] || state['techCheck']) {
-      activateNextStage('otk-route__btn')
-    }
     disableBtn('end-route__btn')
+    disableBtn('pause-route__btn')
     endBTn.classList.add('route-type__finish')
     addLog(routeUser.value, 'Закончил', '#visible__comments')
   })
 
-  // OTK
-  const otkBtn = routeForm.querySelector('.otk-route__btn')
-  otkBtn.addEventListener('click', () => {
-    setDateToInput('otk-route__time')
-    disableBtn('otk-route__btn')
-    addLog(routeUser.value, 'Прошел ОТК', '#visible__comments')
-  })
 
+  // REPORT ISSUED
   const reportIssued = document.querySelector('.report-route__btn')
   reportIssued.addEventListener('click', () => {
     showModal(issuedModal)

@@ -81,6 +81,24 @@ export const colorRoutes = (routes) => {
           }
         }
       }
+
+      if (route.pause_time) {
+        routeInfo.classList.add('route--paused')
+        routeInfo.style.color = 'black'
+
+        routeInfo.classList.remove('route--error')
+        routeInfo.classList.remove('route--started')
+        routeInfo.classList.remove('route--completed')
+
+        if (route.start_time) {
+          routeInfo.style.color = "yellow"
+        }
+        if (route.error_msg) {
+          routeInfo.style.color = "red"
+        }
+
+      }
+
     }
 
     if (dataIssuedInput) {
