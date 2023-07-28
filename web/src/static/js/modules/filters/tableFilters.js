@@ -103,11 +103,10 @@ export const controlFiltersReset = () => {
     const resetBtn = nav.querySelector('.header-button__reset')
     if (resetBtn === null) {
       nav.insertAdjacentHTML('beforeend', `
-                <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
-            `)
+          <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
+      `)
 
       nav.querySelector('.header-button__reset').addEventListener('click', e => {
-        document.querySelector('#search__input').value = ''
         state['filtered'] = false
         state['tableFilters'] = {}
         document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))

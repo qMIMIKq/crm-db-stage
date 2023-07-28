@@ -42,12 +42,12 @@ const routeModal = `
                         
                         <label class='route__label label-plan__date' for='route__dynend'>В план</label>
                         <input id="plan_start" type="text" class="hidden__input" name="plan_start">
-                        <input class="main__button route__input--top route-plan__date" 
+                        <input class="main__button main__input route__input route__input--top route-plan__date" 
                             name="plan_date"
                             readonly
                             id="route-plan__date"
                             type="text"
-                            value="гггг.дд.мм"
+                            value="Не в плане"
                             tabindex="-1" 
                             autocomplete="off">
                             <!--                            disabled -->
@@ -386,24 +386,6 @@ export const triggerRoutesModal = e => {
   const pauseBtn = routeForm.querySelector('.pause-route__btn')
   const pauseTimeInput = routeForm.querySelector('.pause-route__time')
 
-  pauseBtn.addEventListener('click', () => {
-    if (!pauseBtn.classList.contains('route-type__paused')) {
-      pauseBtn.classList.add('route-type__paused')
-      pauseBtn.textContent = 'Сбросить паузу'
-      setDateToInput('pause-route__time')
-      disableBtn('end-route__btn')
-      addLog(logName, `Нажал паузу`, '#visible__comments')
-    } else {
-      pauseBtn.classList.remove('route-type__paused')
-      pauseBtn.textContent = 'Пауза'
-      pauseTimeInput.value = ''
-      addLog(user.nickname, `Сбросил паузу`, '#visible__comments')
-      if (startTime.value) {
-        activateNextStage('end-route__btn')
-      }
-    }
-  })
-
   const startBtn = routeForm.querySelector('.start-route__btn')
   const endBTn = routeForm.querySelector('.end-route__btn')
   const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
@@ -482,7 +464,6 @@ export const triggerRoutesModal = e => {
     // const dynEnd = routeInfo['dyn_end']
     let comments = routeInfo['comments']
 
-    console.log(routeInfo['last_comment'])
     if (routeInfo['last_comment']) {
       document.querySelector('#last_comment').value = routeInfo['last_comment']
     }
@@ -559,7 +540,6 @@ export const triggerRoutesModal = e => {
       planDateInput.classList.remove('route-type__finish')
     }
 
-
     if (comments) {
       comments = comments.map(c => `${c['date']}    ${c['value']}`)
       comments = comments.join('---')
@@ -610,15 +590,74 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['pause_time']) {
       pauseTimeInput.value = routeInfo['pause_time']
-      disableBtn('end-route__btn')
       pauseBtn.textContent = 'Сбросить паузу'
       pauseBtn.classList.add('route-type__paused')
+      disableBtn('route__select--user')
+
+      if (!planObj.planStart) {
+        disableBtn('route-plan__date')
+      }
+
+      disableBtn('start-route__btn')
+      disableBtn('start-route__time')
+      disableBtn('issued-modal_trigger')
+
+
+      disableBtn('end-route__btn')
+      disableBtn('end-route__time')
     }
 
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
     drawPlots()
   }
+
+  pauseBtn.addEventListener('click', () => {
+    if (!pauseBtn.classList.contains('route-type__paused')) {
+      pauseBtn.classList.add('route-type__paused')
+      pauseBtn.textContent = 'Сбросить паузу'
+      setDateToInput('pause-route__time')
+      disableBtn('route__select--user')
+
+      if (!planObj.planStart) {
+        disableBtn('route-plan__date')
+      }
+
+      disableBtn('start-route__btn')
+      disableBtn('start-route__time')
+      disableBtn('issued-modal_trigger')
+
+
+      disableBtn('end-route__btn')
+      disableBtn('end-route__time')
+      addLog(logName, `Нажал паузу`, '#visible__comments')
+    } else {
+      pauseBtn.classList.remove('route-type__paused')
+      pauseBtn.textContent = 'Пауза'
+      pauseTimeInput.value = ''
+      addLog(user.nickname, `Сбросил паузу`, '#visible__comments')
+
+      activateNextStage('route__select--user')
+      activateNextStage('route-plan__date')
+
+      console.log(routeUser.value)
+      if (routeUser.value !== 'Выберите оператора') {
+        activateNextStage('issued-modal_trigger')
+        activateNextStage('start-route__btn')
+      }
+
+      if (startTime.value) {
+        activateNextStage('end-route__btn')
+        activateNextStage('start-route__time')
+      }
+
+      if (endTime.value) {
+        disableBtn('end-route__btn')
+        activateNextStage('end-route__time')
+      }
+    }
+  })
+
 
   const dbID = currentOrder.querySelector('#db_id').value
   const num = currentOrder.querySelector('#number').value
@@ -637,6 +676,7 @@ export const triggerRoutesModal = e => {
 
     addLog(logName, `Выбрал этап ${routePlot.value}`, '#visible__comments')
     drawUsers(plotName, null)
+    activateNextStage('route__select--user')
     activateNextStage('section-finish__sub')
     activateNextStage('pause-route__btn')
     activateNextStage('error-route__btn')
@@ -828,8 +868,6 @@ export const drawUsers = (plotName, userI) => {
   usersSelect.insertAdjacentHTML(`beforeend`, `
         <option selected disabled>Выберите оператора</option>
     `)
-
-  activateNextStage('route__select--user')
 }
 
 const controlQuantityAccess = (routeQuantity) => {

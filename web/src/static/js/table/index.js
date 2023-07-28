@@ -1,6 +1,5 @@
 import "../../css/table/table.scss"
 import {getOrders} from "../modules/orders";
-import {searchModule} from "../modules/search";
 import {topFiltersHandler} from "../modules/filters/topFilters";
 import {state} from "../modules/state";
 import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
@@ -9,7 +8,6 @@ export const user = JSON.parse(sessionStorage.getItem("user"))
 
 topFiltersHandler()
 getOrders()
-searchModule()
 
 const subBtn = document.querySelector(".header-button__add")
 if (!(state["adminCheck"] || state['manCheck'])) {
