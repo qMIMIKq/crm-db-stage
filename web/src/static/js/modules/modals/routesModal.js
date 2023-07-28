@@ -767,7 +767,6 @@ export const drawPlots = (plotI, user) => {
 export const drawUsers = (plotName, userI) => {
   const usersSelect = document.querySelector('#route__user')
   usersSelect.querySelectorAll('option').forEach(elem => {
-    // if (!elem.hasAttribute('disabled'))
     elem.remove()
   })
 
@@ -787,10 +786,6 @@ export const drawUsers = (plotName, userI) => {
   usersSelect.insertAdjacentHTML(`beforeend`, `
         <option selected disabled>Выберите оператора</option>
     `)
-
-  // if (userI) {
-  //     usersSelect.querySelector('option[disabled]').remove()
-  // }
 
   activateNextStage('route__select--user')
 }

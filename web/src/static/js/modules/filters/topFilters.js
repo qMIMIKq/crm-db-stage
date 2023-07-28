@@ -3,6 +3,7 @@ import {state} from "../state";
 import {deleteOrders, getOrders} from "../orders";
 import {globalFilterOrders} from "./filterOrders";
 import {bindOrdersListeners} from "../bindListeners";
+import {getTime} from "../getTime";
 
 export const topFiltersHandler = () => {
   let filtered
@@ -237,7 +238,17 @@ export const filterData = () => {
               let planDate = new Date(route.plan_date).getTime()
               let planStart = new Date(route.plan_start).getTime()
 
-              if (planStart <= today && today <= planDate) {
+              let date
+              if (!state.inPlanDate) {
+                date = getTime()
+                date = date.substring(0, date.length - 6)
+              } else {
+                date = state.inPlanDate
+              }
+
+              const dateToday = new Date(date).getTime()
+
+              if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(date)) {
                 if (filters.length) {
                   if (filters.includes(route.plot)) {
                     flag = true

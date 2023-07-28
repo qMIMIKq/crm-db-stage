@@ -19,23 +19,37 @@ import {globalFilterOrders} from "./filters/filterOrders";
 import {drawOrders} from "./drawOrders";
 import {filterData} from "./filters/topFilters";
 import {completedFilter, errFilter, notInWorkFilter, plannedFilter, startFilter} from "./filters/tableRoutesFilters";
-import {addTriggers} from "./addTriggers";
-import {triggerFilesModal} from "./modals/downloadFilesModal";
-import {triggerRoutesModal} from "./modals/routesModal";
-import {triggerCommentsModal} from "./modals/commentsModal";
-import {showRoutesIssued} from "./showFull";
+import {getTime} from "./getTime";
 
 export const getOrders = (postfix = 'get-all') => {
+  const totalOrders = document.querySelector('.orders__total')
   state['isArchive'] = postfix !== 'get-all'
-
-  document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
-        <h3 class="warning">Обновляем таблицу...</h3>
-    `)
-  document.querySelector('.table__archive').classList.add('hidden__input')
 
   const filters = state['currentTopFilters'].map(filter => filter.name)
   console.time('get orders')
   fetch(`${appAddr}/api/orders/${postfix}`).then(res => res.json()).then(data => {
+    if (!data.data) {
+      deleteOrders()
+      let text = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
+      document.querySelector('.main-header__title').textContent = text
+      text = state.isArchive ? 'Всего в архиве' : 'Всего в работе'
+
+      if (totalOrders === null) {
+        document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
+          <h3 class='orders__total'>${text} 0</h3>
+      `)
+      } else {
+        totalOrders.textContent = `${text} 0`
+      }
+
+      return
+    }
+
+    document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
+        <h3 class="warning">Обновляем таблицу...</h3>
+    `)
+    document.querySelector('.table__archive').classList.add('hidden__input')
+
     const nums = []
     const clients = []
     const materials = []
@@ -95,8 +109,15 @@ export const getOrders = (postfix = 'get-all') => {
               deleteOrders()
               completedFilter(filters)
             } else if (state['routesFilters'].planned) {
+              let date
+              if (!state.inPlanDate) {
+                date = getTime()
+                date = date.substring(0, date.length - 6)
+              } else {
+                date = state.inPlanDate
+              }
               deleteOrders()
-              plannedFilter(filters)
+              plannedFilter(filters, date)
             } else if (state['routesFilters'].unstarted) {
               deleteOrders()
               notInWorkFilter(filters)
@@ -115,11 +136,10 @@ export const getOrders = (postfix = 'get-all') => {
         drawTableFilter([...new Set(timestamps)], timestampFilter)
 
         document.querySelector('.table-info').querySelector('.warning').remove()
-        const totalOrders = document.querySelector('.orders__total')
         if (totalOrders === null) {
           document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
-                        <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
-                    `)
+              <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
+          `)
         } else {
           totalOrders.textContent = `Всего в работе ${data.data.length}`
         }

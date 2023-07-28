@@ -4,7 +4,6 @@ import {showRoutesIssued} from "./showFull";
 import {drawDeadlineP} from './drawDeadlineP';
 import {state} from './state';
 import {drawManagers} from './drawManagers';
-import {submitData} from "./submitOrdersData";
 import {drawSubmit} from "./submitControl";
 import {deleteOrdersHandler} from "./deleteOrdersHandler";
 import {colorRoutes} from "./drawe/routesDraw";
@@ -12,6 +11,8 @@ import {drawHelpers} from "./drawe/helpersDraw";
 import {triggerFilesModal} from "./modals/downloadFilesModal";
 import {triggerRoutesModal} from "./modals/routesModal";
 import {triggerCommentsModal} from "./modals/commentsModal";
+import {getTime} from "./getTime";
+import {submitData} from "./submitOrdersData";
 
 export const table = document.querySelector('.main-table')
 
@@ -226,10 +227,14 @@ export const drawOrders = async (d, data, users) => {
     currentOrder.querySelector('.table__complete').addEventListener('click', e => {
       currentOrder.querySelector('#completed').value = true
       const parent = e.target.closest('.table-form--old')
+      let today = getTime()
+      today = today.substring(0, today.length - 6)
 
       if (parent !== null) {
         parent.classList.remove('table-form--old')
         parent.classList.add('table-form--upd')
+        const endTimeIn = parent.querySelector('.table__endtime').querySelector('input')
+        endTimeIn.value = today
         submitData()
       } else {
         drawSubmit()
