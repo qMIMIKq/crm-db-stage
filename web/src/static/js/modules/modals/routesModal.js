@@ -47,7 +47,7 @@ const routeModal = `
                             readonly
                             id="route-plan__date"
                             type="text"
-                            placeholder="Назначить" 
+                            placeholder="дд.мм" 
                             value="" 
                             tabindex="-1" 
                             autocomplete="off">
@@ -456,29 +456,14 @@ export const triggerRoutesModal = e => {
   })
 
   if (info) {
-    const id = routeInfo['route_id']
-    const quantity = routeInfo['quantity']
-    const dayQuantity = routeInfo['day_quantity']
-    const plot = routeInfo['plot']
-    const user = routeInfo['user']
-    const start = routeInfo['start_time']
-    const end = routeInfo['end_time']
-    const otk = routeInfo['otk_time']
-    const errT = routeInfo['error_time']
-    const errM = routeInfo['error_msg']
-    const theorEnd = routeInfo['theor_end']
     // const dynEnd = routeInfo['dyn_end']
-    const planDate = routeInfo['plan_date']
-    const planDateStart = routeInfo['plan_start']
-    const excludeDays = routeInfo['exclude_days']
-    const faster = routeInfo['plan_faster']
     let comments = routeInfo['comments']
 
     planObj = {
-      'exclude': excludeDays,
-      'planStart': planDateStart,
-      'planEnd': planDate,
-      'faster': faster
+      'exclude': routeInfo['exclude_days'],
+      'planStart': routeInfo['plan_start'],
+      'planEnd': routeInfo['plan_date'],
+      'faster': routeInfo['plan_faster']
     }
 
     if (routeInfo['issued']) {
@@ -489,7 +474,7 @@ export const triggerRoutesModal = e => {
       deleteBtn.removeAttribute('disabled')
       deleteBtn.addEventListener('click', e => {
         confirmChangeTimeHandler(e, () => {
-          sendData(`${appAddr}/api/routes/delete/${id}`, 'POST', null)
+          sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
             .then(resp => {
               if (resp.ok) showResult(true)
               modalElem.remove()
@@ -499,38 +484,45 @@ export const triggerRoutesModal = e => {
       })
     }
 
-    if (start) {
+    if (routeInfo['start_time']) {
       disableBtn('route__select--plot')
     }
 
-    drawPlots(plot, user)
+    drawPlots(routeInfo['plot'], routeInfo['user'])
     activateNextStage('route__select--user')
 
     if (logName !== '') {
       controlCommentAccess(commentInput)
     }
 
-    if (user) {
+    if (routeInfo['user']) {
       controlCommentAccess(commentInput)
     }
 
-    if (!start) {
+    if (!routeInfo['start_time']) {
       activateNextStage('start-route__btn')
     } else {
       activateNextStage('end-route__btn')
       startBtn.classList.add('route-type__start')
     }
 
-    startTime.value = start
-    document.querySelector('#end-route__time').value = end
-    document.querySelector('#otk-route__time').value = otk
-    document.querySelector('#error-route__msg').value = errM
-    document.querySelector('#error__time').value = errT
+    startTime.value = routeInfo['start_time']
+    endTime.value = routeInfo['end_time']
+    document.querySelector('#otk-route__time').value = routeInfo['otk_time']
+    errInput.value = routeInfo['error_msg']
+    errTime.value = routeInfo['error_time']
 
-    theorEndInp.value = theorEnd ? theorEnd : ''
+    theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : ''
     // dynEndInp.value = dynEnd ? dynEnd : ''
-    planDateInput.value = planDate ? planDate : ''
-    planDateInputStart.value = planDateStart ? planDateStart : ''
+
+    if (routeInfo['plan_date']) {
+      planDateInput.value = routeInfo['plan_date']
+      planDateInputStart.value = routeInfo['plan_start']
+      planDateInput.classList.add('route-type__finish')
+    } else {
+      planDateInput.classList.remove('route-type__finish')
+    }
+
 
     if (comments) {
       comments = comments.map(c => `${c['date']}    ${c['value']}`)
@@ -545,23 +537,23 @@ export const triggerRoutesModal = e => {
     activateNextStage('section-finish__sub')
     activateNextStage('section-finish__cancel')
 
-    if (quantity) {
-      routeQuantity.value = quantity
+    if (routeInfo['quantity']) {
+      routeQuantity.value = routeInfo['quantity']
       controlQuantityAccess(routeDayQuantity)
     } else {
       routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
     }
 
-    if (dayQuantity) {
+    if (routeInfo['day_quantity']) {
       controlQuantityAccess(routeDayQuantity)
-      routeDayQuantity.value = dayQuantity
+      routeDayQuantity.value = routeInfo['day_quantity']
     }
 
-    if (quantity && dayQuantity) {
+    if (routeInfo['quantity'] && routeInfo['day_quantity']) {
       shifts.value = Math.ceil(routeQuantity.value / routeDayQuantity.value)
     }
 
-    if (end) {
+    if (routeInfo['end_time']) {
       disableBtn('end-route__btn')
 
       if (state['adminCheck'] || state['techCheck']) {
@@ -570,7 +562,7 @@ export const triggerRoutesModal = e => {
       endBTn.classList.add('route-type__finish')
     }
 
-    if (errM) {
+    if (routeInfo['error_msg']) {
       errInput.setAttribute('disabled', '')
       errBtn.classList.add('route-type__error')
 
@@ -578,7 +570,7 @@ export const triggerRoutesModal = e => {
       }
     }
 
-    if (start) {
+    if (routeInfo['start_time']) {
       issuedToday.classList.add('text-input')
       issuedToday.removeAttribute('disabled')
     }

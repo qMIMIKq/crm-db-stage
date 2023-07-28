@@ -263,10 +263,14 @@ export const tableRoutesFiltersHandler = () => {
   let today = getTime()
   today = today.substring(0, today.length - 6)
   inPlanDate.value = today
+  inPlanDate.setAttribute('min', today)
+
   state.plannedDate = inPlanDate.value
   inPlanBtn.addEventListener('click', e => {
     if (inPlanBtn.classList.contains('route__filter--chosen')) {
       inPlanBtn.classList.remove('route__filter--chosen')
+      inPlanDate.value = today
+      state.plannedDate = today
       state['routesFilters'].planned = false
       getOrders()
       return

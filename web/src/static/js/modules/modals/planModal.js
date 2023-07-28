@@ -10,10 +10,6 @@ const planDateModal = `
                 <label class="modal-plan__label">В план</label>
                 <input type="date" class="main__button modal-plan__end">
             </div>
-            <div class="modal-plan__check">
-                <label>Срочно</label>
-                <input type="checkbox" class="modal-plan__urgently"> 
-            </div>
         </div>
         
         <h2 class="confirm__title confirm__title--plan">Удалить этап из плана</h2>
@@ -34,7 +30,6 @@ const planDateModal = `
 export const planDateHandler = (e, planObj, dateEndInput) => {
   const modal = showModal(planDateModal)
   const dateInput = modal.querySelector('.modal-plan__end')
-  const dateUrgently = modal.querySelector('.modal-plan__urgently')
   const excludeSelect = modal.querySelector('.modal-plan__exclude')
   const excludeDateChose = modal.querySelector('.modal-plan__exclude-chose')
 
@@ -42,11 +37,13 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
   today = today.substring(0, today.length - 6)
   let tmrw = new Date(today)
   tmrw.setDate(tmrw.getDate() + 1)
-  tmrw = tmrw.toLocaleString().split(", ")[0].split('/')
-  ;[tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]]
-  tmrw = tmrw.join('-')
+  tmrw = tmrw.toISOString().split('T')[0]
+  console.log(tmrw)
 
-  dateInput.setAttribute('min', tmrw)
+
+  dateInput.setAttribute('min', today)
+  excludeDateChose.setAttribute('min', today)
+
   const getDays = (start, end) => {
     const oneDay = 1000 * 60 * 60 * 24
     let diff = end.getTime() - start.getTime()
@@ -61,22 +58,13 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
     const endDate = new Date(dateInput.value)
     const startDate = new Date(planObj.planStart)
 
-    excludeDateChose.setAttribute('min', today)
-    if (planObj.faster) {
-      dateUrgently.setAttribute('checked', '')
-    }
-
-    if (startDate.getTime() < new Date(today).getTime()) {
-      dateUrgently.setAttribute('disabled', '')
-    }
-
     drawData(startDate, endDate)
-    excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option ${exclude.includes(planObj.planStart) ? 'exclude-date' : 'include-date'}">${planObj.planStart}</li>  
-    `)
     addHandler()
   } else {
-    dateInput.setAttribute('min', tmrw)
+    dateInput.value = tmrw
+    excludeSelect.insertAdjacentHTML('afterbegin', `
+      <li class="modal-plan__exclude-option ${exclude.includes(tmrw) ? 'exclude-date' : 'include-date'}">${tmrw}</li>  
+    `)
   }
 
   function addHandler() {
@@ -96,9 +84,10 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
 
   function drawData(startDate, endDate) {
     let res = getDays(startDate, endDate)
-    for (let i = res + 1; i > 2; i--) {
+    for (let i = res + 1; i > 1; i--) {
       endDate.setDate(endDate.getDate() - 1)
       let date = endDate.toISOString().split('T')[0]
+      if (exclude.includes(date)) continue
 
       excludeSelect.insertAdjacentHTML('afterbegin', `
         <li class="modal-plan__exclude-option ${exclude.includes(date) ? 'exclude-date' : 'include-date'}">${date}</li>  
@@ -106,9 +95,11 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
     }
 
     excludeDateChose.setAttribute('max', dateInput.value)
-    excludeSelect.insertAdjacentHTML('beforeend', `
+    if (!exclude.includes(dateInput.value)) {
+      excludeSelect.insertAdjacentHTML('beforeend', `
         <li class="modal-plan__exclude-option ${exclude.includes(dateInput.value) ? 'exclude-date' : 'include-date'}">${dateInput.value}</li>  
     `)
+    }
   }
 
   if (dateInput.value) {
@@ -118,6 +109,7 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
   }
 
   dateInput.addEventListener('change', e => {
+    exclude = []
     excludeDateChose.removeAttribute('disabled')
     const endDate = new Date(dateInput.value)
     const startDate = new Date(today)
@@ -127,41 +119,7 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
     })
 
     drawData(startDate, endDate)
-
-    if (dateUrgently.checked) {
-      excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option ${exclude.includes(today) ? 'exclude-date' : 'include-date'}">${today}</li>  
-      `)
-      excludeDateChose.setAttribute('min', today)
-    } else {
-      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent)
-    }
-
     addHandler()
-  })
-
-  dateUrgently.addEventListener('change', e => {
-    if (dateUrgently.checked) {
-      excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option include-date">${today}</li>  
-      `)
-
-      excludeSelect.querySelector('li').addEventListener('click', e => {
-        e.target.classList.toggle('exclude-date')
-        e.target.classList.toggle('include-date')
-
-        if (e.target.classList.contains('exclude-date')) {
-          exclude.push(e.target.textContent)
-        } else {
-          exclude = exclude.filter(ex => ex !== e.target.textContent)
-        }
-      })
-
-      excludeDateChose.setAttribute('min', today)
-    } else {
-      excludeSelect.querySelector('li').remove()
-      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent)
-    }
   })
 
   excludeDateChose.addEventListener('change', () => {
@@ -178,12 +136,27 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
   const cnclBtn = modal.querySelector('.confirm__button--cncl')
 
   okBtn.addEventListener('click', () => {
-    planObj.exclude = exclude.join('__')
-    planObj.planStart = excludeSelect.querySelector('li').textContent
-    planObj.planEnd = dateInput.value
-    planObj.faster = dateUrgently.checked
+    let maxDay
+    excludeSelect.querySelectorAll('.include-date').forEach(day => {
+      maxDay = day.textContent
+    })
 
-    dateEndInput.value = planObj.planEnd
+    let minDay = excludeSelect.querySelector('.include-date')
+    if (minDay) {
+      minDay = minDay.textContent
+    }
+
+    planObj.exclude = exclude.join('__')
+    planObj.planStart = minDay
+    planObj.planEnd = maxDay
+
+    if (maxDay) {
+      dateEndInput.value = maxDay
+    } else {
+      dateEndInput.value = ''
+      dateEndInput.classList.remove('route-type__finish')
+    }
+
     modal.click()
   })
 

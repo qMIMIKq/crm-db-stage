@@ -20,8 +20,6 @@ export const drawOrders = async (d, data, users) => {
   let uniqueFileNames = []
   if (d.files !== null) {
     d.files.forEach(file => {
-      const arrDotFile = file.split('.')
-      const fileType = arrDotFile[arrDotFile.length - 1]
       const arrSlashFile = file.split('/')
       arrSlashFile.splice(0, 3)
       const fileName = arrSlashFile.join('')
@@ -30,10 +28,8 @@ export const drawOrders = async (d, data, users) => {
       uniqueFileNames.push(fileNameWithoutType)
     })
   }
-
   uniqueFileNames = [...new Set(uniqueFileNames)]
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity)
-  console.log(d.quantity, d.issued)
 
   table.insertAdjacentHTML(`afterbegin`, `
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>

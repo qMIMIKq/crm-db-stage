@@ -354,8 +354,6 @@ const drawOrders = async (d, data, users) => {
   let uniqueFileNames = [];
   if (d.files !== null) {
     d.files.forEach(file => {
-      const arrDotFile = file.split('.');
-      const fileType = arrDotFile[arrDotFile.length - 1];
       const arrSlashFile = file.split('/');
       arrSlashFile.splice(0, 3);
       const fileName = arrSlashFile.join('');
@@ -366,7 +364,6 @@ const drawOrders = async (d, data, users) => {
   }
   uniqueFileNames = [...new Set(uniqueFileNames)];
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity);
-  console.log(d.quantity, d.issued);
   table.insertAdjacentHTML(`afterbegin`, `
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
         <ul class='main-table__item'>
@@ -1361,10 +1358,13 @@ const tableRoutesFiltersHandler = () => {
   let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_6__.getTime)();
   today = today.substring(0, today.length - 6);
   inPlanDate.value = today;
+  inPlanDate.setAttribute('min', today);
   _state__WEBPACK_IMPORTED_MODULE_0__.state.plannedDate = inPlanDate.value;
   inPlanBtn.addEventListener('click', e => {
     if (inPlanBtn.classList.contains('route__filter--chosen')) {
       inPlanBtn.classList.remove('route__filter--chosen');
+      inPlanDate.value = today;
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.plannedDate = today;
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
       (0,_orders__WEBPACK_IMPORTED_MODULE_4__.getOrders)();
       return;
@@ -2201,10 +2201,6 @@ const planDateModal = `
                 <label class="modal-plan__label">В план</label>
                 <input type="date" class="main__button modal-plan__end">
             </div>
-            <div class="modal-plan__check">
-                <label>Срочно</label>
-                <input type="checkbox" class="modal-plan__urgently"> 
-            </div>
         </div>
         
         <h2 class="confirm__title confirm__title--plan">Удалить этап из плана</h2>
@@ -2224,17 +2220,16 @@ const planDateModal = `
 const planDateHandler = (e, planObj, dateEndInput) => {
   const modal = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(planDateModal);
   const dateInput = modal.querySelector('.modal-plan__end');
-  const dateUrgently = modal.querySelector('.modal-plan__urgently');
   const excludeSelect = modal.querySelector('.modal-plan__exclude');
   const excludeDateChose = modal.querySelector('.modal-plan__exclude-chose');
   let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_1__.getTime)();
   today = today.substring(0, today.length - 6);
   let tmrw = new Date(today);
   tmrw.setDate(tmrw.getDate() + 1);
-  tmrw = tmrw.toLocaleString().split(", ")[0].split('/');
-  [tmrw[0], tmrw[2]] = [tmrw[2], tmrw[0]];
-  tmrw = tmrw.join('-');
-  dateInput.setAttribute('min', tmrw);
+  tmrw = tmrw.toISOString().split('T')[0];
+  console.log(tmrw);
+  dateInput.setAttribute('min', today);
+  excludeDateChose.setAttribute('min', today);
   const getDays = (start, end) => {
     const oneDay = 1000 * 60 * 60 * 24;
     let diff = end.getTime() - start.getTime();
@@ -2246,20 +2241,13 @@ const planDateHandler = (e, planObj, dateEndInput) => {
     exclude = planObj.exclude ? planObj.exclude.split('__') : [];
     const endDate = new Date(dateInput.value);
     const startDate = new Date(planObj.planStart);
-    excludeDateChose.setAttribute('min', today);
-    if (planObj.faster) {
-      dateUrgently.setAttribute('checked', '');
-    }
-    if (startDate.getTime() < new Date(today).getTime()) {
-      dateUrgently.setAttribute('disabled', '');
-    }
     drawData(startDate, endDate);
-    excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option ${exclude.includes(planObj.planStart) ? 'exclude-date' : 'include-date'}">${planObj.planStart}</li>  
-    `);
     addHandler();
   } else {
-    dateInput.setAttribute('min', tmrw);
+    dateInput.value = tmrw;
+    excludeSelect.insertAdjacentHTML('afterbegin', `
+      <li class="modal-plan__exclude-option ${exclude.includes(tmrw) ? 'exclude-date' : 'include-date'}">${tmrw}</li>  
+    `);
   }
   function addHandler() {
     modal.querySelectorAll('.modal-plan__exclude-option').forEach(option => {
@@ -2276,17 +2264,20 @@ const planDateHandler = (e, planObj, dateEndInput) => {
   }
   function drawData(startDate, endDate) {
     let res = getDays(startDate, endDate);
-    for (let i = res + 1; i > 2; i--) {
+    for (let i = res + 1; i > 1; i--) {
       endDate.setDate(endDate.getDate() - 1);
       let date = endDate.toISOString().split('T')[0];
+      if (exclude.includes(date)) continue;
       excludeSelect.insertAdjacentHTML('afterbegin', `
         <li class="modal-plan__exclude-option ${exclude.includes(date) ? 'exclude-date' : 'include-date'}">${date}</li>  
       `);
     }
     excludeDateChose.setAttribute('max', dateInput.value);
-    excludeSelect.insertAdjacentHTML('beforeend', `
+    if (!exclude.includes(dateInput.value)) {
+      excludeSelect.insertAdjacentHTML('beforeend', `
         <li class="modal-plan__exclude-option ${exclude.includes(dateInput.value) ? 'exclude-date' : 'include-date'}">${dateInput.value}</li>  
     `);
+    }
   }
   if (dateInput.value) {
     excludeDateChose.removeAttribute('disabled');
@@ -2294,6 +2285,7 @@ const planDateHandler = (e, planObj, dateEndInput) => {
     excludeDateChose.setAttribute('disabled', '');
   }
   dateInput.addEventListener('change', e => {
+    exclude = [];
     excludeDateChose.removeAttribute('disabled');
     const endDate = new Date(dateInput.value);
     const startDate = new Date(today);
@@ -2301,35 +2293,7 @@ const planDateHandler = (e, planObj, dateEndInput) => {
       date.remove();
     });
     drawData(startDate, endDate);
-    if (dateUrgently.checked) {
-      excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option ${exclude.includes(today) ? 'exclude-date' : 'include-date'}">${today}</li>  
-      `);
-      excludeDateChose.setAttribute('min', today);
-    } else {
-      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent);
-    }
     addHandler();
-  });
-  dateUrgently.addEventListener('change', e => {
-    if (dateUrgently.checked) {
-      excludeSelect.insertAdjacentHTML('afterbegin', `
-        <li class="modal-plan__exclude-option include-date">${today}</li>  
-      `);
-      excludeSelect.querySelector('li').addEventListener('click', e => {
-        e.target.classList.toggle('exclude-date');
-        e.target.classList.toggle('include-date');
-        if (e.target.classList.contains('exclude-date')) {
-          exclude.push(e.target.textContent);
-        } else {
-          exclude = exclude.filter(ex => ex !== e.target.textContent);
-        }
-      });
-      excludeDateChose.setAttribute('min', today);
-    } else {
-      excludeSelect.querySelector('li').remove();
-      excludeDateChose.setAttribute('min', excludeSelect.querySelector('li').textContent);
-    }
   });
   excludeDateChose.addEventListener('change', () => {
     excludeSelect.querySelectorAll('li').forEach(date => {
@@ -2342,11 +2306,23 @@ const planDateHandler = (e, planObj, dateEndInput) => {
   const okBtn = modal.querySelector('.confirm__button--ok');
   const cnclBtn = modal.querySelector('.confirm__button--cncl');
   okBtn.addEventListener('click', () => {
+    let maxDay;
+    excludeSelect.querySelectorAll('.include-date').forEach(day => {
+      maxDay = day.textContent;
+    });
+    let minDay = excludeSelect.querySelector('.include-date');
+    if (minDay) {
+      minDay = minDay.textContent;
+    }
     planObj.exclude = exclude.join('__');
-    planObj.planStart = excludeSelect.querySelector('li').textContent;
-    planObj.planEnd = dateInput.value;
-    planObj.faster = dateUrgently.checked;
-    dateEndInput.value = planObj.planEnd;
+    planObj.planStart = minDay;
+    planObj.planEnd = maxDay;
+    if (maxDay) {
+      dateEndInput.value = maxDay;
+    } else {
+      dateEndInput.value = '';
+      dateEndInput.classList.remove('route-type__finish');
+    }
     modal.click();
   });
   cnclBtn.addEventListener('click', () => modal.click());
@@ -2430,7 +2406,7 @@ const routeModal = `
                             readonly
                             id="route-plan__date"
                             type="text"
-                            placeholder="Назначить" 
+                            placeholder="дд.мм" 
                             value="" 
                             tabindex="-1" 
                             autocomplete="off">
@@ -2809,28 +2785,13 @@ const triggerRoutesModal = e => {
     disableBtn('send__comment');
   });
   if (info) {
-    const id = routeInfo['route_id'];
-    const quantity = routeInfo['quantity'];
-    const dayQuantity = routeInfo['day_quantity'];
-    const plot = routeInfo['plot'];
-    const user = routeInfo['user'];
-    const start = routeInfo['start_time'];
-    const end = routeInfo['end_time'];
-    const otk = routeInfo['otk_time'];
-    const errT = routeInfo['error_time'];
-    const errM = routeInfo['error_msg'];
-    const theorEnd = routeInfo['theor_end'];
     // const dynEnd = routeInfo['dyn_end']
-    const planDate = routeInfo['plan_date'];
-    const planDateStart = routeInfo['plan_start'];
-    const excludeDays = routeInfo['exclude_days'];
-    const faster = routeInfo['plan_faster'];
     let comments = routeInfo['comments'];
     planObj = {
-      'exclude': excludeDays,
-      'planStart': planDateStart,
-      'planEnd': planDate,
-      'faster': faster
+      'exclude': routeInfo['exclude_days'],
+      'planStart': routeInfo['plan_start'],
+      'planEnd': routeInfo['plan_date'],
+      'faster': routeInfo['plan_faster']
     };
     if (routeInfo['issued']) {
       issued.value = routeInfo['issued'];
@@ -2839,7 +2800,7 @@ const triggerRoutesModal = e => {
       deleteBtn.removeAttribute('disabled');
       deleteBtn.addEventListener('click', e => {
         confirmChangeTimeHandler(e, () => {
-          (0,_sendData__WEBPACK_IMPORTED_MODULE_5__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/routes/delete/${id}`, 'POST', null).then(resp => {
+          (0,_sendData__WEBPACK_IMPORTED_MODULE_5__.sendData)(`${_state__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null).then(resp => {
             if (resp.ok) (0,_submitControl__WEBPACK_IMPORTED_MODULE_6__.showResult)(true);
             modalElem.remove();
             (0,_orders__WEBPACK_IMPORTED_MODULE_7__.getOrders)('get-all');
@@ -2847,32 +2808,38 @@ const triggerRoutesModal = e => {
         }, 'Удалить маршрут?');
       });
     }
-    if (start) {
+    if (routeInfo['start_time']) {
       disableBtn('route__select--plot');
     }
-    drawPlots(plot, user);
+    drawPlots(routeInfo['plot'], routeInfo['user']);
     activateNextStage('route__select--user');
     if (logName !== '') {
       controlCommentAccess(commentInput);
     }
-    if (user) {
+    if (routeInfo['user']) {
       controlCommentAccess(commentInput);
     }
-    if (!start) {
+    if (!routeInfo['start_time']) {
       activateNextStage('start-route__btn');
     } else {
       activateNextStage('end-route__btn');
       startBtn.classList.add('route-type__start');
     }
-    startTime.value = start;
-    document.querySelector('#end-route__time').value = end;
-    document.querySelector('#otk-route__time').value = otk;
-    document.querySelector('#error-route__msg').value = errM;
-    document.querySelector('#error__time').value = errT;
-    theorEndInp.value = theorEnd ? theorEnd : '';
+    startTime.value = routeInfo['start_time'];
+    endTime.value = routeInfo['end_time'];
+    document.querySelector('#otk-route__time').value = routeInfo['otk_time'];
+    errInput.value = routeInfo['error_msg'];
+    errTime.value = routeInfo['error_time'];
+    theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : '';
     // dynEndInp.value = dynEnd ? dynEnd : ''
-    planDateInput.value = planDate ? planDate : '';
-    planDateInputStart.value = planDateStart ? planDateStart : '';
+
+    if (routeInfo['plan_date']) {
+      planDateInput.value = routeInfo['plan_date'];
+      planDateInputStart.value = routeInfo['plan_start'];
+      planDateInput.classList.add('route-type__finish');
+    } else {
+      planDateInput.classList.remove('route-type__finish');
+    }
     if (comments) {
       comments = comments.map(c => `${c['date']}    ${c['value']}`);
       comments = comments.join('---');
@@ -2883,32 +2850,32 @@ const triggerRoutesModal = e => {
     }
     activateNextStage('section-finish__sub');
     activateNextStage('section-finish__cancel');
-    if (quantity) {
-      routeQuantity.value = quantity;
+    if (routeInfo['quantity']) {
+      routeQuantity.value = routeInfo['quantity'];
       controlQuantityAccess(routeDayQuantity);
     } else {
       routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value;
     }
-    if (dayQuantity) {
+    if (routeInfo['day_quantity']) {
       controlQuantityAccess(routeDayQuantity);
-      routeDayQuantity.value = dayQuantity;
+      routeDayQuantity.value = routeInfo['day_quantity'];
     }
-    if (quantity && dayQuantity) {
+    if (routeInfo['quantity'] && routeInfo['day_quantity']) {
       shifts.value = Math.ceil(routeQuantity.value / routeDayQuantity.value);
     }
-    if (end) {
+    if (routeInfo['end_time']) {
       disableBtn('end-route__btn');
       if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
         activateNextStage('otk-route__btn');
       }
       endBTn.classList.add('route-type__finish');
     }
-    if (errM) {
+    if (routeInfo['error_msg']) {
       errInput.setAttribute('disabled', '');
       errBtn.classList.add('route-type__error');
       if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {}
     }
-    if (start) {
+    if (routeInfo['start_time']) {
       issuedToday.classList.add('text-input');
       issuedToday.removeAttribute('disabled');
     }
