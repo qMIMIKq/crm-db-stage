@@ -229,4 +229,9 @@ button:disabled {
   &--long {
     min-width: 300%;
   }
+
+  &--errored {
+    padding: 0;
+    color: black;
+  }
 }

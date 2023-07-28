@@ -36,9 +36,8 @@ export const colorRoutes = (routes) => {
         }
       }
 
-      if (route.comments) {
-        const lastComm = route.comments[route.comments.length - 1]
-        infoParent.setAttribute('data-title', `${lastComm.date} ${lastComm.value}`)
+      if (route.last_comment) {
+        infoParent.setAttribute('data-title', `${route.last_comment} /`)
         infoParent.classList.add('table-body__trattr')
       }
 
@@ -58,7 +57,7 @@ export const colorRoutes = (routes) => {
 
         if (route.error_msg) {
           routeInfo.style.color = "red"
-          infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}\n`)
+          infoParent.setAttribute('data-title', `${route.last_comment}/${route.error_msg}`)
           // console.log(route.comments)
         } else if (route.quantity && route.issued < route.quantity) {
           routeInfo.style.color = "yellow"
@@ -69,7 +68,7 @@ export const colorRoutes = (routes) => {
 
       if (route.error_msg && !route.end_time) {
         routeInfo.classList.add('route--error')
-        infoParent.setAttribute('data-title', `${route.error_time} ${route.error_msg}`)
+        infoParent.setAttribute('data-title', `${route.last_comment}/${route.error_msg}`)
         // console.log(route.comments)
 
         if (route.start_time) {
@@ -96,9 +95,7 @@ export const colorRoutes = (routes) => {
         if (route.error_msg) {
           routeInfo.style.color = "red"
         }
-
       }
-
     }
 
     if (dataIssuedInput) {

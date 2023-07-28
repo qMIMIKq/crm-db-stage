@@ -174,6 +174,8 @@ const routeModal = `
                         
                     </ul>
                     <div class='section-logs__comment'>
+                        <input class="hidden__input" type="text" name="last_comment" id="last_comment">
+                    
                         <input
                         readonly
                         style="cursor: default"
@@ -263,7 +265,7 @@ export const addLog = (name, log, selector) => {
   return logMsg
 }
 
-const activateOnInput = (e, cls) => {
+export const activateOnInput = (e, cls) => {
   if (e.target.value !== '') {
     activateNextStage(cls)
   } else {
@@ -277,7 +279,7 @@ export const setDateToInput = inputId => {
   timeInput.value = today
 }
 
-const activateNextStage = btnClass => {
+export const activateNextStage = btnClass => {
   const btn = document.querySelector('.' + btnClass)
   btn.removeAttribute('disabled')
   btn.removeAttribute('readonly')
@@ -359,8 +361,6 @@ export const triggerRoutesModal = e => {
   controlQuantityAccess(routeQuantity)
   controlQuantityAccess(routeDayQuantity)
 
-  console.log(currentOrder.querySelector('input[name="name"]').value)
-
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
@@ -428,7 +428,7 @@ export const triggerRoutesModal = e => {
   const errTime = document.querySelector('.error__time')
   const errBtn = routeForm.querySelector('.error-route__btn')
   errBtn.addEventListener('click', e => {
-    changeErrorHandler(e, errInput, errTime)
+    changeErrorHandler(e, errInput, errTime, routeUser.value)
   })
 
   if (state['adminCheck'] || state['techCheck']) {
@@ -467,7 +467,11 @@ export const triggerRoutesModal = e => {
       name = logName
     }
 
-    addLog(name, `${document.querySelector('#section-logs__comment').value}`, '#visible__comments')
+    let log = `${document.querySelector('#section-logs__comment').value}`
+
+    addLog(name, log, '#visible__comments')
+
+    modalElem.querySelector('#last_comment').value = `${name} ${log}`
     document.querySelector('#section-logs__comment').value = ''
     disableBtn('send__comment')
   })
@@ -475,6 +479,11 @@ export const triggerRoutesModal = e => {
   if (info) {
     // const dynEnd = routeInfo['dyn_end']
     let comments = routeInfo['comments']
+
+    console.log(routeInfo['last_comment'])
+    if (routeInfo['last_comment']) {
+      document.querySelector('#last_comment').value = routeInfo['last_comment']
+    }
 
     planObj = {
       'exclude': routeInfo['exclude_days'],
@@ -508,7 +517,10 @@ export const triggerRoutesModal = e => {
     drawPlots(routeInfo['plot'], routeInfo['user'])
     activateNextStage('route__select--user')
     activateNextStage('pause-route__btn')
-    activateNextStage('error-route__btn')
+
+    if (!state.operCheck || routeInfo['user']) {
+      activateNextStage('error-route__btn')
+    }
 
     if (logName !== '') {
       controlCommentAccess(commentInput)
@@ -516,12 +528,15 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['user']) {
       controlCommentAccess(commentInput)
-      activateNextStage('issued-modal_trigger')
+
+      if (routeInfo.start_time) {
+        activateNextStage('issued-modal_trigger')
+      }
     }
 
-    if (!routeInfo['start_time']) {
+    if (!routeInfo['start_time'] && routeInfo.user) {
       activateNextStage('start-route__btn')
-    } else {
+    } else if (routeInfo.start_time){
       activateNextStage('end-route__btn')
       startBtn.classList.add('route-type__start')
     }
@@ -632,6 +647,7 @@ export const triggerRoutesModal = e => {
   routeUser.addEventListener('change', () => {
     addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
     activateNextStage('start-route__btn')
+    activateNextStage('error-route__btn')
   })
 
   drawLogs(visibleLogs)
@@ -641,6 +657,7 @@ export const triggerRoutesModal = e => {
     activateNextStage('pause-route__btn')
     activateNextStage('section-finish__sub')
     activateNextStage('section-finish__cancel')
+    activateNextStage('issued-modal_trigger')
     disableBtn('start-route__btn')
     disableBtn('route__select--plot')
     addLog(routeUser.value, 'Начал', '#visible__comments')

@@ -60,9 +60,10 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 		routesQuery := fmt.Sprintf(`
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
-													issued, start_time, end_time,
-													pause_time, error_time, error_value, day_quantity, theor_end, dyn_end, plan_date, plan_start, plan_faster, plan_exclude_days)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+													issued, start_time, end_time, pause_time, error_time, 
+													error_value, day_quantity, theor_end, dyn_end, plan_date, 
+ 												  plan_start, plan_faster, plan_exclude_days, last_comment)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 			RETURNING route_id
 		`)
 
@@ -79,8 +80,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						   issued = $4, start_time = $5, end_time = $6,
 							 pause_time = $7, error_time = $8, error_value = $9, day_quantity = $10, 
 							 theor_end = $11, dyn_end = $12, plan_date = $13, plan_start = $14,
-							 plan_faster = $15, plan_exclude_days = $16
-			   WHERE order_id = $17 AND route_position = $18
+							 plan_faster = $15, plan_exclude_days = $16, last_comment = $17
+			   WHERE order_id = $18 AND route_position = $19
 			`)
 
 		for name, route := range order.Routes {
@@ -93,9 +94,10 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			if len(dbRoutePos) > 0 {
 				log.Info().Msgf("Error msg %v", route.ErrorMsg)
 				_, err = o.db.Exec(routesUpdateQuery, route.User, route.Plot,
-					route.Quantity, route.Issued, route.StartTime,
-					route.EndTime, route.PauseTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity, route.TheorEnd,
-					route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster, route.PlanExcludeDays, order.ID, routePos)
+					route.Quantity, route.Issued, route.StartTime, route.EndTime,
+					route.PauseTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
+					route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
+					route.PlanExcludeDays, route.LastComment, order.ID, routePos)
 				if err != nil {
 					log.Err(err).Caller().Msg("Error")
 				}
@@ -114,8 +116,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				err = o.db.QueryRow(routesQuery, order.ID,
 					routePos, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.PauseTime, route.ErrorTime,
-					route.ErrorMsg, route.DayQuantity, route.TheorEnd,
-					route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster, route.PlanExcludeDays).Scan(&routeID)
+					route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart,
+					route.PlanFaster, route.PlanExcludeDays, route.LastComment).Scan(&routeID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
 						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
@@ -154,9 +156,10 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 
 	routesQuery := fmt.Sprintf(`
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
-													issued, start_time, end_time,
-													pause_time, error_time, error_value, day_quantity, theor_end, dyn_end, plan_date, plan_start, plan_faster, plan_exclude_days)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+													issued, start_time, end_time,pause_time, error_time, 
+													error_value, day_quantity, theor_end, dyn_end, plan_date, 
+													plan_start, plan_faster, plan_exclude_days, last_comment)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
 			RETURNING route_id
 		`)
 
@@ -191,9 +194,9 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 			err = o.db.QueryRow(routesQuery, id,
 				routePos, route.User, route.Plot,
 				route.Quantity, route.Issued, route.StartTime, route.PauseTime,
-				route.EndTime, route.ErrorTime, route.ErrorMsg,
-				route.DayQuantity, route.TheorEnd, route.DynEnd,
-				route.PlanDate, route.PlanStart, route.PlanFaster, route.PlanExcludeDays).Scan(&routeID)
+				route.EndTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
+				route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
+				route.PlanExcludeDays, route.LastComment).Scan(&routeID)
 
 			if err != nil {
 				fmt.Println(err)

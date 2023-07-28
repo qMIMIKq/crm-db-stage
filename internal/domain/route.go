@@ -6,6 +6,7 @@ type Route struct {
 	Plot            string   `json:"plot" db:"plot_id"`
 	RoutePosition   string   `json:"route_position" db:"route_position"`
 	Comments        []Report `json:"comments"`
+	LastComment     string   `json:"last_comment" db:"last_comment"`
 	StartTime       string   `json:"start_time" db:"start_time"`
 	EndTime         string   `json:"end_time" db:"end_time"`
 	PauseTime       string   `json:"pause_time" db:"pause_time"`

@@ -31,12 +31,27 @@ export const drawHelpers = (currentOrder) => {
         })
       }
     } else {
-      const value = cell.getAttribute('data-title')
+      let value = cell.getAttribute('data-title')
       cell.addEventListener('mouseenter', () => {
         if (value) {
+
+          const check = value.split('/')
           cell.insertAdjacentHTML('beforeend', `
-                <div class="check-helper check-helper--long">${value}</div>
+            <div class="check-helper check-helper--long">
+            </div>
+          `)
+
+          if (check[0]) {
+            cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+                <div>${check[0]}</div>
             `)
+          }
+
+          if (check[1]) {
+            cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+                <div style="color: red;" >${check[1].split('--').join(' ')}</div> 
+            `)
+          }
 
           const helper = cell.querySelector('.check-helper')
           if (helper) {
