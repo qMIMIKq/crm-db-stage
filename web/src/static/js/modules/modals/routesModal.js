@@ -642,7 +642,10 @@ export const triggerRoutesModal = e => {
 
       console.log(routeUser.value)
       if (routeUser.value !== 'Выберите оператора') {
-        activateNextStage('issued-modal_trigger')
+        if (startTime.value) {
+          activateNextStage('issued-modal_trigger')
+        }
+
         activateNextStage('start-route__btn')
       }
 
