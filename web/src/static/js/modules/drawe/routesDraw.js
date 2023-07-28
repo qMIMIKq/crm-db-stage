@@ -13,6 +13,7 @@ export const colorRoutes = (routes) => {
     date = state.inPlanDate
   }
 
+  console.log(date)
   const dateToday = new Date(date).getTime()
 
   routes.forEach(route => {
