@@ -55,8 +55,8 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
   if (planObj.planEnd) {
     dateInput.value = planObj.planEnd
     exclude = planObj.exclude ? planObj.exclude.split('__') : []
-    const endDate = new Date(dateInput.value)
-    const startDate = new Date(planObj.planStart)
+    const startDate = new Date(dateInput.value)
+    const endDate = new Date(planObj.planStart)
 
     drawData(startDate, endDate)
     addHandler()
