@@ -6,32 +6,34 @@ import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
 
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
-topFiltersHandler()
-getOrders()
+if (window.location.href.endsWith('main/table')) {
+  topFiltersHandler()
+  getOrders()
 
-const subBtn = document.querySelector(".header-button__add")
-if (!(state["adminCheck"] || state['manCheck'])) {
+  const subBtn = document.querySelector(".header-button__add")
+  if (!(state["adminCheck"] || state['manCheck'])) {
     subBtn.classList.add("hidden__input")
     // plotsFilters.classList.add("hidden__input")
-}
+  }
 
-const archive = document.querySelector('.table__archive')
-archive.addEventListener('click', e => {
+  const archive = document.querySelector('.table__archive')
+  archive.addEventListener('click', e => {
     if (e.target.textContent === 'Архив') {
-        document.querySelector('.main-header__title').textContent = 'Архив заказов'
-        getOrders('get-old')
-        e.target.textContent = 'В работе'
+      document.querySelector('.main-header__title').textContent = 'Архив заказов'
+      getOrders('get-old')
+      e.target.textContent = 'В работе'
     } else {
-        getOrders()
-        e.target.textContent = 'Архив'
-        document.querySelector('.main-header__title').textContent = 'Журнал заказов'
+      getOrders()
+      e.target.textContent = 'Архив'
+      document.querySelector('.main-header__title').textContent = 'Журнал заказов'
     }
-})
+  })
 
-tableRoutesFiltersHandler()
+  tableRoutesFiltersHandler()
 
-const updateMainTableData = () => {
+  const updateMainTableData = () => {
     setInterval(getOrders, 1000)
-}
+  }
 // updateMainTableData()
+}
 

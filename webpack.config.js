@@ -19,6 +19,7 @@ module.exports = {
   entry: {
     index: polyfill.concat(path.resolve(__dirname, "web/src/static/js/table", "index.js")),
     login: polyfill.concat(path.resolve(__dirname, "web/src/static/js/login", "login.js")),
+    report: polyfill.concat(path.resolve(__dirname, "web/src/static/js/report", "report.js")),
   },
   output: {
     path: path.resolve(__dirname, "web/dist"),
@@ -37,6 +38,11 @@ module.exports = {
       filename: "templates/login/login.html",
       template: path.resolve(__dirname, "web", "src/templates/login/login.html"),
       chunks: ["login"]
+    }),
+    new HtmlWebpackPlugin({
+      filename: "templates/report/report.html",
+      template: path.resolve(__dirname, "web", "src/templates/report/report.html"),
+      chunks: ["report"]
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({

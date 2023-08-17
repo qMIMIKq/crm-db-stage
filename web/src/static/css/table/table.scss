@@ -379,3 +379,24 @@ input.tr {
   }
 }
 
+.table {
+  &__issued--report {
+    width: 105px;
+  }
+
+  &__plan--report {
+    width: 105px;
+  }
+
+  &__route--report {
+    width: 65px;
+  }
+
+  &__operator--report {
+    width: 95px;
+  }
+
+  &__issued-plan--report {
+    width: 120px;
+  }
+}

@@ -120,7 +120,8 @@ CREATE TABLE routes
     plan_date         varchar(255) default '',
     plan_start        varchar(255) default '',
     plan_exclude_days text         default '',
-    plan_faster       boolean      default false
+    plan_faster       boolean      default false,
+    last_comment      text         default ''
 );
 
 create table route_comments
@@ -160,4 +161,24 @@ create table comments
     comment_text   TEXT,
     comment_author varchar(255),
     order_id       INT REFERENCES orders (order_id) ON DELETE CASCADE
+);
+
+CREATE TABLE reports
+(
+    report_id      serial unique PRIMARY KEY NOT NULL,
+    report_date    date,
+    order_id       int,
+    order_number   varchar(255),
+    order_client   varchar(255),
+    order_name     varchar(255),
+    order_material varchar(255),
+    order_plot     varchar(255),
+    adding_date    date,
+    quantity       varchar(255),
+    issued         varchar(255),
+    plan           varchar(255),
+    operator       varchar(255),
+    issued_plan    varchar(255),
+    route_position varchar(255) default '0',
+    route_id       integer      default 0
 );

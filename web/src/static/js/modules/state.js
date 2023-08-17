@@ -6,6 +6,7 @@
 export let appAddr = 'http://91.142.94.150:8182'
 // export let appAddr = 'http://192.168.1.231:8182'
 // export let appAddr = 'http://172.20.10.7:8182'
+// export let appAddr = 'http://192.168.0.104:8182'
 const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
@@ -47,6 +48,11 @@ let state = {
     'completed': false,
     'unstarted': false,
     'planned': false
+  },
+  'reports': [],
+  'reportFilters': {
+    'order_id': '',
+    'number': '',
   }
 }
 

@@ -46,6 +46,11 @@ type Time interface {
 	CalcDynamicTime(time domain.TimeInfo) string
 }
 
+type Reports interface {
+	GetAll(from, to string) ([]domain.Report, error)
+	UpdateReports(report domain.Route) error
+}
+
 type Services struct {
 	Routes
 	Files
@@ -55,6 +60,7 @@ type Services struct {
 	Users
 	Orders
 	Time
+	Reports
 }
 
 func NewService(repos *repository.Repository) *Services {
@@ -67,5 +73,6 @@ func NewService(repos *repository.Repository) *Services {
 		Orders:        NewOrdersService(repos.Orders),
 		Routes:        NewRoutesService(repos.Routes),
 		Time:          NewTimeService(),
+		Reports:       NewReportsService(repos.Reports),
 	}
 }

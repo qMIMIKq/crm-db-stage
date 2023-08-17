@@ -228,7 +228,7 @@ export const drawOrders = async (d, data, users) => {
       currentOrder.querySelector('#completed').value = true
       const parent = e.target.closest('.table-form--old')
       let today = getTime()
-      today = today.substring(0, today.length - 6)
+      today = today.substring(0, today.length - 5)
 
       if (parent !== null) {
         parent.classList.remove('table-form--old')

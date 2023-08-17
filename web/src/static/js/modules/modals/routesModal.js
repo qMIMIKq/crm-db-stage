@@ -61,15 +61,18 @@ const routeModal = `
                             <label class='route__label quantity-block__label' for='route__quantity'>Тираж</label>
                             <label class='route__label' for='day_quantity'>Выдано</label>
                         </div>
+                        
                         <div class="quantity-block">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' name='quantity' type='number' id='quantity' placeholder="Тираж">
                           <input readonly class='route__input--top route__input--small table__data--ro main__input progress-block__input' type='number' name='issued' id='route__issued'>
+                          <input readonly class='hidden__input' type='number' name='issued_today' id='route__issued-today'>
                         </div>
                         
                         <div class="quantity-block__labels">
                             <label class='route__label quantity-block__inshifts' for='day_quantity'>В смену</label>
                             <label class='route__label quantity-block__shifts' for='shifts'>Смен</label>
                         </div>
+                        
                         <div class="quantity-block">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В смену">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
@@ -150,7 +153,6 @@ const routeModal = `
                         <input
                         disabled
                         id='route-issued__today'
-                        name='issued_today'
                         placeholder='За смену'
                         class='route__input main__button hidden__input main__input issued-route__num' 
                         type='number'>
@@ -192,7 +194,6 @@ const routeModal = `
                     <input id="route__delete" disabled class='section-finish__btn section-finish__delete main__button' type='button' value="УДАЛИТЬ">
                     
                     <div class='section-finish__complete'>
-                        <button disabled class='section-finish__btn section-finish__cancel main__button clickable' type='button'>ОТМЕНА</button>
                         <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='button'>ОК</button>
                     </div>
                 </div>
@@ -348,6 +349,7 @@ export const triggerRoutesModal = e => {
   const modalElem = showModal(routeModal)
   let logName = state['adminCheck'] || state['techCheck'] ? user.nickname : ''
 
+  let planned = false
   let info = false
   let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
   if (routeInfo !== '') {
@@ -385,12 +387,15 @@ export const triggerRoutesModal = e => {
 
   const pauseBtn = routeForm.querySelector('.pause-route__btn')
   const pauseTimeInput = routeForm.querySelector('.pause-route__time')
+  const issuedTodayStart = document.querySelector('#route__issued-today')
 
   const startBtn = routeForm.querySelector('.start-route__btn')
   const endBTn = routeForm.querySelector('.end-route__btn')
   const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
+  const reportChanger = []
+
   issuedBtn.addEventListener('click', e => {
-    issuedHandler(e, issued, routePlot.value, routeUser.value)
+    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser.value, reportChanger)
   })
 
   // const dynEndInp = document.querySelector('#route__dynend')
@@ -467,12 +472,20 @@ export const triggerRoutesModal = e => {
     if (routeInfo['last_comment']) {
       document.querySelector('#last_comment').value = routeInfo['last_comment']
     }
+    console.log(routeInfo.issued_today)
+    if (routeInfo.issued_today) {
+      issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
+    }
 
     planObj = {
       'exclude': routeInfo['exclude_days'],
       'planStart': routeInfo['plan_start'],
       'planEnd': routeInfo['plan_date'],
       'faster': routeInfo['plan_faster']
+    }
+
+    if (planObj.planEnd) {
+      planned = true
     }
 
     if (routeInfo['issued']) {
@@ -551,7 +564,6 @@ export const triggerRoutesModal = e => {
     }
 
     activateNextStage('section-finish__sub')
-    activateNextStage('section-finish__cancel')
 
     if (routeInfo['quantity']) {
       routeQuantity.value = routeInfo['quantity']
@@ -640,13 +652,12 @@ export const triggerRoutesModal = e => {
       activateNextStage('route__select--user')
       activateNextStage('route-plan__date')
 
-      console.log(routeUser.value)
       if (routeUser.value !== 'Выберите оператора') {
         if (startTime.value) {
           activateNextStage('issued-modal_trigger')
+        } else {
+          activateNextStage('start-route__btn')
         }
-
-        activateNextStage('start-route__btn')
       }
 
       if (startTime.value) {
@@ -660,7 +671,6 @@ export const triggerRoutesModal = e => {
       }
     }
   })
-
 
   const dbID = currentOrder.querySelector('#db_id').value
   const num = currentOrder.querySelector('#number').value
@@ -704,7 +714,6 @@ export const triggerRoutesModal = e => {
 
     activateNextStage('pause-route__btn')
     activateNextStage('section-finish__sub')
-    activateNextStage('section-finish__cancel')
     activateNextStage('issued-modal_trigger')
     disableBtn('start-route__btn')
     disableBtn('route__select--plot')
@@ -724,7 +733,6 @@ export const triggerRoutesModal = e => {
     endBTn.classList.add('route-type__finish')
     addLog(routeUser.value, 'Закончил', '#visible__comments')
   })
-
 
   // REPORT ISSUED
   const reportIssued = document.querySelector('.report-route__btn')
@@ -757,6 +765,16 @@ export const triggerRoutesModal = e => {
     obj['plan_start'] = planObj.planStart
     obj['plan_faster'] = planObj.faster
     obj['exclude_days'] = planObj.exclude
+    obj['route_id'] = routeInfo.route_id
+
+    console.log(obj)
+
+    let today = getTime()
+    today = today.substring(0, today.length - 5)
+    obj['issued_today'] = issuedTodayStart.value
+
+    obj['planned'] = !!(dbID && planned)
+    obj['report_changer'] = reportChanger
 
     routeInput.value = JSON.stringify(obj)
     const parent = routeInput.closest('.table-form--old')
@@ -764,9 +782,10 @@ export const triggerRoutesModal = e => {
     if (!(parent === null)) {
       parent.classList.remove('table-form--old')
       parent.classList.add('table-form--upd')
+      sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
     }
-
     submitData()
+
     document.querySelector('.modal--route').remove()
     window.removeEventListener('keydown', subCommentByEnter)
   })

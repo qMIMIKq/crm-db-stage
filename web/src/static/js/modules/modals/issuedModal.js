@@ -2,6 +2,7 @@ import {showModal} from "./showModal";
 import {addLog, drawPlots} from "./routesModal";
 import {user} from "../../table";
 import {state} from "../state";
+import {getTime} from "../getTime";
 
 const changeIssuedModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
@@ -16,8 +17,7 @@ const changeIssuedModal = `
         </select>
         
         <label class='route__label' for='route__user'>Оператор</label>
-        <select disabled class='route__select main__button main__select route__select--user' name='user' id='route__user'>
-            <option selected disabled>Выберите оператора</option>
+        <select class='route__select main__button main__select route__select--user' name='user' id='route__user'>
         </select>
         
         <label class='route__label'>Дата</label>
@@ -37,7 +37,7 @@ const changeIssuedModal = `
    </div>
 `
 
-export const issuedHandler = (e, issuedInput, plotI, userI) => {
+export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateData) => {
   const modal = showModal(changeIssuedModal)
   const okBtn = modal.querySelector('.confirm__button--ok')
   const cnclBtn = modal.querySelector('.confirm__button--cncl')
@@ -46,25 +46,48 @@ export const issuedHandler = (e, issuedInput, plotI, userI) => {
   const date = modal.querySelector('.modal-issued__date')
 
   const check = state.adminCheck || state.techCheck
+  let today = getTime()
+  today = today.substring(0, today.length - 5)
+  let yst = new Date(today)
+  yst.setDate(yst.getDate() - 1)
+  yst = yst.toISOString().split('T')[0]
+
+  date.setAttribute('max', yst)
 
   if (!check) {
-    userData.remove()
-    plot.remove()
+    userData.classList.add('hidden__input')
+    plot.classList.add('hidden__input')
   }
 
-  const issuedTodayInput = modal.querySelector('.modal-issued__input')
+  const modalIssuedInput = modal.querySelector('.modal-issued__input')
 
   drawPlots(plotI, userI)
   okBtn.addEventListener('click', () => {
-    issuedInput.value = String(Number(issuedInput.value) + Number(issuedTodayInput.value))
+    issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value))
 
     if (check) {
-      addLog(user.nickname, `${plot.value} За смену ${date.value} ${userData.value} ${issuedTodayInput.value}`, '#visible__comments')
+      console.log(issuedTodayInput.value)
+      addLog(user.nickname, `${plot.value} За смену ${date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
+
+
+      updateData.push({
+        'operator_name': userData.value,
+        'report_date': date.value ? date.value : today,
+        'quantity': modalIssuedInput.value
+      })
+
+      if (date.value) {
+        console.log('CHECK')
+      } else {
+        console.log('NOT CHECK')
+        issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value)
+      }
+
     } else {
-      addLog(user.nickname, `${plot.value} За смену ${issuedTodayInput.value}`, '#visible__comments')
+      issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value)
+      addLog(userData.value, `${plot.value} За смену ${modalIssuedInput.value}`, '#visible__comments')
     }
 
-    addLog(user.nickname, `${plot.value} За смену ${date.value} ${userData.value} ${issuedTodayInput.value}`, '#visible__comments')
     modal.click()
   })
 

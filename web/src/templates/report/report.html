@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="../../static/assets/favicon/favicon.png" type="image/png">
+    <link rel="icon" href="favicon.png" type="image/png">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{.Title}}</title>
-<script defer src="../../static/js/index.js"></script></head>
+</head>
 <body>
 <div class="container">
     <header class="header">
@@ -45,45 +45,47 @@
     <main class="main">
         <header class="main__header main-header">
             <div class="main-header__nav">
-                <h3 class="main-header__title">Журнал заказов</h3>
-                <button class="main__button main-header__button header-button__add">Добавить</button>
+                <h3 class="main-header__title">Отчет план факт</h3>
+                <button class="main__button hidden__input main-header__button header-button__add">Добавить</button>
             </div>
 
             <div class="main-header__routes header-routes">
-                <button class="main__button header-routes__filter header-routes__work">В работе</button>
-                <button class="main__button header-routes__filter header-routes__unwork">Не в работе</button>
-                <button class="main__button header-routes__filter header-routes__error">Ошибка</button>
-                <button class="main__button header-routes__filter header-routes__completed">Сдал</button>
-                <button class="main__button header-routes__filter header-routes__planned">В плане</button>
-                <input type="date" class="main__button header-routes__filter header-routes__planned-date">
+                <button class="main__button hidden__input header-routes__filter header-routes__work">В работе</button>
+                <button class="main__button hidden__input header-routes__filter header-routes__unwork">Не в работе
+                </button>
+                <button class="main__button hidden__input header-routes__filter header-routes__error">Ошибка</button>
+                <button class="main__button hidden__input header-routes__filter header-routes__completed">Сдал</button>
+                <button class="main__button header-routes__filter header-routes__planned--report">В плане</button>
+                <label>От</label>
+                <input type="date" class="main__button header-routes__filter header-routes__planned-date--report__from">
+                <label>До</label>
+                <input type="date" class="main__button header-routes__filter header-routes__planned-date--report__to">
             </div>
         </header>
 
         <div class="main-table__data">
             <ul class="main-table__header">
-                <li class="table__cell table__db">№</li>
+                <li class="table__cell table__use table__db">
+                    <label for="numbers">№</label>
+                    <input class="hidden__input filter__type" value="order_id" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="все" id="id">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
                 <li class="table__cell table__use table__timestamp">
-                    <label for="timestamp">Вход</label>
+                    <label for="numbers">Дата</label>
                     <input class="hidden__input filter__type" value="timestamp" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__files">
-                    <svg data-v-fa445770="" xmlns="http://www.w3.org/2000/svg" class="files__ico h-5 w-5 mx-auto"
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path data-v-fa445770="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </li>
                 <li class="table__cell table__use table__number">
                     <label for="numbers">№ заказа</label>
-                    <input class="hidden__input filter__type" value="number" type="text">
+                    <input class="hidden__input filter__type" value="order_number" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="все" id="numbers">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__sample">Шаблон</li>
                 <li class="table__cell table__use table__client">
                     <label for="clients">Клиент</label>
                     <input class="hidden__input filter__type" value="client" type="text">
@@ -114,34 +116,40 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__issued">
-                    <label for="issued">Выдано</label>
+                <li class="table__cell table__use table__issued--report">
+                    <label for="issued">Выдано всего</label>
                     <input class="hidden__input filter__type" value="issued" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="issued"
                             id="issued">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__m">
-                    <label for="m">М</label>
-                    <input class="hidden__input filter__type" value="m" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="m"
-                            id="m">
+                <li class="table__cell table__use table__route table__route--report">
+                    <label for="order_plot">Станок</label>
+                    <input class="hidden__input filter__type" value="order_plot" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                            id="order_plot">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__endtime">
-                    <label for="end_time">Дата сдачи</label>
-                    <input class="hidden__input filter__type" value="end_time" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="end_time"
-                            id="end_time">
+                <li class="table__cell table__operator--report">Оператор</li>
+                <li class="table__cell table__use table__plan--report">
+                    <label for="order_operator">План за смену</label>
+                    <input class="hidden__input filter__type" value="order_operator" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                            id="order_operator">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__routes">Маршруты</li>
-                {{/*            <li class="table__cell table__otk">ОТК</li>*/}}
-                <li class="table__cell table__p">П</li>
-                <li class="table__cell table__comment">Коммент</li>
+                <li class="table__cell table__issued-plan--report">Выдано за смену</li>
+                <li class="table__cell table__use table__plan--report">
+                    <label for="issued">Процент</label>
+                    <input class="hidden__input filter__type" value="issued" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                            id="issued">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
             </ul>
 
             <div class="main__table main-table">
@@ -149,8 +157,7 @@
         </div>
 
         <div class="table__info table-info">
-            <button class="main__button table__archive">Архив</button>
-            <a href="http://91.142.94.150:8182/main/report" class="main__button table__archive">План/Факт</a>
+            <button class="main__button table__archive">В работе</button>
         </div>
     </main>
 </div>

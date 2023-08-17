@@ -20,6 +20,7 @@ func (h *ViewHandler) InitViewRoutes(router *gin.Engine) {
 	main := router.Group("/main", middleware.CheckAuth)
 	{
 		main.GET("/table", h.indexView)
+		main.GET("/report", h.reportView)
 	}
 }
 

@@ -34,7 +34,7 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
   const excludeDateChose = modal.querySelector('.modal-plan__exclude-chose')
 
   let today = getTime()
-  today = today.substring(0, today.length - 6)
+  today = today.substring(0, today.length - 5)
   let tmrw = new Date(today)
   tmrw.setDate(tmrw.getDate() + 1)
   tmrw = tmrw.toISOString().split('T')[0]

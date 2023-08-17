@@ -2,6 +2,7 @@ package handler
 
 import (
 	"crm/internal/domain"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -15,6 +16,8 @@ func (h *Handler) addOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err)
 		return
 	}
+
+	fmt.Println("ADD ORDER")
 
 	err := h.services.Orders.AddOrders(orders)
 	if err != nil {

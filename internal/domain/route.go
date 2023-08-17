@@ -1,30 +1,39 @@
 package domain
 
 type Route struct {
-	User            string   `json:"user" db:"worker"`
-	RouteID         string   `json:"route_id" db:"route_id"`
-	Plot            string   `json:"plot" db:"plot_id"`
-	RoutePosition   string   `json:"route_position" db:"route_position"`
-	Comments        []Report `json:"comments"`
-	LastComment     string   `json:"last_comment" db:"last_comment"`
-	StartTime       string   `json:"start_time" db:"start_time"`
-	EndTime         string   `json:"end_time" db:"end_time"`
-	PauseTime       string   `json:"pause_time" db:"pause_time"`
-	ErrorTime       string   `json:"error_time" db:"error_time"`
-	ErrorMsg        string   `json:"error_msg" db:"error_value"`
-	Quantity        string   `json:"quantity" db:"quantity"`
-	DayQuantity     string   `json:"day_quantity" db:"day_quantity"`
-	Issued          string   `json:"issued" db:"issued"`
-	OrderID         string   `json:"order_id" db:"order_id"`
-	TheorEnd        string   `json:"theor_end" db:"theor_end"`
-	DynEnd          string   `json:"dyn_end" db:"dyn_end"`
-	PlanDate        string   `json:"plan_date" db:"plan_date"`
-	PlanStart       string   `json:"plan_start" db:"plan_start"`
-	PlanExcludeDays string   `json:"exclude_days" db:"plan_exclude_days"`
-	PlanFaster      bool     `json:"plan_faster" db:"plan_faster"`
+	User            string          `json:"user" db:"worker"`
+	RouteID         string          `json:"route_id" db:"route_id"`
+	Plot            string          `json:"plot" db:"plot_id"`
+	RoutePosition   string          `json:"route_position" db:"route_position"`
+	Comments        []Comment       `json:"comments"`
+	LastComment     string          `json:"last_comment" db:"last_comment"`
+	StartTime       string          `json:"start_time" db:"start_time"`
+	EndTime         string          `json:"end_time" db:"end_time"`
+	PauseTime       string          `json:"pause_time" db:"pause_time"`
+	ErrorTime       string          `json:"error_time" db:"error_time"`
+	ErrorMsg        string          `json:"error_msg" db:"error_value"`
+	Quantity        string          `json:"quantity" db:"quantity"`
+	DayQuantity     string          `json:"day_quantity" db:"day_quantity"`
+	Issued          string          `json:"issued" db:"issued"`
+	IssuedToday     string          `json:"issued_today" db:"issued_plan"`
+	OrderID         string          `json:"order_id" db:"order_id"`
+	TheorEnd        string          `json:"theor_end" db:"theor_end"`
+	DynEnd          string          `json:"dyn_end" db:"dyn_end"`
+	PlanDate        string          `json:"plan_date" db:"plan_date"`
+	PlanStart       string          `json:"plan_start" db:"plan_start"`
+	PlanExcludeDays string          `json:"exclude_days" db:"plan_exclude_days"`
+	PlanFaster      bool            `json:"plan_faster" db:"plan_faster"`
+	Planned         bool            `json:"planned"`
+	ReportChanger   []ReportChanger `json:"report_changer"`
 }
 
-type Report struct {
+type ReportChanger struct {
+	OperatorName string `json:"operator_name"`
+	ReportDate   string `json:"report_date"`
+	Quantity     string `json:"quantity"`
+}
+
+type Comment struct {
 	Date  string `json:"date"`
 	Value string `json:"value"`
 }

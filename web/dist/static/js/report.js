@@ -1,29 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./node_modules/@babel/polyfill/lib/index.js":
-/*!***************************************************!*\
-  !*** ./node_modules/@babel/polyfill/lib/index.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-__webpack_require__(/*! ./noConflict */ "./node_modules/@babel/polyfill/lib/noConflict.js");
-
-var _global = _interopRequireDefault(__webpack_require__(/*! core-js/library/fn/global */ "./node_modules/core-js/library/fn/global.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-if (_global["default"]._babelPolyfill && typeof console !== "undefined" && console.warn) {
-  console.warn("@babel/polyfill is loaded more than once on this page. This is probably not desirable/intended " + "and may have consequences if different versions of the polyfills are applied sequentially. " + "If you do need to load the polyfill more than once, use @babel/polyfill/noConflict " + "instead to bypass the warning.");
-}
-
-_global["default"]._babelPolyfill = true;
-
-/***/ }),
-
 /***/ "./node_modules/@babel/polyfill/lib/noConflict.js":
 /*!********************************************************!*\
   !*** ./node_modules/@babel/polyfill/lib/noConflict.js ***!
@@ -3824,6 +3801,358 @@ function submitData() {
     });
   }
 }
+
+/***/ }),
+
+/***/ "./web/src/static/js/report/drawReport.js":
+/*!************************************************!*\
+  !*** ./web/src/static/js/report/drawReport.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "drawReport": () => (/* binding */ drawReport),
+/* harmony export */   "table": () => (/* binding */ table)
+/* harmony export */ });
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _filters_reportFilters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filters/reportFilters */ "./web/src/static/js/report/filters/reportFilters.js");
+
+
+const table = document.querySelector('.main-table');
+const drawReport = async (d, data) => {
+  (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_1__.controlReportsFiltersReset)();
+  console.log(d);
+  let percents = 0;
+  if (d.plan && d.issued_plan) {
+    percents = d.issued_plan / d.plan * 100;
+  }
+  table.insertAdjacentHTML(`afterbegin`, `
+    <form id="form-${d.report_id}" class='table-form table-form--old' method='POST'>
+      <ul class='main-table__item'>
+          <li class='table-body_cell table__db'>
+              <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li class='table-body_cell table__timestamp'>
+              <input id='db_id' class='table__data table__data--ro' name='id' type='text' readonly value='${d.report_date.split('T')[0]}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li class='table-body_cell table-body__helper ${d.order_number ? "table-body__attr" : ""}  table__number'>
+              <input 
+              readonly
+              id='number' class='table__data table__data--ro' name='number' type='text' value='${d.order_number}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li  class='table-body_cell table-body__helper ${d.order_client ? "table-body__attr" : ""} table__client'>
+              <input readonly class='table__data table__data--ro' type='text' name='client' value='${d.order_client}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li  class='table-body_cell table-body__helper ${d.order_name ? "table-body__attr" : ""} table__name'>
+              <input readonly class='table__data table__data--ro' type='text' name='name' value='${d.order_name}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li  class='table-body_cell table-body__helper ${d.order_material ? "table-body__attr" : ""} table__material'>
+              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.order_material}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li class='table-body_cell table__quantity'>
+              <input readonly class='table__data table__data--ro' type='number' name='quantity' required value='${d.quantity}' autocomplete='off'>
+          </li>
+          <li class="table-body_cell table__issued--report">
+              <input readonly class="table__data table__data--ro" tabindex="-1"
+              type="number" 
+              name="issued" 
+              required  autocomplete="off"
+              value="${d.issued}">
+          </li>
+          <li class="table-body_cell table__route--report">
+              <input readonly type="text" class="table__data" value="${d.order_plot}">
+          </li>
+          <li class="table-body_cell table__operator--report">
+            <input readonly type="text" class="table__data" value="${d.operator}">
+          </li>
+           <li class="table-body_cell table__use table__plan--report">
+             <input readonly class="table__data" tabindex="-1"
+              type="number" 
+              name="issued" 
+              required  autocomplete="off"
+              value="${d.plan}">
+          </li>
+          <li class="table-body_cell table__issued-plan--report">
+            <input readonly type="number" class="table__data ${d.issued_plan && d.issued_plan != '0' ? '' : 'route--error'}" value=${d.issued_plan}>
+          </li>
+          <li class="table-body_cell table__issued-plan--report">
+            <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>
+          </li>
+        </ul>
+    </form>
+  `);
+  const currentOrder = document.getElementById(`form-${d.id}`);
+  if (String(d.id) === _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentOrder) {
+    currentOrder.querySelectorAll('.table__data').forEach(item => {
+      if (!item.classList.contains('table__data--opened')) {
+        item.classList.add('table__data--chosen');
+      }
+    });
+  }
+
+  // addTriggers("#db_id", showRoutesIssued)
+  // addTriggers(".table__files", triggerFilesModal)
+  // addTriggers(".table__route", triggerRoutesModal)
+  // addTriggers(".table__comment", triggerCommentsModal)
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/report/filters/reportFilters.js":
+/*!***********************************************************!*\
+  !*** ./web/src/static/js/report/filters/reportFilters.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "bindReportsFilters": () => (/* binding */ bindReportsFilters),
+/* harmony export */   "controlReportsFiltersReset": () => (/* binding */ controlReportsFiltersReset),
+/* harmony export */   "deleteReportsFilters": () => (/* binding */ deleteReportsFilters),
+/* harmony export */   "drawReportsFilter": () => (/* binding */ drawReportsFilter),
+/* harmony export */   "globalFilterReports": () => (/* binding */ globalFilterReports),
+/* harmony export */   "idReportFilter": () => (/* binding */ idReportFilter),
+/* harmony export */   "numsReportFilter": () => (/* binding */ numsReportFilter),
+/* harmony export */   "plotsReportFilter": () => (/* binding */ plotsReportFilter),
+/* harmony export */   "reportFiltersWrapper": () => (/* binding */ reportFiltersWrapper)
+/* harmony export */ });
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../modules/state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../modules/orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _modules_bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../modules/bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _drawReport__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../drawReport */ "./web/src/static/js/report/drawReport.js");
+/* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../getReports */ "./web/src/static/js/report/getReports.js");
+
+
+
+
+
+const reportFiltersWrapper = document.querySelector('.main-table__header');
+const idReportFilter = document.querySelector('#id');
+const numsReportFilter = document.querySelector('#numbers');
+const plotsReportFilter = document.querySelector('#order_plot');
+const deleteReportsFilters = () => {
+  const filters = document.querySelectorAll('.table__filter--new');
+  if (filters[0] !== null) {
+    filters.forEach(filter => filter.remove());
+  }
+};
+const drawReportsFilter = (data, target) => {
+  data.forEach(d => {
+    target.insertAdjacentHTML('beforeend', `
+            <option class='table__filter--new' value='${d}'>${d}</option>
+        `);
+  });
+};
+const bindReportsFilters = () => {
+  const tableFilters = document.querySelectorAll('.table__filter');
+  const filterWrappers = document.querySelectorAll('.table__use label');
+  filterWrappers.forEach(wrapper => {
+    wrapper.addEventListener('click', e => {
+      const select = wrapper.parentNode.querySelector('select');
+      wrapper.classList.add('hidden__input');
+      select.classList.remove('hidden__input');
+    });
+  });
+  tableFilters.forEach(filter => {
+    filter.addEventListener('blur', e => {
+      showFilter(e);
+    });
+  });
+  bindFilter(idReportFilter);
+  bindFilter(numsReportFilter);
+  bindFilter(reportFiltersWrapper);
+};
+const showFilter = e => {
+  const target = e.target;
+  _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered = true;
+  const label = target.parentNode.querySelector('label');
+  target.classList.add('hidden__input');
+  label.classList.remove('hidden__input');
+};
+const filterReports = (type, filter) => {
+  _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered = true;
+  _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters[type] = filter;
+  console.log(type, filter);
+  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters);
+  (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+  _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reports.forEach(o => {
+    globalFilterReports(o, []);
+  });
+  (0,_modules_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
+};
+const bindFilter = elem => {
+  elem.removeEventListener('change', filterListener);
+  elem.addEventListener('change', filterListener);
+};
+const filterListener = e => {
+  showFilter(e);
+  filterReports(e.target.parentNode.querySelector(".filter__type").value, e.target.value);
+  setChosenFilter(e);
+};
+const controlReportsFiltersReset = () => {
+  if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered) {
+    const nav = document.querySelector('.main-header__nav');
+    const resetBtn = nav.querySelector('.header-button__reset');
+    if (resetBtn === null) {
+      nav.insertAdjacentHTML('beforeend', `
+          <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
+      `);
+      nav.querySelector('.header-button__reset').addEventListener('click', e => {
+        _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered = false;
+        _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters = {};
+        document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'));
+        reportFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
+          cell.style.textDecoration = 'none';
+        });
+        (0,_getReports__WEBPACK_IMPORTED_MODULE_4__.getReports)('get-all');
+      });
+    }
+  } else {
+    const resetBtn = document.querySelector('.header-button__reset');
+    if (resetBtn !== null) {
+      resetBtn.remove();
+    }
+  }
+};
+const setChosenFilter = e => {
+  if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered) {
+    e.target.parentNode.querySelector('label').style.textDecoration = 'underline';
+  } else {
+    e.target.parentNode.querySelector('label').style.textDecoration = 'none';
+  }
+};
+const globalFilterReports = (report, topFilters) => {
+  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters);
+  let flag = true;
+  for (let type in _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters) {
+    const filter = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters[type];
+    if (filter === 'все') {} else if (filter) {
+      console.log(report[type], _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters[type]);
+      if (!(report[type] == _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFilters[type])) {
+        flag = false;
+        break;
+      }
+    }
+  }
+  console.log(report);
+  if (flag) {
+    (0,_drawReport__WEBPACK_IMPORTED_MODULE_3__.drawReport)(report, _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredReport, _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+  }
+  return flag;
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/report/getReports.js":
+/*!************************************************!*\
+  !*** ./web/src/static/js/report/getReports.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getReports": () => (/* binding */ getReports)
+/* harmony export */ });
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _modules_sendData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/sendData */ "./web/src/static/js/modules/sendData.js");
+/* harmony import */ var _drawReport__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawReport */ "./web/src/static/js/report/drawReport.js");
+/* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filters/reportFilters */ "./web/src/static/js/report/filters/reportFilters.js");
+/* harmony import */ var _modules_filters_tableFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
+
+
+
+
+
+
+const getReports = () => {
+  const totalOrders = document.querySelector('.orders__total');
+  const from = document.querySelector(".header-routes__planned-date--report__from").value;
+  const to = document.querySelector(".header-routes__planned-date--report__to").value;
+  let reportTime = {
+    "from": from,
+    "to": to
+  };
+  (0,_modules_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_modules_state__WEBPACK_IMPORTED_MODULE_0__.appAddr}/api/reports/get-all`, 'POST', JSON.stringify(reportTime)).then(resp => resp.json()).then(data => {
+    _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reports = data.data;
+    (0,_modules_orders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
+    (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.deleteReportsFilters)();
+    if (!data.data) {
+      document.querySelector('.main-header__title').textContent = 'Отчет пуст';
+      if (totalOrders === null) {
+        document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
+          <h3 class='orders__total'>Всего в отчёте 0</h3>
+      `);
+      } else {
+        totalOrders.textContent = `Всего в отчёте 0`;
+      }
+      return;
+    }
+
+    // document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
+    //     <h3 class="warning">Обновляем таблицу...</h3>
+    // `)
+    // document.querySelector('.table__archive').classList.add('hidden__input')
+
+    const nums = [];
+    const ids = [];
+    const plots = [];
+
+    // deleteTableFilters()
+    // deleteOrders()
+    _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reports = data.data;
+    _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredReport = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.filter(o => o);
+    data.data.forEach(d => {
+      nums.push(d.order_number);
+      ids.push(d.order_id);
+      plots.push(d.order_plot);
+      (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(d, data);
+    });
+    (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.drawReportsFilter)([...new Set(ids)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.idReportFilter);
+    (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.drawReportsFilter)([...new Set(nums)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.numsReportFilter);
+    (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.drawReportsFilter)([...new Set(plots)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.plotsReportFilter);
+    (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.bindReportsFilters)();
+  });
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/report/reportRoutesDatesFilter.js":
+/*!*************************************************************!*\
+  !*** ./web/src/static/js/report/reportRoutesDatesFilter.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "reportRoutesDatesFilter": () => (/* binding */ reportRoutesDatesFilter)
+/* harmony export */ });
+/* harmony import */ var _modules_getTime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getReports */ "./web/src/static/js/report/getReports.js");
+
+
+const reportRoutesDatesFilter = () => {
+  const filterBtn = document.querySelector('.header-routes__planned--report');
+  const filterDateFrom = document.querySelector('.header-routes__planned-date--report__from');
+  const filterDateTo = document.querySelector('.header-routes__planned-date--report__to');
+  let today = (0,_modules_getTime__WEBPACK_IMPORTED_MODULE_0__.getTime)();
+  today = today.substring(0, today.length - 5);
+  filterDateFrom.value = today.trim();
+  filterDateTo.value = today.trim();
+  filterDateTo.setAttribute('min', String(today.trim()));
+  filterDateFrom.addEventListener('change', () => {
+    filterDateTo.setAttribute('min', String(filterDateFrom.value));
+    filterDateTo.value = filterDateFrom.value;
+  });
+  filterBtn.addEventListener('click', () => {
+    (0,_getReports__WEBPACK_IMPORTED_MODULE_1__.getReports)();
+  });
+};
 
 /***/ }),
 
@@ -14255,13 +14584,57 @@ module.exports = styleTagTransform;
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	__webpack_require__("./node_modules/@babel/polyfill/lib/index.js");
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./web/src/static/js/table/index.js");
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!***************************************************!*\
+  !*** ./node_modules/@babel/polyfill/lib/index.js ***!
+  \***************************************************/
+
+
+__webpack_require__(/*! ./noConflict */ "./node_modules/@babel/polyfill/lib/noConflict.js");
+
+var _global = _interopRequireDefault(__webpack_require__(/*! core-js/library/fn/global */ "./node_modules/core-js/library/fn/global.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+if (_global["default"]._babelPolyfill && typeof console !== "undefined" && console.warn) {
+  console.warn("@babel/polyfill is loaded more than once on this page. This is probably not desirable/intended " + "and may have consequences if different versions of the polyfills are applied sequentially. " + "If you do need to load the polyfill more than once, use @babel/polyfill/noConflict " + "instead to bypass the warning.");
+}
+
+_global["default"]._babelPolyfill = true;
+})();
+
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!********************************************!*\
+  !*** ./web/src/static/js/report/report.js ***!
+  \********************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "user": () => (/* binding */ user)
+/* harmony export */ });
+/* harmony import */ var _css_table_table_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css/table/table.scss */ "./web/src/static/css/table/table.scss");
+/* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getReports */ "./web/src/static/js/report/getReports.js");
+/* harmony import */ var _reportRoutesDatesFilter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./reportRoutesDatesFilter */ "./web/src/static/js/report/reportRoutesDatesFilter.js");
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+
+
+
+
+const user = JSON.parse(sessionStorage.getItem("user"));
+if (window.location.href.endsWith('main/report')) {
+  (0,_reportRoutesDatesFilter__WEBPACK_IMPORTED_MODULE_2__.reportRoutesDatesFilter)();
+  (0,_getReports__WEBPACK_IMPORTED_MODULE_1__.getReports)();
+  const archive = document.querySelector('.table__archive');
+  archive.addEventListener('click', e => {
+    window.location.href = `${_modules_state__WEBPACK_IMPORTED_MODULE_3__.appAddr}/main/table`;
+  });
+}
+})();
+
 /******/ })()
 ;
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=report.js.map

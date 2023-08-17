@@ -46,6 +46,12 @@ type Routes interface {
 	DeleteRoute(routeID string) error
 }
 
+type Reports interface {
+	GetAll(from, to string) ([]domain.Report, error)
+	UpdateReports(report domain.Route) error
+	AddReports(route *domain.Route, order *domain.Order, id, routePos string, routeID int, new bool) error
+}
+
 type Repository struct {
 	Init
 	Authorization
@@ -55,6 +61,7 @@ type Repository struct {
 	Routes
 	Users
 	Files
+	Reports
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -64,8 +71,9 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Filters:       NewFiltersPG(db),
 		Plots:         NewPlotsPG(db),
 		Files:         NewFilesMwPg(db),
-		Orders:        NewOrdersPG(db),
+		Orders:        NewOrdersPG(db, NewReportsPG(db)),
 		Routes:        NewRoutesPG(db),
 		Init:          NewInitPG(db),
+		Reports:       NewReportsPG(db),
 	}
 }

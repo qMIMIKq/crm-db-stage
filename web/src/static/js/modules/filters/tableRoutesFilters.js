@@ -25,7 +25,7 @@ export const startFilter = (filters) => {
     }
 
 
-    return checkDoFilter(check, order)
+    return checkDoFilter(check, order, filters)
   })
 
   bindOrdersListeners()
@@ -50,7 +50,7 @@ export const errFilter = (filters) => {
       })
     }
 
-    return checkDoFilter(check, order)
+    return checkDoFilter(check, order, filters)
   })
 
   bindOrdersListeners()
@@ -73,7 +73,7 @@ export const completedFilter = (filters) => {
         }
       })
     }
-    return checkDoFilter(check, order)
+    return checkDoFilter(check, order, filters)
   })
 
   bindOrdersListeners()
@@ -96,13 +96,13 @@ export const notInWorkFilter = filters => {
         }
       })
     }
-    return checkDoFilter(check, order)
+    return checkDoFilter(check, order, filters)
   })
 
   bindOrdersListeners()
 }
 
-const checkDoFilter = (check, order) => {
+const checkDoFilter = (check, order, filters) => {
   if (check) {
     if (state['filtered'] && filters.length) {
       globalFilterOrders(order)
@@ -142,7 +142,7 @@ export const plannedFilter = (filters, date) => {
         }
       })
     }
-    return checkDoFilter(check, order)
+    return checkDoFilter(check, order, filters)
   })
 
   bindOrdersListeners()
@@ -261,7 +261,7 @@ export const tableRoutesFiltersHandler = () => {
   })
 
   let today = getTime()
-  today = today.substring(0, today.length - 6)
+  today = today.substring(0, today.length - 5)
   inPlanDate.value = today
   inPlanDate.setAttribute('min', today)
 

@@ -64,11 +64,10 @@ export const getOrders = (postfix = 'get-all') => {
       .then(res => {
         deleteTableFilters()
         deleteOrders()
+        state['orders'] = data.data
+        state['filteredOrders'] = state['orders'].filter(o => o)
 
         data.data.forEach(d => {
-          state['orders'] = data.data
-          state['filteredOrders'] = state['orders'].filter(o => o)
-
           nums.push(d.number)
           clients.push(d.client)
           materials.push(d.material)
@@ -97,33 +96,34 @@ export const getOrders = (postfix = 'get-all') => {
             // console.log('draw only')
             drawOrders(d, data, state['managers'])
           }
-
-          if (!filters.length) {
-            if (state['routesFilters'].started) {
-              deleteOrders()
-              startFilter(filters)
-            } else if (state['routesFilters'].error) {
-              deleteOrders()
-              errFilter(filters)
-            } else if (state['routesFilters'].completed) {
-              deleteOrders()
-              completedFilter(filters)
-            } else if (state['routesFilters'].planned) {
-              let date
-              if (!state.inPlanDate) {
-                date = getTime()
-                date = date.substring(0, date.length - 6)
-              } else {
-                date = state.inPlanDate
-              }
-              deleteOrders()
-              plannedFilter(filters, date)
-            } else if (state['routesFilters'].unstarted) {
-              deleteOrders()
-              notInWorkFilter(filters)
-            }
-          }
         })
+
+        if (!filters.length) {
+          console.log('wtf')
+          if (state['routesFilters'].started) {
+            deleteOrders()
+            startFilter(filters)
+          } else if (state['routesFilters'].error) {
+            deleteOrders()
+            errFilter(filters)
+          } else if (state['routesFilters'].completed) {
+            deleteOrders()
+            completedFilter(filters)
+          } else if (state['routesFilters'].planned) {
+            let date
+            if (!state.inPlanDate) {
+              date = getTime()
+              date = date.substring(0, date.length - 6)
+            } else {
+              date = state.inPlanDate
+            }
+            deleteOrders()
+            plannedFilter(filters, date)
+          } else if (state['routesFilters'].unstarted) {
+            deleteOrders()
+            notInWorkFilter(filters)
+          }
+        }
 
         drawTableFilter([...new Set(nums)], numsFilter)
         drawTableFilter([...new Set(clients)], clientsFilter)
@@ -155,6 +155,11 @@ export const getOrders = (postfix = 'get-all') => {
         }
 
         console.timeEnd('get orders')
+
+        const lastOrder = document.querySelector('.table__data--chosen')
+        if (lastOrder) {
+          lastOrder.scrollIntoView({block: 'center'})
+        }
 
         document.querySelectorAll(".table-form").forEach(form => {
           form.addEventListener('click', e => {
