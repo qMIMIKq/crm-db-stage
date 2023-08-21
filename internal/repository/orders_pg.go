@@ -42,6 +42,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var err error
 	for _, order := range orders {
+
 		_, err = o.db.Exec(query, order.Number, order.Sample,
 			order.Client, order.Name, order.Material, order.Quantity,
 			order.Issued, order.M, order.EndTime, order.OTK,
@@ -235,13 +236,17 @@ func (o OrdersPG) DeleteOrderByID(id int) error {
 	return err
 }
 
-func (o OrdersPG) GetOrders(old bool) ([]*domain.Order, error) {
+func (o OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	log.Info().Msg("Getting orders")
 
 	var query string
-	if old {
+	if params.Old {
 		query = fmt.Sprintf(`
-			SELECT * FROM orders WHERE completed = true ORDER BY order_id ASC;
+			SELECT * FROM orders 
+       WHERE completed = true 
+ 						 AND order_endtime >= $1
+						 AND order_endtime <= $2
+		   ORDER BY order_id ASC;
 		`)
 	} else {
 		query = fmt.Sprintf(`
@@ -279,9 +284,18 @@ func (o OrdersPG) GetOrders(old bool) ([]*domain.Order, error) {
 	var err error
 
 	var orders []*domain.Order
-	err = o.db.Select(&orders, query)
-	if err != nil {
-		log.Err(err).Caller().Msg("error is")
+
+	if params.Old {
+		err = o.db.Select(&orders, query, params.ArchiveFrom, params.ArchiveTo)
+		if err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
+
+	} else {
+		err = o.db.Select(&orders, query)
+		if err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
 	}
 
 	today := time.Now().Format("2006-01-02")

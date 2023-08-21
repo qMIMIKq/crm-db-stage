@@ -36,7 +36,7 @@ type Files interface {
 }
 
 type Orders interface {
-	GetOrders(old bool) ([]*domain.Order, error)
+	GetOrders(params domain.GetOrder) ([]*domain.Order, error)
 	DeleteOrderByID(id int) error
 	AddOrders(orders []*domain.Order) error
 	UpdateOrders(orders []*domain.Order) error

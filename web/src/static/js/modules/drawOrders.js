@@ -39,7 +39,7 @@ export const drawOrders = async (d, data, users) => {
                 <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__timestamp'>
-                <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split('T')[0]}' tabindex='-1' autocomplete='off'>
+                <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp ?  d.timestamp.split('T')[0] : ''}' tabindex='-1' autocomplete='off'>
             </li>
              <li class='table-body_cell hidden-input'>
                 <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
@@ -90,7 +90,7 @@ export const drawOrders = async (d, data, users) => {
                 name="end_time" 
                 type="text"
                 placeholder=" " 
-                value="${d.end_time.split("T")[0]}" 
+                value="${d.end_time ? d.end_time.split("T")[0] : ''}" 
                 onfocus="this.type='date'"
                 onblur="(this.type='text')"
                 tabindex="-1" 
@@ -228,7 +228,7 @@ export const drawOrders = async (d, data, users) => {
       currentOrder.querySelector('#completed').value = true
       const parent = e.target.closest('.table-form--old')
       let today = getTime()
-      today = today.substring(0, today.length - 5)
+      today = today.substring(0, today.length - 5).trim()
 
       if (parent !== null) {
         parent.classList.remove('table-form--old')

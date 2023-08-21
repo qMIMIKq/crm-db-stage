@@ -7,7 +7,7 @@ export const reportRoutesDatesFilter = () => {
   const filterDateTo = document.querySelector('.header-routes__planned-date--report__to')
 
   let today = getTime()
-  today = today.substring(0, today.length - 5)
+  today = today.substring(0, today.length - 5).trim()
 
   filterDateFrom.value = today.trim()
   filterDateTo.value = today.trim()

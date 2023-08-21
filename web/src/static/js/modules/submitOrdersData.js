@@ -20,6 +20,9 @@ const createRes = forms => {
         case 'comments':
           obj[key] = value.split('.-.')
           break
+        case 'end_time':
+          obj[key] = value ? new Date(value) : null
+          break
         case 'issued':
           if (value === '') {
             obj[key] = '0'

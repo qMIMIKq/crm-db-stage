@@ -31,17 +31,13 @@ func (h *Handler) addOrders(c *gin.Context) {
 }
 
 func (h *Handler) getOrders(c *gin.Context) {
-	orders, err := h.services.GetOrders(false)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err)
+	var params domain.GetOrder
+	if err := c.Bind(&params); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	newDataResponse(c, http.StatusOK, orders)
-}
-
-func (h *Handler) getOldOrders(c *gin.Context) {
-	orders, err := h.services.GetOrders(true)
+	orders, err := h.services.GetOrders(params)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err)
 		return

@@ -47,7 +47,7 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
 
   const check = state.adminCheck || state.techCheck
   let today = getTime()
-  today = today.substring(0, today.length - 5)
+  today = today.substring(0, today.length - 5).trim()
   let yst = new Date(today)
   yst.setDate(yst.getDate() - 1)
   yst = yst.toISOString().split('T')[0]

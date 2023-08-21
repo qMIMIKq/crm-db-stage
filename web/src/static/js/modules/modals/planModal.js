@@ -5,13 +5,24 @@ const planDateModal = `
     <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>
       <div class='modal_content modal-plan modal_content--confirm' style='width: 400px'>
         <h2 class='confirm__title confirm__title--plan'>Назначить этап в план</h2>
+         <div class="modal-plan__section">
+            <div class="modal-plan__data modal-plan__data--center">
+<!--                <label class="modal-plan__label">Текущая дата</label>-->
+                <input type="text" class="main__button modal-plan__today">
+            </div>
+        </div>
         <div class="modal-plan__section">
             <div class="modal-plan__data">
-                <label class="modal-plan__label">В план</label>
+                <label class="modal-plan__label">В плане от</label>
+                <input type="date" class="main__button modal-plan__start">
+            </div>
+        </div>
+        <div class="modal-plan__section">
+            <div class="modal-plan__data">
+                <label class="modal-plan__label">В плане до </label>
                 <input type="date" class="main__button modal-plan__end">
             </div>
         </div>
-        
         <h2 class="confirm__title confirm__title--plan">Удалить этап из плана</h2>
         <div class="modal-plan__section">
             <ul class="modal-plan__exclude">
@@ -29,42 +40,45 @@ const planDateModal = `
 
 export const planDateHandler = (e, planObj, dateEndInput) => {
   const modal = showModal(planDateModal)
-  const dateInput = modal.querySelector('.modal-plan__end')
+  const dateInput = modal.querySelector('.modal-plan__today')
+  const dateStart = modal.querySelector('.modal-plan__start')
+  const dateEnd = modal.querySelector('.modal-plan__end')
   const excludeSelect = modal.querySelector('.modal-plan__exclude')
   const excludeDateChose = modal.querySelector('.modal-plan__exclude-chose')
 
+  const notInPlan = !(!!dateStart.value)
+
   let today = getTime()
-  today = today.substring(0, today.length - 5)
+  today = today.substring(0, today.length - 5).trim()
   let tmrw = new Date(today)
   tmrw.setDate(tmrw.getDate() + 1)
   tmrw = tmrw.toISOString().split('T')[0]
   console.log(tmrw)
 
+  dateInput.value = today
 
-  dateInput.setAttribute('min', today)
+  dateStart.setAttribute('min', today)
   excludeDateChose.setAttribute('min', today)
 
   const getDays = (start, end) => {
     const oneDay = 1000 * 60 * 60 * 24
     let diff = end.getTime() - start.getTime()
+    console.log(start, end)
 
     return Math.round(diff / oneDay)
   }
 
   let exclude = []
   if (planObj.planEnd) {
-    dateInput.value = planObj.planEnd
+    dateStart.value = planObj.planStart
+    dateEnd.value = planObj.planEnd
     exclude = planObj.exclude ? planObj.exclude.split('__') : []
-    const startDate = new Date(dateInput.value)
-    const endDate = new Date(planObj.planStart)
+    const startDate = new Date(dateStart.value)
+    let endDate = new Date(dateEnd.value)
+    endDate.setDate(endDate.getDate() + 1)
 
     drawData(startDate, endDate)
     addHandler()
-  } else {
-    dateInput.value = tmrw
-    excludeSelect.insertAdjacentHTML('afterbegin', `
-      <li class="modal-plan__exclude-option ${exclude.includes(tmrw) ? 'exclude-date' : 'include-date'}">${tmrw}</li>  
-    `)
   }
 
   function addHandler() {
@@ -84,6 +98,8 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
 
   function drawData(startDate, endDate) {
     let res = getDays(startDate, endDate)
+    console.log(res)
+
     for (let i = res + 1; i > 1; i--) {
       endDate.setDate(endDate.getDate() - 1)
       let date = endDate.toISOString().split('T')[0]
@@ -94,25 +110,24 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
       `)
     }
 
-    excludeDateChose.setAttribute('max', dateInput.value)
-    if (!exclude.includes(dateInput.value)) {
-      excludeSelect.insertAdjacentHTML('beforeend', `
-        <li class="modal-plan__exclude-option ${exclude.includes(dateInput.value) ? 'exclude-date' : 'include-date'}">${dateInput.value}</li>  
-    `)
-    }
+    excludeDateChose.setAttribute('max', dateEnd.value)
   }
 
-  if (dateInput.value) {
+  if (dateStart.value) {
     excludeDateChose.removeAttribute('disabled')
   } else {
     excludeDateChose.setAttribute('disabled', '')
   }
 
-  dateInput.addEventListener('change', e => {
+  dateStart.addEventListener('change', e => {
+    dateEnd.value = dateStart.value
+    dateEnd.setAttribute('min', dateStart.value)
+
     exclude = []
     excludeDateChose.removeAttribute('disabled')
-    const endDate = new Date(dateInput.value)
-    const startDate = new Date(today)
+    const startDate = new Date(dateStart.value)
+    let endDate = new Date(dateEnd.value)
+    endDate.setDate(endDate.getDate() + 1)
 
     excludeSelect.querySelectorAll('li').forEach(date => {
       date.remove()
@@ -121,6 +136,22 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
     drawData(startDate, endDate)
     addHandler()
   })
+
+  dateEnd.addEventListener('change', e => {
+    exclude = []
+    excludeDateChose.removeAttribute('disabled')
+    const startDate = new Date(dateStart.value)
+    let endDate = new Date(dateEnd.value)
+    endDate.setDate(endDate.getDate() + 1)
+
+    excludeSelect.querySelectorAll('li').forEach(date => {
+      date.remove()
+    })
+
+    drawData(startDate, endDate)
+    addHandler()
+  })
+
 
   excludeDateChose.addEventListener('change', () => {
     excludeSelect.querySelectorAll('li').forEach(date => {
@@ -156,6 +187,8 @@ export const planDateHandler = (e, planObj, dateEndInput) => {
       dateEndInput.value = ''
       dateEndInput.classList.remove('route-type__finish')
     }
+
+    console.log(planObj)
 
     modal.click()
   })

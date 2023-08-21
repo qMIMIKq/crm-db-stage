@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type Order struct {
 	ID        string            `json:"id" db:"order_id"`
 	TimeStamp string            `json:"timestamp" db:"order_timestamp"`
@@ -12,13 +14,19 @@ type Order struct {
 	Quantity  string            `json:"quantity" db:"order_quantity"`
 	Issued    string            `json:"issued" db:"order_issued"`
 	M         string            `json:"m" db:"order_m"`
-	EndTime   string            `json:"end_time" db:"order_endtime"`
+	EndTime   *time.Time        `json:"end_time" db:"order_endtime"`
 	OTK       string            `json:"otk" db:"order_otk"`
 	P         string            `json:"p" db:"order_p"`
 	Comments  []string          `json:"comments"`
 	Completed bool              `json:"completed" db:"completed"`
 	Routes    map[string]*Route `json:"routes_json"`
 	DbRoutes  []*Route          `json:"db_routes"`
+}
+
+type GetOrder struct {
+	ArchiveFrom string `json:"archive_from"`
+	ArchiveTo   string `json:"archive_to"`
+	Old         bool   `json:"order_old"`
 }
 
 func (o *Order) SetFiles(file string) {

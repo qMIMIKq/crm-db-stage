@@ -17,8 +17,8 @@ func (o OrdersService) UpdateOrders(orders []*domain.Order) error {
 	return o.repo.UpdateOrders(orders)
 }
 
-func (o OrdersService) GetOrders(old bool) ([]*domain.Order, error) {
-	return o.repo.GetOrders(old)
+func (o OrdersService) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
+	return o.repo.GetOrders(params)
 }
 
 func (o OrdersService) AddOrders(orders []*domain.Order) error {

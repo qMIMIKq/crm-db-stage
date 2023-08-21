@@ -6,6 +6,10 @@ import {deleteOrders, getOrders} from "../orders";
 import {bindOrdersListeners} from "../bindListeners";
 import {getTime} from "../getTime";
 
+export const inArchiveBtn = document.querySelector('.header-routes__archived')
+export const archiveFrom = document.querySelector('.header-routes__planned-date__from')
+export const archiveTo = document.querySelector('.header-routes__planned-date__to')
+
 export const startFilter = (filters) => {
   state['orders'].forEach(order => {
     let check = false
@@ -154,7 +158,32 @@ export const tableRoutesFiltersHandler = () => {
   const inErrorBtn = document.querySelector(".header-routes__error")
   const completedBtn = document.querySelector(".header-routes__completed")
   const inPlanBtn = document.querySelector(".header-routes__planned")
+
   const inPlanDate = document.querySelector('.header-routes__planned-date')
+
+  let date = getTime()
+  let today = date.substring(0, date.length - 5).trim()
+  let week = new Date(date)
+  week.setDate(week.getDate() - 7)
+
+  archiveFrom.value = week.toISOString().split('T')[0]
+  archiveTo.value = today
+
+  archiveFrom.setAttribute('max', archiveTo.value)
+  archiveTo.setAttribute('min', archiveFrom.value)
+
+  archiveFrom.addEventListener('change', () => {
+    archiveTo.setAttribute('min', archiveFrom.value)
+  })
+
+  archiveTo.addEventListener('change', () => {
+    archiveFrom.setAttribute('max', archiveTo.value)
+  })
+
+  inArchiveBtn.addEventListener('click', () => {
+    console.log('hi')
+    getOrders('get-old')
+  })
 
   inWorkBtn.addEventListener('click', e => {
     if (inWorkBtn.classList.contains('route__filter--chosen')) {
@@ -260,8 +289,7 @@ export const tableRoutesFiltersHandler = () => {
     state.inPlanDate = inPlanDate.value
   })
 
-  let today = getTime()
-  today = today.substring(0, today.length - 5)
+
   inPlanDate.value = today
   inPlanDate.setAttribute('min', today)
 

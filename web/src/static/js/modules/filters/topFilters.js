@@ -241,7 +241,7 @@ export const filterData = () => {
               let date
               if (!state.inPlanDate) {
                 date = getTime()
-                date = date.substring(0, date.length - 6)
+                date = date.substring(0, date.length - 5).trim()
               } else {
                 date = state.inPlanDate
               }
