@@ -21,7 +21,7 @@ const createRes = forms => {
           obj[key] = value.split('.-.')
           break
         case 'end_time':
-          obj[key] = value ? new Date(value) : null
+          obj[key] = value
           break
         case 'issued':
           if (value === '') {

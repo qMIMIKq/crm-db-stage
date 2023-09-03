@@ -174,8 +174,13 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 	var err error
 	var id string
 	for _, order := range orders {
-		err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
-			order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P).Scan(&id)
+		if order.EndTime != "" {
+			err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
+				order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P).Scan(&id)
+		} else {
+			err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
+				order.Name, order.Material, order.Quantity, order.Issued, order.M, nil, order.OTK, order.P).Scan(&id)
+		}
 
 		err = o.db.Select(&files, getFilesQuery, id)
 		for _, file := range order.Files {

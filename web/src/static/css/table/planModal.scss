@@ -65,7 +65,7 @@
 }
 
 .confirm__title--plan {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
 .exclude-date {
@@ -77,4 +77,45 @@
   border: 1px solid black;
   border-radius: 5px;
   overflow-x: scroll;
+}
+
+.plan-period {
+  &__btn {
+    &:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
+
+  margin-bottom: 10px;
+}
+
+.plan-dates {
+  display: flex;
+  //justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-left: 7px;
+
+  &__item {
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-bottom: 7px;
+    transition: color .3s;
+
+    &:hover {
+      cursor: pointer;
+      transition: color .3s;
+      color: #09d009;
+    }
+
+    &:not(:last-child) {
+      margin-right: 7px;
+    }
+
+    &--inplan {
+      color: white;
+      background: #09d009;
+    }
+  }
 }

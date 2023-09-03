@@ -7,7 +7,7 @@ import {sendData} from "../sendData";
 import {showResult} from "../submitControl";
 import {getOrders} from "../orders";
 import {getTime} from "../getTime";
-import {planDateHandler} from "./planModal";
+import {planDateHandler2} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
 
@@ -410,7 +410,7 @@ export const triggerRoutesModal = e => {
   }
 
   planDateInput.addEventListener('click', e => {
-    planDateHandler(e, planObj, planDateInput)
+    planDateHandler2()
   })
 
   const errInput = document.querySelector('#error-route__msg')
