@@ -251,9 +251,10 @@ export const planDateHandler = (addedDates, plot, routeID) => {
             if (modalAddedDates[currentDate].queues.length === 1) {
               delete modalAddedDates[currentDate]
             } else {
+              const ind = modalAddedDates[currentDate].queues.findIndex((value => value === queue.value))
+              modalAddedDates[currentDate].queues.splice(ind, 1)
             }
 
-            console.log(modalAddedDates[currentDate])
             deleteData()
             drawData(new Date(todayStr), new Date(endDateInput.value))
           })
