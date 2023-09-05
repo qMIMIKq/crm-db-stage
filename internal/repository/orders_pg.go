@@ -462,13 +462,15 @@ func (o OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 
 			for _, dateInfo := range route.DBPlanDates {
 				var newAdded domain.DateInfo
+
 				newAdded.Date = dateInfo.PlanDate
 				newAdded.DateInfo.Divider = dateInfo.Divider
 				newAdded.DateInfo.Queues = strings.Split(dateInfo.Queues, ", ")
 
-				route.AddedDates = append(route.AddedDates)
+				route.AddedDates = append(route.AddedDates, newAdded)
 			}
 
+			log.Info().Interface("ADDED DATES", route.AddedDates).Msg("ADDED DATES")
 			err = o.db.Select(&route.BusyDates, queryRouteBusyPlan, route.Plot, today, route.RouteID)
 			if err != nil {
 				log.Err(err).Caller().Msg("error is")
