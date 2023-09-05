@@ -66,6 +66,11 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			report.POST("/get-all", h.getReports)
 			report.POST("/update", h.updateReports)
 		}
+
+		plans := api.Group("/plans")
+		{
+			plans.POST("/get-busy", h.getBusyPlans)
+		}
 	}
 }
 

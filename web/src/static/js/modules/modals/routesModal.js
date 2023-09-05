@@ -45,6 +45,7 @@ const routeModal = `
                         <input class="main__button main__input route__input route__input--top route-plan__date" 
                             name="plan_date"
                             readonly
+                            disabled
                             id="route-plan__date"
                             type="text"
                             value="Не в плане"
@@ -410,7 +411,7 @@ export const triggerRoutesModal = e => {
   }
 
   planDateInput.addEventListener('click', e => {
-    planDateHandler(addedDates, busyDates)
+    planDateHandler(addedDates, routePlot.value)
   })
 
   const errInput = document.querySelector('#error-route__msg')
@@ -468,9 +469,8 @@ export const triggerRoutesModal = e => {
   let addedDates = []
   let dbAddedDates = []
 
-  let busyDates = []
-  let dbBusyDates = []
   if (info) {
+    activateNextStage('route-plan__date')
     let comments = routeInfo['comments']
     if (routeInfo['last_comment']) {
       document.querySelector('#last_comment').value = routeInfo['last_comment']
@@ -479,7 +479,11 @@ export const triggerRoutesModal = e => {
       issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
     }
 
-    dbAddedDates = routeInfo['db_plan'] ? routeInfo['db_plan'] : []
+    if (routeInfo['db_plan']) {
+      dbAddedDates = routeInfo['db_plan']
+      planDateInput.value = 'Уже в плане'
+    }
+
     dbAddedDates.map(dateInfo => {
       dateInfo['queues'] = dateInfo['queues'].split(', ')
       dateInfo['date'] = dateInfo['date'].split('T')[0]
@@ -489,18 +493,6 @@ export const triggerRoutesModal = e => {
         'queues': dateInfo.queues
       }
     })
-
-    dbBusyDates = routeInfo['busy_dates'] ? routeInfo['busy_dates'] : []
-    dbBusyDates.map(dateInfo => {
-      dateInfo['queues'] = dateInfo['queues'].split(', ')
-      dateInfo['date'] = dateInfo['date'].split('T')[0]
-
-      busyDates[dateInfo['date']] = {
-        'divider': dateInfo.divider,
-        'queues': dateInfo.queues
-      }
-    })
-
 
     planObj = {
       'exclude': routeInfo['exclude_days'],
@@ -646,6 +638,7 @@ export const triggerRoutesModal = e => {
 
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
+    disableBtn('route-plan__date')
     drawPlots()
   }
 
@@ -675,7 +668,10 @@ export const triggerRoutesModal = e => {
       addLog(user.nickname, `Сбросил паузу`, '#visible__comments')
 
       activateNextStage('route__select--user')
-      activateNextStage('route-plan__date')
+      if (routePlot.value !== 'Выберите участок') {
+        console.log('Чек')
+        activateNextStage('route-plan__date')
+      }
 
       if (routeUser.value !== 'Выберите оператора') {
         if (startTime.value) {
@@ -719,6 +715,7 @@ export const triggerRoutesModal = e => {
     activateNextStage('pause-route__btn')
     activateNextStage('error-route__btn')
     activateNextStage('section-logs__input')
+    activateNextStage('route-plan__date')
     controlQuantityAccess(routeQuantity)
     controlCommentAccess(commentInput)
   })

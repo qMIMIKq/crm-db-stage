@@ -51,7 +51,12 @@ type Reports interface {
 	UpdateReports(report domain.Route) error
 }
 
+type Plans interface {
+	GetBusy(plot string) ([]domain.DbPlanInfo, error)
+}
+
 type Services struct {
+	Plans
 	Routes
 	Files
 	Authorization
@@ -74,5 +79,6 @@ func NewService(repos *repository.Repository) *Services {
 		Routes:        NewRoutesService(repos.Routes),
 		Time:          NewTimeService(),
 		Reports:       NewReportsService(repos.Reports),
+		Plans:         NewPlansService(repos.Plans),
 	}
 }

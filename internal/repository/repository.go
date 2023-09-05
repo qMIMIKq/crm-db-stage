@@ -52,7 +52,12 @@ type Reports interface {
 	AddReports(route *domain.Route, order *domain.Order, id, routePos string, routeID int, new bool) error
 }
 
+type Plans interface {
+	GetBusy(plot string) ([]domain.DbPlanInfo, error)
+}
+
 type Repository struct {
+	Plans
 	Init
 	Authorization
 	Filters
@@ -75,5 +80,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Routes:        NewRoutesPG(db),
 		Init:          NewInitPG(db),
 		Reports:       NewReportsPG(db),
+		Plans:         NewPlansPG(db),
 	}
 }
