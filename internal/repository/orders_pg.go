@@ -44,7 +44,6 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var err error
 	for _, order := range orders {
-
 		_, err = o.db.Exec(query, order.Number, order.Sample,
 			order.Client, order.Name, order.Material, order.Quantity,
 			order.Issued, order.M, order.EndTime, order.OTK,
@@ -110,6 +109,8 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				for _, info := range route.AddedDates {
 					planDates = append(planDates, info.Date)
 				}
+
+				log.Info().Caller().Msgf("INFO %v, %v, %v", planDates, order.ID, route.Plot)
 
 				err = o.db.QueryRow(routesUpdateQuery, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime, route.EndTime,
@@ -457,6 +458,15 @@ func (o OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 			err = o.db.Select(&route.DBPlanDates, queryRoutePlan, route.RouteID)
 			if err != nil {
 				log.Err(err).Caller().Msg("error is")
+			}
+
+			for _, dateInfo := range route.DBPlanDates {
+				var newAdded domain.DateInfo
+				newAdded.Date = dateInfo.PlanDate
+				newAdded.DateInfo.Divider = dateInfo.Divider
+				newAdded.DateInfo.Queues = strings.Split(dateInfo.Queues, ", ")
+
+				route.AddedDates = append(route.AddedDates)
 			}
 
 			err = o.db.Select(&route.BusyDates, queryRouteBusyPlan, route.Plot, today, route.RouteID)
