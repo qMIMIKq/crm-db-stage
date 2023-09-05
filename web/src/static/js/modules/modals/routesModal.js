@@ -411,7 +411,11 @@ export const triggerRoutesModal = e => {
   }
 
   planDateInput.addEventListener('click', e => {
-    planDateHandler(addedDates, routePlot.value)
+    if (info) {
+      planDateHandler(addedDates, routePlot.value, routeInfo['route_id'])
+    } else {
+      planDateHandler(addedDates, routePlot.value, '0')
+    }
   })
 
   const errInput = document.querySelector('#error-route__msg')

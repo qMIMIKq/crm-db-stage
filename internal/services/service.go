@@ -52,7 +52,7 @@ type Reports interface {
 }
 
 type Plans interface {
-	GetBusy(plot string) ([]domain.DbPlanInfo, error)
+	GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error)
 }
 
 type Services struct {

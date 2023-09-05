@@ -9,8 +9,8 @@ type PlansService struct {
 	repo repository.Plans
 }
 
-func (p PlansService) GetBusy(plot string) ([]domain.DbPlanInfo, error) {
-	return p.repo.GetBusy(plot)
+func (p PlansService) GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error) {
+	return p.repo.GetBusy(plot, routeId)
 }
 
 func NewPlansService(repo repository.Plans) *PlansService {

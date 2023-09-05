@@ -12,7 +12,7 @@ type PlansPG struct {
 	db *sqlx.DB
 }
 
-func (p PlansPG) GetBusy(plot string) ([]domain.DbPlanInfo, error) {
+func (p PlansPG) GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error) {
 	layout := "2006-01-02"
 	today := time.Now().Format(layout)
 
@@ -24,10 +24,12 @@ func (p PlansPG) GetBusy(plot string) ([]domain.DbPlanInfo, error) {
 	`)
 
 	var busyDates []domain.DbPlanInfo
-	err := p.db.Select(&busyDates, queryRouteBusyPlan, plot, today, 0)
+	err := p.db.Select(&busyDates, queryRouteBusyPlan, plot, today, routeId)
 	if err != nil {
 		log.Err(err).Caller().Msg("error is")
 	}
+
+	log.Info().Interface("busy dates", busyDates).Msg("BUSY")
 
 	return busyDates, err
 }

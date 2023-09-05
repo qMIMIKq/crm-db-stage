@@ -12,7 +12,7 @@ func (h *Handler) getBusyPlans(c *gin.Context) {
 		return
 	}
 
-	res, err := h.services.Plans.GetBusy(plot["plot"])
+	res, err := h.services.Plans.GetBusy(plot["plot"], plot["route_id"])
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err)
 		return

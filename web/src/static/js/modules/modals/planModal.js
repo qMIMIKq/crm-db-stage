@@ -72,14 +72,14 @@ const planDateModalAdd = `
    </div>
 `
 
-export const planDateHandler = (addedDates, plot) => {
+export const planDateHandler = (addedDates, plot, routeID) => {
   const modal = showModal(planDateModal)
   const planToday = modal.querySelector('.plan-period__today')
   const planWeek = modal.querySelector('.plan-period__week')
   const planMonth = modal.querySelector('.plan-period__month')
 
   let newBusy = []
-  sendData(`${appAddr}/api/plans/get-busy`, 'POST', JSON.stringify({"plot": plot}))
+  sendData(`${appAddr}/api/plans/get-busy`, 'POST', JSON.stringify({"plot": plot, "route_id": routeID}))
     .then(res => {
       return res.json()
     })
@@ -87,13 +87,19 @@ export const planDateHandler = (addedDates, plot) => {
       if (data.data) {
         console.log(data.data)
         data.data.map(dateInfo => {
-          dateInfo['queues'] = dateInfo['queues'].split(', ')
           dateInfo['date'] = dateInfo['date'].split('T')[0]
 
-          newBusy[dateInfo['date']] = {
-            'divider': dateInfo.divider,
-            'queues': dateInfo.queues
+          console.log(dateInfo)
+          if (!newBusy[dateInfo['date']]) {
+            newBusy[dateInfo['date']] = {
+              'divider': dateInfo.divider,
+              'queues': dateInfo['queues'].split(', ')
+            }
+          } else {
+            newBusy[dateInfo['date']].queues.push(dateInfo['queues'])
           }
+
+          console.log(newBusy)
         })
       }
     }).then(() => {
@@ -169,16 +175,9 @@ export const planDateHandler = (addedDates, plot) => {
           const currentDivider = dateItem.querySelector('.divider').value
 
           const flag = currentDivider > 1
-
-          resObj = {
-            'divider': currentQueue,
-            'queue': currentDivider
-          }
-
           const some = addingModal.querySelector('#modal-some')
           const divider = addingModal.querySelector('#modal-divider')
           const queue = addingModal.querySelector('#modal-queue')
-
 
           if (flag) {
             divider.insertAdjacentHTML('afterbegin', `
@@ -209,12 +208,6 @@ export const planDateHandler = (addedDates, plot) => {
 
           divider.addEventListener('change', () => {
             drawAddingOptions(queue, divider.value)
-            resObj['divider'] = divider.value
-            resObj['queue'] = queue.value
-          })
-
-          queue.addEventListener('change', () => {
-            resObj['queue'] = queue.value
           })
 
           const okBtn = addingModal.querySelector('.confirm__button--ok')
@@ -222,13 +215,16 @@ export const planDateHandler = (addedDates, plot) => {
             if (typeof modalAddedDates[currentDate] === 'undefined') {
               modalAddedDates[currentDate] = {}
             }
-            modalAddedDates[currentDate]['divider'] = resObj.divider
 
+            modalAddedDates[currentDate]['divider'] = divider.value
+
+            console.log('divider', resObj.divider)
+            console.log('queue', resObj.queue)
             if (typeof modalAddedDates[currentDate]['queues'] === 'undefined') {
               modalAddedDates[currentDate]['queues'] = []
-              modalAddedDates[currentDate]['queues'].push(resObj.queue)
+              modalAddedDates[currentDate]['queues'].push(queue.value)
             } else {
-              modalAddedDates[currentDate]['queues'].push(resObj.queue)
+              modalAddedDates[currentDate]['queues'].push(queue.value)
             }
 
             deleteData()
@@ -261,11 +257,10 @@ export const planDateHandler = (addedDates, plot) => {
         let showDate = date.substring(5).split('-')
         ;[showDate[0], showDate[1]] = [showDate[1], showDate[0]]
 
+        console.log(modalAddedDates)
         if (flag) {
           for (const [addedDate, entry] of Object.entries(modalAddedDates)) {
-            console.log(addedDate)
             if (String(addedDate) === date) {
-              console.log('HELLO SUKA')
               for (let j = Number(entry.divider); j > 0; j--) {
                 if (entry.queues.includes(String(j))) {
                   datesList.insertAdjacentHTML('afterbegin', `
@@ -277,38 +272,107 @@ export const planDateHandler = (addedDates, plot) => {
                   </li>  
                 `)
                 } else {
-                  datesList.insertAdjacentHTML('afterbegin', `
-                  <li class="plan-dates__item ${modalBusyDates.includes(date) ? 'plan-dates__item--busy' : ''}">
-                    ${showDate.join('.')}
-                    <input type="text" class="hidden__input date" value="${date}">
-                    <input type="number" class="hidden__input queue" value="${j}">
-                    <input type="number" class="hidden__input divider" value="${entry.divider}">
-                  </li>  
-                `)
+                  if (newBusy[date] && newBusy[date].queues.includes(String(j))) {
+                    datesList.insertAdjacentHTML('afterbegin', `
+                      <li class="plan-dates__item plan-dates__item--busy">
+                        ${showDate.join('.')}
+                        <input type="text" class="hidden__input date" value="${date}">
+                        <input type="number" class="hidden__input queue" value="${j}">
+                        <input type="number" class="hidden__input divider" value="${entry.divider}">
+                      </li>
+                    `)
+                  } else {
+                    datesList.insertAdjacentHTML('afterbegin', `
+                      <li class="plan-dates__item">
+                        ${showDate.join('.')}
+                        <input type="text" class="hidden__input date" value="${date}">
+                        <input type="number" class="hidden__input queue" value="${j}">
+                        <input type="number" class="hidden__input divider" value="${entry.divider}">
+                      </li>
+                    `)
+                  }
+
+
                 }
               }
 
               excludeDates.push(date)
             } else if (!excludeDates.includes(date) && !(!!modalAddedDates[date])) {
-              datesList.insertAdjacentHTML('afterbegin', `
-              <li class="plan-dates__item ${modalBusyDates.includes(date) ? 'plan-dates__item--busy' : ''}">
+              if (modalBusyDates.includes(date)) {
+                for (const [busyDate, busyDateInfo] of Object.entries(newBusy)) {
+                  if (busyDate === date) {
+                    for (let j = Number(busyDateInfo.divider); j > 0; j--) {
+                      if (busyDateInfo.queues.includes(String(j))) {
+                        datesList.insertAdjacentHTML('afterbegin', `
+                          <li class="plan-dates__item plan-dates__item--busy">
+                            ${showDate.join('.')}
+                            <input type="text" class="hidden__input date" value="${date}">
+                            <input type="number" class="hidden__input queue" value="${j}">
+                            <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                          </li>  
+                        `)
+                      } else {
+                        datesList.insertAdjacentHTML('afterbegin', `
+                          <li class="plan-dates__item">
+                            ${showDate.join('.')}
+                            <input type="text" class="hidden__input date" value="${date}">
+                            <input type="number" class="hidden__input queue" value="${j}">
+                            <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                          </li>  
+                        `)
+                      }
+                    }
+                  }
+                }
+              } else {
+                datesList.insertAdjacentHTML('afterbegin', `
+                  <li class="plan-dates__item">
+                    ${showDate.join('.')}
+                    <input type="text" class="hidden__input date" value="${date}">
+                    <input type="number" class="hidden__input queue" value="1">
+                    <input type="number" class="hidden__input divider" value="1">
+                  </li>  
+                `)
+              }
+            }
+          }
+        } else {
+          if (modalBusyDates.includes(date)) {
+            for (const [busyDate, busyDateInfo] of Object.entries(newBusy)) {
+              if (busyDate === date) {
+                for (let j = Number(busyDateInfo.divider); j > 0; j--) {
+                  if (busyDateInfo.queues.includes(String(j))) {
+                    datesList.insertAdjacentHTML('afterbegin', `
+                      <li class="plan-dates__item plan-dates__item--busy">
+                        ${showDate.join('.')}
+                        <input type="text" class="hidden__input date" value="${date}">
+                        <input type="number" class="hidden__input queue" value="${j}">
+                        <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                      </li>  
+                    `)
+                  } else {
+                    datesList.insertAdjacentHTML('afterbegin', `
+                      <li class="plan-dates__item">
+                        ${showDate.join('.')}
+                        <input type="text" class="hidden__input date" value="${date}">
+                        <input type="number" class="hidden__input queue" value="${j}">
+                        <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                      </li>  
+                    `)
+                  }
+                }
+              }
+            }
+          } else {
+            datesList.insertAdjacentHTML('afterbegin', `
+              <li class="plan-dates__item">
                 ${showDate.join('.')}
                 <input type="text" class="hidden__input date" value="${date}">
                 <input type="number" class="hidden__input queue" value="1">
                 <input type="number" class="hidden__input divider" value="1">
               </li>  
             `)
-            }
           }
-        } else {
-          datesList.insertAdjacentHTML('afterbegin', `
-          <li class="plan-dates__item ${modalBusyDates.includes(date) ? 'plan-dates__item--busy' : ''}">
-            ${showDate.join('.')}
-            <input type="text" class="hidden__input date" value="${date}">
-            <input type="number" class="hidden__input queue" value="1">
-            <input type="number" class="hidden__input divider" value="1">
-          </li>  
-        `)
         }
       }
 
