@@ -13,13 +13,9 @@ export const colorRoutes = (routes) => {
     date = state.inPlanDate
   }
 
-  console.log(date)
-  const dateToday = new Date(date).getTime()
-
   routes.forEach(route => {
     const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
     const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
-
     if (dataInput) {
       const infoParent = dataInput.parentNode
       const routeInfo = infoParent.querySelector(`input[value="-"]`)
@@ -27,12 +23,8 @@ export const colorRoutes = (routes) => {
       dataInput.value = JSON.stringify(route)
       routeInfo.value = route.plot
 
-      if (route.plan_date) {
-        let planDate = new Date(route.plan_date).getTime()
-        let planStart = new Date(route.plan_start).getTime()
-
-
-        if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(date)) {
+      if (route.plan_dates) {
+        if (route.plan_dates.includes(date)) {
           routeInfo.classList.add('route--planned')
         }
       }

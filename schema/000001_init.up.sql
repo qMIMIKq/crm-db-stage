@@ -121,7 +121,8 @@ CREATE TABLE routes
     plan_start        varchar(255) default '',
     plan_exclude_days text         default '',
     plan_faster       boolean      default false,
-    last_comment      text         default ''
+    last_comment      text         default '',
+    plan_dates        text         default ''
 );
 
 create table route_comments
@@ -181,4 +182,15 @@ CREATE TABLE reports
     issued_plan    varchar(255),
     route_position varchar(255) default '0',
     route_id       integer      default 0
+);
+
+create table plans
+(
+    plan_id    serial unique PRIMARY KEY NOT NULL,
+    route_id   integer      default 0,
+    order_id   integer      default 0,
+    route_plot varchar(255) default '',
+    plan_date  date,
+    divider    varchar(255),
+    queues     varchar(255)
 );

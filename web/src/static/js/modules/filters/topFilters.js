@@ -29,14 +29,14 @@ export const topFiltersHandler = () => {
         if (short) {
           block.insertAdjacentHTML('beforeend', `
                     <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button'>${d.short_name}</button>
+                        <button class='nav-filters__button main__button--click'>${d.short_name}</button>
                         <input class='hidden__input' value="${d.name}"/>
                      </li>
                     `)
         } else {
           block.insertAdjacentHTML('beforeend', `
                     <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button'>${d.name}</button>
+                        <button class='nav-filters__button main__button--click'>${d.name}</button>
                      </li>
                     `)
         }

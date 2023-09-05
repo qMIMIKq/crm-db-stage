@@ -7,7 +7,7 @@ import {sendData} from "../sendData";
 import {showResult} from "../submitControl";
 import {getOrders} from "../orders";
 import {getTime} from "../getTime";
-import {planDateHandler2} from "./planModal";
+import {planDateHandler} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
 
@@ -410,7 +410,7 @@ export const triggerRoutesModal = e => {
   }
 
   planDateInput.addEventListener('click', e => {
-    planDateHandler2()
+    planDateHandler(addedDates, busyDates)
   })
 
   const errInput = document.querySelector('#error-route__msg')
@@ -465,17 +465,42 @@ export const triggerRoutesModal = e => {
     disableBtn('send__comment')
   })
 
-  if (info) {
-    // const dynEnd = routeInfo['dyn_end']
-    let comments = routeInfo['comments']
+  let addedDates = []
+  let dbAddedDates = []
 
+  let busyDates = []
+  let dbBusyDates = []
+  if (info) {
+    let comments = routeInfo['comments']
     if (routeInfo['last_comment']) {
       document.querySelector('#last_comment').value = routeInfo['last_comment']
     }
-    console.log(routeInfo.issued_today)
     if (routeInfo.issued_today) {
       issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
     }
+
+    dbAddedDates = routeInfo['db_plan'] ? routeInfo['db_plan'] : []
+    dbAddedDates.map(dateInfo => {
+      dateInfo['queues'] = dateInfo['queues'].split(', ')
+      dateInfo['date'] = dateInfo['date'].split('T')[0]
+
+      addedDates[dateInfo['date']] = {
+        'divider': dateInfo.divider,
+        'queues': dateInfo.queues
+      }
+    })
+
+    dbBusyDates = routeInfo['busy_dates'] ? routeInfo['busy_dates'] : []
+    dbBusyDates.map(dateInfo => {
+      dateInfo['queues'] = dateInfo['queues'].split(', ')
+      dateInfo['date'] = dateInfo['date'].split('T')[0]
+
+      busyDates[dateInfo['date']] = {
+        'divider': dateInfo.divider,
+        'queues': dateInfo.queues
+      }
+    })
+
 
     planObj = {
       'exclude': routeInfo['exclude_days'],
@@ -768,6 +793,7 @@ export const triggerRoutesModal = e => {
     obj['route_id'] = routeInfo.route_id
 
     console.log(obj)
+    console.log(addedDates)
 
     let today = getTime()
     today = today.substring(0, today.length - 5)
@@ -775,6 +801,8 @@ export const triggerRoutesModal = e => {
 
     obj['planned'] = !!(dbID && planned)
     obj['report_changer'] = reportChanger
+    obj['added_dates'] = addedDates
+    console.log(obj.added_dates)
 
     routeInput.value = JSON.stringify(obj)
     const parent = routeInput.closest('.table-form--old')

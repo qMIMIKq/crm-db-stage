@@ -25,6 +25,28 @@ type Route struct {
 	PlanFaster      bool            `json:"plan_faster" db:"plan_faster"`
 	Planned         bool            `json:"planned"`
 	ReportChanger   []ReportChanger `json:"report_changer"`
+	AddedDates      []DateInfo      `json:"added_dates"`
+	PlanDates       string          `db:"plan_dates" json:"plan_dates"`
+	DBPlanDates     []DbPlanInfo    `json:"db_plan"`
+	BusyDates       []DbPlanInfo    `json:"busy_dates"`
+}
+
+type DbPlanInfo struct {
+	OrderID   string `json:"order_id" db:"order_id"`
+	RoutePlot string `json:"route_plot" db:"route_plot"`
+	PlanDate  string `json:"date" db:"plan_date"`
+	Divider   string `json:"divider" db:"divider"`
+	Queues    string `json:"queues" db:"queues"`
+}
+
+type DateInfo struct {
+	Date     string `json:"date"`
+	DateInfo Info   `json:"date_info"`
+}
+
+type Info struct {
+	Divider string   `json:"divider" db:""`
+	Queues  []string `json:"queues" db:""`
 }
 
 type ReportChanger struct {

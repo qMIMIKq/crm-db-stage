@@ -13,6 +13,10 @@ input::-webkit-inner-spin-button {
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
+body {
+  font-family: Inter;
+}
+
 .container {
   padding: 0 15px;
 }
@@ -49,8 +53,37 @@ ul {
     padding: 5px;
 
     &:hover {
-      color: $hover_aqua;
+      color: $main_green;
       transition: color .3s;
+    }
+
+    &--select {
+      outline: none;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 19px;
+      letter-spacing: 0em;
+      text-align: center;
+      //border-radius: 15px;
+      background: $table_bg !important;
+      color: $main_green;
+      cursor: pointer;
+      padding: 3px 7px;
+    }
+
+    &--click {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 19px;
+      letter-spacing: 0em;
+      text-align: center;
+      border-radius: 15px;
+      border: $btn_border;
+      box-shadow: $btn_shadow;
+      background: white;
+      color: $text_black;
+      cursor: pointer;
+      padding: 3px 7px;
     }
   }
 

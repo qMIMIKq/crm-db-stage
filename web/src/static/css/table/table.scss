@@ -34,18 +34,27 @@ input.tr {
 
 .table {
   &__cell {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
     height: 28px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
     cursor: default;
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     background: white;
+    color: $table_text;
 
     &:not(:last-child) {
       border-right: 1px solid black;
+    }
+    
+    &--top {
+      background: $table_bg !important;
     }
   }
 
@@ -66,13 +75,15 @@ input.tr {
       transition: color .3s;
 
       &:hover {
-        color: $hover_aqua;
+        color: $main_green;
         transition: color .3s;
       }
     }
   }
 
   &__data {
+    font-size: 14px;
+    font-weight: 400;
     height: 28px;
     width: 100%;
     text-align: center;
@@ -89,23 +100,28 @@ input.tr {
     }
 
     &--chosen {
-      font-size: 15px;
-      background: $gray_bg;
-      color: $button_color;
+      //font-size: 15px;
+      background: $table_bg_main;
+      color: $table_text;
     }
 
     &--opened {
       height: 56px;
-      border-bottom: 1px solid black;
       font-size: 15px;
-      background: #f3efef;
-      color: #447e9b;
+      background: $table_bg_main;
+      color: $table_text;
+      border-bottom: 1px solid black;
+    }
+
+    &--opened.table__data--current {
+      border-bottom: 2px solid black;
     }
 
     &--current {
-      color: $hover_aqua;
+      font-weight: 600;
+      color: $table_text;
       text-decoration: underline;
-      font-style: italic;
+      border: 1px solid black;
       //font-size: 16px;
     }
   }
@@ -184,8 +200,8 @@ input.tr {
   }
 
   &__endtime {
-    min-width: 130px;
-    max-width: 130px;
+    min-width: 140px;
+    max-width: 140px;
   }
 
   &__route {

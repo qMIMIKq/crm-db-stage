@@ -123,18 +123,13 @@ const checkDoFilter = (check, order, filters) => {
 }
 
 export const plannedFilter = (filters, date) => {
-  let dateToday = new Date(date).getTime()
-
   state['orders'].forEach(order => {
     let check = false
 
     if (order.db_routes) {
       order.db_routes.forEach(route => {
-        if (route.plan_date) {
-          let planDate = new Date(route.plan_date).getTime()
-          let planStart = new Date(route.plan_start).getTime()
-
-          if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(date)) {
+        if (route.plan_dates) {
+          if (route.plan_dates.includes(date)) {
             if (filters.length) {
               if (filters.includes(route.plot)) {
                 check = true

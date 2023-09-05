@@ -34,7 +34,7 @@ export const getOrders = (postfix = 'get-all') => {
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
 
-  const totalOrders = document.querySelector('.orders__total')
+  const totalOrders = document.querySelector('.nav-control__total')
   state['isArchive'] = postfix !== 'get-all'
 
   const filters = state['currentTopFilters'].map(filter => filter.name)
@@ -166,9 +166,7 @@ export const getOrders = (postfix = 'get-all') => {
 
           document.querySelector('.table-info').querySelector('.warning').remove()
           if (totalOrders === null) {
-            document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
-              <h3 class='orders__total'>Всего в работе ${data.data.length}</h3>
-          `)
+            document.querySelector('.nav-control__total').textContent = `Всего в работе ${data.data.length}`
           } else {
             totalOrders.textContent = `Всего в работе ${data.data.length}`
           }

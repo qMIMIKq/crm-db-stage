@@ -12,7 +12,7 @@ type Order struct {
 	Quantity  string            `json:"quantity" db:"order_quantity"`
 	Issued    string            `json:"issued" db:"order_issued"`
 	M         string            `json:"m" db:"order_m"`
-	EndTime   string            `json:"end_time" db:"order_endtime"`
+	EndTime   interface{}       `json:"end_time" db:"order_endtime"`
 	OTK       string            `json:"otk" db:"order_otk"`
 	P         string            `json:"p" db:"order_p"`
 	Comments  []string          `json:"comments"`
