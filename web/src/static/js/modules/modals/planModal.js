@@ -67,6 +67,7 @@ const planDateModalAdd = `
         <div class='confirm__section'>
             <button class='main__button confirm__button confirm__button--ok'>ОК</button>
             <button class='main__button confirm__button confirm__button--cncl'>Отмена</button>
+            <button class='main__button hidden__input confirm__button confirm__button--dlt'>Удалить</button>
         </div>
       </div>
    </div>
@@ -170,6 +171,17 @@ export const planDateHandler = (addedDates, plot, routeID) => {
           }
 
           const addingModal = showModal(planDateModalAdd)
+          const okBtn = addingModal.querySelector('.confirm__button--ok')
+          const cnclBtn = addingModal.querySelector('.confirm__button--cncl')
+          const dltBtn = addingModal.querySelector('.confirm__button--dlt')
+
+          if (dateItem.classList.contains('plan-dates__item--inplan')) {
+            okBtn.remove()
+            cnclBtn.remove()
+
+            dltBtn.classList.remove('hidden__input')
+          }
+
           currentDate = dateItem.querySelector('.date').value
           const currentQueue = dateItem.querySelector('.queue').value
           const currentDivider = dateItem.querySelector('.divider').value
@@ -210,21 +222,20 @@ export const planDateHandler = (addedDates, plot, routeID) => {
             drawAddingOptions(queue, divider.value)
           })
 
-          const okBtn = addingModal.querySelector('.confirm__button--ok')
           okBtn.addEventListener('click', () => {
             if (typeof modalAddedDates[currentDate] === 'undefined') {
               modalAddedDates[currentDate] = {}
             }
 
-            modalAddedDates[currentDate]['divider'] = divider.value
+            modalAddedDates[currentDate]['divider'] = divider.value ? divider.value : '1'
 
             console.log('divider', resObj.divider)
             console.log('queue', resObj.queue)
             if (typeof modalAddedDates[currentDate]['queues'] === 'undefined') {
               modalAddedDates[currentDate]['queues'] = []
-              modalAddedDates[currentDate]['queues'].push(queue.value)
+              modalAddedDates[currentDate]['queues'].push(queue.value ? queue.value : '1')
             } else {
-              modalAddedDates[currentDate]['queues'].push(queue.value)
+              modalAddedDates[currentDate]['queues'].push(queue.value ? queue.value : '1')
             }
 
             deleteData()
@@ -232,9 +243,19 @@ export const planDateHandler = (addedDates, plot, routeID) => {
             addingModal.click()
           })
 
-          const cnclBtn = addingModal.querySelector('.confirm__button--cncl')
           cnclBtn.addEventListener('click', () => {
+            addingModal.click()
+          })
 
+          dltBtn.addEventListener('click', () => {
+            if (modalAddedDates[currentDate].queues.length === 1) {
+              delete modalAddedDates[currentDate]
+            } else {
+            }
+
+            console.log(modalAddedDates[currentDate])
+            deleteData()
+            drawData(new Date(todayStr), new Date(endDateInput.value))
           })
         })
       })
