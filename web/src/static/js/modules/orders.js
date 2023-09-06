@@ -33,6 +33,7 @@ import {sendData} from "./sendData";
 export const getOrders = (postfix = 'get-all') => {
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
+  document.querySelector('.nav-control__total').textContent = 'Обновляем таблицу...'
 
   state['isArchive'] = postfix !== 'get-all'
 
