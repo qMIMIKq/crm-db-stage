@@ -20,6 +20,7 @@ const routeModal = `
                 <div class='modal-header__number'></div>
             </div>
             <form class='route__config' method='POST'>
+                <div class="route__title">Общая информация:</div>
                 <div class='route-block__wrapper'>
                     <div class='route__block user__block'>
                         <label class='route__label' for='route__plot'>Участок</label>
@@ -80,13 +81,13 @@ const routeModal = `
                         </div>
                     </div>
                 </div>
-               
+                <div class="route__title">Статус:</div>
                 <div class='route__section start-route'>
                     <input 
                     readonly
                     type='text'
                     placeholder='Время начала'
-                    class='route__input main__button main__input start-route__time'
+                    class='route__input route__input--middle main__button main__input start-route__time'
                     name='start_time' 
                     disabled
                     id='start-route__time'>
@@ -95,54 +96,63 @@ const routeModal = `
                     onblur='(this.type='text')'-->
                     
                     <button disabled type='button' class='route__btn main__button start-route__btn'>Начал</button>
-                </div>
-                
-                <div class='route__section end-route'>
-                    <input 
-                    readonly
-                    type='text'
-                    placeholder='Время сдачи'
-                    onblur='(this.type="text")'
-                    class='route__input end-route__time main__button main__input'
-                    name='end_time' 
-                    id='end-route__time'>
                     
-                    <button disabled type='button' class='route__btn main__button end-route__btn'>Сдал</button>
-                </div>
-                
-                <div class='route__section pause-route'>
                     <input 
                     style="cursor: default; text-align: center"
                     readonly
                     type='text'
                     placeholder='Время паузы'
                     onblur='(this.type="text")'
-                    class='route__input main__input pause-route__time'
+                    class='route__input route__input--middle main__input pause-route__time'
                     name='pause_time' 
                     id='pause-route__time'>
                     
                     <button disabled type='button' class='route__btn main__button pause-route__btn'>Пауза</button>
                 </div>
                 
-                <div class='route__section error-route'>
-                    <input type='text' 
-                    class='route__input error__time main__input hidden__input' 
-                    id='error__time' 
-                    name='error_time'>
-                    
-                    <input 
+<!--                <div class='route__section end-route'>-->
+<!--                    -->
+<!--                </div>-->
+                
+                <div class='route__section pause-route'>
+                  <input 
+                    readonly
                     type='text'
-                    class='route__input hidden__input text-input main__input main__input'
-                    name='error_msg' 
-                    id='error-route__msg'>
+                    placeholder='Время сдачи'
+                    onblur='(this.type="text")'
+                    class='route__input route__input--middle end-route__time main__button main__input'
+                    name='end_time' 
+                    id='end-route__time'>
                     
-                    <button disabled type='button' class='route__btn route__input main__button issued-modal_trigger'>За смену</button>
-                    <button disabled type='button' class='route__btn main__button error-route__btn'>Ошибка!</button>
-                    <button type='button' class='route__btn main__button hidden__input error-route__close'>Сбросить ошибку</button>
+                  <button disabled type='button' class='route__btn main__button end-route__btn'>Сдал</button>
+                  
+                  
+                  <input style="cursor: default"
+                  type='text' 
+                  readonly
+                  class='route__input route__input--middle error__time main__input' 
+                  id='error__time' 
+                  placeholder="Время ошибки"
+                  name='error_time'>
+                  
+                  <input 
+                  type='text'
+                  class='route__input route__input--middle hidden__input text-input main__input main__input'
+                  name='error_msg' 
+                  id='error-route__msg'>
+                  
+                  <button disabled type='button' class='route__btn main__button error-route__btn'>Ошибка!</button>
+                  <button type='button' class='route__btn main__button hidden__input error-route__close'>Сбросить ошибку</button>
                 </div>
                 
+<!--                <div class='route__section error-route'>-->
+<!--                    -->
+<!--                </div>-->
+                
+                <div class="route__title">Выдача:</div>
                 <div class='route__section route__section--report section-report'>
-                    <button style="align-self: flex-start" type='button' class='clickable main__button route__btn report-route__btn'>Отчет по сменам</button>
+                    <button disabled type='button' class='route__btn main__button issued-modal_trigger'>За смену</button>
+                    <button style="align-self: flex-start" type='button' class='clickable main__button route__btn report-route__btn'>Отчет</button>
                     
                     <div class='section-report__issued'>
                         <input 
@@ -164,6 +174,7 @@ const routeModal = `
                     </div>
                 </div>
                 
+                <div class="route__title">Комментарии и логи событий:</div>
                 <div class='section-logs'>
                     <input 
                     class='route__comments hidden__input' 
@@ -172,30 +183,29 @@ const routeModal = `
                     name='commentss'>
                     
                     <input name='comments' type="text" class="hidden__input" id="visible__comments">
-                    <div class='section-logs__title'>Комментарии и логи событий</div>
                     <ul class='section-logs__list'>
                         
                     </ul>
-                    <div class='section-logs__comment'>
+                </div>
+                <div class='section-logs__comment'>
                         <input class="hidden__input" type="text" name="last_comment" id="last_comment">
                     
                         <input
                         readonly
                         style="cursor: default"
-                        class='section-logs__input main__input' 
+                        class='section-logs__input main__input route__input' 
                         placeholder='Напишите комментарий'
                         type='text' 
                         name='route-comment' 
                         id='section-logs__comment'>
                         <button disabled type='button' class='section-logs__btn main__button send__comment'>Отправить</button>
                     </div>
-                </div>
                 
                 <div class='section-finish'>
-                    <input id="route__delete" disabled class='section-finish__btn section-finish__delete main__button' type='button' value="УДАЛИТЬ">
+                    <input id="route__delete" disabled class='section-finish__btn section-finish__delete' type='button' value="УДАЛИТЬ">
                     
                     <div class='section-finish__complete'>
-                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='button'>ОК</button>
+                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='button'>Сохранить</button>
                     </div>
                 </div>
             
@@ -233,7 +243,7 @@ const drawLogs = data => {
 
       if (log.includes('ОШИБКА')) {
         logsList.insertAdjacentHTML(`beforeend`, `
-          <li style="color: red" class='section-logs__item'>${log}</li>
+          <li class='section-logs__item section-logs__item--error'>${log}</li>
         `)
       } else if (flag) {
         logsList.insertAdjacentHTML(`beforeend`, `
@@ -241,7 +251,7 @@ const drawLogs = data => {
         `)
       } else {
         logsList.insertAdjacentHTML(`beforeend`, `
-          <li style="color: #447e9b" class='section-logs__item'>${log}</li>
+          <li class='section-logs__item section-logs__item--system'>${log}</li>
         `)
       }
     }

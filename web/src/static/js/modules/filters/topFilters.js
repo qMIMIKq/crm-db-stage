@@ -1,5 +1,5 @@
 import {getData} from '../getData';
-import {state} from "../state";
+import {state, userInf} from "../state";
 import {deleteOrders, getOrders} from "../orders";
 import {globalFilterOrders} from "./filterOrders";
 import {bindOrdersListeners} from "../bindListeners";
@@ -12,6 +12,37 @@ export const topFiltersHandler = () => {
   const selectUser = document.querySelector('.select-user')
   const nav = document.querySelector('.nav-filters')
   const extensions = ['все']
+
+  const navControl = document.querySelector('.nav-control')
+  const userName = navControl.querySelector('.nav-control__name')
+  userName.textContent = userInf.nickname
+
+  const burgerMenu = navControl.querySelector('.nav-control__burger')
+  const navRoutes = navControl.querySelector('.nav-control__routes')
+  burgerMenu.addEventListener('click', () => {
+    navControl.classList.toggle('nav-control--opened')
+    navRoutes.classList.toggle('hidden__input')
+  })
+
+  const links = navControl.querySelectorAll('.nav-control__route-link')
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      console.log(window.location.href)
+      navControl.classList.toggle('nav-control--opened')
+      navRoutes.classList.toggle('hidden__input')
+
+      if (link.textContent.trim().includes('Архив')) {
+        getOrders('get-old')
+      } else if (link.textContent.trim().includes('Главная')) {
+        console.log(window.location.href)
+        getOrders()
+      } else {
+        window.location.href = link.querySelector('.hidden__input').value
+      }
+
+    })
+  })
+
   const checkExt = (extensions, ext) => {
     let flag = false
     extensions.forEach(d => {

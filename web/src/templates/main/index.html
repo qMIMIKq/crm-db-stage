@@ -28,16 +28,45 @@
             </div>
             <div class="nav__control nav-control">
                 <div class="nav-control__nav">
-                    <div class="nav-control__admin">
-                        <a class="nav-control__admin" target="_blank" href="http://91.142.94.150:8192/panel">Администрирование</a>
-                    </div>
-                    <div class="nav-control__user">
-                        <div class="nav-control__name">SuperAdmin</div>
-                        <div class="nav-control__exit">
-                            <a class="admin-form__exit" href="http://91.142.94.150:8182/login">Выход</a>
+                    <div class="nav-control__left">
+                        <div class="nav-control__admin">
+                            <a class="nav-control__admin" target="_blank" href="http://91.142.94.150:8192/panel">Администрирование</a>
+                        </div>
+                        <div class="nav-control__user">
+                            <div class="nav-control__name">SuperAdmin</div>
+                            <div class="nav-control__exit">
+                                <a class="admin-form__exit" href="http://91.142.94.150:8182/login">Выход</a>
+                            </div>
                         </div>
                     </div>
+                    <div class="nav-control__burger">
+                        <span class="nav-control__burger-item"></span>
+                        <span class="nav-control__burger-item"></span>
+                        <span class="nav-control__burger-item"></span>
+                    </div>
                 </div>
+
+                <ul class="nav-control__routes hidden__input">
+                    <li class="nav-control__route">
+                        <button class="nav-control__route-link link__main">
+                            Главная
+                            <input class="hidden__input" value="/main/table"/>
+                        </button>
+                    </li>
+                    <li class="nav-control__route">
+                        <button class="nav-control__route-link link__archive">
+                            Архив
+                            <input class="hidden__input" value="/main/table"/>
+                        </button>
+                    </li>
+                    <li class="nav-control__route">
+                        <button class="nav-control__route-link link__report">
+                            План/Факт
+                            <input class="hidden__input" value="/main/report"/>
+                        </button>
+                    </li>
+                </ul>
+
                 <div class="nav-control__total">
                     Всего в работе
                 </div>
@@ -174,11 +203,6 @@
 
             <div class="main__table main-table">
             </div>
-        </div>
-
-        <div class="table__info table-info">
-            <button class="main__button--select table__archive">Архив</button>
-            <a href="http://91.142.94.150:8182/main/report" class="main__button--select table__archive">План/Факт</a>
         </div>
     </main>
 </div>

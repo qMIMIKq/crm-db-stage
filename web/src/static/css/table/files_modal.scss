@@ -14,8 +14,7 @@
     width: 900px;
     height: auto;
     background: white;
-    border: 1px solid black;
-    border-radius: 5px;
+    border-radius: 15px;
   }
 
   &-header {
@@ -25,8 +24,10 @@
     padding: 5px;
     background: $main_green;
     color: $text_white;
-    height: 30px;
     text-align: center;
+    height: 35px;
+    border-radius: 15px 15px 0px 0px;
+
   }
 
   &__trigger {

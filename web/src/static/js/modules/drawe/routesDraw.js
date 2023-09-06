@@ -23,9 +23,12 @@ export const colorRoutes = (routes) => {
       dataInput.value = JSON.stringify(route)
       routeInfo.value = route.plot
 
+      routeInfo.classList.add('route')
       if (route.plan_dates) {
         if (route.plan_dates.includes(date)) {
           routeInfo.classList.add('route--planned')
+          routeInfo.parentNode.classList.add('route--inplan')
+          console.log(routeInfo.parentNode)
         }
       }
 
@@ -34,60 +37,27 @@ export const colorRoutes = (routes) => {
         infoParent.classList.add('table-body__trattr')
       }
 
-      if (route.start_time && !route.end_time) {
+      if (route.start_time) {
         routeInfo.classList.add('route--started')
-
-        if (route.issued && route.quantity && route.issued >= route.quantity) {
-          routeInfo.style.color = "rgb(0 207 0)"
-        } else {
-          routeInfo.style.color = "black"
-        }
       }
 
       if (route.end_time) {
         routeInfo.classList.add('route--completed')
         routeInfo.classList.remove('route--started')
-
-        if (route.error_msg) {
-          routeInfo.style.color = "red"
-          infoParent.setAttribute('data-title', `${route.last_comment}/${route.error_msg}`)
-          // console.log(route.comments)
-        } else if (route.quantity && route.issued < route.quantity) {
-          routeInfo.style.color = "yellow"
-        } else {
-          routeInfo.style.color = "black"
-        }
       }
 
-      if (route.error_msg && !route.end_time) {
+      if (route.error_msg) {
         routeInfo.classList.add('route--error')
+        routeInfo.classList.remove('route--started')
+        routeInfo.classList.remove('route--completed')
         infoParent.setAttribute('data-title', `${route.last_comment}/${route.error_msg}`)
-        // console.log(route.comments)
-
-        if (route.start_time) {
-          routeInfo.style.color = "black"
-          routeInfo.classList.remove('route--started')
-
-          if (route.issued && route.quantity && route.issued >= route.quantity) {
-            routeInfo.style.color = "#07e807"
-          }
-        }
       }
 
       if (route.pause_time) {
         routeInfo.classList.add('route--paused')
-        routeInfo.style.color = 'black'
-
         routeInfo.classList.remove('route--error')
         routeInfo.classList.remove('route--started')
         routeInfo.classList.remove('route--completed')
-
-        if (route.start_time) {
-          routeInfo.style.color = "yellow"
-        }
-        if (route.error_msg) {
-          routeInfo.style.color = "red"
-        }
       }
     }
 

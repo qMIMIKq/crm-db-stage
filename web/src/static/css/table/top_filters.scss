@@ -2,9 +2,11 @@
   width: 77%;
   position: relative;
   height: 113px;
+  background: white;
+  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);
 
   border: 1px solid black;
-  border-radius: 5px;
+  border-radius: 15px;
   padding: 5px 25px;
 
   display: flex;
@@ -66,12 +68,28 @@
   width: 313px;
   height: 113px;
   border: 1px solid black;
-  border-radius: 5px;
-  padding: 11px;
+  border-radius: 15px;
+  padding: 20px;
+  background: white;
+  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);
+
+  &--opened {
+    z-index: 1000;
+    height: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 
   &__nav {
     display: flex;
-    flex-direction: column;
+    //flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__left {
+    width: 200px;
   }
 
   &__admin {
@@ -84,7 +102,7 @@
 
   &__user {
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 7px;
   }
 
   &__name {
@@ -113,5 +131,42 @@
     letter-spacing: 0em;
     text-align: center;
     color: $main_green;
+  }
+
+  &__routes {
+    margin-bottom: 5px;
+  }
+
+  &__route {
+
+    &-link {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 26px;
+      letter-spacing: 0em;
+      cursor: pointer;
+
+      &:hover {
+        color: $main_green;
+      }
+    }
+  }
+
+  &__burger {
+    position: relative;
+    top: -5px;
+    cursor: pointer;
+
+    &-item {
+      display: block;
+      width: 40px;
+      height: 5px;
+      background: $text_black;
+      border-radius: 15px;
+
+      &:not(:last-child) {
+        margin-bottom: 6px;
+      }
+    }
   }
 }

@@ -34,7 +34,6 @@ export const getOrders = (postfix = 'get-all') => {
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
 
-  const totalOrders = document.querySelector('.nav-control__total')
   state['isArchive'] = postfix !== 'get-all'
 
   const filters = state['currentTopFilters'].map(filter => filter.name)
@@ -57,27 +56,15 @@ export const getOrders = (postfix = 'get-all') => {
         routesBlock.classList.remove('hidden__input')
       }
 
+      const title = document.querySelector('.main-header__title')
+
       if (!data.data) {
         deleteOrders()
-        let text = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
-        document.querySelector('.main-header__title').textContent = text
-        text = state.isArchive ? 'Всего в архиве' : 'Всего в работе'
-
-        if (totalOrders === null) {
-          document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
-          <h3 class='orders__total'>${text} 0</h3>
-      `)
-        } else {
-          totalOrders.textContent = `${text} 0`
-        }
-
+        title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
         return
+      } else {
+        title.textContent = state.isArchive ? 'Архив заказов' : 'Журнал заказов'
       }
-
-      document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
-        <h3 class="warning">Обновляем таблицу...</h3>
-    `)
-      document.querySelector('.table__archive').classList.add('hidden__input')
 
       const nums = []
       const clients = []
@@ -163,15 +150,6 @@ export const getOrders = (postfix = 'get-all') => {
           drawTableFilter([...new Set(managers)], managerFilter)
           drawTableFilter([...new Set(deadlines)], deadlineFilter)
           drawTableFilter([...new Set(timestamps)], timestampFilter)
-
-          document.querySelector('.table-info').querySelector('.warning').remove()
-          if (totalOrders === null) {
-            document.querySelector('.nav-control__total').textContent = `Всего в работе ${data.data.length}`
-          } else {
-            totalOrders.textContent = `Всего в работе ${data.data.length}`
-          }
-          document.querySelector('.table__archive').classList.remove('hidden__input')
-
           bindOrdersListeners()
           bindTableFilters()
 
@@ -181,6 +159,7 @@ export const getOrders = (postfix = 'get-all') => {
             })
           }
 
+          document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} ${data.data.length}`
           console.timeEnd('get orders')
 
           const lastOrder = document.querySelector('.table__data--chosen')

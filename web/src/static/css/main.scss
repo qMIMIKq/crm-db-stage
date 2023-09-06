@@ -15,6 +15,7 @@ input::-webkit-inner-spin-button {
 
 body {
   font-family: Inter;
+  background: rgba(236, 236, 236, 1);
 }
 
 .container {
@@ -36,7 +37,7 @@ ul {
 }
 
 .main {
-  color: $button_color;
+  color: $text_black;
   margin-bottom: 15px;
   //border-left: 1px solid black;
   //border-right: 1px solid black;
@@ -47,7 +48,7 @@ ul {
     border: 1px solid black;
     border-radius: 5px;
     background: white;
-    color: $button_color;
+    color: $text_black;
     transition: color .3s;
     cursor: pointer;
     padding: 5px;
@@ -93,7 +94,7 @@ ul {
     cursor: text;
     border: 1px solid black;
     border-radius: 5px;
-    color: $button_color;
+    color: $text_black;
   }
 
   &-table__data {
@@ -103,6 +104,8 @@ ul {
     margin-bottom: 5px;
     border-left: 1px solid black;
     border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    background: white;
 
     @media screen and (max-width: 1200px) {
       height: 65vh;
@@ -161,6 +164,11 @@ select:disabled {
 input:disabled {
   cursor: default;
   color: gray;
+}
+
+button {
+  border: none;
+  background: none;
 }
 
 button:disabled {
@@ -284,4 +292,8 @@ button:disabled {
 .header-routes {
   display: flex;
   align-items: center;
+}
+
+.header {
+  position: relative;
 }

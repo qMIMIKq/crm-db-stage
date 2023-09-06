@@ -54,7 +54,6 @@ const setChooseListeners = (label, listener, action, cls) => {
             chosen.classList.remove(cls)
           }
         } else if (chosen.classList.contains('tr') && chosen.parentNode.parentNode.parentNode.parentNode.querySelector('#db_id').classList.contains('table__data--opened')) {
-          console.log(chosen)
         } else {
           chosen.classList.remove(cls)
         }
@@ -66,6 +65,14 @@ const setChooseListeners = (label, listener, action, cls) => {
             if (!label.classList.contains('table__data--opened')) {
               state['inWork'] = true
               item.classList.add(cls)
+              // if (item.parentElement.classList.contains('table__route')) {
+              //   item.parentElement.classList.add('table__data--chosen')
+              // }
+
+              // if (parent.classList.contains('table__route')) {
+              //   parent.classList.add('table__data--chosen')
+              // }
+
               state['currentOrder'] = parent.querySelector('#db_id').value
             }
             break

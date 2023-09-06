@@ -52,7 +52,7 @@ input.tr {
     &:not(:last-child) {
       border-right: 1px solid black;
     }
-    
+
     &--top {
       background: $table_bg !important;
     }
@@ -120,7 +120,6 @@ input.tr {
     &--current {
       font-weight: 600;
       color: $table_text;
-      text-decoration: underline;
       border: 1px solid black;
       //font-size: 16px;
     }
@@ -205,6 +204,11 @@ input.tr {
   }
 
   &__route {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+
     &:last-child {
       border-right: 1px solid black !important;
     }
@@ -243,6 +247,7 @@ input.tr {
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 28px;
     }
   }
 }
@@ -297,6 +302,7 @@ input.tr {
 
   &_cell {
     max-height: 56px;
+    height: 29px;
     font-size: 16px;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
@@ -354,26 +360,41 @@ input.tr {
 
 .route {
   color: black;
+  height: 24px;
+  width: 37px;
+
+  &--inplan {
+    border-top: 1px solid black;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+    border-left: 1px solid black !important;
+  }
 
   &--planned {
-    text-decoration: underline;
+    //text-decoration: underline;
     //font-style: italic;
   }
 
   &--paused {
-    background: orange;
-  }
-
-  &--started {
-    background: #ffff4e;
+    background: rgba(224, 108, 0, 1);
+    color: white !important;
+    border-radius: 15px;
   }
 
   &--error {
-    background: #de1313;
+    color: white !important;
+    background: rgba(210, 66, 66, 1);
+    border-radius: 15px;
+  }
+
+  &--started {
+    border: 2px solid rgba(81, 165, 227, 1);
+    border-radius: 15px;
   }
 
   &--completed {
-    background: #09d009;
+    border: 2px solid rgba(0, 130, 29, 1);
+    border-radius: 15px;
   }
 }
 

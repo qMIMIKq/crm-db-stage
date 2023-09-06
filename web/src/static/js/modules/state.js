@@ -3,11 +3,11 @@
 //91.142.94.150
 
 // let addr = process.env.CHECK
-export let appAddr = 'http://91.142.94.150:8182'
+// export let appAddr = 'http://91.142.94.150:8182'
 // export let appAddr = 'http://192.168.1.231:8182'
-// export let appAddr = 'http://172.20.10.7:8182'
+export let appAddr = 'http://172.20.10.7:8182'
 // export let appAddr = 'http://192.168.0.104:8182'
-const userInf = JSON.parse(sessionStorage.getItem('user'))
+export const userInf = JSON.parse(sessionStorage.getItem('user'))
 
 let state = {
   'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут', 'Нажал паузу'],
