@@ -3,6 +3,8 @@ import {appAddr} from "../state";
 import {ucFirst} from "../../ucFirst";
 
 export const drawAdminPlots = (modal, datas) => {
+  let ok = false
+
   const navContent = modal.querySelector('.nav-content')
   const topColumns = modal.querySelector('.nav-content__columns')
   const itemColumns = modal.querySelector('.nav-content__items')
@@ -15,7 +17,7 @@ export const drawAdminPlots = (modal, datas) => {
         Участок
     </li>
     <li class="nav-content__column nav-content__column--left users-columns__nickname">
-        Никнейм
+        Короткое имя
     </li>
   `)
 
@@ -58,13 +60,13 @@ export const drawAdminPlots = (modal, datas) => {
               <div class="edit-form__user">
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Участок</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
+                    <input required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
                            value="${d.name}">
                   </div>
   
                   <div class="edit-form__block">
-                      <label class="edit-form__label" for="login">Никнейм</label>
-                      <input id="login" class="route__input edit-form__input edit-form__login" name="short_name" type="text"
+                      <label class="edit-form__label" for="login">Короткое имя</label>
+                      <input required id="login" class="route__input edit-form__input edit-form__login" name="short_name" type="text"
                              value="${d.short_name}">
                   </div>
       
@@ -74,6 +76,47 @@ export const drawAdminPlots = (modal, datas) => {
               </div>
         </form>
         `)
+
+          const editForm = modal.querySelector('.edit__form')
+          editForm.addEventListener('submit', e => {
+            e.preventDefault()
+
+            const formData = new FormData(editForm)
+
+            const obj = {}
+            formData.forEach(((value, key) => {
+              switch (key) {
+                case "id":
+                  obj[key] = Number(value)
+                  break
+                case 'disable':
+                  console.log(value)
+                  break
+                default:
+                  obj[key] = value.trim()
+              }
+            }))
+
+            console.log(obj)
+
+            sendData(`${appAddr}/api/plots/edit`, 'PUT', JSON.stringify(obj))
+              .then(res => {
+                if (res.ok) {
+                  if (!ok) {
+                    ok = true
+                    editForm.insertAdjacentHTML('beforeend', `
+                <div class="user-form__block user-form__succ">
+                    <h3>Участок успешно изменен</h3>
+                </div>
+            `)
+                  }
+                }
+
+                return res.json()
+              }).then(data => {
+              console.log(data)
+            })
+          })
         })
     })
   })

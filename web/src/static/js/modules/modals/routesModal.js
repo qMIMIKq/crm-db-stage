@@ -896,10 +896,13 @@ const createReportObj = (data) => {
 
 export const drawPlots = (plotI, user) => {
   const plotsResp = getData('filters/get-all')
+
+
   plotsResp.then(plots => {
     const plotsSelect = document.querySelector('#route__plot')
     const plotsConnection = document.querySelector('#plot-connection')
 
+    plots.data = plots.data.filter(d => !d.disable)
     plots.data.forEach(plot => {
       plotsSelect.insertAdjacentHTML('beforeend', `
           <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>

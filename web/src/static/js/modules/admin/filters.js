@@ -2,6 +2,9 @@ import {sendData} from "../sendData";
 import {appAddr} from "../state";
 
 export const drawAdminFilters = (modal, datas) => {
+  let ok = false
+  let err = false
+
   const navContent = modal.querySelector('.nav-content')
   const topColumns = modal.querySelector('.nav-content__columns')
   const itemColumns = modal.querySelector('.nav-content__items')
@@ -22,8 +25,6 @@ export const drawAdminFilters = (modal, datas) => {
   `)
 
   datas.forEach(data => {
-    console.log(data)
-
     itemColumns.insertAdjacentHTML('beforeend', `
       <li class="nav-content__item nav-item">
           <div class="nav-item__column users-item__name">
@@ -61,13 +62,13 @@ export const drawAdminFilters = (modal, datas) => {
               <div class="edit-form__user">
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Фильтр</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
+                    <input required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
                            value="${d.name}">
                   </div>
   
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="login">Участки</label>
-                      <select class="route__select edit-form__input edit-form__plot" name="plot_id" id="plot">
+                      <select required class="route__select edit-form__input edit-form__plot" name="plot_id" id="plot">
                           <option value="${d.plot_id}">${d.plot}</option>
                       </select>
                   </div>
@@ -85,7 +86,7 @@ export const drawAdminFilters = (modal, datas) => {
                   
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Конец работы</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="d.end_time" type="time"
+                    <input id="name" class="route__input edit-form__input edit-form__name" name="end_time" type="time"
                            value="${d.end_time}">
                   </div>
       
@@ -95,6 +96,101 @@ export const drawAdminFilters = (modal, datas) => {
               </div>
         </form>
         `)
+
+          const editPlot = document.querySelector(".edit-form__plot")
+          const filterPlot = document.querySelector(".edit-form__plot option").textContent
+          const drawData = (url, block, userData) => {
+            fetch(`${appAddr}/api/${url}`)
+              .then(res => res.json())
+              .then(data => {
+                data.data.forEach(group => {
+                  if (group.name !== userData) {
+                    block.insertAdjacentHTML("beforeend", `
+                        <option value="${group.id}">${group.name}</option>
+                    `)
+                  }
+                })
+              })
+          }
+          drawData("plots/get-all", editPlot, filterPlot)
+
+          const editForm = modal.querySelector('.edit__form')
+          editForm.addEventListener("submit", e => {
+            e.preventDefault()
+
+            const formData = new FormData(editForm)
+
+            const startTime = formData.get("start_time")
+            const endTime = formData.get("end_time")
+
+            if (startTime.length || endTime.length) {
+              if (!validateTime(startTime, endTime)) {
+                err = true
+
+                editForm.insertAdjacentHTML("beforeend", `
+                <div class="user-form__block user-form__error">
+                    <h3>Некорректный формат времени</h3>
+                </div>
+            `)
+
+                return
+              }
+            }
+
+            const obj = {}
+            formData.forEach(((value, key) => {
+              switch (key) {
+                case "id":
+                  obj[key] = Number(value)
+                  break
+                case 'disable':
+                  obj[key] = value === "on"
+                  console.log(value === "on")
+                  break
+                default:
+                  obj[key] = value.trim()
+              }
+            }))
+
+            sendData(`${appAddr}/api/filters/edit`, 'PUT', JSON.stringify(obj))
+              .then(res => {
+                if (res.ok) {
+                  if (!ok) {
+                    ok = true
+                    editForm.insertAdjacentHTML('beforeend', `
+                      <div class="user-form__block user-form__succ">
+                          <h3>Фильтр успешно изменен</h3>
+                      </div>
+                    `)
+                  }
+                }
+
+                return res.json()
+              }).then(data => {
+              console.log(data)
+            })
+          })
+
+          const validateTime = (startTime, endTime) => {
+            const arrStartTime = startTime.split(":")
+            const arrEndTime = endTime.split(":")
+
+            if (arrStartTime.length !== 2 || arrEndTime.length !== 2) {
+              return false
+            }
+
+            if (Number(arrStartTime[0]) > Number(arrEndTime[0])) {
+              return false
+            }
+
+            for (let i = 0; i < arrStartTime.length; i++) {
+              if (arrStartTime[i].length !== 2 || arrEndTime[i].length !== 2) {
+                return false
+              }
+            }
+
+            return true
+          }
         })
     })
   })

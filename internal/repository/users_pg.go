@@ -119,6 +119,98 @@ func (u UsersPG) GetUsersByGroup(group string) ([]domain.UserInfo, error) {
 	return users, err
 }
 
+func (u *UsersPG) EditUser(user domain.UserInfo) error {
+	tx, err := u.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	var args []interface{}
+	args = append(args, user.Name, user.Login)
+
+	setter := fmt.Sprintf("SET user_name = $1, login = $2")
+	if len(user.Password) > 0 {
+		setter += fmt.Sprintf(", password = $%d", len(args)+1)
+		args = append(args, user.Password)
+	}
+
+	if len(user.Nickname) > 0 {
+		setter += fmt.Sprintf(", nickname = $%d", len(args)+1)
+		args = append(args, user.Nickname)
+	}
+
+	setter += fmt.Sprintf(", disable = $%d", len(args)+1)
+	args = append(args, user.Disable)
+
+	setter += fmt.Sprintf(" WHERE users.user_id = $%d", len(args)+1)
+	userQuery := fmt.Sprintf(`UPDATE users %s`, setter)
+	args = append(args, user.ID)
+
+	_, err = tx.Exec(userQuery, args...)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	rightsQuery := fmt.Sprintf(`
+			UPDATE users_rights
+				 SET group_id = $1, plot_id = $2
+		   WHERE user_id = $3;
+	`)
+
+	_, err = tx.Exec(rightsQuery, user.GroupID, user.PlotID, user.ID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return nil
+}
+func (u UsersPG) CreateUser(user domain.UserInfo) (int, error) {
+	tx, err := u.db.Begin()
+	if err != nil {
+		return 0, err
+	}
+
+	userQuery := fmt.Sprintf(`
+			INSERT INTO users (user_name, login, password, nickname)
+			VALUES ($1, $2, $3, $4)								 
+   RETURNING user_id;
+	`)
+
+	var id int
+	err = tx.QueryRow(userQuery, user.Name, user.Login, user.Password, user.Nickname).Scan(&id)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	rightsQuery := fmt.Sprintf(`
+			INSERT INTO users_rights (user_id, group_id, plot_id)
+			VALUES ($1, $2, $3)
+	`)
+
+	_, err = tx.Exec(rightsQuery, id, user.GroupID, user.PlotID)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	return id, nil
+}
+
 func NewUsersPG(db *sqlx.DB) *UsersPG {
 	return &UsersPG{db: db}
 }

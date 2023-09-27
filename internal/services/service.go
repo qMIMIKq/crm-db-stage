@@ -32,6 +32,8 @@ type Users interface {
 	GetOperators() ([]domain.UserInfo, error)
 	GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo, error)
 	GetUserByID(id string) (user domain.UserInfo, err error)
+	CreateUser(user domain.UserInfo) (int, error)
+	EditUser(user domain.UserInfo) error
 }
 
 type Files interface {

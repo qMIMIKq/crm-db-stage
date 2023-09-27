@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -29,4 +30,38 @@ func (h *Handler) getPlot(c *gin.Context) {
 	}
 
 	newDataResponse(c, 200, plot)
+}
+
+func (h *Handler) addPlot(c *gin.Context) {
+	var plot domain.Plot
+	if err := c.Bind(&plot); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	id, err := h.services.Plots.CreatePlot(plot)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id": id,
+	})
+}
+
+func (h *Handler) editPlot(c *gin.Context) {
+	var plot domain.Plot
+	if err := c.Bind(&plot); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err)
+		return
+	}
+
+	err := h.services.Plots.EditPlot(plot)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
 }

@@ -4,6 +4,7 @@ import (
 	"crm/internal/domain"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type FiltersPG struct {
@@ -11,14 +12,16 @@ type FiltersPG struct {
 }
 
 func (f FiltersPG) EditFilter(filter domain.FilterInfo) error {
+	log.Info().Interface("filter", filter).Msg("Filter!!")
+
 	query := fmt.Sprintf(`
 			UPDATE filters
-				 SET filter_name = $1, plot_id = $2, 
-             start_time = $3, end_time = $4
-			 WHERE filter_id = $5
+				 SET filter_name = $1, plot_id = $2,
+             start_time = $3, end_time = $4, disable = $5
+			 WHERE filter_id = $6
 	`)
 
-	_, err := f.db.Exec(query, filter.Name, filter.PlotID, filter.StartTime, filter.EndTime, filter.ID)
+	_, err := f.db.Exec(query, filter.Name, filter.PlotID, filter.StartTime, filter.EndTime, filter.Disable, filter.ID)
 
 	return err
 }

@@ -4,6 +4,7 @@ import (
 	"crm/internal/domain"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type PlotsPG struct {
@@ -11,13 +12,16 @@ type PlotsPG struct {
 }
 
 func (p PlotsPG) EditPlot(plot domain.Plot) error {
+	log.Info().Interface("plot", plot).Msg("PLOT IS")
+
 	query := fmt.Sprintf(`
 			UPDATE plots
-				 SET plot_name = $1
-			 WHERE plot_id = $2;
+				 SET plot_name = $1,
+             nickname = $2
+			 WHERE plot_id = $3;
 	`)
 
-	_, err := p.db.Exec(query, plot.Name, plot.ID)
+	_, err := p.db.Exec(query, plot.Name, plot.ShortName, plot.ID)
 	return err
 }
 
@@ -36,13 +40,12 @@ func (p PlotsPG) GetPlotByID(plotId string) (domain.Plot, error) {
 
 func (p PlotsPG) CreatePlot(plot domain.Plot) (int, error) {
 	query := fmt.Sprintf(`
-		INSERT INTO plots (plot_name)
-    VALUES ($1)
-		returning plot_id
+		INSERT INTO plots (plot_name, nickname)
+    VALUES ($1, $2) returning plot_id
   `)
 
 	var id int
-	err := p.db.QueryRow(query, plot.Name).Scan(&id)
+	err := p.db.QueryRow(query, plot.Name, plot.ShortName).Scan(&id)
 
 	return id, err
 }

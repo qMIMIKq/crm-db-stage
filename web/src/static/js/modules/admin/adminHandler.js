@@ -1,12 +1,13 @@
 import {showModal} from "../modals/showModal"
 import {appAddr} from "../state";
-import {ucFirst} from "../../ucFirst";
-import {sendData} from "../sendData";
 import {drawUsers} from "./users";
 import {drawGroups} from "./groups";
 import {drawAdminPlots} from "./drawPlots";
 import {drawAdminFilters} from "./filters";
 import {drawConstructor} from "./constructor";
+import {userAdd} from "./userAdd";
+import {filterAdd} from "./filterAdd";
+import {plotAdd} from "./plotAdd";
 
 const mainAdminModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
@@ -51,14 +52,14 @@ const mainAdminModal = `
 
 
 export const getAndDrawData = (url, drawFunc, modal) => {
-  const contentPlace = modal.querySelector('.nav-content')
+  let contentPlace = modal.querySelector('.nav-content')
   try {
-    contentPlace.querySelector('.nav-content__columns').remove()
-    contentPlace.querySelector('.nav-content__items').remove()
-    contentPlace.querySelector('.edit-form').remove()
-  } catch {}
+    contentPlace.remove()
+    modal.querySelector('.panel-nav').insertAdjacentHTML('beforeend', `<div class="panel-nav__content nav-content"></div>`)
+  } catch {
+  }
 
-
+  contentPlace = modal.querySelector('.nav-content')
   contentPlace.insertAdjacentHTML('beforeend', `<ul class="nav-content__columns"></ul>`)
   contentPlace.insertAdjacentHTML('beforeend', `<ul class="nav-content__items"></ul>`)
 
@@ -73,7 +74,6 @@ export const getAndDrawData = (url, drawFunc, modal) => {
 export const adminHandler = () => {
   const adminModalBtn = document.querySelector('.nav-control__admin')
 
-
   adminModalBtn.addEventListener('click', () => {
     const adminModal = showModal(mainAdminModal)
     const usersBtn = adminModal.querySelector('.nav-navigation__users')
@@ -82,27 +82,69 @@ export const adminHandler = () => {
     const filtersBtn = adminModal.querySelector('.nav-navigation__filters')
     const constructorBtn = adminModal.querySelector('.nav-navigation__constructor')
 
-    const contentPlace = adminModal.querySelector('.nav-content')
+    const userAddBtn = adminModal.querySelector('.nav-navigation__users-add')
+    userAddBtn.addEventListener('click', () => {
+      userAdd(adminModal)
+    })
 
+    const plotAddBtn = adminModal.querySelector('.nav-navigation__plots-add')
+    plotAddBtn.addEventListener('click', () => {
+      plotAdd(adminModal)
+    })
+
+    const filterAddBtn = adminModal.querySelector('.nav-navigation__filters-add')
+    filterAddBtn.addEventListener('click', () => {
+      filterAdd(adminModal)
+    })
 
     usersBtn.addEventListener('click', () => {
+      try {
+        adminModal.querySelector('.nav-content__columns').remove()
+        adminModal.querySelector('.nav-content__items').remove()
+        adminModal.querySelector('.edit-form').remove()
+      } catch {
+      }
       getAndDrawData('users/get-all', drawUsers, adminModal)
     })
 
     groupsBtn.addEventListener('click', () => {
+      try {
+        adminModal.querySelector('.nav-content__columns').remove()
+        adminModal.querySelector('.nav-content__items').remove()
+        adminModal.querySelector('.edit-form').remove()
+      } catch {
+      }
       getAndDrawData('groups/get-all', drawGroups, adminModal)
     })
 
     plotBtn.addEventListener('click', () => {
+      try {
+        adminModal.querySelector('.nav-content__columns').remove()
+        adminModal.querySelector('.nav-content__items').remove()
+        adminModal.querySelector('.edit-form').remove()
+      } catch {
+      }
       getAndDrawData('plots/get-all', drawAdminPlots, adminModal)
     })
 
     filtersBtn.addEventListener('click', () => {
-      getAndDrawData('filters/get-all', drawAdminFilters, adminModal)
+      try {
+        adminModal.querySelector('.nav-content__columns').remove()
+        adminModal.querySelector('.nav-content__items').remove()
+        adminModal.querySelector('.edit-form').remove()
+      } catch {
+      }
+      getAndDrawData('filters/get-all-hidden', drawAdminFilters, adminModal)
       console.log('hi')
     })
 
     constructorBtn.addEventListener('click', () => {
+      try {
+        adminModal.querySelector('.nav-content__columns').remove()
+        adminModal.querySelector('.nav-content__items').remove()
+        adminModal.querySelector('.edit-form').remove()
+      } catch {
+      }
       getAndDrawData('filters/get-all', drawConstructor, adminModal)
     })
   })

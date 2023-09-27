@@ -73,15 +73,15 @@ func (h *Handler) addUser(c *gin.Context) {
 		return
 	}
 
-	//id, err := h.services.Users.CreateUser(user)
-	//if err != nil {
-	//	newErrorResponse(c, http.StatusInternalServerError, err)
-	//	return
-	//}
-	//
-	//c.JSON(http.StatusOK, map[string]interface{}{
-	//	"id": id,
-	//})
+	id, err := h.services.Users.CreateUser(user)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id": id,
+	})
 }
 
 func (h *Handler) editUser(c *gin.Context) {
@@ -91,15 +91,15 @@ func (h *Handler) editUser(c *gin.Context) {
 		return
 	}
 
-	//err := h.services.Users.EditUser(user)
-	//if err != nil {
-	//	newErrorResponse(c, http.StatusInternalServerError, err)
-	//	return
-	//}
-	//
-	//c.JSON(http.StatusOK, map[string]interface{}{
-	//	"status": "ok",
-	//})
+	err := h.services.Users.EditUser(user)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
 }
 
 func (h *Handler) getAllOperators(c *gin.Context) {

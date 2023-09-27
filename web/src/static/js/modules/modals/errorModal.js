@@ -6,7 +6,7 @@ import {state} from "../state";
 const changeErrorModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
     <div class='modal_content modal-error' style='width: 350px'>
-         <div class='modal__header modal-header'>
+         <div class='modal__header modal-header' style="background:rgb(210, 66, 66);;">
               <h2 class='comments__title'>Ошибка</h2>                
           </div>
         

@@ -30,6 +30,8 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 		{
 			plots.GET("/get-all", h.getPlots)
 			plots.POST("/get-plot", h.getPlot)
+			plots.POST("/add", h.addPlot)
+			plots.PUT("/edit", h.editPlot)
 		}
 
 		filters := api.Group("/filters")
@@ -49,8 +51,8 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			users.GET("/get-users", h.getUsers)
 			users.GET("/get-all", h.getAllUsers)
 			users.POST("/get-user", h.getUserByID)
-			users.POST("/add-user", h.addUser)
-			users.PUT("/add-user", h.editUser)
+			users.POST("/add", h.addUser)
+			users.PUT("/edit", h.editUser)
 		}
 
 		files := api.Group("/files")

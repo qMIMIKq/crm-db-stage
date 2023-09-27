@@ -1,6 +1,5 @@
 .admin-panel {
   min-width: 1200px;
-  width: 80%;
   height: 600px;
   background: $text_white;
 }
@@ -158,9 +157,9 @@
   }
 
   &__user {
-    margin-top: 13px;
+    //margin-top: 13px;
     width: 50%;
-    height: 284px;
+    //height: 284px;
     border-right: 1px solid $text_gray;
   }
 

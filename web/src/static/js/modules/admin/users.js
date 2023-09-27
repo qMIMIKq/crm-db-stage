@@ -3,6 +3,9 @@ import {sendData} from "../sendData";
 import {appAddr} from "../state";
 
 export const drawUsers = (modal, users) => {
+  let err = false
+  let ok = false
+
   const navContent = modal.querySelector('.nav-content')
   const topColumns = modal.querySelector('.nav-content__columns')
   const itemColumns = modal.querySelector('.nav-content__items')
@@ -70,19 +73,19 @@ export const drawUsers = (modal, users) => {
               <div class="edit-form__user">
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Имя</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
+                    <input required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
                            value="${user.name}">
                   </div>
   
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="login">Логин</label>
-                      <input id="login" class="route__input edit-form__input edit-form__login" name="login" type="text"
+                      <input required id="login" class="route__input edit-form__input edit-form__login" name="login" type="text"
                              value="${user.login}">
                   </div>
       
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="nickname">Никнейм</label>
-                      <input id="nickname" class="route__input edit-form__input edit-form__name" name="nickname" type="text"
+                      <input required id="nickname" class="route__input edit-form__input edit-form__name" name="nickname" type="text"
                              value="${user.nickname}">
                   </div>
       
@@ -96,14 +99,14 @@ export const drawUsers = (modal, users) => {
               <div class="edit-form__status">
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="group">Группа</label>
-                    <select class="route__select edit-form__input edit-form__group" name="group_id" id="group">
+                    <select required class="route__select edit-form__input edit-form__group" name="group_id" id="group">
                         <option value="${user.group_id}">${user.group}</option>
                     </select>
                   </div>
   
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="plot">Участки</label>
-                      <select class="route__select edit-form__input edit-form__plot" name="plot_id" id="plot">
+                      <select required class="route__select edit-form__input edit-form__plot" name="plot_id" id="plot">
                           <option value="${user.plot_id}">${user.plot}</option>
                       </select>
                   </div>
@@ -124,7 +127,84 @@ export const drawUsers = (modal, users) => {
                   </div>
               </div>
         </form>
-          `)
+        `)
+
+          const editGroup = document.querySelector(".edit-form__group")
+          const userGroup = document.querySelector(".edit-form__group option").textContent
+          const editPlot = document.querySelector(".edit-form__plot")
+          const userPlot = document.querySelector(".edit-form__plot option").textContent
+
+          const drawData = (url, block, userData) => {
+            fetch(`${appAddr}/api/${url}`)
+              .then(res => res.json())
+              .then(data => {
+                data.data.forEach(group => {
+                  if (group.name !== userData) {
+                    block.insertAdjacentHTML("beforeend", `
+                    <option value="${group.id}">${group.name}</option>
+                  `)
+                  }
+                })
+              })
+          }
+          drawData("groups/get-all", editGroup, userGroup)
+          drawData("plots/get-all", editPlot, userPlot)
+
+          const editForm = modal.querySelector('.edit__form')
+          editForm.addEventListener('submit', e => {
+            console.log(e.target)
+            e.preventDefault()
+
+            const formData = new FormData(editForm)
+
+            if (formData.get("password") !== formData.get("password_repeat")) {
+              if (!err) {
+                ok = false
+                err = true
+                editForm.insertAdjacentHTML("beforeend", `
+            <div class="user-form__block user-form__error">
+                <h3>Пароли не совпадают</h3>
+            </div>
+        `)
+              }
+
+              return
+            }
+
+            const obj = {}
+            formData.forEach(((value, key) => {
+              switch (key) {
+                case "id":
+                  obj[key] = Number(value)
+                  break
+                case "password_repeat":
+                  break
+                case 'disable':
+                  obj[key] = value === "on"
+                  break
+                default:
+                  obj[key] = value
+              }
+            }))
+
+            sendData(`${appAddr}/api/users/edit`, 'PUT', JSON.stringify(obj))
+              .then(res => {
+                if (res.ok) {
+                  if (!ok) {
+                    ok = true
+                    editForm.insertAdjacentHTML('beforeend', `
+                <div class="user-form__block user-form__succ">
+                    <h3>Пользователь успешно изменен</h3>
+                </div>
+            `)
+                  }
+                }
+
+                return res.json()
+              }).then(data => {
+              console.log(data)
+            })
+          })
         })
     })
   })
