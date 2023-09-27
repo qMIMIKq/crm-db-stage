@@ -62,7 +62,7 @@ export const drawGroups = (modal, datas) => {
   
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="login">Описание</label>
-                      <textarea class="route__input edit-form__text" name="description" id="description">${d.description}</textarea>
+                      <textarea style="cursor: text" class="route__input edit-form__text" name="description" id="description">${d.description}</textarea>
                   </div>
       
                   <div class="edit-form__block">

@@ -55,7 +55,9 @@ input.tr {
     }
 
     &--top {
-      background: $table_bg !important;
+      background: rgba(156, 156, 156, 1) !important;
+      //color: white;
+      //background: $table_bg !important;
     }
   }
 
@@ -362,7 +364,7 @@ input.tr {
 .route {
   color: black;
   height: 24px;
-  width: 37px;
+  width: 42px;
 
   &--inplan {
     border-top: 1px solid black;

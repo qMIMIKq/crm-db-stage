@@ -91,7 +91,7 @@ export const drawUsers = (modal, users) => {
       
                   <div class="edit-form__block edit-form__block--checker">
                       <label class="edit-form__label edit-form__label--checker" for="disable">Скрыть</label>
-                      <input ${user.disable ? 'checked' : ''} id="disable" class="" name="disable" type="checkbox">
+                      <input style="cursor: pointer" ${user.disable ? 'checked' : ''} id="disable" class="" name="disable" type="checkbox">
                   </div>        
               </div>
               

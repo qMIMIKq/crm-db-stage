@@ -78,7 +78,7 @@
   }
 
   &__item {
-    height: 28px;
+    height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -191,6 +191,28 @@
     height: 28px !important;
     cursor: text !important;
     margin-bottom: 0 !important;
+  }
+
+  &__group {
+    cursor: pointer !important;
+    transition: color .3s;
+
+
+    &:hover {
+      transition: color .3s;
+      color: $main_green;
+    }
+  }
+
+  &__plot {
+    cursor: pointer !important;
+    transition: color .3s;
+
+
+    &:hover {
+      transition: color .3s;
+      color: $main_green;
+    }
   }
 
   &__submit {

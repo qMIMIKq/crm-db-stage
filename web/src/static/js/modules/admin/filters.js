@@ -75,18 +75,18 @@ export const drawAdminFilters = (modal, datas) => {
                   
                   <div class="edit-form__block edit-form__block--checker">
                       <label class="edit-form__label edit-form__label--checker" for="disable">Скрыть</label>
-                      <input ${d.disable ? 'checked' : ''} id="disable" class="" name="disable" type="checkbox">
+                      <input style="cursor: pointer" ${d.disable ? 'checked' : ''} id="disable" class="" name="disable" type="checkbox">
                   </div>        
                   
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Начало работы</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="start_time" type="time"
+                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="start_time" type="time"
                            value="${d.start_time}">
                   </div>
                   
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Конец работы</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="end_time" type="time"
+                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="end_time" type="time"
                            value="${d.end_time}">
                   </div>
       

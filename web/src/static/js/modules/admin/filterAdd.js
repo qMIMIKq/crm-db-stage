@@ -52,12 +52,12 @@ export const filterAdd = (modal) => {
                   
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Начало работы</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="start_time" type="time">
+                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="start_time" type="time">
                   </div>
                   
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Конец работы</label>
-                    <input id="name" class="route__input edit-form__input edit-form__name" name="end_time" type="time">
+                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="end_time" type="time">
                   </div>
       
                   <div class="edit-form__block">
