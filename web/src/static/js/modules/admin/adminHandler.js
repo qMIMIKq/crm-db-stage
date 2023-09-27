@@ -6,6 +6,7 @@ import {drawUsers} from "./users";
 import {drawGroups} from "./groups";
 import {drawAdminPlots} from "./drawPlots";
 import {drawAdminFilters} from "./filters";
+import {drawConstructor} from "./constructor";
 
 const mainAdminModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
@@ -36,7 +37,7 @@ const mainAdminModal = `
                     <button class="nav-navigation__add main__button route__btn nav-navigation__filters-add">Добавить</button>
                 </li>
                 <li class="nav-navigation__item">
-                    <div class="nav-navigation__text">Конструктор фильтров</div>
+                    <div class="nav-navigation__text nav-navigation__constructor">Конструктор фильтров</div>
                 </li>
             </ul>
             <div class="panel-nav__content nav-content">
@@ -49,7 +50,7 @@ const mainAdminModal = `
 `
 
 
-const getAndDrawData = (url, drawFunc, modal) => {
+export const getAndDrawData = (url, drawFunc, modal) => {
   const contentPlace = modal.querySelector('.nav-content')
   try {
     contentPlace.querySelector('.nav-content__columns').remove()
@@ -79,6 +80,7 @@ export const adminHandler = () => {
     const groupsBtn = adminModal.querySelector('.nav-navigation__groups')
     const plotBtn = adminModal.querySelector('.nav-navigation__plots')
     const filtersBtn = adminModal.querySelector('.nav-navigation__filters')
+    const constructorBtn = adminModal.querySelector('.nav-navigation__constructor')
 
     const contentPlace = adminModal.querySelector('.nav-content')
 
@@ -98,6 +100,10 @@ export const adminHandler = () => {
     filtersBtn.addEventListener('click', () => {
       getAndDrawData('filters/get-all', drawAdminFilters, adminModal)
       console.log('hi')
+    })
+
+    constructorBtn.addEventListener('click', () => {
+      getAndDrawData('filters/get-all', drawConstructor, adminModal)
     })
   })
 }

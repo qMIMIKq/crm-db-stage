@@ -1,5 +1,6 @@
 import {sendData} from "../sendData";
 import {appAddr} from "../state";
+import {ucFirst} from "../../ucFirst";
 
 export const drawAdminPlots = (modal, datas) => {
   const navContent = modal.querySelector('.nav-content')
@@ -26,7 +27,7 @@ export const drawAdminPlots = (modal, datas) => {
           <div class="nav-item__column nav-item__column--left users-item__name">
               <div class="nav-item__column--edit">
                 <input class="hidden-input" type="text" value="${data.id}">
-                ${data.name}
+                ${ucFirst(data.name)}
             </div>
           </div>
           </div>

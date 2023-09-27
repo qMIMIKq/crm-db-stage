@@ -117,6 +117,16 @@
       }
     }
   }
+
+  &__pos {
+    cursor: pointer;
+    transition: color .3s;
+
+    &:hover {
+      transition: color .3s;
+      color: $main_green;
+    }
+  }
 }
 
 .edit-form {
