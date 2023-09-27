@@ -3,7 +3,6 @@ package handler
 import (
 	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -13,8 +12,6 @@ func (h *Handler) getReports(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err)
 		return
 	}
-
-	log.Info().Interface("time", reportTime).Msg("report time")
 
 	res, err := h.services.Reports.GetAll(reportTime.From, reportTime.To)
 	if err != nil {

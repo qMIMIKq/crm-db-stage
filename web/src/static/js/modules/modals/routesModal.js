@@ -45,8 +45,8 @@ const routeModal = `
                         <input id="plan_start" type="text" class="hidden__input" name="plan_start">
                         <input class="main__button main__input route__input route__input--top route-plan__date" 
                             name="plan_date"
-                            readonly
                             disabled
+                            readonly
                             id="route-plan__date"
                             type="text"
                             value="Не в плане"
@@ -61,7 +61,7 @@ const routeModal = `
                     <div class='route__block progress-block'>
                         <div class="quantity-block__labels">
                             <label class='route__label quantity-block__label' for='route__quantity'>Тираж</label>
-                            <label class='route__label' for='day_quantity'>Выдано</label>
+                            <label class='route__label quantity-block__issued' for='day_quantity'>Выдано</label>
                         </div>
                         
                         <div class="quantity-block">
@@ -145,14 +145,10 @@ const routeModal = `
                   <button type='button' class='route__btn main__button hidden__input error-route__close'>Сбросить ошибку</button>
                 </div>
                 
-<!--                <div class='route__section error-route'>-->
-<!--                    -->
-<!--                </div>-->
-                
                 <div class="route__title">Выдача:</div>
                 <div class='route__section route__section--report section-report'>
                     <button disabled type='button' class='route__btn main__button issued-modal_trigger'>За смену</button>
-                    <button style="align-self: flex-start" type='button' class='clickable main__button route__btn report-route__btn'>Отчет</button>
+                    <button style="align-self: flex-start" type='button' disabled class='clickable main__button route__btn report-route__btn'>Отчет</button>
                     
                     <div class='section-report__issued'>
                         <input 
@@ -216,12 +212,15 @@ const routeModal = `
 const issuedModal = `
    <div id='modal' style='z-index: 10000' class='modal modal--issued bounceIn'>
         <div class='modal_content modal_content--issued' style='width: 350px'>
-            <h2 class='comment__title'>Отчет по сменам</h2>
+            <div class='modal__header modal__header--routes modal-header'>
+                <h2 class='comments__title'>Отчет по сменам</h2>
+            </div>        
             <ul class='comment__prev issued-list'>
             </ul>
         </div>
    </div>
 `
+
 const drawLogs = data => {
   const logsList = document.querySelector('.section-logs__list')
   const logsItems = logsList.querySelectorAll('.section-logs__item')
@@ -309,8 +308,8 @@ const confirmChangeTimeModal = `
         <div class='modal_content modal_content--confirm' style='width: 350px'>
             <h2 class='confirm__title'>Подтвердить сброс времени?</h2>
             <div class='confirm__section'>
-                <button class='main__button confirm__button confirm__button--ok'>Да</button>
-                <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
+                <button class='main__button route__btn confirm__button confirm__button--ok'>Да</button>
+                <button class='main__button route__btn confirm__button confirm__button--cncl'>Нет</button>
             </div>
         </div>
    </div>
@@ -484,7 +483,7 @@ export const triggerRoutesModal = e => {
   let dbAddedDates = []
 
   if (info) {
-    activateNextStage('route-plan__date')
+    planDateInput.removeAttribute('disabled')
     let comments = routeInfo['comments']
     if (routeInfo['last_comment']) {
       document.querySelector('#last_comment').value = routeInfo['last_comment']
@@ -495,18 +494,18 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['db_plan']) {
       dbAddedDates = routeInfo['db_plan']
-      planDateInput.value = 'Уже в плане'
+      planDateInput.value = 'В плане'
+
+      dbAddedDates.map(dateInfo => {
+        dateInfo['queues'] = dateInfo['queues'].split(', ')
+        dateInfo['date'] = dateInfo['date'].split('T')[0]
+
+        addedDates[dateInfo['date']] = {
+          'divider': dateInfo.divider,
+          'queues': dateInfo.queues
+        }
+      })
     }
-
-    dbAddedDates.map(dateInfo => {
-      dateInfo['queues'] = dateInfo['queues'].split(', ')
-      dateInfo['date'] = dateInfo['date'].split('T')[0]
-
-      addedDates[dateInfo['date']] = {
-        'divider': dateInfo.divider,
-        'queues': dateInfo.queues
-      }
-    })
 
     planObj = {
       'exclude': routeInfo['exclude_days'],
@@ -521,6 +520,7 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['issued']) {
       issued.value = routeInfo['issued']
+      activateNextStage('report-route__btn')
     }
 
     if (logName !== '') {
@@ -684,7 +684,7 @@ export const triggerRoutesModal = e => {
       activateNextStage('route__select--user')
       if (routePlot.value !== 'Выберите участок') {
         console.log('Чек')
-        activateNextStage('route-plan__date')
+        planDateInput.removeAttribute('disabled')
       }
 
       if (routeUser.value !== 'Выберите оператора') {
@@ -729,7 +729,7 @@ export const triggerRoutesModal = e => {
     activateNextStage('pause-route__btn')
     activateNextStage('error-route__btn')
     activateNextStage('section-logs__input')
-    activateNextStage('route-plan__date')
+    planDateInput.removeAttribute('disabled')
     controlQuantityAccess(routeQuantity)
     controlCommentAccess(commentInput)
   })
@@ -803,8 +803,6 @@ export const triggerRoutesModal = e => {
     obj['exclude_days'] = planObj.exclude
     obj['route_id'] = routeInfo.route_id
 
-    console.log(obj)
-    console.log(addedDates)
 
     let today = getTime()
     today = today.substring(0, today.length - 5)
@@ -812,7 +810,18 @@ export const triggerRoutesModal = e => {
 
     obj['planned'] = !!(dbID && planned)
     obj['report_changer'] = reportChanger
-    obj['added_dates'] = addedDates
+
+    let resAddedDates = []
+    for (const [addedDate, entry] of Object.entries(addedDates)) {
+      resAddedDates.push({
+        'date': addedDate,
+        'date_info': entry
+      })
+    }
+
+    obj['added_dates'] = resAddedDates
+
+
     console.log(obj.added_dates)
 
     routeInput.value = JSON.stringify(obj)

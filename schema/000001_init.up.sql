@@ -113,7 +113,6 @@ CREATE TABLE routes
     pause_time        varchar(255),
     error_time        varchar(255),
     error_value       varchar(255),
-    last_comm         text         default '',
     day_quantity      varchar(255) default '',
     theor_end         varchar(255) default '',
     dyn_end           varchar(255) default '',

@@ -12,17 +12,26 @@ type Authorization interface {
 }
 
 type Plots interface {
+	GetPlotByID(plotId string) (domain.Plot, error)
 	GetPlots() ([]domain.Plot, error)
+	CreatePlot(plot domain.Plot) (int, error)
+	EditPlot(plot domain.Plot) error
 }
 
 type Filters interface {
-	GetFilters() ([]domain.FilterInfo, error)
+	GetFilters(hidden bool) ([]domain.FilterInfo, error)
+	GetFilterByID(filterId string) (domain.FilterInfo, error)
+	CreateFilter(filter domain.FilterInfo) (int, error)
+	EditFilter(filter domain.FilterInfo) error
+	UpdatePosition(filters []domain.FilterInfo) error
 }
 
 type Users interface {
 	GetUsers() ([]domain.UserInfo, error)
+	GetAllUsers() (domain.Users, error)
 	GetOperators() ([]domain.UserInfo, error)
 	GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo, error)
+	GetUserByID(id string) (user domain.UserInfo, err error)
 }
 
 type Files interface {
@@ -55,7 +64,14 @@ type Plans interface {
 	GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error)
 }
 
+type Groups interface {
+	GetGroup(groupName string)
+	GetGroups() ([]domain.Group, error)
+	GetGroupByID(groupID string) (domain.Group, error)
+	EditGroup(group domain.Group) error
+}
 type Services struct {
+	Groups
 	Plans
 	Routes
 	Files
@@ -78,6 +94,7 @@ func NewService(repos *repository.Repository) *Services {
 		Orders:        NewOrdersService(repos.Orders),
 		Routes:        NewRoutesService(repos.Routes),
 		Time:          NewTimeService(),
+		Groups:        NewGroupsService(repos.Groups),
 		Reports:       NewReportsService(repos.Reports),
 		Plans:         NewPlansService(repos.Plans),
 	}

@@ -3,7 +3,7 @@
 
 .user-form {
   width: 283px;
-  height: 232px;
+  height: 245px;
   border-radius: 10px;
   box-shadow: $btn_shadow;
   margin: 150px auto;
@@ -64,7 +64,8 @@
     color: $text_white;
     transition: color .3s;
     position: absolute;
-    right: 10px;
+    right: 15px;
+    bottom: 15px;
     border-radius: 15px;
     box-shadow: $btn_shadow;
     border: none;

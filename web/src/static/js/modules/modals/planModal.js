@@ -9,15 +9,15 @@ const planDateModal = `
         <h2 class='confirm__title confirm__title--plan'>Период</h2>
         <input type="text" class="hidden__input" name="end_date" id="end_date">
         <div class="modal-plan__period plan-period">
-            <button class="main__button plan-period__btn plan-period__today">
+            <button class="main__button route__btn plan-period__btn plan-period__today">
                 <input type="number" class="hidden__input" value="1">
                 1 день
             </button>
-            <button class="main__button plan-period__btn plan-period__week">
+            <button class="main__button route__btn plan-period__btn plan-period__week">
                 <input type="number" class="hidden__input" value="7">
                 7 дней
             </button>
-            <button class="main__button plan-period__btn plan-period__month">
+            <button class="main__button route__btn plan-period__btn plan-period__month">
                 <input type="number" class="hidden__input" value="30">
                 30 дней
             </button>
@@ -27,8 +27,8 @@ const planDateModal = `
          </ul>
         
         <div class='confirm__section'>
-            <button class='main__button confirm__button confirm__button--ok'>ОК</button>
-            <button class='main__button confirm__button confirm__button--cncl'>Отмена</button>
+            <button class='main__button route__btn confirm__button confirm__button--ok'>ОК</button>
+            <button class='main__button route__btn confirm__button confirm__button--cncl'>Отмена</button>
         </div>
       </div>
    </div>
@@ -42,14 +42,14 @@ const planDateModalAdd = `
         <div class="modal-plan__section">
             <div class="modal-plan__data">
                 <label class="modal-plan__label">Несколько</label>
-                <input type="checkbox" name="some" id="modal-some">
+                <input class="" type="checkbox" name="some" id="modal-some">
             </div>
         </div> 
         
         <div class="modal-plan__section">
             <div class="modal-plan__data">
                 <label class="modal-plan__label">Делитель смены</label>
-                <select name="divider" id="modal-divider">
+                <select class="" name="divider" id="modal-divider">
                     
                 </select>
             </div>
@@ -58,16 +58,16 @@ const planDateModalAdd = `
         <div class="modal-plan__section">
             <div class="modal-plan__data">
                 <label class="modal-plan__label">Порядок в смене</label>
-                <select name="order" id="modal-queue">
+                <select class="" name="order" id="modal-queue">
                  
                 </select>
             </div>
         </div> 
         
         <div class='confirm__section'>
-            <button class='main__button confirm__button confirm__button--ok'>ОК</button>
-            <button class='main__button confirm__button confirm__button--cncl'>Отмена</button>
-            <button class='main__button hidden__input confirm__button confirm__button--dlt'>Удалить</button>
+            <button class='main__button route__btn confirm__button confirm__button--ok'>ОК</button>
+            <button class='main__button route__btn confirm__button confirm__button--cncl'>Отмена</button>
+            <button class='main__button route__btn hidden__input confirm__button confirm__button--dlt'>Удалить</button>
         </div>
       </div>
    </div>
@@ -86,7 +86,6 @@ export const planDateHandler = (addedDates, plot, routeID) => {
     })
     .then(data => {
       if (data.data) {
-        console.log(data.data)
         data.data.map(dateInfo => {
           dateInfo['date'] = dateInfo['date'].split('T')[0]
 
@@ -100,7 +99,6 @@ export const planDateHandler = (addedDates, plot, routeID) => {
             newBusy[dateInfo['date']].queues.push(dateInfo['queues'])
           }
 
-          console.log(newBusy)
         })
       }
     }).then(() => {
@@ -151,7 +149,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
         for (let j = Number(entry.divider); j > 0; j--) {
           if (entry.queues.includes(String(j))) {
             datesList.insertAdjacentHTML('beforeend', `
-            <li class="plan-dates__item plan-dates__item--inplan">
+            <li class="plan-dates__item route__btn plan-dates__item--inplan">
               ${showDate.join('.')}
               <input type="text" class="hidden__input date" value="${addedDate}">
               <input type="number" class="hidden__input queue" value="${j}">
@@ -229,8 +227,6 @@ export const planDateHandler = (addedDates, plot, routeID) => {
 
             modalAddedDates[currentDate]['divider'] = divider.value ? divider.value : '1'
 
-            console.log('divider', resObj.divider)
-            console.log('queue', resObj.queue)
             if (typeof modalAddedDates[currentDate]['queues'] === 'undefined') {
               modalAddedDates[currentDate]['queues'] = []
               modalAddedDates[currentDate]['queues'].push(queue.value ? queue.value : '1')
@@ -279,14 +275,13 @@ export const planDateHandler = (addedDates, plot, routeID) => {
         let showDate = date.substring(5).split('-')
         ;[showDate[0], showDate[1]] = [showDate[1], showDate[0]]
 
-        console.log(modalAddedDates)
         if (flag) {
           for (const [addedDate, entry] of Object.entries(modalAddedDates)) {
             if (String(addedDate) === date) {
               for (let j = Number(entry.divider); j > 0; j--) {
                 if (entry.queues.includes(String(j))) {
                   datesList.insertAdjacentHTML('afterbegin', `
-                  <li class="plan-dates__item plan-dates__item--inplan">
+                  <li class="plan-dates__item route__btn plan-dates__item--inplan">
                     ${showDate.join('.')}
                     <input type="text" class="hidden__input date" value="${date}">
                     <input type="number" class="hidden__input queue" value="${j}">
@@ -296,7 +291,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
                 } else {
                   if (newBusy[date] && newBusy[date].queues.includes(String(j))) {
                     datesList.insertAdjacentHTML('afterbegin', `
-                      <li class="plan-dates__item plan-dates__item--busy">
+                      <li class="plan-dates__item route__btn plan-dates__item--busy">
                         ${showDate.join('.')}
                         <input type="text" class="hidden__input date" value="${date}">
                         <input type="number" class="hidden__input queue" value="${j}">
@@ -305,7 +300,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
                     `)
                   } else {
                     datesList.insertAdjacentHTML('afterbegin', `
-                      <li class="plan-dates__item">
+                      <li class="plan-dates__item route__btn">
                         ${showDate.join('.')}
                         <input type="text" class="hidden__input date" value="${date}">
                         <input type="number" class="hidden__input queue" value="${j}">
@@ -326,7 +321,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
                     for (let j = Number(busyDateInfo.divider); j > 0; j--) {
                       if (busyDateInfo.queues.includes(String(j))) {
                         datesList.insertAdjacentHTML('afterbegin', `
-                          <li class="plan-dates__item plan-dates__item--busy">
+                          <li class="plan-dates__item route__btn plan-dates__item--busy">
                             ${showDate.join('.')}
                             <input type="text" class="hidden__input date" value="${date}">
                             <input type="number" class="hidden__input queue" value="${j}">
@@ -335,7 +330,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
                         `)
                       } else {
                         datesList.insertAdjacentHTML('afterbegin', `
-                          <li class="plan-dates__item">
+                          <li class="plan-dates__item route__btn">
                             ${showDate.join('.')}
                             <input type="text" class="hidden__input date" value="${date}">
                             <input type="number" class="hidden__input queue" value="${j}">
@@ -348,7 +343,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
                 }
               } else {
                 datesList.insertAdjacentHTML('afterbegin', `
-                  <li class="plan-dates__item">
+                  <li class="plan-dates__item route__btn">
                     ${showDate.join('.')}
                     <input type="text" class="hidden__input date" value="${date}">
                     <input type="number" class="hidden__input queue" value="1">
@@ -365,7 +360,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
                 for (let j = Number(busyDateInfo.divider); j > 0; j--) {
                   if (busyDateInfo.queues.includes(String(j))) {
                     datesList.insertAdjacentHTML('afterbegin', `
-                      <li class="plan-dates__item plan-dates__item--busy">
+                      <li class="plan-dates__item route__btn plan-dates__item--busy">
                         ${showDate.join('.')}
                         <input type="text" class="hidden__input date" value="${date}">
                         <input type="number" class="hidden__input queue" value="${j}">
@@ -374,7 +369,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
                     `)
                   } else {
                     datesList.insertAdjacentHTML('afterbegin', `
-                      <li class="plan-dates__item">
+                      <li class="plan-dates__item route__btn">
                         ${showDate.join('.')}
                         <input type="text" class="hidden__input date" value="${date}">
                         <input type="number" class="hidden__input queue" value="${j}">
@@ -387,7 +382,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
             }
           } else {
             datesList.insertAdjacentHTML('afterbegin', `
-              <li class="plan-dates__item">
+              <li class="plan-dates__item route__btn">
                 ${showDate.join('.')}
                 <input type="text" class="hidden__input date" value="${date}">
                 <input type="number" class="hidden__input queue" value="1">
@@ -437,7 +432,6 @@ export const planDateHandler = (addedDates, plot, routeID) => {
     okBtn.addEventListener('click', () => {
       modal.click()
 
-      console.log(modalAddedDates)
       for (const [addedDate, entry] of Object.entries(modalAddedDates)) {
         addedDates.push({
           'date': addedDate,

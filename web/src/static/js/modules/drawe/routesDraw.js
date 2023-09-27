@@ -23,8 +23,8 @@ export const colorRoutes = (routes) => {
       dataInput.value = JSON.stringify(route)
       routeInfo.value = route.plot
 
-      routeInfo.classList.add('route')
       if (route.plan_dates) {
+        routeInfo.classList.add('route')
         if (route.plan_dates.includes(date)) {
           routeInfo.classList.add('route--planned')
           routeInfo.parentNode.classList.add('route--inplan')
@@ -33,27 +33,33 @@ export const colorRoutes = (routes) => {
       }
 
       if (route.last_comment) {
+        routeInfo.classList.add('route')
         infoParent.setAttribute('data-title', `${route.last_comment} /`)
         infoParent.classList.add('table-body__trattr')
       }
 
       if (route.start_time) {
+        routeInfo.classList.add('route')
         routeInfo.classList.add('route--started')
       }
 
       if (route.end_time) {
+        routeInfo.classList.add('route')
         routeInfo.classList.add('route--completed')
         routeInfo.classList.remove('route--started')
       }
 
       if (route.error_msg) {
+        routeInfo.classList.add('route')
         routeInfo.classList.add('route--error')
         routeInfo.classList.remove('route--started')
         routeInfo.classList.remove('route--completed')
         infoParent.setAttribute('data-title', `${route.last_comment}/${route.error_msg}`)
       }
 
+
       if (route.pause_time) {
+        routeInfo.classList.add('route')
         routeInfo.classList.add('route--paused')
         routeInfo.classList.remove('route--error')
         routeInfo.classList.remove('route--started')

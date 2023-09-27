@@ -4,6 +4,7 @@ import {deleteOrders, getOrders} from "../orders";
 import {globalFilterOrders} from "./filterOrders";
 import {bindOrdersListeners} from "../bindListeners";
 import {getTime} from "../getTime";
+import {getReports} from "../../report/getReports";
 
 export const topFiltersHandler = () => {
   let filtered
@@ -34,10 +35,12 @@ export const topFiltersHandler = () => {
       if (link.textContent.trim().includes('Архив')) {
         getOrders('get-old')
       } else if (link.textContent.trim().includes('Главная')) {
-        console.log(window.location.href)
+        window.location.href = link.querySelector('.hidden__input').value
         getOrders()
       } else {
+        console.log(window.location.href)
         window.location.href = link.querySelector('.hidden__input').value
+
       }
 
     })
@@ -59,17 +62,17 @@ export const topFiltersHandler = () => {
       if (condition) {
         if (short) {
           block.insertAdjacentHTML('beforeend', `
-                    <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button--click'>${d.short_name}</button>
-                        <input class='hidden__input' value="${d.name}"/>
-                     </li>
-                    `)
+            <li class='nav-filters__item'>
+                <button class='nav-filters__button main__button--click'>${d.short_name}</button>
+                <input class='hidden__input' value="${d.name}"/>
+             </li>
+          `)
         } else {
           block.insertAdjacentHTML('beforeend', `
-                    <li class='nav-filters__item'>
-                        <button class='nav-filters__button main__button--click'>${d.name}</button>
-                     </li>
-                    `)
+            <li class='nav-filters__item'>
+                <button class='nav-filters__button main__button--click'>${d.name}</button>
+             </li>
+          `)
         }
       }
     })
@@ -99,7 +102,12 @@ export const topFiltersHandler = () => {
           filtered = true
           controlFilterReset()
         } else {
-          getOrders('get-all')
+          if (window.location.href.includes('/main/table')) {
+            getOrders('get-all')
+          } else {
+            getReports()
+          }
+
           filtered = false
           controlFilterReset()
         }
@@ -179,7 +187,11 @@ export const topFiltersHandler = () => {
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {
           state['currentTopFilters'] = []
           document.querySelector('.nav-filters__reset').remove()
-          getOrders('get-all')
+          if (window.location.href.includes('/main/table')) {
+            getOrders('get-all')
+          } else {
+            getReports()
+          }
 
           nav.querySelectorAll('.nav-filters__button').forEach(btn => {
             console.log(btn)

@@ -17,17 +17,26 @@ type Authorization interface {
 
 type Users interface {
 	GetUsers() ([]domain.UserInfo, error)
+	GetAllUsers() (domain.Users, error)
 	GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo, error)
 	GetUsersByGroup(group string) ([]domain.UserInfo, error)
 	GetOperators() ([]domain.UserInfo, error)
+	GetUserByID(id string) (domain.UserInfo, error)
 }
 
 type Filters interface {
-	GetFilters() ([]domain.FilterInfo, error)
+	GetFilters(hidden bool) ([]domain.FilterInfo, error)
+	GetFilterByID(filterId string) (domain.FilterInfo, error)
+	CreateFilter(filter domain.FilterInfo) (int, error)
+	EditFilter(filter domain.FilterInfo) error
+	UpdatePosition(filters []domain.FilterInfo) error
 }
 
 type Plots interface {
 	GetPlots() ([]domain.Plot, error)
+	GetPlotByID(plotId string) (domain.Plot, error)
+	CreatePlot(plot domain.Plot) (int, error)
+	EditPlot(plot domain.Plot) error
 }
 
 type Files interface {
@@ -56,6 +65,12 @@ type Plans interface {
 	GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error)
 }
 
+type Groups interface {
+	GetGroups() ([]domain.Group, error)
+	GetGroupByID(groupID string) (domain.Group, error)
+	EditGroup(group domain.Group) error
+}
+
 type Repository struct {
 	Plans
 	Init
@@ -63,6 +78,7 @@ type Repository struct {
 	Filters
 	Orders
 	Plots
+	Groups
 	Routes
 	Users
 	Files
@@ -81,5 +97,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Init:          NewInitPG(db),
 		Reports:       NewReportsPG(db),
 		Plans:         NewPlansPG(db),
+		Groups:        NewGroupsPG(db),
 	}
 }

@@ -3,7 +3,6 @@ package handler
 import (
 	"crm/internal/services"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type Handler struct {
@@ -19,14 +18,28 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 
 	api := router.Group("/api")
 	{
+
+		groups := api.Group("/groups")
+		{
+			groups.GET("/get-all", h.getGroups)
+			groups.POST("/get-group", h.getGroup)
+			groups.PUT("/edit", h.editGroup)
+		}
+
 		plots := api.Group("/plots")
 		{
 			plots.GET("/get-all", h.getPlots)
+			plots.POST("/get-plot", h.getPlot)
 		}
 
 		filters := api.Group("/filters")
 		{
 			filters.GET("/get-all", h.getFilters)
+			filters.POST("get-filter", h.getFilter)
+			filters.GET("/get-all-hidden", h.getByHiddenFilters)
+			filters.POST("/add", h.addFilter)
+			filters.PUT("/edit", h.editFilter)
+			filters.PUT("/edit-position", h.editFilterPosition)
 		}
 
 		users := api.Group("/users")
@@ -34,6 +47,10 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			users.GET("/get-operators", h.getOperators)
 			users.GET("/get-all-operators", h.getAllOperators)
 			users.GET("/get-users", h.getUsers)
+			users.GET("/get-all", h.getAllUsers)
+			users.POST("/get-user", h.getUserByID)
+			users.POST("/add-user", h.addUser)
+			users.PUT("/add-user", h.editUser)
 		}
 
 		files := api.Group("/files")
@@ -71,22 +88,5 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 		{
 			plans.POST("/get-busy", h.getBusyPlans)
 		}
-	}
-}
-
-func (h *Handler) getAllOperators(c *gin.Context) {
-	users, err := h.services.Users.GetOperators()
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err)
-	}
-
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"data": users,
-	})
-}
-
-func NewHandler(services *services.Services) *Handler {
-	return &Handler{
-		services: services,
 	}
 }

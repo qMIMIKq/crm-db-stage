@@ -21,7 +21,7 @@ func (p PlotsPG) EditPlot(plot domain.Plot) error {
 	return err
 }
 
-func (p PlotsPG) GetPlotByID(plotId int) (domain.Plot, error) {
+func (p PlotsPG) GetPlotByID(plotId string) (domain.Plot, error) {
 	query := fmt.Sprintf(`
 			SELECT * 
 				FROM plots

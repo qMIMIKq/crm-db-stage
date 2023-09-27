@@ -23,6 +23,41 @@ func (f FiltersPG) EditFilter(filter domain.FilterInfo) error {
 	return err
 }
 
+func (f FiltersPG) GetFilters(hidden bool) ([]domain.FilterInfo, error) {
+	query := fmt.Sprintf(`
+			SELECT f.filter_id, f.filter_name, 
+						 f.plot_id, f.disable, p.plot_name
+			  FROM filters f
+						 JOIN plots p USING(plot_id)
+	`)
+
+	if hidden {
+		query += " ORDER BY f.disable, f.filter_id"
+	} else {
+		query += " ORDER BY f.position, f.filter_id"
+	}
+
+	var filters []domain.FilterInfo
+	err := f.db.Select(&filters, query)
+
+	return filters, err
+}
+
+func (f *FiltersPG) UpdatePosition(filters []domain.FilterInfo) error {
+	query := fmt.Sprintf(`
+			UPDATE filters
+				 SET position = $1
+			 WHERE filter_id = $2
+	`)
+
+	var err error
+	for _, filter := range filters {
+		_, err = f.db.Exec(query, filter.Position, filter.ID)
+	}
+
+	return err
+}
+
 func (f FiltersPG) CreateFilter(filter domain.FilterInfo) (int, error) {
 	query := fmt.Sprintf(`
 			INSERT INTO filters (filter_name, plot_id, start_time, end_time)
@@ -36,27 +71,10 @@ func (f FiltersPG) CreateFilter(filter domain.FilterInfo) (int, error) {
 	return id, err
 }
 
-func (f FiltersPG) GetFilters() ([]domain.FilterInfo, error) {
-	query := fmt.Sprintf(`
-			SELECT f.filter_id, f.filter_name,
-             f.start_time, f.end_time,
-						 f.plot_id, p.plot_name
-			  FROM filters f
-						 JOIN plots p USING(plot_id)	 						
-			 WHERE f.disable = false
-       ORDER BY position
-	`)
-
-	var filters []domain.FilterInfo
-	err := f.db.Select(&filters, query)
-
-	return filters, err
-}
-
-func (f FiltersPG) GetFilterByID(filterId int) (domain.FilterInfo, error) {
+func (f FiltersPG) GetFilterByID(filterId string) (domain.FilterInfo, error) {
 	query := fmt.Sprintf(`
 		SELECT f.filter_id, f.filter_name, f.plot_id, 
-           p.plot_name, f.start_time, f.end_time
+           p.plot_name, f.start_time, f.disable, f.end_time
       FROM filters f
            JOIN plots p USING(plot_id)	 				
      WHERE f.filter_id = $1

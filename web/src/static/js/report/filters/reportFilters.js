@@ -1,8 +1,9 @@
 import {state} from "../../modules/state";
 import {deleteOrders} from "../../modules/orders";
 import {bindOrdersListeners} from "../../modules/bindListeners";
-import {drawReport} from "../drawReport";
 import {getReports} from "../getReports";
+import {globalFilterReports} from "./globalFilterReports";
+import {filterRouteReports} from "./topReportFilter";
 
 export const reportFiltersWrapper = document.querySelector('.main-table__header')
 export const idReportFilter = document.querySelector('#id')
@@ -20,8 +21,8 @@ export const deleteReportsFilters = () => {
 export const drawReportsFilter = (data, target) => {
   data.forEach(d => {
     target.insertAdjacentHTML('beforeend', `
-            <option class='table__filter--new' value='${d}'>${d}</option>
-        `)
+        <option class='table__filter--new' value='${d}'>${d}</option>
+    `)
   })
 }
 
@@ -57,15 +58,18 @@ const showFilter = e => {
 
 const filterReports = (type, filter) => {
   state['filtered'] = true
-  state['reportFilters'][type] = filter
+  state['tableFilters'][type] = filter
   console.log(type, filter)
-  console.log(state['reportFilters'])
+  console.log(state['tableFilters'])
 
   deleteOrders()
-  state['reports'].forEach(o => {
-    globalFilterReports(o, [])
+  state['orders'].forEach(o => {
+    globalFilterReports(o, state.topFilters)
   })
 
+  if (state.topFilters.length) {
+    filterRouteReports()
+  }
   bindOrdersListeners()
 }
 
@@ -91,7 +95,7 @@ export const controlReportsFiltersReset = () => {
 
       nav.querySelector('.header-button__reset').addEventListener('click', e => {
         state['filtered'] = false
-        state['reportFilters'] = {}
+        state['tableFilters'] = {}
         document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))
 
         reportFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
@@ -114,30 +118,4 @@ const setChosenFilter = e => {
   } else {
     e.target.parentNode.querySelector('label').style.textDecoration = 'none'
   }
-}
-
-export const globalFilterReports = (report, topFilters) => {
-  console.log(state.reportFilters)
-
-  let flag = true
-  for (let type in state['reportFilters']) {
-    const filter = state['reportFilters'][type]
-
-    if (filter === 'все') {
-    } else if (filter) {
-      console.log(report[type], state['reportFilters'][type])
-      if (!(report[type] == state['reportFilters'][type])) {
-        flag = false
-        break
-      }
-    }
-  }
-
-  console.log(report)
-
-  if (flag) {
-    drawReport(report, state['filteredReport'], state['managers'])
-  }
-
-  return flag
 }

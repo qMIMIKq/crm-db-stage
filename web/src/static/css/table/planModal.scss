@@ -99,8 +99,7 @@
   &__item {
     width: 56px;
     padding: 5px;
-    border: 1px solid black;
-    border-radius: 5px;
+    background: $text_white;
     margin-bottom: 7px;
     transition: color .3s;
     text-align: center;
@@ -117,11 +116,11 @@
 
     &--inplan {
       color: white;
-      background: #09d009;
+      background: $main_green;
     }
 
     &--busy {
-      border: 1px solid #09d009;
+      border: 1px solid $main_green;
     }
   }
 }

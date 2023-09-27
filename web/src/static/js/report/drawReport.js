@@ -60,7 +60,7 @@ export const drawReport = async (d, data) => {
               value="${d.plan}">
           </li>
           <li class="table-body_cell table__issued-plan--report">
-            <input readonly type="number" class="table__data ${d.issued_plan && d.issued_plan != '0' ? '' : 'route--error'}" value=${d.issued_plan}>
+            <input readonly type="number" class="table__data ${d.issued_plan && d.issued_plan != '0' ? '' : 'route--error'}" value=${d.issued_plan || 0}>
           </li>
           <li class="table-body_cell table__issued-plan--report">
             <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>

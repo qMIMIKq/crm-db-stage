@@ -5,6 +5,7 @@
 @import "route_modal";
 @import "comments_modal";
 @import "planModal";
+@import "adminPanel";
 
 .main-table {
   &__header {
@@ -207,7 +208,8 @@ input.tr {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
+    height: 29px;
+    width: 45px;
 
     &:last-child {
       border-right: 1px solid black !important;
@@ -215,8 +217,8 @@ input.tr {
   }
 
   &__routes {
-    min-width: 400px;
-    max-width: 400px;
+    min-width: 450px;
+    max-width: 450px;
   }
 
   &-routes__issued {
@@ -302,7 +304,6 @@ input.tr {
 
   &_cell {
     max-height: 56px;
-    height: 29px;
     font-size: 16px;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
@@ -388,11 +389,13 @@ input.tr {
   }
 
   &--started {
+    background: white !important;
     border: 2px solid rgba(81, 165, 227, 1);
     border-radius: 15px;
   }
 
   &--completed {
+    background: white !important;
     border: 2px solid rgba(0, 130, 29, 1);
     border-radius: 15px;
   }
@@ -418,22 +421,27 @@ input.tr {
 
 .table {
   &__issued--report {
-    width: 105px;
+    min-width: 105px;
+    max-width: 105px;
   }
 
   &__plan--report {
-    width: 105px;
+    min-width: 105px;
+    max-width: 105px;
   }
 
   &__route--report {
-    width: 65px;
+    min-width: 65px;
+    max-width: 65px;
   }
 
   &__operator--report {
-    width: 95px;
+    min-width: 95px;
+    max-width: 95px;
   }
 
   &__issued-plan--report {
-    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
   }
 }

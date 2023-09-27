@@ -13,6 +13,10 @@ input::-webkit-inner-spin-button {
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
+input, select {
+  outline: none;
+}
+
 body {
   font-family: Inter;
   background: rgba(236, 236, 236, 1);
@@ -41,6 +45,13 @@ ul {
   margin-bottom: 15px;
   //border-left: 1px solid black;
   //border-right: 1px solid black;
+
+  &--reports {
+    @media screen and (min-width: 1522px) {
+      margin: 0 auto 15px;
+      width: 1492px;
+    }
+  }
 
   &__button {
     height: 28px;

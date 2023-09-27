@@ -102,6 +102,13 @@
     line-height: 17px;
     letter-spacing: 0em;
     margin-bottom: 10px;
+    cursor: pointer;
+    transition: color .3s;
+
+    &:hover {
+      transition: color .3s;
+      color: $main_green;
+    }
   }
 
   &__user {
@@ -139,6 +146,8 @@
 
   &__routes {
     margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
   }
 
   &__route {
@@ -152,6 +161,10 @@
 
       &:hover {
         color: $main_green;
+      }
+
+      &--current {
+        text-decoration: underline;
       }
     }
   }

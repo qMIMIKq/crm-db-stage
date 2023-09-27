@@ -7,14 +7,20 @@ import {getTime} from "../getTime";
 
 const commentModal = `
    <div id='modal' class='modal modal--comment bounceIn'>
-        <div class='modal_content'>
-            <h2 class='comment__title'>Предыдущие комментарии</h2>
-            <ul class='comments__prev comments-list'>
-            </ul>
-            
-            <h2 class='comment__title'>Ваш комментарий</h2>
-            <textarea class='comments__yours main__input' name='comment' id='comments__yours'></textarea>    
-            <button disabled class='main__button comment__button' >Сохранить</button>   
+        <div class='modal_content modal_content--comments'>
+            <div class='modal__header modal-header'>
+                <h2 class='comments__title'>Комментарии</h2>                
+            </div>
+        
+            <div class="comments-content">
+              <ul class='comments__prev comments-list'>
+              </ul>
+              
+              <div class="comments__add">
+                <input placeholder="Напишите комментарий" class='comments__yours route__input main__input' name='comment' id='comments__yours'/>    
+                <button disabled class='main__button comment__button route__btn send__comment' >Сохранить</button>   
+              </div>
+            </div>
         </div>
    </div>
 `

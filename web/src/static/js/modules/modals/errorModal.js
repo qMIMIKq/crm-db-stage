@@ -6,17 +6,20 @@ import {state} from "../state";
 const changeErrorModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
     <div class='modal_content modal-error' style='width: 350px'>
-        <h2 class='confirm__title modal-error__title'>Ошибка</h2>
+         <div class='modal__header modal-header'>
+              <h2 class='comments__title'>Ошибка</h2>                
+          </div>
         
         <input 
+          placeholder="Текст ошибки"
           type='text'
           class='route__input modal-error__input text-input main__input main__input'
           name='error_msg' 
           id='error-route__msg'>
         
         <div class='confirm__section'>
-            <button disabled class='main__button confirm__button confirm__button--ok'>ОК</button>
-            <button disabled class='main__button confirm__button confirm__button--cncl'>Сброс</button>
+            <button disabled class='main__button route__btn confirm__button confirm__button--ok'>Сохранить</button>
+            <button disabled class='main__button route__btn confirm__button confirm__button--cncl'>Сброс</button>
         </div>
     </div>
    </div>

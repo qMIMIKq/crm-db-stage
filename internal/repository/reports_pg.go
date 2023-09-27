@@ -21,6 +21,7 @@ func (r ReportsPG) GetAll(from, to string) ([]domain.Report, error) {
 
 	var reports []domain.Report
 	err := r.db.Select(&reports, query, from, to)
+	log.Info().Caller().Interface("reports", reports).Msg("REPORTS")
 
 	return reports, err
 }

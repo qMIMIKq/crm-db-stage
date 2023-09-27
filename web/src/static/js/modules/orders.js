@@ -35,9 +35,29 @@ export const getOrders = (postfix = 'get-all') => {
   const routesBlock = document.querySelector('.routes-block')
   document.querySelector('.nav-control__total').textContent = 'Обновляем таблицу...'
 
-  state['isArchive'] = postfix !== 'get-all'
+  const links = document.querySelectorAll('.nav-control__route-link')
+  const mainLink = document.querySelector('.link__main')
+  const archiveLink = document.querySelector('.link__archive')
 
+  state['isArchive'] = postfix !== 'get-all'
   const filters = state['currentTopFilters'].map(filter => filter.name)
+
+  if (state.isArchive) {
+    document.title = 'Архив'
+    links.forEach(link => {
+      link.classList.remove('nav-control__route-link--current')
+    })
+
+    archiveLink.classList.add('nav-control__route-link--current')
+  } else {
+    document.title = 'Заказы'
+    links.forEach(link => {
+      link.classList.remove('nav-control__route-link--current')
+    })
+
+    mainLink.classList.add('nav-control__route-link--current')
+  }
+
   console.time('get orders')
 
   const params = {
@@ -160,7 +180,7 @@ export const getOrders = (postfix = 'get-all') => {
             })
           }
 
-          document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} ${data.data.length}`
+          document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} ${state.orders.length}`
           console.timeEnd('get orders')
 
           const lastOrder = document.querySelector('.table__data--chosen')

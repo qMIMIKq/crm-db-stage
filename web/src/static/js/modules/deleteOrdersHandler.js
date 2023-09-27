@@ -8,8 +8,8 @@ const confirmDeleteOrderModal = `
         <div class='modal_content modal_content--confirm' style='width: 350px'>
             <h2 class='confirm__title'></h2>
             <div class='confirm__section'>
-                <button class='main__button confirm__button confirm__button--ok'>Да</button>
-                <button class='main__button confirm__button confirm__button--cncl'>Нет</button>
+                <button class='main__button route__btn confirm__button confirm__button--ok'>Да</button>
+                <button class='main__button route__btn confirm__button confirm__button--cncl'>Нет</button>
             </div>
         </div>
    </div>

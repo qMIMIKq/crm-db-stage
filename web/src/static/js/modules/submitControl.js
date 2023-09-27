@@ -11,10 +11,10 @@ import {drawManagers} from "./drawManagers";
 import {drawDeadlineP} from "./drawDeadlineP";
 
 const submitButtonHTML = `
-    <button class='main-header__button main__button header-button__submit'>Отправить</button>
+    <button class='main-header__button main__button--click header-button__submit'>Отправить</button>
 `
 const cancelButtonHTML = `
-    <button class='main-header__button main__button header-button__cancel'>Отмена</button>
+    <button class='main-header__button main__button--click header-button__cancel'>Отмена</button>
 `
 
 const addOrder = document.querySelector('.header-button__add')
@@ -58,35 +58,21 @@ export const deleteCancelBtn = () => {
 }
 
 export const showResult = status => {
-  let sucTitle = document.querySelector('h3.success')
-  let errTitle = document.querySelector('h3.error')
-  const nav = document.querySelector(".main-header__nav")
+  const nav = document.querySelector(".nav-control__total")
   if (status) {
-    if (sucTitle === null && errTitle === null) {
-      nav.insertAdjacentHTML(`beforeend`, `
-            <h3 class='success'>Успешно</h3>
-        `)
-    }
+    nav.textContent = 'Успешно'
   } else {
-    if (errTitle === null) {
-      if (sucTitle !== null) {
-        sucTitle.remove()
-      }
-      nav.insertAdjacentHTML(`beforeend`, `
-                <h3 class='error'>Неудачно</h3>
-            `)
-    }
+    nav.textContent = 'Неудачно'
   }
-  sucTitle = document.querySelector('h3.success')
-  errTitle = document.querySelector('h3.error')
-  setTimeout(() => {
-    if (sucTitle !== null) {
-      sucTitle.remove()
-    }
-    if (errTitle !== null) {
-      errTitle.remove()
-    }
-  }, 500)
+
+  // setTimeout(() => {
+  //   if (sucTitle !== null) {
+  //     sucTitle.remove()
+  //   }
+  //   if (errTitle !== null) {
+  //     errTitle.remove()
+  //   }
+  // }, 500)
 }
 
 addOrder.addEventListener('click', e => {
