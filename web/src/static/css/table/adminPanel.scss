@@ -58,7 +58,7 @@
   display: flex;
   flex-direction: column;
 
-  overflow: scroll;
+  overflow-y: auto;
 
   &__columns {
     height: 40px;
@@ -87,7 +87,7 @@
   &__column {
     min-width: 20%;
     text-align: center;
-    
+
     &--left {
       text-align: left !important;
     }
@@ -101,7 +101,7 @@
   &__column {
     text-align: center;
     min-width: 20%;
-    
+
     &--left {
       text-align: left;
     }
@@ -136,10 +136,11 @@
   background: rgba(236, 236, 236, 1);
   padding: 25px;
   border-radius: 15px;
+  position: relative;
 
   &--group {
     width: 300px;
-    height: 350px;
+    height: 320px;
 
     .edit-form__user {
       border-right: none;
@@ -189,14 +190,13 @@
     padding: 5px 5px 5px 10px;
     width: 250px !important;
     height: 28px !important;
-    cursor: text !important;
+    cursor: text;
     margin-bottom: 0 !important;
   }
 
   &__group {
     cursor: pointer !important;
     transition: color .3s;
-
 
     &:hover {
       transition: color .3s;
@@ -208,7 +208,6 @@
     cursor: pointer !important;
     transition: color .3s;
 
-
     &:hover {
       transition: color .3s;
       color: $main_green;
@@ -219,5 +218,25 @@
     cursor: pointer;
     margin-top: 20px;
     align-self: flex-end;
+  }
+
+  &__succ {
+    position: absolute;
+    color: $main_green;
+
+    &--user {
+      bottom: 70px;
+      left: 25px;
+    }
+
+    &--filter {
+      bottom: 80px;
+      left: 27px;
+    }
+
+    &--group {
+      bottom: 80px;
+      left: 27px;
+    }
   }
 }

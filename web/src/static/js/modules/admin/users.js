@@ -162,7 +162,7 @@ export const drawUsers = (modal, users) => {
                 ok = false
                 err = true
                 editForm.insertAdjacentHTML("beforeend", `
-            <div class="user-form__block user-form__error">
+            <div class="edit-form__error">
                 <h3>Пароли не совпадают</h3>
             </div>
         `)
@@ -193,11 +193,16 @@ export const drawUsers = (modal, users) => {
                   if (!ok) {
                     ok = true
                     editForm.insertAdjacentHTML('beforeend', `
-                <div class="user-form__block user-form__succ">
-                    <h3>Пользователь успешно изменен</h3>
-                </div>
-            `)
+                      <div class="edit-form__succ edit-form__succ--user">
+                          <h3>Пользователь успешно изменён</h3>
+                      </div>
+                    `)
                   }
+
+                  setTimeout(() => {
+                    editForm.querySelector('.edit-form__succ').remove()
+                    ok = false
+                  }, 1000)
                 }
 
                 return res.json()

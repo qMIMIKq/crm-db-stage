@@ -39,8 +39,9 @@ export const getOrders = (postfix = 'get-all') => {
   const mainLink = document.querySelector('.link__main')
   const archiveLink = document.querySelector('.link__archive')
 
-  state['isArchive'] = postfix !== 'get-all'
+  state['isArchive'] = postfix !== 'get-all' || sessionStorage.getItem('page') === 'archive'
   const filters = state['currentTopFilters'].map(filter => filter.name)
+  console.log(sessionStorage.getItem('page'))
 
   if (state.isArchive) {
     document.title = 'Архив'
@@ -82,6 +83,7 @@ export const getOrders = (postfix = 'get-all') => {
       if (!data.data) {
         deleteOrders()
         title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
+        document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} ${state.orders.length}`
         return
       } else {
         title.textContent = state.isArchive ? 'Архив заказов' : 'Журнал заказов'

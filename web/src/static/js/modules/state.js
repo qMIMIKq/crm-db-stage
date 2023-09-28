@@ -62,6 +62,8 @@ if (userInf) {
   state['operCheck'] = userInf.groupId === '5'
   state['manCheck'] = userInf.groupId === '4'
 
+  console.log(userInf)
+
   const admManCheck = state['adminCheck'] || state['manCheck']
   const admTechCheck = state['adminCheck'] || state['techCheck']
   const admManTechCheck = admManCheck || state['techCheck']

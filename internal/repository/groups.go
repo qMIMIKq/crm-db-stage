@@ -17,17 +17,17 @@ func (g GroupsPG) EditGroup(group domain.Group) error {
 		return err
 	}
 
-	groupQuery := fmt.Sprintf(`
-			UPDATE groups
-				 SET group_name = $1
-			 WHERE group_id = $2;
-	`)
-
-	_, err = tx.Exec(groupQuery, group.Name, group.ID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
+	//groupQuery := fmt.Sprintf(`
+	//		UPDATE groups
+	//			 SET group_name = $1
+	//		 WHERE group_id = $2;
+	//`)
+	//
+	//_, err = tx.Exec(groupQuery, group.Name, group.ID)
+	//if err != nil {
+	//	tx.Rollback()
+	//	return err
+	//}
 
 	descriptionQuery := fmt.Sprintf(`
 			UPDATE groups_description

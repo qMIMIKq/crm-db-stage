@@ -2,8 +2,8 @@ import {state, userInf} from "../../modules/state";
 import {deleteOrders, getOrders} from "../../modules/orders";
 import {getReports} from "../getReports";
 import {getData} from "../../modules/getData";
-import {globalFilterOrders} from "../../modules/filters/filterOrders";
 import {globalFilterReports} from "./globalFilterReports";
+import {ucFirst} from "../../ucFirst";
 
 export const topReportFilter = () => {
   let filtered
@@ -16,12 +16,21 @@ export const topReportFilter = () => {
   const navControl = document.querySelector('.nav-control')
   const userName = navControl.querySelector('.nav-control__name')
   userName.textContent = userInf.nickname
+  const userGroup = document.querySelector('.nav-control__group')
+  userGroup.textContent = ucFirst(userInf.group)
 
   const burgerMenu = navControl.querySelector('.nav-control__burger')
   const navRoutes = navControl.querySelector('.nav-control__routes')
+  const adminModalBtn = document.querySelector('.nav-control__admin')
   burgerMenu.addEventListener('click', () => {
     navControl.classList.toggle('nav-control--opened')
     navRoutes.classList.toggle('hidden__input')
+
+    if (userInf.groupId === '1') {
+      adminModalBtn.classList.toggle('hidden-input')
+    } else {
+      navRoutes.style.paddingBottom = '6px'
+    }
   })
 
   const links = navControl.querySelectorAll('.nav-control__route-link')
@@ -30,10 +39,15 @@ export const topReportFilter = () => {
       console.log(window.location.href)
       navControl.classList.toggle('nav-control--opened')
       navRoutes.classList.toggle('hidden__input')
+      adminModalBtn.classList.toggle('hidden-input')
 
       if (link.textContent.trim().includes('Архив')) {
-        getOrders('get-old')
+        sessionStorage.setItem('page', 'archive')
+        window.location.href = link.querySelector('.hidden__input').value
+
+        // getOrders('get-old')
       } else if (link.textContent.trim().includes('Главная')) {
+        sessionStorage.setItem('page', 'main')
         window.location.href = link.querySelector('.hidden__input').value
         getOrders()
       } else {

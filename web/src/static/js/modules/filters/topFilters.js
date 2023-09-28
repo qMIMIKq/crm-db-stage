@@ -5,6 +5,7 @@ import {globalFilterOrders} from "./filterOrders";
 import {bindOrdersListeners} from "../bindListeners";
 import {getTime} from "../getTime";
 import {getReports} from "../../report/getReports";
+import {ucFirst} from "../../ucFirst";
 
 export const topFiltersHandler = () => {
   let filtered
@@ -13,6 +14,9 @@ export const topFiltersHandler = () => {
   const selectUser = document.querySelector('.select-user')
   const nav = document.querySelector('.nav-filters')
   const extensions = ['все']
+
+  const userGroup = document.querySelector('.nav-control__group')
+  userGroup.textContent = ucFirst(userInf.group)
 
   const navControl = document.querySelector('.nav-control')
   const userName = navControl.querySelector('.nav-control__name')
@@ -23,6 +27,13 @@ export const topFiltersHandler = () => {
   burgerMenu.addEventListener('click', () => {
     navControl.classList.toggle('nav-control--opened')
     navRoutes.classList.toggle('hidden__input')
+
+    if (userInf.groupId === '1') {
+      const adminModalBtn = document.querySelector('.nav-control__admin')
+      adminModalBtn.classList.toggle('hidden-input')
+    } else {
+      navRoutes.style.paddingBottom = '6px'
+    }
   })
 
   const links = navControl.querySelectorAll('.nav-control__route-link')
@@ -32,9 +43,18 @@ export const topFiltersHandler = () => {
       navControl.classList.toggle('nav-control--opened')
       navRoutes.classList.toggle('hidden__input')
 
+      if (userInf.groupId === '1') {
+        const adminModalBtn = document.querySelector('.nav-control__admin')
+        adminModalBtn.classList.toggle('hidden-input')
+      } else {
+        navRoutes.style.paddingBottom = '6px'
+      }
+
       if (link.textContent.trim().includes('Архив')) {
+        sessionStorage.setItem('page', 'archive')
         getOrders('get-old')
       } else if (link.textContent.trim().includes('Главная')) {
+        sessionStorage.setItem('page', 'main')
         window.location.href = link.querySelector('.hidden__input').value
         getOrders()
       } else {

@@ -99,11 +99,16 @@ export const userAdd = (modal) => {
           if (!ok) {
             ok = true
             editForm.insertAdjacentHTML('beforeend', `
-                <div class="user-form__block user-form__succ">
-                    <h3>Пользователь успешно добавлен</h3>
-                </div>
+              <div class="edit-form__succ edit-form__succ--user">
+                  <h3>Пользователь успешно добавлен</h3>
+              </div>
             `)
           }
+
+          setTimeout(() => {
+            editForm.querySelector('.edit-form__succ').remove()
+            ok = false
+          }, 1000)
         }
       })
   })

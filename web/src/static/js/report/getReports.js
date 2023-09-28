@@ -38,19 +38,8 @@ export const getReports = () => {
       state.orders = data.data
       deleteOrders()
       deleteReportsFilters()
-      if (!data.data) {
-        document.querySelector('.main-header__title').textContent = 'Отчет пуст'
 
-        if (totalOrders === null) {
-          document.querySelector('.table-info').insertAdjacentHTML('afterbegin', `
-          <h3 class='orders__total'>Всего в отчёте 0</h3>
-      `)
-        } else {
-          totalOrders.textContent = `Всего в отчёте 0`
-        }
-
-        return
-      }
+      document.querySelector('.nav-control__total').textContent = `Всего в плане ${data.data.length}`
 
       // document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
       //     <h3 class="warning">Обновляем таблицу...</h3>

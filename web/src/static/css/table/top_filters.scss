@@ -69,13 +69,22 @@
 }
 
 .nav-control {
+  position: relative;
   width: 313px;
   height: 113px;
   border: 1px solid black;
   border-radius: 15px;
-  padding: 20px;
+  padding: 20px 20px 10px;
   background: white;
   box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);
+
+  &__group {
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    letter-spacing: 0em;
+  }
 
   &--opened {
     z-index: 1000;
@@ -90,6 +99,8 @@
     //flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 2px solid black;
+    margin-bottom: 5px;
   }
 
   &__left {
@@ -97,11 +108,13 @@
   }
 
   &__admin {
-    font-size: 14px;
+    position: absolute;
+    right: 26%;
+    bottom: 50px;
+    font-size: 16px;
     font-weight: 500;
-    line-height: 17px;
+    line-height: 26px;
     letter-spacing: 0em;
-    margin-bottom: 10px;
     cursor: pointer;
     transition: color .3s;
 
@@ -145,9 +158,11 @@
   }
 
   &__routes {
+    padding-bottom: 40px;
     margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
+    border-bottom: 2px solid black;
   }
 
   &__route {
@@ -165,6 +180,7 @@
 
       &--current {
         text-decoration: underline;
+        color: $main_green;
       }
     }
   }

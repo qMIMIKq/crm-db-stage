@@ -152,17 +152,28 @@ export const drawAdminFilters = (modal, datas) => {
               }
             }))
 
+            const subBtn = editForm.querySelector('.edit-form__submit')
             sendData(`${appAddr}/api/filters/edit`, 'PUT', JSON.stringify(obj))
               .then(res => {
                 if (res.ok) {
+                  editForm.reset()
                   if (!ok) {
                     ok = true
                     editForm.insertAdjacentHTML('beforeend', `
-                      <div class="user-form__block user-form__succ">
-                          <h3>Фильтр успешно изменен</h3>
+                      <div class="edit-form__succ edit-form__succ--filter">
+                          <h3>Фильтр успешно изменён</h3>
                       </div>
                     `)
+                    editForm.style.height = '480px'
+                    subBtn.style.marginTop = '65px'
                   }
+
+                  setTimeout(() => {
+                    editForm.querySelector('.edit-form__succ').remove()
+                    ok = false
+                    editForm.style.height = '446px'
+                    subBtn.style.marginTop = '20px'
+                  }, 1000)
                 }
 
                 return res.json()

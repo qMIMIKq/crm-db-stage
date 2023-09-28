@@ -7,8 +7,11 @@ import {adminHandler} from "../modules/admin/adminHandler";
 
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
-adminHandler()
+
+console.log('ADMINKA', document.querySelector('.nav-control__admin'))
 if (window.location.href.endsWith('main/table')) {
+  adminHandler()
+  tableRoutesFiltersHandler()
   topFiltersHandler()
   getOrders()
 
@@ -17,8 +20,6 @@ if (window.location.href.endsWith('main/table')) {
     subBtn.classList.add("hidden__input")
     // plotsFilters.classList.add("hidden__input")
   }
-
-  tableRoutesFiltersHandler()
 
   const updateMainTableData = () => {
     setInterval(getOrders, 1000)

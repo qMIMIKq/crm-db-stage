@@ -36,7 +36,7 @@ export const filterAdd = (modal) => {
   }
 
   navContent.insertAdjacentHTML('afterbegin', `
-            <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 446px">
+            <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 400px">
               
               <div class="edit-form__user">
                   <div class="edit-form__block">
@@ -52,12 +52,12 @@ export const filterAdd = (modal) => {
                   
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Начало работы</label>
-                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="start_time" type="time">
+                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="start_time" type="time" value="08:00">
                   </div>
                   
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Конец работы</label>
-                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="end_time" type="time">
+                    <input style="cursor: pointer" id="name" class="route__input edit-form__input edit-form__name" name="end_time" type="time" value="20:00">
                   </div>
       
                   <div class="edit-form__block">
@@ -119,19 +119,28 @@ export const filterAdd = (modal) => {
       }
     }))
 
+    const subBtn = editForm.querySelector('.edit-form__submit')
     sendData(`${appAddr}/api/filters/add`, 'POST', JSON.stringify(obj))
       .then(res => {
         if (res.ok) {
           editForm.reset()
-
           if (!ok) {
             ok = true
             editForm.insertAdjacentHTML('beforeend', `
-              <div class="user-form__block user-form__succ">
+              <div class="edit-form__succ edit-form__succ--filter">
                   <h3>Фильтр успешно добавлен</h3>
               </div>
             `)
+            editForm.style.height = '434px'
+            subBtn.style.marginTop = '65px'
           }
+
+          setTimeout(() => {
+            editForm.querySelector('.edit-form__succ').remove()
+            ok = false
+            editForm.style.height = '400px'
+            subBtn.style.marginTop = '20px'
+          }, 1000)
         }
 
         return res.json()
