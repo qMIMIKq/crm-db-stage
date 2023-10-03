@@ -95,7 +95,6 @@ export const planDateHandler = (addedDates, plot, routeID) => {
         data.data.map(dateInfo => {
           dateInfo['date'] = dateInfo['date'].split('T')[0]
 
-          console.log(dateInfo)
           if (!newBusy[dateInfo['date']]) {
             newBusy[dateInfo['date']] = {
               'divider': dateInfo.divider,
@@ -151,8 +150,8 @@ export const planDateHandler = (addedDates, plot, routeID) => {
       for (const [addedDate, entry] of Object.entries(modalAddedDates)) {
         let showDate = addedDate.substring(5).split('-')
         ;[showDate[0], showDate[1]] = [showDate[1], showDate[0]]
-        ;[showDate[0], showDate[1]] = [showDate[1], showDate[0]]
         showDate = showDate.join('.')
+        console.log(showDate)
 
         showDate += `/${getWeekDay(new Date(addedDate))}`
 
@@ -272,7 +271,6 @@ export const planDateHandler = (addedDates, plot, routeID) => {
       drawAddedData()
       addHandlers()
     }
-
 
     const drawData = (startDate, endDate) => {
       let res = getDays(startDate, endDate)

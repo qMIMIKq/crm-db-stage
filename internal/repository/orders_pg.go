@@ -149,6 +149,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 				_, err = o.db.Exec("DELETE FROM plans WHERE route_id = $1 AND plan_date >= $2", dbRoutePos[0].RouteID, today)
 				for _, info := range route.AddedDates {
+					log.Info().Interface("info", info).Msg("INFO !!")
 					_, err := o.db.Exec(planQuery, routeID, order.ID, route.Plot, info.Date, info.DateInfo.Divider, strings.Join(info.DateInfo.Queues, ", "))
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
