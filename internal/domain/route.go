@@ -10,6 +10,7 @@ type Route struct {
 	StartTime       string          `json:"start_time" db:"start_time"`
 	EndTime         string          `json:"end_time" db:"end_time"`
 	PauseTime       string          `json:"pause_time" db:"pause_time"`
+	PauseMsg        string          `json:"pause_msg" db:"pause_value"`
 	ErrorTime       string          `json:"error_time" db:"error_time"`
 	ErrorMsg        string          `json:"error_msg" db:"error_value"`
 	Quantity        string          `json:"quantity" db:"quantity"`

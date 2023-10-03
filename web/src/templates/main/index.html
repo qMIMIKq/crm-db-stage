@@ -17,11 +17,11 @@
     <header class="header">
         <nav class="header__nav nav">
             <div class="nav__filters nav-filters">
-                {{if eq .GroupID "5"}}
-                    <select name="user" class="select-user main__button--select main__select">
+{{/*                {{if eq .GroupID "5"}}*/}}
+{{/*                    <select name="user" class="select-user main__button--select main__select">*/}}
 
-                    </select>
-                {{end}}
+{{/*                    </select>*/}}
+{{/*                {{end}}*/}}
 
                 <ul class="nav-filters__list nav-filters__plots"></ul>
                 <ul class="nav-filters__list nav-filters__filters"></ul>
@@ -65,9 +65,12 @@
                             <input class="hidden__input" value="/main/report"/>
                         </button>
                     </li>
+                    <li class="nav-control__route nav-control__admin hidden-input">
+                        Администрирование
+                    </li>
                 </ul>
 
-                <button class="nav-control__admin hidden-input">Администрирование</button>
+{{/*                <button class="nav-control__admin hidden-input">Администрирование</button>*/}}
                 <div class="nav-control__total">
                     Всего в работе
                 </div>

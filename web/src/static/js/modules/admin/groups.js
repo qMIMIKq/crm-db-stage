@@ -58,7 +58,7 @@ export const drawGroups = (modal, datas) => {
                   <div class="edit-form__user">
                       <div class="edit-form__block">
                         <label class="edit-form__label" for="name">Название</label>
-                        <input readonly style="cursor: default" id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
+                        <input style="cursor: default;" readonly style="cursor: default" id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
                                value="${d.name}">
                       </div>
       

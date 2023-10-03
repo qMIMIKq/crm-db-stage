@@ -24,7 +24,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "web/dist"),
     clean: true,
-    filename: "static/js/[name].js",
+    filename: `${devMode ? "static/js/[name].js" : "static/js/[name].[hash].js"}`,
     // filename: "static/js/[name].[contenthash].js",
     assetModuleFilename: "static/assets/[name]/[name][ext]"
   },
@@ -46,7 +46,7 @@ module.exports = {
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: "static/css/[name].css"
+      filename: `${devMode ? "static/css/[name].css" : "static/css/[name].[hash].css"}`
     }),
   ],
   module: {

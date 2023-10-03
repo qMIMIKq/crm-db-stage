@@ -108,9 +108,6 @@
   }
 
   &__admin {
-    position: absolute;
-    right: 26%;
-    bottom: 50px;
     font-size: 16px;
     font-weight: 500;
     line-height: 26px;
@@ -158,10 +155,11 @@
   }
 
   &__routes {
-    padding-bottom: 40px;
+    padding-bottom: 5px;
     margin-bottom: 5px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    /**/justify-content: space-between;
     border-bottom: 2px solid black;
   }
 

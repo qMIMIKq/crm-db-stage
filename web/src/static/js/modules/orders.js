@@ -61,6 +61,7 @@ export const getOrders = (postfix = 'get-all') => {
 
   console.time('get orders')
 
+  console.log(state.isArchive)
   const params = {
     'order_old': state.isArchive,
     'archive_from': archiveFrom.value,
@@ -82,8 +83,9 @@ export const getOrders = (postfix = 'get-all') => {
 
       if (!data.data) {
         deleteOrders()
+        state.orders = data.data
         title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
-        document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} ${state.orders.length}`
+        document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
         return
       } else {
         title.textContent = state.isArchive ? 'Архив заказов' : 'Журнал заказов'
@@ -106,15 +108,19 @@ export const getOrders = (postfix = 'get-all') => {
           state['orders'] = data.data
           state['filteredOrders'] = state['orders'].filter(o => o)
 
+          const isEmptyData = checkThis => {
+            return checkThis || 'Не заполнено'
+          }
+
           data.data.forEach(d => {
-            nums.push(d.number)
-            clients.push(d.client)
-            materials.push(d.material)
-            names.push(d.name)
-            quantity.push(d.quantity)
-            issued.push(d.issued)
-            managers.push(d.m)
-            deadlines.push(d.end_time)
+            nums.push(isEmptyData(d.number))
+            clients.push(isEmptyData(d.client))
+            materials.push(isEmptyData(d.material))
+            names.push(isEmptyData(d.name))
+            quantity.push(isEmptyData(d.quantity))
+            issued.push(isEmptyData(d.issued))
+            managers.push(isEmptyData(d.m))
+            deadlines.push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено')
             timestamps.push(d.timestamp.split('T')[0])
 
             if (!state['filtered']) {
@@ -183,6 +189,7 @@ export const getOrders = (postfix = 'get-all') => {
           }
 
           document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} ${state.orders.length}`
+
           console.timeEnd('get orders')
 
           const lastOrder = document.querySelector('.table__data--chosen')

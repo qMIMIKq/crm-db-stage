@@ -60,13 +60,13 @@ export const drawAdminPlots = (modal, datas) => {
               <div class="edit-form__user">
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Участок</label>
-                    <input required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
+                    <input style="cursor: text" required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
                            value="${d.name}">
                   </div>
   
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="login">Короткое имя</label>
-                      <input required id="login" class="route__input edit-form__input edit-form__login" name="short_name" type="text"
+                      <input style="cursor: text;" required id="login" class="route__input edit-form__input edit-form__login" name="short_name" type="text"
                              value="${d.short_name}">
                   </div>
       

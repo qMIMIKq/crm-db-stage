@@ -32,6 +32,23 @@ export const drawOrders = async (d, data, users) => {
   uniqueFileNames = [...new Set(uniqueFileNames)]
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity)
 
+  let alertDeadline = false
+  if (d.end_time) {
+    let deadline = new Date(d.end_time.split('T')[0])
+    let term = Number(d.p ? d.p.split('дн')[0] : 3)
+    console.log(term)
+
+    deadline.setDate(deadline.getDate() - term)
+
+    let today = getTime()
+    today = today.split(' ')[0]
+    today = new Date(today)
+
+    if (today.getTime() >= deadline.getTime()) {
+      alertDeadline = true
+    }
+  }
+
   table.insertAdjacentHTML(`afterbegin`, `
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
         <ul class='main-table__item'>
@@ -39,7 +56,7 @@ export const drawOrders = async (d, data, users) => {
                 <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__timestamp'>
-                <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp ?  d.timestamp.split('T')[0] : ''}' tabindex='-1' autocomplete='off'>
+                <input id='timestamp' class='table__data   table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp ? d.timestamp.split('T')[0] : ''}' tabindex='-1' autocomplete='off'>
             </li>
              <li class='table-body_cell hidden-input'>
                 <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
@@ -85,7 +102,7 @@ export const drawOrders = async (d, data, users) => {
                 </select>
             </li>
             <li class="table-body_cell table__endtime">
-                <input class="main__button table__data "
+                <input class="main__button table__data ${alertDeadline ? 'table__endtime--dead' : ''}"
                 ${state["inputAdmManTechGroupper"]} 
                 name="end_time" 
                 type="text"

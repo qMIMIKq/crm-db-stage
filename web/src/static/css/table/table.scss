@@ -182,7 +182,9 @@ input.tr {
 
     &--done {
       color: green;
-      animation: issued-ready infinite 4s;
+      font-size: 16px;
+      font-weight: 600;
+      //animation: issued-ready infinite 4s;
     }
   }
 
@@ -204,6 +206,11 @@ input.tr {
   &__endtime {
     min-width: 140px;
     max-width: 140px;
+
+    &--dead {
+      color: red;
+      font-size: 15px;
+    }
   }
 
   &__route {

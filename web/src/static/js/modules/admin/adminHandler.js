@@ -76,6 +76,10 @@ export const adminHandler = () => {
   const adminModalBtn = document.querySelector('.nav-control__admin')
 
   adminModalBtn.addEventListener('click', () => {
+    document.querySelector('.nav-control').classList.toggle('nav-control--opened')
+    document.querySelector('.nav-control__routes').classList.toggle('hidden__input')
+    adminModalBtn.classList.add('hidden-input')
+
     const adminModal = showModal(mainAdminModal)
     const usersBtn = adminModal.querySelector('.nav-navigation__users')
     const groupsBtn = adminModal.querySelector('.nav-navigation__groups')

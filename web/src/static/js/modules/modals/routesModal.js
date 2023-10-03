@@ -10,6 +10,7 @@ import {getTime} from "../getTime";
 import {planDateHandler} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
+import {changePauseHandler} from "./pauseModal";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -106,6 +107,12 @@ const routeModal = `
                     class='route__input route__input--middle main__input pause-route__time'
                     name='pause_time' 
                     id='pause-route__time'>
+                    
+                    <input 
+                    type='text'
+                    class='hidden__input main__input'
+                    name='pause_msg' 
+                    id='pause-route__msg'>
                     
                     <button disabled type='button' class='route__btn main__button pause-route__btn'>Пауза</button>
                 </div>
@@ -243,6 +250,10 @@ const drawLogs = data => {
       if (log.includes('ОШИБКА')) {
         logsList.insertAdjacentHTML(`beforeend`, `
           <li class='section-logs__item section-logs__item--error'>${log}</li>
+        `)
+      } else if (log.includes('ПАУЗА')) {
+        logsList.insertAdjacentHTML(`beforeend`, `
+          <li class='section-logs__item section-logs__item--pause'>${log}</li>
         `)
       } else if (flag) {
         logsList.insertAdjacentHTML(`beforeend`, `
@@ -395,10 +406,67 @@ export const triggerRoutesModal = e => {
   const theorEndInp = document.querySelector('#route__teorend')
   const shifts = document.querySelector('#shifts')
 
+
+  const doPause = () => {
+    if (!pauseBtn.classList.contains('route-type__paused')) {
+      console.log(pauseBtn)
+
+      pauseBtn.classList.add('route-type__paused')
+      setDateToInput('pause-route__time')
+      disableBtn('route__select--user')
+
+      if (!planObj.planStart) {
+        disableBtn('route-plan__date')
+      }
+
+      disableBtn('start-route__btn')
+      disableBtn('start-route__time')
+      disableBtn('issued-modal_trigger')
+
+
+      disableBtn('end-route__btn')
+      disableBtn('end-route__time')
+    } else {
+      console.log(pauseBtn)
+
+      pauseBtn.classList.remove('route-type__paused')
+      pauseBtn.textContent = 'Пауза'
+      pauseTimeInput.value = ''
+
+      activateNextStage('route__select--user')
+      if (routePlot.value !== 'Выберите участок') {
+        console.log('Чек')
+        planDateInput.removeAttribute('disabled')
+      }
+
+      if (routeUser.value !== 'Выберите оператора') {
+        if (startTime.value) {
+          activateNextStage('issued-modal_trigger')
+        } else {
+          activateNextStage('start-route__btn')
+        }
+      }
+
+      if (startTime.value) {
+        activateNextStage('end-route__btn')
+        activateNextStage('start-route__time')
+      }
+
+      if (endTime.value) {
+        disableBtn('end-route__btn')
+        activateNextStage('end-route__time')
+      }
+    }
+  }
+
   const pauseBtn = routeForm.querySelector('.pause-route__btn')
   const pauseTimeInput = routeForm.querySelector('.pause-route__time')
-  const issuedTodayStart = document.querySelector('#route__issued-today')
+  const pauseTextInput = document.querySelector('#pause-route__msg')
+  pauseBtn.addEventListener('click', e => {
+    changePauseHandler(e, pauseTextInput, pauseTimeInput, routeUser.value, doPause)
+  })
 
+  const issuedTodayStart = document.querySelector('#route__issued-today')
   const startBtn = routeForm.querySelector('.start-route__btn')
   const endBTn = routeForm.querySelector('.end-route__btn')
   const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
@@ -633,7 +701,8 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['pause_time']) {
       pauseTimeInput.value = routeInfo['pause_time']
-      pauseBtn.textContent = 'Сбросить паузу'
+      pauseTextInput.value = routeInfo['pause_msg']
+      pauseBtn.textContent = 'Пауза'
       pauseBtn.classList.add('route-type__paused')
       disableBtn('route__select--user')
 
@@ -655,57 +724,6 @@ export const triggerRoutesModal = e => {
     disableBtn('route-plan__date')
     drawPlots()
   }
-
-  pauseBtn.addEventListener('click', () => {
-    if (!pauseBtn.classList.contains('route-type__paused')) {
-      pauseBtn.classList.add('route-type__paused')
-      pauseBtn.textContent = 'Сбросить паузу'
-      setDateToInput('pause-route__time')
-      disableBtn('route__select--user')
-
-      if (!planObj.planStart) {
-        disableBtn('route-plan__date')
-      }
-
-      disableBtn('start-route__btn')
-      disableBtn('start-route__time')
-      disableBtn('issued-modal_trigger')
-
-
-      disableBtn('end-route__btn')
-      disableBtn('end-route__time')
-      addLog(logName, `Нажал паузу`, '#visible__comments')
-    } else {
-      pauseBtn.classList.remove('route-type__paused')
-      pauseBtn.textContent = 'Пауза'
-      pauseTimeInput.value = ''
-      addLog(user.nickname, `Сбросил паузу`, '#visible__comments')
-
-      activateNextStage('route__select--user')
-      if (routePlot.value !== 'Выберите участок') {
-        console.log('Чек')
-        planDateInput.removeAttribute('disabled')
-      }
-
-      if (routeUser.value !== 'Выберите оператора') {
-        if (startTime.value) {
-          activateNextStage('issued-modal_trigger')
-        } else {
-          activateNextStage('start-route__btn')
-        }
-      }
-
-      if (startTime.value) {
-        activateNextStage('end-route__btn')
-        activateNextStage('start-route__time')
-      }
-
-      if (endTime.value) {
-        disableBtn('end-route__btn')
-        activateNextStage('end-route__time')
-      }
-    }
-  })
 
   const dbID = currentOrder.querySelector('#db_id').value
   const num = currentOrder.querySelector('#number').value

@@ -19,17 +19,17 @@ export const userAdd = (modal) => {
               <div class="edit-form__user">
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Имя</label>
-                    <input required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text">
+                    <input style="cursor: text;" required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text">
                   </div>
   
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="login">Логин</label>
-                      <input required id="login" class="route__input edit-form__input edit-form__login" name="login" type="text">
+                      <input style="cursor: text;" required id="login" class="route__input edit-form__input edit-form__login" name="login" type="text">
                   </div>
       
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="nickname">Никнейм</label>
-                      <input required id="nickname" class="route__input edit-form__input edit-form__name" name="nickname" type="text">
+                      <input style="cursor: text;" required id="nickname" class="route__input edit-form__input edit-form__name" name="nickname" type="text">
                   </div>
               </div>
               
@@ -49,7 +49,7 @@ export const userAdd = (modal) => {
       
                   <div class="edit-form__block">
                       <label class="edit-form__label" for="password">Пароль</label>
-                      <input required id="password" class="route__input edit-form__input edit-form__name" name="password" type="password">
+                      <input style="cursor: text;" required id="password" class="route__input edit-form__input edit-form__name" name="password" type="password">
                   </div>
       
                   <div class="edit-form__block">

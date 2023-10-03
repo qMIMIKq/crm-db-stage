@@ -192,6 +192,15 @@ button:disabled {
   }
 }
 
+input:disabled {
+  cursor: default;
+  color: gray;
+
+  &:hover {
+    color: gray;
+  }
+}
+
 .select-user {
   margin-bottom: 25px;
   width: 100px;

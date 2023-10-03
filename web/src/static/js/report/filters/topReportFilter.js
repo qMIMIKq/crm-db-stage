@@ -228,6 +228,8 @@ export const topReportFilter = () => {
 
     await getData('filters/get-all')
       .then(data => {
+        data.data = data.data.filter(d => !d.disable)
+
         drawTopPanel(data.data, filterFilters)
         filters = data.data
         state['topFilters'] = filters

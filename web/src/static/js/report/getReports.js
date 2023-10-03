@@ -32,6 +32,9 @@ export const getReports = () => {
     "to": to
   }
 
+  const total = document.querySelector('.nav-control__total')
+  total.textContent = 'Обновляем таблицу...'
+
   sendData(`${appAddr}/api/reports/get-all`, 'POST', JSON.stringify(reportTime))
     .then(resp => resp.json())
     .then(data => {
@@ -39,11 +42,14 @@ export const getReports = () => {
       deleteOrders()
       deleteReportsFilters()
 
-      document.querySelector('.nav-control__total').textContent = `Всего в плане ${data.data.length}`
+      if (data.data) {
+        total.textContent = `Всего в плане ${data.data.length}`
+      } else {
+        total.textContent = `Всего в плане 0`
+        return
+      }
 
-      // document.querySelector('.table-info').insertAdjacentHTML('beforeend', `
-      //     <h3 class="warning">Обновляем таблицу...</h3>
-      // `)
+
       // document.querySelector('.table__archive').classList.add('hidden__input')
 
       const nums = []

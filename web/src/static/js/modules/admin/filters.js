@@ -62,7 +62,7 @@ export const drawAdminFilters = (modal, datas) => {
               <div class="edit-form__user">
                   <div class="edit-form__block">
                     <label class="edit-form__label" for="name">Фильтр</label>
-                    <input required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
+                    <input style="cursor: text;" required id="name" class="route__input edit-form__input edit-form__name" name="name" type="text"
                            value="${d.name}">
                   </div>
   
