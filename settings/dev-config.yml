@@ -6,7 +6,7 @@ salt: dasdfasffsdf
 #172.20.10.7
 #91.142.94.150
 db:
-  host: 172.20.10.7
+  host: 91.142.94.150
   port: 5437
   user: nik
   password: '1325'
