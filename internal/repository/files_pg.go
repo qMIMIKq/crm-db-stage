@@ -24,8 +24,11 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 	var newFiles []string
 
 	for _, file := range files {
+		//log.Info().Interface("file", file).Caller().Msgf("file")
+
 		filePath := DataPath + file.Filename
 		fileType := strings.Split(file.Filename, ".")
+		//log.Info().Interface("filepath", filePath).Interface("filetype", fileType).Msg("FILES IS")
 
 		if err := c.SaveUploadedFile(file, filePath); err != nil {
 			return nil, err
@@ -52,14 +55,12 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 			_, err = io.Copy(fw, file)
 			writer.Close()
 
-			req, err := http.NewRequest(http.MethodPost, "http://91.142.94.150:5001/pdf-convert", bytes.NewReader(body.Bytes()))
+			req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/pdf-convert", bytes.NewReader(body.Bytes()))
 			req.Header.Set("Content-Type", writer.FormDataContentType())
 			rsp, _ := client.Do(req)
 			if rsp.StatusCode != http.StatusOK {
 				log.Warn().Msgf("FUCK")
 			}
-
-			return newFiles, err
 
 		case "DXF", "dxf":
 			name := filePath[:len(filePath)-3] + "png"
@@ -72,14 +73,13 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 			_, err = io.Copy(fw, file)
 			writer.Close()
 
-			req, err := http.NewRequest(http.MethodPost, "http://91.142.94.150:5001/dxf-convert", bytes.NewReader(body.Bytes()))
+			req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/dxf-convert", bytes.NewReader(body.Bytes()))
 			req.Header.Set("Content-Type", writer.FormDataContentType())
 			rsp, _ := client.Do(req)
 			if rsp.StatusCode != http.StatusOK {
 				log.Warn().Msgf("FUCK")
 			}
 
-			return newFiles, err
 		}
 	}
 

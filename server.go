@@ -8,27 +8,27 @@ import (
 	"time"
 )
 
-type server struct {
+type Server struct {
 	httpServer *http.Server
 	log        *zerolog.Logger
 }
 
-func (s *server) Run() error {
+func (s *Server) Run() error {
 	log.Info().Caller().Msgf("starting server on port: %s", s.httpServer.Addr)
 	return s.httpServer.ListenAndServe()
 }
 
-func (s *server) Shutdown(ctx context.Context) error {
+func (s *Server) Shutdown(ctx context.Context) error {
 	log.Warn().Caller().Msgf("shutdown server")
 	return s.httpServer.Shutdown(ctx)
 }
 
-func NewServer(port string, handler http.Handler) *server {
-	return &server{
+func NewServer(port string, handler http.Handler) *Server {
+	return &Server{
 		httpServer: &http.Server{
 			Addr:           ":" + port,
 			Handler:        handler,
-			MaxHeaderBytes: 1 << 20,
+			MaxHeaderBytes: 1000000000,
 			ReadTimeout:    30 * time.Second,
 			WriteTimeout:   30 * time.Second,
 		},

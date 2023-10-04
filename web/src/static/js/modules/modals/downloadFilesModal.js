@@ -39,6 +39,7 @@ const deleteFiles = () => {
 const sendFiles = (files, filesInput, old, id, parent) => {
   const formData = new FormData()
   for (let file of files) {
+    console.log(file)
     formData.append('files', file)
   }
 
