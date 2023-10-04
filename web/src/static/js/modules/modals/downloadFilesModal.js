@@ -8,7 +8,7 @@ import {plotAdd} from "../admin/plotAdd";
 export const filesModal = `
    <div id='modal' class='modal bounceIn'>
         <div class='modal_content drop-area'>
-            <input type="text" id="modal-files__current">
+            <input class="hidden__input" type="text" id="modal-files__current">
             <div class='modal__header modal-header'>
                 <div class='modal-header__db'></div>
                 <div class='modal-header__number'></div>
