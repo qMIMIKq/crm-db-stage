@@ -37,12 +37,12 @@ export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = t
     // console.log('hi')
     if (hidden) {
       currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="order__delete hidden__input table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `)
+          <input class="order__delete hidden__input table__data--ro" id='order__delete' type="button" value="X" readonly>
+      `)
     } else {
       currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
-                <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
-            `)
+          <input class="order__delete table__data--ro" id='order__delete' type="button" value="X" readonly>
+      `)
     }
 
     document.querySelector('.order__delete').addEventListener('click', e => {

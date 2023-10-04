@@ -28,7 +28,6 @@ export const colorRoutes = (routes) => {
         if (route.plan_dates.includes(date)) {
           routeInfo.classList.add('route--planned')
           routeInfo.parentNode.classList.add('route--inplan')
-          console.log(routeInfo.parentNode)
         }
       }
 

@@ -8,7 +8,6 @@ import {adminHandler} from "../modules/admin/adminHandler";
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
 
-console.log('ADMINKA', document.querySelector('.nav-control__admin'))
 if (window.location.href.endsWith('main/table')) {
   adminHandler()
   tableRoutesFiltersHandler()

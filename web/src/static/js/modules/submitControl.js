@@ -9,6 +9,7 @@ import {submitData} from './submitOrdersData';
 import {state} from './state';
 import {drawManagers} from "./drawManagers";
 import {drawDeadlineP} from "./drawDeadlineP";
+import {copyOrderHandler} from "./copyOrderHandler";
 
 const submitButtonHTML = `
     <button class='main-header__button main__button--click header-button__submit'>Отправить</button>
@@ -84,6 +85,7 @@ addOrder.addEventListener('click', e => {
   addTriggers('.table__files', triggerFilesModal)
   addTriggers('.table__route', triggerRoutesModal)
   addTriggers('.table__comment', triggerCommentsModal)
+  addTriggers(".order__copy", copyOrderHandler)
 })
 
 export const finallyForOrders = success => {

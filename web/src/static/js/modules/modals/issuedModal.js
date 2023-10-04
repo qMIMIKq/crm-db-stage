@@ -57,6 +57,8 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   if (!check) {
     userData.classList.add('hidden__input')
     plot.classList.add('hidden__input')
+    date.classList.add('hidden__input')
+    modal.querySelectorAll('.route__label').forEach(label => label.classList.add('hidden__input'))
   }
 
   const modalIssuedInput = modal.querySelector('.modal-issued__input')

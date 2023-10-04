@@ -218,7 +218,7 @@ input.tr {
     align-items: center;
     justify-content: center;
     height: 29px;
-    width: 45px;
+    width: 50px;
 
     &:last-child {
       border-right: 1px solid black !important;
@@ -226,8 +226,8 @@ input.tr {
   }
 
   &__routes {
-    min-width: 450px;
-    max-width: 450px;
+    min-width: 500px;
+    max-width: 500px;
   }
 
   &-routes__issued {
@@ -377,7 +377,7 @@ input.tr {
 .route {
   color: black;
   height: 24px;
-  width: 42px;
+  width: 48px;
 
   &--inplan {
     border-top: 1px solid black;
@@ -419,6 +419,19 @@ input.tr {
 .table-info {
   display: flex;
   align-items: center;
+}
+
+.order__copy {
+  width: 10px;
+  border: none;
+  background: rgb(156, 156, 156) !important;
+  transition: color .3s;
+
+  &:hover {
+    cursor: pointer;
+    transition: color .3s;
+    color: white;
+  }
 }
 
 .order__delete {

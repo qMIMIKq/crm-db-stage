@@ -41,7 +41,6 @@ export const getOrders = (postfix = 'get-all') => {
 
   state['isArchive'] = postfix !== 'get-all' || sessionStorage.getItem('page') === 'archive'
   const filters = state['currentTopFilters'].map(filter => filter.name)
-  console.log(sessionStorage.getItem('page'))
 
   if (state.isArchive) {
     document.title = 'Архив'
@@ -61,7 +60,6 @@ export const getOrders = (postfix = 'get-all') => {
 
   console.time('get orders')
 
-  console.log(state.isArchive)
   const params = {
     'order_old': state.isArchive,
     'archive_from': archiveFrom.value,
@@ -85,10 +83,10 @@ export const getOrders = (postfix = 'get-all') => {
         deleteOrders()
         state.orders = data.data
         title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
-        document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
+        // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
         return
       } else {
-        title.textContent = state.isArchive ? 'Архив заказов' : 'Журнал заказов'
+        title.textContent = state.isArchive ? `Архив заказов (${data.data.length})` : `Журнал заказов (${data.data.length})`
       }
 
       const nums = []
@@ -132,7 +130,6 @@ export const getOrders = (postfix = 'get-all') => {
               globalFilterOrders(d, filters)
               filterData()
             } else if (state['filtered']) {
-              console.log('table filter')
               globalFilterOrders(d)
             } else if (filters.length) {
               // console.log('top filter')
@@ -144,7 +141,6 @@ export const getOrders = (postfix = 'get-all') => {
           })
 
           if (!filters.length) {
-            console.log('wtf')
             if (state['routesFilters'].started) {
               deleteOrders()
               startFilter(filters)

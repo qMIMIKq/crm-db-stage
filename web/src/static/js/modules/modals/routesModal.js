@@ -368,7 +368,15 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
 export const triggerRoutesModal = e => {
   const routeInput = e.target.parentNode.querySelector('.hidden__input')
   const modalElem = showModal(routeModal)
-  let logName = state['adminCheck'] || state['techCheck'] ? user.nickname : ''
+  let logName = state['adminCheck'] || state['techCheck'] || state['manCheck'] ? user.nickname : ''
+
+  const adminStatus = state['adminCheck'] || state['techCheck']
+  const operStatus = state['operCheck']
+  const manStatus = state['manCheck']
+
+  console.log('Admin', adminStatus)
+  console.log('Operator', operStatus)
+  console.log('Manager', manStatus)
 
   let planned = false
   let info = false
@@ -409,8 +417,6 @@ export const triggerRoutesModal = e => {
 
   const doPause = () => {
     if (!pauseBtn.classList.contains('route-type__paused')) {
-      console.log(pauseBtn)
-
       pauseBtn.classList.add('route-type__paused')
       setDateToInput('pause-route__time')
       disableBtn('route__select--user')
@@ -427,15 +433,12 @@ export const triggerRoutesModal = e => {
       disableBtn('end-route__btn')
       disableBtn('end-route__time')
     } else {
-      console.log(pauseBtn)
-
       pauseBtn.classList.remove('route-type__paused')
       pauseBtn.textContent = 'Пауза'
       pauseTimeInput.value = ''
 
       activateNextStage('route__select--user')
       if (routePlot.value !== 'Выберите участок') {
-        console.log('Чек')
         planDateInput.removeAttribute('disabled')
       }
 
@@ -586,7 +589,7 @@ export const triggerRoutesModal = e => {
       planned = true
     }
 
-    if (routeInfo['issued']) {
+    if (routeInfo['issued'] && !operStatus) {
       issued.value = routeInfo['issued']
       activateNextStage('report-route__btn')
     }
@@ -613,7 +616,7 @@ export const triggerRoutesModal = e => {
     activateNextStage('route__select--user')
     activateNextStage('pause-route__btn')
 
-    if (!state.operCheck || routeInfo['user']) {
+    if (routeInfo['user']) {
       activateNextStage('error-route__btn')
     }
 
@@ -725,6 +728,23 @@ export const triggerRoutesModal = e => {
     drawPlots()
   }
 
+  if (operStatus || manStatus) {
+    disableBtn('route__select--plot')
+    disableBtn('report-route__btn')
+    disableBtn('section-finish__delete')
+    disableBtn('route-plan__date')
+    disableBtn('end-route__time')
+  }
+
+  if (manStatus) {
+    disableBtn('route__select--user')
+    disableBtn('start-route__btn')
+    disableBtn('end-route__btn')
+    disableBtn('pause-route__btn')
+    disableBtn('error-route__btn')
+    disableBtn('issued-modal_trigger')
+  }
+
   const dbID = currentOrder.querySelector('#db_id').value
   const num = currentOrder.querySelector('#number').value
   modalElem.querySelector('.modal-header__db').textContent = '№' + dbID
@@ -806,6 +826,11 @@ export const triggerRoutesModal = e => {
 
   window.addEventListener('keydown', subCommentByEnter)
   document.querySelector('.section-finish__sub').addEventListener('click', () => {
+    modalElem.querySelectorAll('.route__input').forEach(input => {
+      input.removeAttribute('disabled')
+    })
+
+
     const formData = new FormData(routeForm)
     const obj = {}
     formData.forEach((value, key) => {
@@ -838,9 +863,7 @@ export const triggerRoutesModal = e => {
     }
 
     obj['added_dates'] = resAddedDates
-
-
-    console.log(obj.added_dates)
+    console.log(obj)
 
     routeInput.value = JSON.stringify(obj)
     const parent = routeInput.closest('.table-form--old')

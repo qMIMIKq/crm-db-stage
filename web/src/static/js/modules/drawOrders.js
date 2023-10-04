@@ -13,13 +13,15 @@ import {triggerRoutesModal} from "./modals/routesModal";
 import {triggerCommentsModal} from "./modals/commentsModal";
 import {getTime} from "./getTime";
 import {submitData} from "./submitOrdersData";
+import {copyOrderHandler} from "./copyOrderHandler";
 
 export const table = document.querySelector('.main-table')
 
 export const drawOrders = async (d, data, users) => {
   controlFiltersReset()
   let uniqueFileNames = []
-  if (d.files !== null) {
+
+  if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
       const arrSlashFile = file.split('/')
       arrSlashFile.splice(0, 3)
@@ -36,8 +38,6 @@ export const drawOrders = async (d, data, users) => {
   if (d.end_time) {
     let deadline = new Date(d.end_time.split('T')[0])
     let term = Number(d.p ? d.p.split('дн')[0] : 3)
-    console.log(term)
-
     deadline.setDate(deadline.getDate() - term)
 
     let today = getTime()
@@ -53,6 +53,7 @@ export const drawOrders = async (d, data, users) => {
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
         <ul class='main-table__item'>
             <li class='table-body_cell table__db'>
+                <input class="order__copy table__data--ro" id='order__copy' type="button" value="V" readonly>
                 <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__timestamp'>
@@ -70,7 +71,7 @@ export const drawOrders = async (d, data, users) => {
                 id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table-body__helper table__sample'>
-                <input class='table__data   table__data--ro' name='sample' type='text' value='${d.sample}' readonly tabindex='-1' autocomplete='off'>
+                <input class='table__data   table__data--ro' name='sample' type='text' value='' readonly tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
                 <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
@@ -97,7 +98,7 @@ export const drawOrders = async (d, data, users) => {
                 <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
             </li>
             <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
-                <select ${state["selectAdmManGroupper"]} class="table__data table-m-select main__button" name="m" id="">
+                <select ${state['adminCheck'] || state['manCheck'] ?  "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button" name="m" id="">
                     <option selected value=""></option>
                 </select>
             </li>
@@ -191,7 +192,7 @@ export const drawOrders = async (d, data, users) => {
                 </ul>
             </li>
             <li class="table-body_cell table-body__helper table__p">
-                <select ${state["selectAdmManTechGroupper"]} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                <select ${state['adminCheck'] || state['manCheck'] ?  "" : 'style="pointer-events : none"'} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                     <option selected value=""></option>
                 </select>
             </li>
@@ -305,12 +306,19 @@ export const drawOrders = async (d, data, users) => {
   addTriggers(".table__files", triggerFilesModal)
   addTriggers(".table__route", triggerRoutesModal)
   addTriggers(".table__comment", triggerCommentsModal)
+
+  if (state.adminCheck || state.manCheck) {
+    addTriggers(".order__copy", copyOrderHandler)
+  } else {
+    currentOrder.querySelector('#order__copy').remove()
+  }
 }
 
 export const orderHTML = `
 <form class="table-form table-form--new" method="POST">
             <ul class="main-table__item">
                     <li class="table-body_cell table-body__helper table__db">
+                        <input class="order__copy table__data--ro" id='order__copy' type="button" value="V" readonly>
                         <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__timestamp">

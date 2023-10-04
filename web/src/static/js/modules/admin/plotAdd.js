@@ -53,6 +53,7 @@ export const plotAdd = modal => {
       }
     }))
 
+    const subBtn = editForm.querySelector('.edit-form__submit')
     sendData(`${appAddr}/api/plots/add`, 'POST', JSON.stringify(obj))
       .then(res => {
         if (res.ok) {
@@ -60,11 +61,20 @@ export const plotAdd = modal => {
           if (!ok) {
             ok = true
             editForm.insertAdjacentHTML('beforeend', `
-                <div class="user-form__block user-form__succ">
-                    <h3>Участок успешно изменен</h3>
-                </div>
+              <div class="edit-form__succ edit-form__succ--filter">
+                  <h3>Участок успешно добавлен</h3>
+              </div>
             `)
+            editForm.style.height = '299px'
+            subBtn.style.marginTop = '65px'
           }
+
+          setTimeout(() => {
+            editForm.querySelector('.edit-form__succ').remove()
+            ok = false
+            editForm.style.height = '265px'
+            subBtn.style.marginTop = '20px'
+          }, 1000)
         }
 
         return res.json()

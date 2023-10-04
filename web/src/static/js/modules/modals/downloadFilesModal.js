@@ -1,13 +1,14 @@
 import {appAddr, state} from '../state';
-import {drawSubmit} from '../submitControl';
 import {showModal} from './showModal';
 import {sendData} from "../sendData";
 import {submitData} from "../submitOrdersData";
+import {plotAdd} from "../admin/plotAdd";
 
 
 export const filesModal = `
    <div id='modal' class='modal bounceIn'>
         <div class='modal_content drop-area'>
+            <input type="text" id="modal-files__current">
             <div class='modal__header modal-header'>
                 <div class='modal-header__db'></div>
                 <div class='modal-header__number'></div>
@@ -35,7 +36,7 @@ const deleteFiles = () => {
   }
 }
 
-const sendFiles = (files, filesInput, old, id) => {
+const sendFiles = (files, filesInput, old, id, parent) => {
   const formData = new FormData()
   for (let file of files) {
     formData.append('files', file)
@@ -52,7 +53,7 @@ const sendFiles = (files, filesInput, old, id) => {
     let newData = currentData.concat(data.data).filter(file => file !== '')
     newData = [...new Set(newData)]
     filesInput.value = newData.join(', ')
-    const parent = filesInput.closest('form')
+    console.log(filesInput)
     drop.classList.add('success')
     drop.textContent = 'Файлы успешно загружены'
     deleteFiles()
@@ -65,19 +66,12 @@ const sendFiles = (files, filesInput, old, id) => {
       drop.classList.remove('success')
       drop.textContent = 'Укажите файлы для загрузки'
     }, 1000)
-
-    if (old) {
-      // submitData()
-    } else {
-      drawSubmit()
-    }
   })
 }
 
 export function triggerFilesModal(e) {
   const parent = e.target.closest('ul')
   const old = parent.parentNode.classList.contains('table-form--old')
-  const filesInputData = parent.querySelector('input[name="files"]')
   const db = parent.querySelector('#db_id').value
   const enter = parent.querySelector('#timestamp').value
   const number = parent.querySelector('#number').value
@@ -87,9 +81,18 @@ export function triggerFilesModal(e) {
   modalHeader.querySelector('.modal-header__number').textContent = '№ заказа ' + number
   modalHeader.querySelector('.modal-header__enter').textContent = enter
 
+  const filesInputData = modalElem.querySelector('#modal-files__current')
+  const orderFilesData = parent.querySelector('input[name="files"]')
+  filesInputData.value = orderFilesData.value
+
   modalElem.addEventListener('click', ev => {
-    submitData()
+    if (ev.target === modalElem) {
+      orderFilesData.value = filesInputData.value
+      submitData()
+    }
   })
+
+  console.log(modalElem)
 
   const downloadTrigger = document.querySelector('.modal__trigger')
 
@@ -98,7 +101,7 @@ export function triggerFilesModal(e) {
       const filesInput = document.querySelector('.modal__files')
       filesInput.addEventListener('change', e => {
         const files = e.target.files
-        sendFiles(files, filesInputData, old, db)
+        sendFiles(files, filesInputData, old, db, orderFilesData.closest('form'))
       })
       filesInput.click()
     })
@@ -113,13 +116,13 @@ export function triggerFilesModal(e) {
     downloadTrigger.addEventListener('drop', e => {
       let dt = e.dataTransfer
       let files = dt.files
-      sendFiles(files, filesInputData, old, db)
+      sendFiles(files, filesInputData, old, db,orderFilesData.closest('form'))
     })
 
     modalElem.querySelector('.order__files').addEventListener('submit', e => {
       e.preventDefault()
       const filesData = document.querySelector('.modal__files')
-      sendFiles(filesData.files, filesInputData, old, db)
+      sendFiles(filesData.files, filesInputData, old, db,orderFilesData.closest('form'))
     })
   } else {
     downloadTrigger.remove()
@@ -130,7 +133,6 @@ export function triggerFilesModal(e) {
 export const drawFiles = (modal, files, id, filesInput) => {
   const data = modal.querySelector('.data')
 
-  console.log(id)
   if (files.length) {
     const fileNames = []
     files.split(', ').map(file => {
@@ -214,9 +216,9 @@ export const drawFiles = (modal, files, id, filesInput) => {
               }, 1000)
             }
           })
-        })
+      })
 
-        submitData()
+      // submitData()
     })
 
     const btn = modal.querySelector('.file__all')
@@ -224,8 +226,8 @@ export const drawFiles = (modal, files, id, filesInput) => {
       btn.remove()
     }
     data.closest('.modal_content').insertAdjacentHTML('beforeend', `
-            <button class='file__all main__button'>Скачать всё</button>
-        `)
+        <button class='file__all main__button'>Скачать всё</button>
+    `)
     document.querySelector('.file__all').addEventListener('click', () => {
       document.querySelectorAll('.file__download').forEach(file => {
         file.click()

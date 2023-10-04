@@ -91,7 +91,7 @@ CREATE table orders
     order_name      varchar(255),
     order_material  varchar(255),
     order_quantity  varchar(255),
-    order_issued    varchar(255) default '0',
+    order_issued    varchar(255) default '',
     order_m         varchar(255) default '',
     order_endtime   date                      null,
     order_otk       varchar(255),
