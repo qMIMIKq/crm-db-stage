@@ -1,1 +1,39 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge"><link rel="icon" href="../../static/assets/auth/auth.png" type="image/png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"><title>{{.Title}}</title><body style="background-color:#fff!important"><main><div class="container"><form class="edit-user__form user-form login-form" method="post"><div class="user-form__header"><h3 class="user-form__title">Авторизация</h3></div><div class="user-form__block"><label class="user-form__label" for="name">Логин:</label> <input id="login" class="user-form__input user-form__name" name="login" value="" required></div><div class="user-form__block"><label class="user-form__label" for="login">Пароль:</label> <input id="password" class="user-form__input user-form__login" name="password" type="password" value="" required></div><button class="user-form__submit main__button" type="submit">Войти</button></form></div></main></body><script defer="defer" src="../../static/js/login.4daff221f746bfe5144c.js"></script><link href="../../static/css/login.4daff221f746bfe5144c.css" rel="stylesheet"></head></html>
+<!doctype html>
+<html lang="en"><head><script defer src="../../static/js/login.js"></script></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="../../static/assets/auth/auth.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <title>{{.Title}}</title>
+<body style="background-color: white !important;">
+<main>
+    <div class="container">
+        <form class="edit-user__form user-form login-form" method="post">
+            <div class="user-form__header">
+                <h3 class="user-form__title">Авторизация</h3>
+            </div>
+            <div class="user-form__block">
+                <label class="user-form__label" for="name">Логин:</label>
+                <input id="login" class="user-form__input user-form__name" name="login" type="text"
+                       value="" required>
+            </div>
+
+            <div class="user-form__block">
+                <label class="user-form__label" for="login">Пароль:</label>
+                <input id="password" class="user-form__input user-form__login" name="password" type="password"
+                       value="" required>
+            </div>
+
+            <button class="user-form__submit main__button" type="submit">Войти</button>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

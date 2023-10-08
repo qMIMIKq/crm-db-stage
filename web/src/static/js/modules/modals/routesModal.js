@@ -1,6 +1,6 @@
 import {showModal} from './showModal';
 import {getData} from '../getData';
-import {appAddr, state} from '../state';
+import {state} from '../state';
 import {user} from '../../table';
 import {submitData} from "../submitOrdersData";
 import {sendData} from "../sendData";
@@ -11,6 +11,7 @@ import {planDateHandler} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
 import {changePauseHandler} from "./pauseModal";
+import {appAddr} from "../appAddr";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -218,7 +219,7 @@ const routeModal = `
 `
 const issuedModal = `
    <div id='modal' style='z-index: 10000' class='modal modal--issued bounceIn'>
-        <div class='modal_content modal_content--issued' style='width: 350px'>
+        <div class='modal_content modal_content--issued' style='width: 500px'>
             <div class='modal__header modal__header--routes modal-header'>
                 <h2 class='comments__title'>Отчет по сменам</h2>
             </div>        
@@ -811,12 +812,18 @@ export const triggerRoutesModal = e => {
   // REPORT ISSUED
   const reportIssued = document.querySelector('.report-route__btn')
   reportIssued.addEventListener('click', () => {
-    showModal(issuedModal)
-    const dataPlace = document.querySelector('.issued-list')
+    const iM = showModal(issuedModal)
+    const dataPlace = iM.querySelector('.issued-list')
+
     document.querySelector('#issued__all').value.split('---').forEach(rep => {
       if (rep.trim() !== '') {
+        const data = rep.split('   ')
+        const date = data[0].slice(0, 10)
+
+        console.log(data[1])
+
         dataPlace.insertAdjacentHTML(`beforeend`, `
-            <li style='text-align: center' class='comment__item'>${rep}</li>   
+            <li style='text-align: center' class='comment__item'>${date} ${data[1]}</li>   
         `)
       }
     })

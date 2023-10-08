@@ -22,7 +22,7 @@ module.exports = {
     report: polyfill.concat(path.resolve(__dirname, "web/src/static/js/report", "report.js")),
   },
   output: {
-    path: path.resolve(__dirname, "web/dist"),
+    path: path.resolve("web/dist"),
     clean: true,
     filename: `${devMode ? "static/js/[name].js" : "static/js/[name].[hash].js"}`,
     // filename: "static/js/[name].[contenthash].js",
@@ -31,17 +31,17 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       filename: "templates/main/index.html",
-      template: path.resolve(__dirname, "web", "src/templates/main/index.html"),
+      template: path.resolve("web", "src/templates/main/index.html"),
       chunks: ["index"]
     }),
     new HtmlWebpackPlugin({
       filename: "templates/login/login.html",
-      template: path.resolve(__dirname, "web", "src/templates/login/login.html"),
+      template: path.resolve("web", "src/templates/login/login.html"),
       chunks: ["login"]
     }),
     new HtmlWebpackPlugin({
       filename: "templates/report/report.html",
-      template: path.resolve(__dirname, "web", "src/templates/report/report.html"),
+      template: path.resolve("web", "src/templates/report/report.html"),
       chunks: ["report"]
     }),
     new CleanWebpackPlugin(),

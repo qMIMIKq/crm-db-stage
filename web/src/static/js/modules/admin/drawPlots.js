@@ -1,5 +1,5 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../state";
+import {appAddr} from "../appAddr";
 import {ucFirst} from "../../ucFirst";
 
 export const drawAdminPlots = (modal, datas) => {

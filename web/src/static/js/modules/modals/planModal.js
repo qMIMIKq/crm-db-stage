@@ -1,7 +1,7 @@
 import {showModal} from "./showModal";
 import {getTime} from "../getTime";
 import {sendData} from "../sendData";
-import {appAddr} from "../state";
+import {appAddr} from "../appAddr";
 
 const planDateModal = `
     <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>

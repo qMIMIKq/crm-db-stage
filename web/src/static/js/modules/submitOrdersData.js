@@ -1,6 +1,7 @@
 import {finallyForOrders, showResult} from './submitControl';
-import {appAddr} from './state';
+import {} from './state';
 import {sendData} from './sendData';
+import {appAddr} from "./appAddr";
 
 const createRes = forms => {
   const res = []
@@ -36,6 +37,7 @@ const createRes = forms => {
         if (value !== '-') {
           obj['routes_json'][key] = JSON.parse(String(value))
         }
+        console.log(obj['routes_json'])
       }
     })
     res.push(obj)

@@ -1,5 +1,5 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../state";
+import {appAddr} from "../appAddr";
 
 export const plotAdd = modal => {
   let ok = false

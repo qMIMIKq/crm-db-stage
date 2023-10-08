@@ -1,5 +1,5 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../state";
+import {appAddr} from "../appAddr";
 
 const validateTime = (startTime, endTime) => {
   const arrStartTime = startTime.split(":")

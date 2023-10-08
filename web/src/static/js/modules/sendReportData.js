@@ -1,5 +1,5 @@
 import {sendData} from "./sendData";
-import {appAddr} from "./state";
+import {appAddr} from "./appAddr";
 
 export const sendReportData = data => {
   sendData(`${appAddr}/api/report/update`, 'POST', JSON.stringify(data))

@@ -127,12 +127,12 @@
     position: absolute;
     top: 5px;
     left: 5px;
-    color: $text_black !important;
+    color: $main_green !important;
     transition: color .3s;
 
     &:hover {
       cursor: pointer;
-      color: $main_green !important;
+      color: green !important;
       transition: color .3s;
     }
   }

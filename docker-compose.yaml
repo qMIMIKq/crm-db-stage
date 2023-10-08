@@ -1,34 +1,45 @@
 version: '3.8'
 
 services:
-  oxcs:
+  app:
     build: ./
     command: ./app
     ports:
-      - 8182:8182
+      - 8182:6000
+    volumes:
+      - "~/apps-data/files-data/${COMPANY}/:/app/assets/uploads/"
     depends_on:
       db:
         condition: service_healthy
+      app-converter:
+        condition: service_started
     environment:
+      PORT: 6000
+      APP_ADDRESS: http://172.20.10.7:8182
       DB_PASSWORD: qwerty
       DB_HOST: db
       DB_PORT: 5432
-      DB_USER: nik
-      DB_NAME: nik
+      DB_USER: postgres
+      DB_NAME: postgres
       DB_SSLMODE: disable
-      container-name: oxcs
+  app-converter:
+    restart: always
+    image: m1m1kq/oxcs-converter
+    ports:
+      - 5001:5000
+    environment:
+      APP_ADDR: http://app:6000
   db:
     restart: always
     image: postgres:latest
     volumes:
-      - ./.database/postgres/data:/var/lib/postgresql/data
+      - "~/apps-data/tables-data/${COMPANY}:/var/lib/postgresql/data"
     environment:
-      POSTGRES_DB: "nik"
-      POSTGRES_USER: "nik"
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "qwerty"
-    container_name: oxcs-db
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U nik" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5

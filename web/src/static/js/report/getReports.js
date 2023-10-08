@@ -1,4 +1,4 @@
-import {appAddr, state} from '../modules/state';
+import {state} from '../modules/state';
 import {sendData} from "../modules/sendData";
 import {drawReport} from "./drawReport";
 import {deleteOrders} from "../modules/orders";
@@ -9,6 +9,7 @@ import {
   idReportFilter,
   numsReportFilter
 } from "./filters/reportFilters";
+import {appAddr} from "../modules/appAddr";
 import {globalFilterReports} from "./filters/globalFilterReports";
 import {filterRouteReports} from "./filters/topReportFilter";
 
@@ -32,7 +33,7 @@ export const getReports = () => {
     "to": to
   }
 
-  const total = document.querySelector('.nav-control__total')
+  const total = document.querySelector('.main-header__title')
   total.textContent = 'Обновляем таблицу...'
 
   sendData(`${appAddr}/api/reports/get-all`, 'POST', JSON.stringify(reportTime))
@@ -43,9 +44,9 @@ export const getReports = () => {
       deleteReportsFilters()
 
       if (data.data) {
-        total.textContent = `Всего в плане ${data.data.length}`
+        total.textContent = `План/факт (${data.data.length})`
       } else {
-        total.textContent = `Всего в плане 0`
+        total.textContent = `План/факт (0)`
         return
       }
 

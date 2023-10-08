@@ -1,4 +1,5 @@
 .idea
 node_modules
-web/src
-assets/uploads
+#web/src
+#assets/uploads
+.database

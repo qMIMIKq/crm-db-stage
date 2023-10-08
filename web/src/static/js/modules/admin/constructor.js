@@ -1,5 +1,5 @@
 import {getAndDrawData} from "./adminHandler";
-import {appAddr} from "../state";
+import {appAddr} from "../appAddr";
 
 let filters = []
 

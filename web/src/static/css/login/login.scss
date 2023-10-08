@@ -30,6 +30,12 @@
     margin-bottom: 25px;
   }
 
+  &__error {
+    position: absolute;
+    color: red;
+    bottom: -74px;
+  }
+
   &__input {
     width: 257px;
     border: none;

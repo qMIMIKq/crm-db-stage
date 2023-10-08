@@ -59,7 +59,7 @@ export const deleteCancelBtn = () => {
 }
 
 export const showResult = status => {
-  const nav = document.querySelector(".nav-control__total")
+  const nav = document.querySelector(".main-header__title")
   if (status) {
     nav.textContent = 'Успешно'
   } else {

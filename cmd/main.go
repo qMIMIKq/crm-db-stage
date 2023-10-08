@@ -28,6 +28,18 @@ func main() {
 	}
 
 	repos := repository.NewRepository(pgDb)
+	if err := repos.Init.InitDB(); err != nil {
+		log.Fatal().Err(err).Msg("error init tables")
+	}
+
+	log.Info().Interface("config", cfg.AppAddressJs).Msg("app address for js")
+
+	//file, err := os.Create("web/src/static/js/appAddr.js")
+	//defer file.Close()
+	//if _, err := file.Write([]byte(fmt.Sprintf("export const appAddr = '%s'", cfg.AppAddressJs))); err != nil {
+	//	log.Fatal().Err(err).Msg("error create server addr for js")
+	//}
+
 	service := services.NewService(repos)
 	mainHandler := transport.NewMainHandler(service)
 

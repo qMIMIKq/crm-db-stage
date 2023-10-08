@@ -8,9 +8,10 @@ import (
 )
 
 type Config struct {
-	AppPort string            `yaml:"app_port" env:"PORT"`
-	Salt    string            `yaml:"salt" env:"SALT"`
-	CrmDB   database.PGConfig `yaml:"db"`
+	AppPort      string            `yaml:"app_port" env:"PORT"`
+	AppAddressJs string            `yaml:"app_address_js" env:"APP_ADDRESS"`
+	Salt         string            `yaml:"salt" env:"SALT"`
+	CrmDB        database.PGConfig `yaml:"db"`
 }
 
 var once sync.Once

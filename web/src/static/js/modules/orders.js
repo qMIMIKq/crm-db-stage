@@ -12,7 +12,7 @@ import {
   quantityFilter,
   timestampFilter
 } from './filters/tableFilters';
-import {appAddr, state} from './state';
+import {state} from './state';
 import {bindOrdersListeners} from './bindListeners';
 import {getData} from './getData';
 import {globalFilterOrders} from "./filters/filterOrders";
@@ -29,11 +29,12 @@ import {
 } from "./filters/tableRoutesFilters";
 import {getTime} from "./getTime";
 import {sendData} from "./sendData";
+import {appAddr} from "./appAddr";
 
 export const getOrders = (postfix = 'get-all') => {
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
-  document.querySelector('.nav-control__total').textContent = 'Обновляем таблицу...'
+  document.querySelector('.main-header__title').textContent = 'Обновляем таблицу...'
 
   const links = document.querySelectorAll('.nav-control__route-link')
   const mainLink = document.querySelector('.link__main')
@@ -183,8 +184,6 @@ export const getOrders = (postfix = 'get-all') => {
               field.setAttribute("readonly", "true")
             })
           }
-
-          document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} ${state.orders.length}`
 
           console.timeEnd('get orders')
 

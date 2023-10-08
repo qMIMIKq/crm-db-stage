@@ -1,8 +1,9 @@
-import {appAddr, state} from '../state';
+import {state} from '../state';
 import {showModal} from './showModal';
 import {sendData} from "../sendData";
 import {submitData} from "../submitOrdersData";
 import {plotAdd} from "../admin/plotAdd";
+import {appAddr} from "../appAddr";
 
 
 export const filesModal = `
