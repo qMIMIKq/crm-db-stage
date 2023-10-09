@@ -1,1 +1,0 @@
-export const appAddr = 'http://172.20.10.7:8182'
