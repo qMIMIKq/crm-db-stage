@@ -16,7 +16,7 @@ import {state} from './state';
 import {bindOrdersListeners} from './bindListeners';
 import {getData} from './getData';
 import {globalFilterOrders} from "./filters/filterOrders";
-import {drawOrders} from "./drawOrders";
+import {drawOrders} from "./drawe/drawOrders";
 import {filterData} from "./filters/topFilters";
 import {
   archiveFrom,

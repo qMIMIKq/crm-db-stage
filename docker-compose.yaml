@@ -6,7 +6,7 @@ services:
     ports:
       - 8182:6000
     volumes:
-      - "~/apps-data/files-data/${COMPANY}/:/app/assets/uploads/"
+      - "~/apps-data/${COMPANY}/files-data/:/app/assets/uploads/"
     depends_on:
       db:
         condition: service_healthy
@@ -14,7 +14,7 @@ services:
         condition: service_started
     environment:
       PORT: 6000
-      APP_ADDRESS: http://172.20.10.7:8184
+      APP_ADDRESS: http://172.20.10.7:8182
       DB_PASSWORD: "${DB_PASSWORD}"
       DB_HOST: db
       DB_PORT: 5432
@@ -32,13 +32,13 @@ services:
     restart: always
     image: postgres:latest
     volumes:
-      - "~/apps-data/tables-data/${COMPANY}:/var/lib/postgresql/data"
+      - "~/apps-data/${COMPANY}/tables-data/:/var/lib/postgresql/data"
     environment:
       POSTGRES_DB: "${DB}"
       POSTGRES_USER: "${DB}"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB}" ]
       interval: 5s
       timeout: 5s
       retries: 5

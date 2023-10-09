@@ -14,13 +14,13 @@ export const drawAdminPlots = (modal, datas) => {
   itemColumns.classList.remove('hidden-input')
 
   topColumns.insertAdjacentHTML('afterbegin', `
-    <li class="nav-content__column nav-content__column--left users-columns__name">
+    <li class="nav-content__column nav-content__column-name nav-content__column--left users-columns__name">
         Участок
     </li>
-    <li class="nav-content__column nav-content__column--left users-columns__nickname">
+    <li class="nav-content__column nav-content__column-shortname nav-content__column--left users-columns__nickname">
         Короткое имя
     </li>
-     <li class="nav-content__column nav-content__column--left users-columns__nickname">
+     <li class="nav-content__column nav-content__column-hide nav-content__column--left users-columns__nickname">
         Скрыт
     </li>
   `)
@@ -30,15 +30,15 @@ export const drawAdminPlots = (modal, datas) => {
 
     itemColumns.insertAdjacentHTML('beforeend', `
       <li class="nav-content__item nav-item">
-          <div class="nav-item__column nav-item__column--left users-item__name">
+          <div class="nav-item__column nav-item__column-name nav-item__column--left users-item__name">
               <div class="nav-item__column--edit">
                 <input class="hidden-input" type="text" value="${data.id}">
                 ${ucFirst(data.name)}
             </div>
           </div>
           </div>
-          <div class="nav-item__column nav-item__column--left users-item__name">${data.short_name}</div>
-          <div class="nav-item__column nav-item__column--left users-item__name">${data.disable ? 'Да' : 'Нет'}</div>
+          <div class="nav-item__column nav-item__column-shortname nav-item__column--left users-item__name">${data.short_name}</div>
+          <div class="nav-item__column nav-item__column-hide nav-item__column--left users-item__name">${data.disable ? 'Да' : 'Нет'}</div>
       </li>
     `)
   })

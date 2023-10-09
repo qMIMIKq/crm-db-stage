@@ -1,7 +1,7 @@
-import {orderHTML, table} from "./drawOrders";
+import {orderHTML, table} from "./drawe/drawOrders";
 import {state, userInf} from "./state";
-import {drawManagers} from "./drawManagers";
-import {drawDeadlineP} from "./drawDeadlineP";
+import {drawManagers} from "./drawe/drawManagers";
+import {drawDeadlineP} from "./drawe/drawDeadlineP";
 import {bindOrdersListeners} from "./bindListeners";
 import {addTriggers} from "./addTriggers";
 import {triggerFilesModal} from "./modals/downloadFilesModal";

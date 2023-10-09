@@ -1,14 +1,14 @@
 import {getOrders} from './orders';
 import {bindOrdersListeners} from './bindListeners';
-import {orderHTML, table} from './drawOrders';
+import {orderHTML, table} from './drawe/drawOrders';
 import {addTriggers} from './addTriggers';
 import {triggerFilesModal} from './modals/downloadFilesModal';
 import {triggerRoutesModal} from './modals/routesModal';
 import {triggerCommentsModal} from './modals/commentsModal';
 import {submitData} from './submitOrdersData';
 import {state} from './state';
-import {drawManagers} from "./drawManagers";
-import {drawDeadlineP} from "./drawDeadlineP";
+import {drawManagers} from "./drawe/drawManagers";
+import {drawDeadlineP} from "./drawe/drawDeadlineP";
 import {copyOrderHandler} from "./copyOrderHandler";
 
 const submitButtonHTML = `

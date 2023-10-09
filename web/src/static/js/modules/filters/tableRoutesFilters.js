@@ -1,7 +1,7 @@
 import {state} from "../state";
 import {globalFilterOrders} from "./filterOrders";
 import {filterData} from "./topFilters";
-import {drawOrders} from "../drawOrders";
+import {drawOrders} from "../drawe/drawOrders";
 import {deleteOrders, getOrders} from "../orders";
 import {bindOrdersListeners} from "../bindListeners";
 import {getTime} from "../getTime";

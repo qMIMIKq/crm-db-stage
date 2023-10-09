@@ -78,7 +78,7 @@
   }
 
   &__item {
-    height: 40px;
+    min-height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -90,6 +90,21 @@
 
     &--left {
       text-align: left !important;
+    }
+
+    &-name {
+      min-width: 45%;
+      width: 45%;
+    }
+
+    &-shortname {
+      min-width: 15%;
+      width: 15%;
+    }
+
+    &-hide {
+      min-width: 10%;
+      width: 10%;
     }
   }
 
@@ -104,6 +119,21 @@
 
     &--left {
       text-align: left;
+    }
+
+    &-name {
+      min-width: 45%;
+      width: 45%;
+    }
+
+    &-shortname {
+      min-width: 15%;
+      width: 15%;
+    }
+
+    &-hide {
+      min-width: 10%;
+      width: 10%;
     }
 
     &--edit {

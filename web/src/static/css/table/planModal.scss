@@ -100,6 +100,8 @@
 
 .plan-dates {
   display: flex;
+  overflow-y: scroll;
+  max-height: 72%;
   //justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;

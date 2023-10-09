@@ -1,19 +1,19 @@
-import {controlFiltersReset} from './filters/tableFilters';
-import {addTriggers} from './addTriggers';
-import {showRoutesIssued} from "./showFull";
+import {controlFiltersReset} from '../filters/tableFilters';
+import {addTriggers} from '../addTriggers';
+import {showRoutesIssued} from "../showFull";
 import {drawDeadlineP} from './drawDeadlineP';
-import {state} from './state';
+import {state} from '../state';
 import {drawManagers} from './drawManagers';
-import {drawSubmit} from "./submitControl";
-import {deleteOrdersHandler} from "./deleteOrdersHandler";
-import {colorRoutes} from "./drawe/routesDraw";
-import {drawHelpers} from "./drawe/helpersDraw";
-import {triggerFilesModal} from "./modals/downloadFilesModal";
-import {triggerRoutesModal} from "./modals/routesModal";
-import {triggerCommentsModal} from "./modals/commentsModal";
-import {getTime} from "./getTime";
-import {submitData} from "./submitOrdersData";
-import {copyOrderHandler} from "./copyOrderHandler";
+import {drawSubmit} from "../submitControl";
+import {deleteOrdersHandler} from "../deleteOrdersHandler";
+import {colorRoutes} from "./routesDraw";
+import {drawHelpers} from "./helpersDraw";
+import {triggerFilesModal} from "../modals/downloadFilesModal";
+import {triggerRoutesModal} from "../modals/routesModal";
+import {triggerCommentsModal} from "../modals/commentsModal";
+import {getTime} from "../getTime";
+import {submitData} from "../submitOrdersData";
+import {copyOrderHandler} from "../copyOrderHandler";
 
 export const table = document.querySelector('.main-table')
 
@@ -23,6 +23,7 @@ export const drawOrders = async (d, data, users) => {
 
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
+      console.log(file)
       const arrSlashFile = file.split('/')
       arrSlashFile.splice(0, 3)
       const fileName = arrSlashFile.join('')
