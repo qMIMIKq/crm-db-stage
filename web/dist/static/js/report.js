@@ -1772,6 +1772,10 @@ const drawOrders = async (d, data, users) => {
       switch (fileType) {
         case 'png':
         case 'PNG':
+          // case 'DXF':
+          // case 'dxf':
+          // case 'PDF':
+          // case 'pdf':
           if (!uniqueFileNames.includes(fileNameWithoutType)) uniqueFileNames.push(fileNameWithoutType);
           break;
         default:
