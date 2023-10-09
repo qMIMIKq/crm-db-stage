@@ -55,8 +55,8 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 			_, err = io.Copy(fw, file)
 			writer.Close()
 
-			req, err := http.NewRequest(http.MethodPost, "http://app-converter:5000/pdf-convert", bytes.NewReader(body.Bytes()))
-			//req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/pdf-convert", bytes.NewReader(body.Bytes()))
+			//req, err := http.NewRequest(http.MethodPost, "http://app-converter:5000/pdf-convert", bytes.NewReader(body.Bytes()))
+			req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/pdf-convert", bytes.NewReader(body.Bytes()))
 			req.Header.Set("Content-Type", writer.FormDataContentType())
 			rsp, _ := client.Do(req)
 			if rsp.StatusCode != http.StatusOK {
@@ -74,8 +74,8 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 			_, err = io.Copy(fw, file)
 			writer.Close()
 
-			req, err := http.NewRequest(http.MethodPost, "http://app-converter:5000/dxf-convert", bytes.NewReader(body.Bytes()))
-			//req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/dxf-convert", bytes.NewReader(body.Bytes()))
+			//req, err := http.NewRequest(http.MethodPost, "http://app-converter:5000/dxf-convert", bytes.NewReader(body.Bytes()))
+			req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/dxf-convert", bytes.NewReader(body.Bytes()))
 			req.Header.Set("Content-Type", writer.FormDataContentType())
 			rsp, _ := client.Do(req)
 			if rsp.StatusCode != http.StatusOK {

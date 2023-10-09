@@ -28,14 +28,14 @@ export const filterAdd = (modal) => {
   let err = false
 
   const contentPlace = modal.querySelector('.nav-content')
-  const navContent = modal.querySelector('.nav-content')
-  try {
-    contentPlace.querySelector('.nav-content__columns').remove()
-    contentPlace.querySelector('.nav-content__items').remove()
-    contentPlace.querySelector('.edit-form').remove()
-  } catch {
-  }
+  const adminPanel = modal.querySelector(".admin-panel__nav")
+  contentPlace.remove()
+  adminPanel.insertAdjacentHTML('beforeend', `
+    <div class="panel-nav__content nav-content"></div>
+  `)
 
+
+  const navContent = modal.querySelector('.nav-content')
   navContent.insertAdjacentHTML('afterbegin', `
             <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 400px">
               
@@ -74,9 +74,11 @@ export const filterAdd = (modal) => {
       .then(res => res.json())
       .then(data => {
         data.data.forEach(group => {
-          block.insertAdjacentHTML("beforeend", `
+          if (group.name.toLowerCase() !== 'все') {
+            block.insertAdjacentHTML("beforeend", `
               <option value="${group.id}">${group.name}</option>
-          `)
+            `)
+          }
         })
       })
   }

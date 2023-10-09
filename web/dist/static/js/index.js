@@ -545,12 +545,12 @@ const filterAdd = modal => {
   let ok = false;
   let err = false;
   const contentPlace = modal.querySelector('.nav-content');
+  const adminPanel = modal.querySelector(".admin-panel__nav");
+  contentPlace.remove();
+  adminPanel.insertAdjacentHTML('beforeend', `
+    <div class="panel-nav__content nav-content"></div>
+  `);
   const navContent = modal.querySelector('.nav-content');
-  try {
-    contentPlace.querySelector('.nav-content__columns').remove();
-    contentPlace.querySelector('.nav-content__items').remove();
-    contentPlace.querySelector('.edit-form').remove();
-  } catch {}
   navContent.insertAdjacentHTML('afterbegin', `
             <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 400px">
               
@@ -586,9 +586,11 @@ const filterAdd = modal => {
   const drawData = (url, block) => {
     fetch(`${_appAddr__WEBPACK_IMPORTED_MODULE_1__.appAddr}/api/${url}`).then(res => res.json()).then(data => {
       data.data.forEach(group => {
-        block.insertAdjacentHTML("beforeend", `
+        if (group.name.toLowerCase() !== 'все') {
+          block.insertAdjacentHTML("beforeend", `
               <option value="${group.id}">${group.name}</option>
-          `);
+            `);
+        }
       });
     });
   };
@@ -997,12 +999,13 @@ __webpack_require__.r(__webpack_exports__);
 const plotAdd = modal => {
   let ok = false;
   let err = false;
+  const contentPlace = modal.querySelector('.nav-content');
+  const adminPanel = modal.querySelector(".admin-panel__nav");
+  contentPlace.remove();
+  adminPanel.insertAdjacentHTML('beforeend', `
+    <div class="panel-nav__content nav-content"></div>
+  `);
   const navContent = modal.querySelector('.nav-content');
-  try {
-    navContent.querySelector('.nav-content__columns').remove();
-    navContent.querySelector('.nav-content__items').remove();
-    navContent.querySelector('.edit-form').remove();
-  } catch {}
   navContent.insertAdjacentHTML('afterbegin', `
       <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 265px">
           <div class="edit-form__user">
@@ -1091,11 +1094,11 @@ const userAdd = modal => {
   let ok = false;
   let err = false;
   const contentPlace = modal.querySelector('.nav-content');
-  try {
-    contentPlace.querySelector('.nav-content__columns').remove();
-    contentPlace.querySelector('.nav-content__items').remove();
-    contentPlace.querySelector('.edit-form').remove();
-  } catch {}
+  const adminPanel = modal.querySelector(".admin-panel__nav");
+  contentPlace.remove();
+  adminPanel.insertAdjacentHTML('beforeend', `
+    <div class="panel-nav__content nav-content"></div>
+  `);
   const navContent = modal.querySelector('.nav-content');
   navContent.insertAdjacentHTML('afterbegin', `
             <form class="edit__form edit-form" method="post">
@@ -1778,18 +1781,29 @@ const table = document.querySelector('.main-table');
 const drawOrders = async (d, data, users) => {
   (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.controlFiltersReset)();
   let uniqueFileNames = [];
+  let checkNewFileName = [];
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
-      console.log(file);
+      const arrDotFile = file.split('.');
+      const fileType = arrDotFile[arrDotFile.length - 1];
+      console.log(file, fileType);
       const arrSlashFile = file.split('/');
       arrSlashFile.splice(0, 3);
       const fileName = arrSlashFile.join('');
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
-      uniqueFileNames.push(fileNameWithoutType);
+      switch (fileType) {
+        case 'png':
+        case 'PNG':
+          if (!uniqueFileNames.includes(fileNameWithoutType)) uniqueFileNames.push(fileNameWithoutType);
+          break;
+        default:
+          uniqueFileNames.push(fileNameWithoutType);
+      }
     });
   }
-  uniqueFileNames = [...new Set(uniqueFileNames)];
+
+  // uniqueFileNames = [...new Set(uniqueFileNames)]
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity);
   let alertDeadline = false;
   if (d.end_time) {

@@ -20,19 +20,33 @@ export const table = document.querySelector('.main-table')
 export const drawOrders = async (d, data, users) => {
   controlFiltersReset()
   let uniqueFileNames = []
+  let checkNewFileName = []
 
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
-      console.log(file)
+      const arrDotFile = file.split('.')
+      const fileType = arrDotFile[arrDotFile.length - 1]
+
+      console.log(file, fileType)
       const arrSlashFile = file.split('/')
       arrSlashFile.splice(0, 3)
       const fileName = arrSlashFile.join('')
       let fileNameWithoutType = fileName.split('.')
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
-      uniqueFileNames.push(fileNameWithoutType)
+
+      switch (fileType) {
+        case 'png':
+        case 'PNG':
+          if (!uniqueFileNames.includes(fileNameWithoutType))
+          uniqueFileNames.push(fileNameWithoutType)
+          break
+        default:
+          uniqueFileNames.push(fileNameWithoutType)
+      }
     })
   }
-  uniqueFileNames = [...new Set(uniqueFileNames)]
+
+  // uniqueFileNames = [...new Set(uniqueFileNames)]
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity)
 
   let alertDeadline = false

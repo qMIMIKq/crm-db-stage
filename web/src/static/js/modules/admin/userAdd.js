@@ -7,12 +7,12 @@ export const userAdd = (modal) => {
   let err = false
 
   const contentPlace = modal.querySelector('.nav-content')
-  try {
-    contentPlace.querySelector('.nav-content__columns').remove()
-    contentPlace.querySelector('.nav-content__items').remove()
-    contentPlace.querySelector('.edit-form').remove()
-  } catch {
-  }
+  const adminPanel = modal.querySelector(".admin-panel__nav")
+  contentPlace.remove()
+  adminPanel.insertAdjacentHTML('beforeend', `
+    <div class="panel-nav__content nav-content"></div>
+  `)
+
 
   const navContent = modal.querySelector('.nav-content')
   navContent.insertAdjacentHTML('afterbegin', `

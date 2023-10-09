@@ -5,14 +5,15 @@ import {topFiltersHandler} from "../filters/topFilters";
 export const plotAdd = modal => {
   let ok = false
   let err = false
-  const navContent = modal.querySelector('.nav-content')
 
-  try {
-    navContent.querySelector('.nav-content__columns').remove()
-    navContent.querySelector('.nav-content__items').remove()
-    navContent.querySelector('.edit-form').remove()
-  } catch {
-  }
+  const contentPlace = modal.querySelector('.nav-content')
+  const adminPanel = modal.querySelector(".admin-panel__nav")
+  contentPlace.remove()
+  adminPanel.insertAdjacentHTML('beforeend', `
+    <div class="panel-nav__content nav-content"></div>
+  `)
+
+  const navContent = modal.querySelector('.nav-content')
 
   navContent.insertAdjacentHTML('afterbegin', `
       <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 265px">
