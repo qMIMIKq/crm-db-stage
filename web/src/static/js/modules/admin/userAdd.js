@@ -1,5 +1,6 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
+import {topFiltersHandler} from "../filters/topFilters";
 
 export const userAdd = (modal) => {
   let ok = false
@@ -105,6 +106,7 @@ export const userAdd = (modal) => {
             `)
           }
 
+          topFiltersHandler()
           setTimeout(() => {
             editForm.querySelector('.edit-form__succ').remove()
             ok = false

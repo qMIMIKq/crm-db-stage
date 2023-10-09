@@ -1,5 +1,5 @@
 import {showModal} from "../modals/showModal"
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
 import {drawUsers} from "./users";
 import {drawGroups} from "./groups";
 import {drawAdminPlots} from "./drawPlots";

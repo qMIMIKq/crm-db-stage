@@ -11,7 +11,7 @@ import {planDateHandler} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
 import {changePauseHandler} from "./pauseModal";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>

@@ -11,34 +11,56 @@ type PlotsPG struct {
 	db *sqlx.DB
 }
 
-func (p PlotsPG) EditPlot(plot domain.Plot) error {
+func (p *PlotsPG) EditPlot(plot domain.Plot) error {
 	log.Info().Interface("plot", plot).Msg("PLOT IS")
 
 	query := fmt.Sprintf(`
 			UPDATE plots
 				 SET plot_name = $1,
-             nickname = $2
-			 WHERE plot_id = $3;
+             nickname = $2,
+             disable = $3
+			 WHERE plot_id = $4;
 	`)
 
-	_, err := p.db.Exec(query, plot.Name, plot.ShortName, plot.ID)
+	disableFiltersQuery := fmt.Sprintf(`
+		UPDATE filters
+	 	   SET disable = $1
+		 WHERE plot_id = $2
+	`)
+
+	_, err := p.db.Exec(query, plot.Name, plot.ShortName, plot.Disable, plot.ID)
+	_, err = p.db.Exec(disableFiltersQuery, plot.Disable, plot.ID)
+
 	return err
 }
 
-func (p PlotsPG) GetPlotByID(plotId string) (domain.Plot, error) {
+func (p *PlotsPG) GetPlotByID(plotId string) (domain.Plot, error) {
 	query := fmt.Sprintf(`
 			SELECT * 
 				FROM plots
 			 WHERE plot_id = $1
 	`)
 
+	canDeleteQuery := fmt.Sprintf(`
+		SELECT filter_id FROM filters WHERE plot_id = $1
+	`)
+
 	var plot domain.Plot
 	err := p.db.Get(&plot, query, plotId)
+
+	var checkID int
+	err = p.db.Get(&checkID, canDeleteQuery, plotId)
+	if err != nil {
+		plot.CanDelete = true
+		err = nil
+	} else {
+		plot.CanDelete = false
+	}
 
 	return plot, err
 }
 
-func (p PlotsPG) CreatePlot(plot domain.Plot) (int, error) {
+func (p *PlotsPG) CreatePlot(plot domain.Plot) (int, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO plots (plot_name, nickname)
     VALUES ($1, $2) returning plot_id
@@ -50,9 +72,10 @@ func (p PlotsPG) CreatePlot(plot domain.Plot) (int, error) {
 	return id, err
 }
 
-func (p PlotsPG) GetPlots() ([]domain.Plot, error) {
+func (p *PlotsPG) GetPlots() ([]domain.Plot, error) {
 	query := fmt.Sprintf(`
 		SELECT * FROM plots
+		ORDER BY disable
 	`)
 
 	var plots []domain.Plot
@@ -64,3 +87,8 @@ func (p PlotsPG) GetPlots() ([]domain.Plot, error) {
 func NewPlotsPG(db *sqlx.DB) *PlotsPG {
 	return &PlotsPG{db: db}
 }
+
+//
+//func (p *PlotsPG) DeletePlot(plot domain.Plot) error {
+//
+//}

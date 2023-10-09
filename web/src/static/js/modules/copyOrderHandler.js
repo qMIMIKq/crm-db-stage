@@ -19,7 +19,6 @@ export const copyOrderHandler = e => {
     switch (key) {
       case 'number':
       case 'client':
-      case 'material':
       case 'quantity':
       case 'issued':
       case 'm':
@@ -61,7 +60,6 @@ export const copyOrderHandler = e => {
   const currElem = document.querySelector('.table-form--new')
   currElem.querySelector('#number').value = obj.number
   currElem.querySelector('input[name="client"]').value = obj.client
-  currElem.querySelector('input[name="material"]').value = obj.material
   currElem.querySelector('input[name="quantity"]').value = obj.quantity
   currElem.querySelector('input[name="issued"]').value = obj.issued
   currElem.querySelector('input[name="end_time"]').value = obj.end_time

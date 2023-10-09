@@ -1,6 +1,7 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
 import {ucFirst} from "../../ucFirst";
+import {topFiltersHandler} from "../filters/topFilters";
 
 export const drawAdminPlots = (modal, datas) => {
   let ok = false
@@ -19,6 +20,9 @@ export const drawAdminPlots = (modal, datas) => {
     <li class="nav-content__column nav-content__column--left users-columns__nickname">
         Короткое имя
     </li>
+     <li class="nav-content__column nav-content__column--left users-columns__nickname">
+        Скрыт
+    </li>
   `)
 
   datas.forEach(data => {
@@ -34,6 +38,7 @@ export const drawAdminPlots = (modal, datas) => {
           </div>
           </div>
           <div class="nav-item__column nav-item__column--left users-item__name">${data.short_name}</div>
+          <div class="nav-item__column nav-item__column--left users-item__name">${data.disable ? 'Да' : 'Нет'}</div>
       </li>
     `)
   })
@@ -52,8 +57,9 @@ export const drawAdminPlots = (modal, datas) => {
 
           const d = data.data
 
+          console.log(d.can_delete)
           navContent.insertAdjacentHTML('afterbegin', `
-            <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 265px">
+            <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 290px">
 <!--              <h3 class="edit-form__title">Изменение пользователя ${d.name}</h3>-->
               <input class="hidden__input" type="text" id="id" name="id" value="${d.id}">
               
@@ -69,8 +75,13 @@ export const drawAdminPlots = (modal, datas) => {
                       <input style="cursor: text;" required id="login" class="route__input edit-form__input edit-form__login" name="short_name" type="text"
                              value="${d.short_name}">
                   </div>
+                  
+                  <div class="edit-form__block edit-form__block--checker">
+                      <label class="edit-form__label edit-form__label--checker" for="disable">Скрыть</label>
+                      <input style="cursor: pointer" ${d.disable ? 'checked' : ''} id="disable" class="" name="disable" type="checkbox">
+                  </div>        
       
-                  <div class="edit-form__block">
+                  <div class="edit-form__block edit-form__block--ctrl">
                       <button class="section-finish__btn section-finish__sub edit-form__submit" type="submit">Сохранить</button>
                   </div>
               </div>
@@ -78,6 +89,12 @@ export const drawAdminPlots = (modal, datas) => {
         `)
 
           const editForm = modal.querySelector('.edit__form')
+          if (d.can_delete) {
+            editForm.querySelector('.edit-form__block--ctrl').insertAdjacentHTML('beforeend', `
+              <button disabled class="section-finish__btn hidden__input section-finish__delete" type="submit">Удалить</button>
+            `)
+          }
+
           editForm.addEventListener('submit', e => {
             e.preventDefault()
 
@@ -90,7 +107,7 @@ export const drawAdminPlots = (modal, datas) => {
                   obj[key] = Number(value)
                   break
                 case 'disable':
-                  console.log(value)
+                  obj[key] = value === "on"
                   break
                 default:
                   obj[key] = value.trim()
@@ -111,14 +128,16 @@ export const drawAdminPlots = (modal, datas) => {
                           <h3>Участок успешно изменён</h3>
                       </div>
                     `)
-                    editForm.style.height = '299px'
+                    // 265
+                    editForm.style.height = '334px'
                     subBtn.style.marginTop = '65px'
                   }
 
+                  topFiltersHandler()
                   setTimeout(() => {
                     editForm.querySelector('.edit-form__succ').remove()
                     ok = false
-                    editForm.style.height = '265px'
+                    editForm.style.height = '290px'
                     subBtn.style.marginTop = '20px'
                   }, 1000)
                 }

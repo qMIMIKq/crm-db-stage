@@ -1,6 +1,6 @@
 import {ucFirst} from "../../ucFirst";
 import {sendData} from "../sendData";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
 
 export const drawUsers = (modal, users) => {
   let err = false

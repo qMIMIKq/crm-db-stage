@@ -50,26 +50,30 @@ func (i InitPG) InitDB() error {
 		(
 				plot_id   SERIAL UNIQUE PRIMARY KEY NOT NULL,
 				plot_name VARCHAR(255)              NOT NULL,
-				nickname  varchar(255) DEFAULT ''
+				nickname  varchar(255) DEFAULT '',
+			  disable     boolean      default false
 		);
 		
-		INSERT INTO plots (plot_name)
-		VALUES ('все'),
-					 ('фрезерный участок'),
-					 ('токарный участок'),
-					 ('фрезерный (рыжики) участок');
+		INSERT INTO plots (plot_name, nickname)
+		VALUES ('все', 'все'),
+					 ('тестовый участок 1', 'ТУ-1'),
+					 ('тестовый участок 2', 'ТУ-2');
 		
 		CREATE TABLE IF NOT EXISTS filters
 		(
 				filter_id   SERIAL UNIQUE PRIMARY KEY                        NOT NULL,
 				filter_name VARCHAR(255)                                     NOT NULL,
 				plot_id     INT REFERENCES plots (plot_id) ON DELETE CASCADE NOT NULL,
-				start_time  varchar(255) default '08:20',
+				start_time  varchar(255) default '08:00',
 				end_time    varchar(255) default '20:00',
 				nickname    varchar(255) default '',
 				position    integer      default 0,
 				disable     boolean      default false
 		);
+
+		INSERT INTO filters (filter_name, plot_id)
+		VALUES ('ТФ-1', '2'),
+					 ('ТФ-2', '3');
 		
 		CREATE TABLE IF NOT EXISTS users
 		(
@@ -165,8 +169,8 @@ func (i InitPG) InitDB() error {
 												order_client, order_name,
 												order_material, order_quantity,
 												order_issued, order_endtime, order_otk, order_p)
-		VALUES (1, '-', 'Тестовый Клиент', 'Тестовый заказ', 'Тестовый материал', '10000', '5', '2023-04-12', 'ОТК',
-						'1дн');
+		VALUES (1, '-', 'Тестовый Клиент', 'Тестовый заказ', 'Тестовый материал', '', '', '2023-04-12', '',
+						'');
 		
 		create table IF NOT EXISTS files
 		(

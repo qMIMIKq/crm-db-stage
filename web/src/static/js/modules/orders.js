@@ -29,7 +29,7 @@ import {
 } from "./filters/tableRoutesFilters";
 import {getTime} from "./getTime";
 import {sendData} from "./sendData";
-import {appAddr} from "./appAddr";
+import {appAddr} from "../../../../../appAddr";
 
 export const getOrders = (postfix = 'get-all') => {
   const archiveBlock = document.querySelector('.archive-block')

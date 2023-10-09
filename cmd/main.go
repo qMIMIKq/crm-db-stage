@@ -32,12 +32,21 @@ func main() {
 		log.Fatal().Err(err).Msg("error init tables")
 	}
 
-	log.Info().Interface("config", cfg.AppAddressJs).Msg("app address for js")
-
-	//file, err := os.Create("web/src/static/js/appAddr.js")
+	//log.Info().Interface("config", cfg.AppAddressJs).Msg("app address for js")
+	//file, err := os.Create("appAddr.js")
 	//defer file.Close()
 	//if _, err := file.Write([]byte(fmt.Sprintf("export const appAddr = '%s'", cfg.AppAddressJs))); err != nil {
 	//	log.Fatal().Err(err).Msg("error create server addr for js")
+	//}
+	//
+	//log.Info().Msg("building web interface...")
+	//cmd := exec.Command("webpack", "--node-env=production")
+	//cmd.Stdout = os.Stdout
+	//cmd.Stdin = os.Stdin
+	//cmd.Stderr = os.Stderr
+	//err = cmd.Run()
+	//if err != nil {
+	//	log.Fatal().Err(err).Msg("error build web interface")
 	//}
 
 	service := services.NewService(repos)

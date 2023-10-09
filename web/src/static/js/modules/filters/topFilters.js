@@ -11,20 +11,32 @@ export const topFiltersHandler = () => {
   let filtered
   const plotFilters = document.querySelector('.nav-filters__plots')
   const filterFilters = document.querySelector('.nav-filters__filters')
+  const navControl = document.querySelector('.nav-control')
+  const burgerMenu = navControl.querySelector('.nav-control__burger')
   const selectUser = document.querySelector('.select-user')
   const nav = document.querySelector('.nav-filters')
   const extensions = ['все']
 
+  plotFilters.querySelectorAll('li').forEach(filter => filter.remove())
+  filterFilters.querySelectorAll('li').forEach(filter => filter.remove())
+  burgerMenu.remove()
+
   const userGroup = document.querySelector('.nav-control__group')
   userGroup.textContent = ucFirst(userInf.group)
 
-  const navControl = document.querySelector('.nav-control')
   const userName = navControl.querySelector('.nav-control__name')
   userName.textContent = userInf.nickname
 
-  const burgerMenu = navControl.querySelector('.nav-control__burger')
   const navRoutes = navControl.querySelector('.nav-control__routes')
-  burgerMenu.addEventListener('click', () => {
+
+  navControl.querySelector('.nav-control__nav').insertAdjacentHTML('beforeend', `
+    <div class="nav-control__burger">
+        <span class="nav-control__burger-item"></span>
+        <span class="nav-control__burger-item"></span>
+        <span class="nav-control__burger-item"></span>
+    </div>
+  `)
+  const burgerTrigger = e => {
     navControl.classList.toggle('nav-control--opened')
     navRoutes.classList.toggle('hidden__input')
 
@@ -34,7 +46,10 @@ export const topFiltersHandler = () => {
     } else {
       navRoutes.style.paddingBottom = '6px'
     }
-  })
+  }
+
+  // burgerMenu.removeEventListener('click', burgerTrigger)
+  navControl.querySelector('.nav-control__burger').addEventListener('click', burgerTrigger)
 
   const links = navControl.querySelectorAll('.nav-control__route-link')
   links.forEach(link => {
@@ -81,12 +96,14 @@ export const topFiltersHandler = () => {
       let condition = !checkExt(extensions, d.name)
       if (condition) {
         if (short) {
-          block.insertAdjacentHTML('beforeend', `
-            <li class='nav-filters__item'>
-                <button class='nav-filters__button main__button--click'>${d.short_name}</button>
-                <input class='hidden__input' value="${d.name}"/>
-             </li>
+          if (!d.disable) {
+            block.insertAdjacentHTML('beforeend', `
+              <li class='nav-filters__item'>
+                  <button class='nav-filters__button main__button--click'>${d.short_name}</button>
+                  <input class='hidden__input' value="${d.name}"/>
+               </li>
           `)
+          }
         } else {
           block.insertAdjacentHTML('beforeend', `
             <li class='nav-filters__item'>

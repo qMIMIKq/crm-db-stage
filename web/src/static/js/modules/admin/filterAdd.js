@@ -1,5 +1,6 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
+import {topFiltersHandler} from "../filters/topFilters";
 
 const validateTime = (startTime, endTime) => {
   const arrStartTime = startTime.split(":")
@@ -135,6 +136,7 @@ export const filterAdd = (modal) => {
             subBtn.style.marginTop = '65px'
           }
 
+          topFiltersHandler()
           setTimeout(() => {
             editForm.querySelector('.edit-form__succ').remove()
             ok = false

@@ -1,6 +1,6 @@
 import "../../css/login/login.scss"
 import {state} from "../modules/state";
-import {appAddr} from "../modules/appAddr";
+import {appAddr} from "../../../../../appAddr";
 
 //192.168.1.231
 //172.20.10.7

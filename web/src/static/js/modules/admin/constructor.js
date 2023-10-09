@@ -1,5 +1,6 @@
 import {getAndDrawData} from "./adminHandler";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
+import {topFiltersHandler} from "../filters/topFilters";
 
 let filters = []
 
@@ -11,6 +12,7 @@ const submitFilters = async (data) => {
     },
     body: JSON.stringify(data)
   })
+  topFiltersHandler()
 }
 
 export const drawConstructor = (modal, datas) => {

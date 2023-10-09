@@ -1,5 +1,6 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
+import {topFiltersHandler} from "../filters/topFilters";
 
 export const drawAdminFilters = (modal, datas) => {
   let ok = false
@@ -104,7 +105,7 @@ export const drawAdminFilters = (modal, datas) => {
               .then(res => res.json())
               .then(data => {
                 data.data.forEach(group => {
-                  if (group.name !== userData) {
+                  if (group.name !== userData && group.name !== 'все') {
                     block.insertAdjacentHTML("beforeend", `
                         <option value="${group.id}">${group.name}</option>
                     `)
@@ -168,6 +169,7 @@ export const drawAdminFilters = (modal, datas) => {
                     subBtn.style.marginTop = '65px'
                   }
 
+                  topFiltersHandler()
                   setTimeout(() => {
                     editForm.querySelector('.edit-form__succ').remove()
                     ok = false

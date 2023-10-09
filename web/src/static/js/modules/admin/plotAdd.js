@@ -1,5 +1,6 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
+import {topFiltersHandler} from "../filters/topFilters";
 
 export const plotAdd = modal => {
   let ok = false
@@ -69,6 +70,7 @@ export const plotAdd = modal => {
             subBtn.style.marginTop = '65px'
           }
 
+          topFiltersHandler()
           setTimeout(() => {
             editForm.querySelector('.edit-form__succ').remove()
             ok = false

@@ -2,7 +2,7 @@ import {state} from "./state";
 import {sendData} from "./sendData";
 import {getOrders} from "./orders";
 import {showModal} from "./modals/showModal";
-import {appAddr} from "./appAddr";
+import {appAddr} from "../../../../../appAddr";
 
 const confirmDeleteOrderModal = `
     <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>

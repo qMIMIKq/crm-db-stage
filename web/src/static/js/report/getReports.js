@@ -9,7 +9,7 @@ import {
   idReportFilter,
   numsReportFilter
 } from "./filters/reportFilters";
-import {appAddr} from "../modules/appAddr";
+import {appAddr} from "../../../../../appAddr";
 import {globalFilterReports} from "./filters/globalFilterReports";
 import {filterRouteReports} from "./filters/topReportFilter";
 

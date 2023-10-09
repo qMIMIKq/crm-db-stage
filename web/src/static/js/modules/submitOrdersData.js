@@ -1,7 +1,7 @@
 import {finallyForOrders, showResult} from './submitControl';
 import {} from './state';
 import {sendData} from './sendData';
-import {appAddr} from "./appAddr";
+import {appAddr} from "../../../../../appAddr";
 
 const createRes = forms => {
   const res = []

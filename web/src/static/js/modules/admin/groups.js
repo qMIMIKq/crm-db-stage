@@ -1,5 +1,5 @@
 import {sendData} from "../sendData";
-import {appAddr} from "../appAddr";
+import {appAddr} from "../../../../../../appAddr";
 
 export const drawGroups = (modal, datas) => {
   let ok = false

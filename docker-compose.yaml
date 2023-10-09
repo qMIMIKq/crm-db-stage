@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build: ./
-    command: ./app
+    image: m1m1kq/oxcs
     ports:
       - 8182:6000
     volumes:
@@ -15,12 +14,12 @@ services:
         condition: service_started
     environment:
       PORT: 6000
-      APP_ADDRESS: http://172.20.10.7:8182
-      DB_PASSWORD: qwerty
+      APP_ADDRESS: http://172.20.10.7:8184
+      DB_PASSWORD: "${DB_PASSWORD}"
       DB_HOST: db
       DB_PORT: 5432
-      DB_USER: postgres
-      DB_NAME: postgres
+      DB_USER: "${DB}"
+      DB_NAME: "${DB}"
       DB_SSLMODE: disable
   app-converter:
     restart: always
@@ -35,9 +34,9 @@ services:
     volumes:
       - "~/apps-data/tables-data/${COMPANY}:/var/lib/postgresql/data"
     environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "qwerty"
+      POSTGRES_DB: "${DB}"
+      POSTGRES_USER: "${DB}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
