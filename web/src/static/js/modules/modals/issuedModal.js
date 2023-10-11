@@ -1,5 +1,5 @@
 import {showModal} from "./showModal";
-import {addLog, drawPlots} from "./routesModal";
+import {addLog, addReportMsg, drawPlots} from "./routesModal";
 import {user} from "../../table";
 import {state} from "../state";
 import {getTime} from "../getTime";
@@ -30,8 +30,8 @@ const changeIssuedModal = `
           id='error-route__msg'>
         
         <div class='confirm__section'>
-            <button class='main__button confirm__button confirm__button--ok'>ОК</button>
-            <button class='main__button confirm__button confirm__button--cncl'>Отмена</button>
+            <button class='main__button--click confirm__button confirm__button--ok'>ОК</button>
+            <button class='main__button--click confirm__button confirm__button--cncl'>Отмена</button>
         </div>
     </div>
    </div>
@@ -66,11 +66,11 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   drawPlots(plotI, userI)
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value))
+    addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments')
 
     if (check) {
       console.log(issuedTodayInput.value)
       addLog(user.nickname, `${plot.value} За смену ${date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
-
 
       updateData.push({
         'operator_name': userData.value,

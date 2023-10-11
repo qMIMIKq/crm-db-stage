@@ -219,11 +219,20 @@ const routeModal = `
 `
 const issuedModal = `
    <div id='modal' style='z-index: 10000' class='modal modal--issued bounceIn'>
-        <div class='modal_content modal_content--issued' style='width: 500px'>
+        <div class='modal_content modal_content--issued' style='width: 900px'>
             <div class='modal__header modal__header--routes modal-header'>
                 <h2 class='comments__title'>Отчет по сменам</h2>
-            </div>        
+            </div>
+                    
             <ul class='comment__prev issued-list'>
+                <li style='text-align: center;background-color: rgb(156, 156, 156)' class='comment__item'>
+                   <ul class="issued-top">
+                      <li class="issued-top__item issued-top__item--date">Дата</li>
+                      <li class="issued-top__item issued-top__item--operators">Операторы</li>
+                      <li class="issued-top__item issued-top__item--plots">Станки</li>
+                      <li class="issued-top__item issued-top__item--summary">Сдано</li>
+                   </ul>
+                </li>
             </ul>
         </div>
    </div>
@@ -248,10 +257,12 @@ const drawLogs = data => {
         }
       })
 
+      console.log(log.includes('REPORTMSG'))
       if (log.includes('ОШИБКА')) {
         logsList.insertAdjacentHTML(`beforeend`, `
           <li class='section-logs__item section-logs__item--error'>${log}</li>
         `)
+      } else if (log.includes('REPORTMSG')) {
       } else if (log.includes('ПАУЗА')) {
         logsList.insertAdjacentHTML(`beforeend`, `
           <li class='section-logs__item section-logs__item--pause'>${log}</li>
@@ -277,6 +288,13 @@ const saveData = (data, selector) => {
     dataInput.value = data
   }
   return dataInput
+}
+
+export const addReportMsg = (report, selector) => {
+  let logMsg = `REPORTMSG ${report}`
+  const visible = saveData(logMsg, selector)
+  saveData(logMsg, '#route__comments')
+  drawLogs(visible)
 }
 
 export const addLog = (name, log, selector) => {
@@ -662,7 +680,7 @@ export const triggerRoutesModal = e => {
       visibleLogs.value = comments
 
       comments = comments.split('---')
-      comments = comments.filter(c => c.includes('За смену'))
+      comments = comments.filter(c => c.includes('REPORTMSG'))
       modalElem.querySelector('#issued__all').value = comments.join('---')
     }
 
@@ -815,18 +833,40 @@ export const triggerRoutesModal = e => {
     const iM = showModal(issuedModal)
     const dataPlace = iM.querySelector('.issued-list')
 
+    const res = {}
     document.querySelector('#issued__all').value.split('---').forEach(rep => {
       if (rep.trim() !== '') {
-        const data = rep.split('   ')
-        const date = data[0].slice(0, 10)
-
-        console.log(data[1])
-
-        dataPlace.insertAdjacentHTML(`beforeend`, `
-            <li style='text-align: center' class='comment__item'>${date} ${data[1]}</li>   
-        `)
+        rep = rep.replaceAll('REPORTMSG', '').trim().split('__')
+        if (res.hasOwnProperty(rep[0])) {
+          res[rep[0]]['operators'].push(rep[1])
+          res[rep[0]]['plots'].push(rep[2])
+          res[rep[0]]['summary'] += Number(rep[3])
+        } else {
+          res[rep[0]] = {
+            'operators': [rep[1]],
+            'plots': [rep[2]],
+            'summary': Number(rep[3]),
+          }
+        }
       }
     })
+
+    for (const [date, info] of Object.entries(res)) {
+      let operators = [...new Set(info.operators)].join('/')
+      let plots = [...new Set(info.plots)].join('/')
+      console.log(date, operators, plots, info.summary)
+
+      dataPlace.insertAdjacentHTML(`beforeend`, `
+        <li style='text-align: center' class='comment__item'>
+          <ul class="issued-top">
+            <li class="issued-top__item issued-top__item--date">${date}</li>
+            <li class="issued-top__item issued-top__item--operators">${operators}</li>
+            <li class="issued-top__item issued-top__item--plots">${plots}</li>
+            <li class="issued-top__item issued-top__item--summary">${info.summary}</li>
+          </ul>
+        </li>
+      `)
+    }
 
     addLog(logName, 'Просмотрел отчет по сменам', '#visible__comments')
   })

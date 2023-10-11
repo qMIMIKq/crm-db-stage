@@ -223,18 +223,20 @@
 
 .comment {
   &__prev {
-    margin: 12px auto 0;
+    //margin: 12px auto 0;
     overflow-y: scroll;
     background: $text_white;
-    height: 80%;
-    width: 90%;
-    border-radius: 15px;
+    height: 100%;
+    width: 100%;
+    //border-radius: 15px;
   }
 
   &__item {
     color: $text_black;
     font-size: 17px;
-    padding: 10px 13px;
+    //padding: 10px 13px;
+    //padding: 5px 0;
+    border-bottom: 1px solid black;
   }
 }
 
@@ -438,5 +440,27 @@
     background: none;
     color: rgba(210, 66, 66, 1);
     cursor: pointer;
+  }
+}
+
+.issued-top {
+  display: flex;
+  align-items: center;
+
+  &__item {
+    padding: 5px 0;
+    width: 39%;
+
+    &:not(:last-child) {
+      border-right: 1px solid black;
+    }
+
+    &--date {
+      width: 120px;
+    }
+
+    &--summary {
+      width: 80px;
+    }
   }
 }

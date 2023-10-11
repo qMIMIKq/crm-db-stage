@@ -15,7 +15,6 @@ import (
 
 type FilesMwPg struct {
 	db *sqlx.DB
-	//mw *imagick.MagickWand
 }
 
 const DataPath = "./assets/uploads/"

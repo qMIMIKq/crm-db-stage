@@ -72,7 +72,7 @@ export const drawOrders = async (d, data, users) => {
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
         <ul class='main-table__item'>
             <li class='table-body_cell table__db'>
-                <input class="order__copy table__data--ro" id='order__copy' type="button" value="V" readonly>
+                <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
                 <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__timestamp'>
@@ -337,7 +337,7 @@ export const orderHTML = `
 <form class="table-form table-form--new" method="POST">
             <ul class="main-table__item">
                     <li class="table-body_cell table-body__helper table__db">
-                        <input class="order__copy table__data--ro" id='order__copy' type="button" value="V" readonly>
+                        <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
                         <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__timestamp">
