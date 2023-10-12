@@ -13,23 +13,14 @@ import {
   timestampFilter
 } from './filters/tableFilters';
 import {state} from './state';
-import {bindOrdersListeners} from './bindListeners';
 import {getData} from './getData';
-import {globalFilterOrders} from "./filters/filterOrders";
-import {drawOrders} from "./drawe/drawOrders";
-import {filterData} from "./filters/topFilters";
 import {
   archiveFrom,
   archiveTo,
-  completedFilter,
-  errFilter,
-  notInWorkFilter,
-  plannedFilter,
-  startFilter
 } from "./filters/tableRoutesFilters";
-import {getTime} from "./getTime";
 import {sendData} from "./sendData";
 import {appAddr} from "../../../../../appAddr";
+import {newAllFilter} from "./filters/newAllFilter";
 
 export const getOrders = (postfix = 'get-all') => {
   const archiveBlock = document.querySelector('.archive-block')
@@ -59,6 +50,14 @@ export const getOrders = (postfix = 'get-all') => {
     mainLink.classList.add('nav-control__route-link--current')
   }
 
+  if (state.isArchive) {
+    archiveBlock.classList.remove('hidden__input')
+    routesBlock.classList.add('hidden__input')
+  } else {
+    archiveBlock.classList.add('hidden__input')
+    routesBlock.classList.remove('hidden__input')
+  }
+
   console.time('get orders')
 
   const params = {
@@ -70,15 +69,10 @@ export const getOrders = (postfix = 'get-all') => {
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
-      if (state.isArchive) {
-        archiveBlock.classList.remove('hidden__input')
-        routesBlock.classList.add('hidden__input')
-      } else {
-        archiveBlock.classList.add('hidden__input')
-        routesBlock.classList.remove('hidden__input')
-      }
-
+      console.timeEnd('get orders')
       const title = document.querySelector('.main-header__title')
+
+      console.time('draw orders')
 
       if (!data.data) {
         deleteOrders()
@@ -86,8 +80,6 @@ export const getOrders = (postfix = 'get-all') => {
         title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
         // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
         return
-      } else {
-        title.textContent = state.isArchive ? `Архив заказов (${data.data.length})` : `Журнал заказов (${data.data.length})`
       }
 
       const nums = []
@@ -125,48 +117,13 @@ export const getOrders = (postfix = 'get-all') => {
             if (!state['filtered']) {
               state['managers'] = res.data.filter(user => user.group === 'менеджер')
             }
-
-            if (state['filtered'] && filters.length) {
-              // console.log('big filter')
-              globalFilterOrders(d, filters)
-              filterData()
-            } else if (state['filtered']) {
-              globalFilterOrders(d)
-            } else if (filters.length) {
-              // console.log('top filter')
-              filterData()
-            } else {
-              // console.log('draw only')
-              drawOrders(d, data, state['managers'])
-            }
           })
 
-          if (!filters.length) {
-            if (state['routesFilters'].started) {
-              deleteOrders()
-              startFilter(filters)
-            } else if (state['routesFilters'].error) {
-              deleteOrders()
-              errFilter(filters)
-            } else if (state['routesFilters'].completed) {
-              deleteOrders()
-              completedFilter(filters)
-            } else if (state['routesFilters'].planned) {
-              let date
-              if (!state.inPlanDate) {
-                date = getTime()
-                date = date.substring(0, date.length - 5).trim()
-              } else {
-                date = state.inPlanDate
-              }
-              deleteOrders()
-              plannedFilter(filters, date)
-            } else if (state['routesFilters'].unstarted) {
-              deleteOrders()
-              notInWorkFilter(filters)
-            }
-          }
+          newAllFilter()
 
+          console.timeEnd('draw orders')
+
+          console.time('add filters and listeners')
           drawTableFilter([...new Set(nums)], numsFilter)
           drawTableFilter([...new Set(clients)], clientsFilter)
           drawTableFilter([...new Set(materials)], materialsFilter)
@@ -176,27 +133,26 @@ export const getOrders = (postfix = 'get-all') => {
           drawTableFilter([...new Set(managers)], managerFilter)
           drawTableFilter([...new Set(deadlines)], deadlineFilter)
           drawTableFilter([...new Set(timestamps)], timestampFilter)
-          bindOrdersListeners()
           bindTableFilters()
+          console.timeEnd('add filters and listeners')
 
+          title.textContent = state.isArchive ? `Архив заказов (${data.data.length})` : `Журнал заказов (${data.data.length})`
           if (state['isArchive']) {
             document.querySelectorAll('.table__data').forEach(field => {
               field.setAttribute("readonly", "true")
             })
           }
 
-          console.timeEnd('get orders')
-
           const lastOrder = document.querySelector('.table__data--chosen')
           if (lastOrder) {
             lastOrder.scrollIntoView({block: 'center'})
           }
 
-          document.querySelectorAll(".table-form").forEach(form => {
-            form.addEventListener('click', e => {
-              console.log("I am form hi)")
-            })
-          })
+          // document.querySelectorAll(".table-form").forEach(form => {
+          //   form.addEventListener('click', e => {
+          //     console.log("I am form hi)")
+          //   })
+          // })
         })
     })
 }

@@ -9,6 +9,8 @@ export const user = JSON.parse(sessionStorage.getItem("user"))
 
 
 if (window.location.href.endsWith('main/table')) {
+  console.log('hello')
+
   adminHandler()
   tableRoutesFiltersHandler()
   topFiltersHandler()

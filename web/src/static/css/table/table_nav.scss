@@ -31,8 +31,15 @@
   }
 
   &__button {
+    transition: color .3s;
+
+    &:hover {
+      transition: color .3s;
+      color: $main_green;
+    }
+
     &:not(:last-child) {
-      margin-right: 20px;
+      margin-right: 10px;
     }
   }
 }

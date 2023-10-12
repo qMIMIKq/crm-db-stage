@@ -1,11 +1,10 @@
 import {getData} from '../getData';
 import {state, userInf} from "../state";
-import {deleteOrders, getOrders} from "../orders";
-import {globalFilterOrders} from "./filterOrders";
-import {bindOrdersListeners} from "../bindListeners";
-import {getTime} from "../getTime";
+import {getOrders} from "../orders";
 import {getReports} from "../../report/getReports";
 import {ucFirst} from "../../ucFirst";
+import {searchOrdersHandler} from "../modals/searchOrdersModal";
+import {newAllFilter} from "./newAllFilter";
 
 export const topFiltersHandler = () => {
   let filtered
@@ -36,6 +35,7 @@ export const topFiltersHandler = () => {
         <span class="nav-control__burger-item"></span>
     </div>
   `)
+
   const burgerTrigger = e => {
     navControl.classList.toggle('nav-control--opened')
     navRoutes.classList.toggle('hidden__input')
@@ -50,6 +50,11 @@ export const topFiltersHandler = () => {
 
   // burgerMenu.removeEventListener('click', burgerTrigger)
   navControl.querySelector('.nav-control__burger').addEventListener('click', burgerTrigger)
+
+  const searchBtn = document.querySelector('.nav-control__search-btn')
+  searchBtn.addEventListener('click', () => {
+    searchOrdersHandler()
+  })
 
   const links = navControl.querySelectorAll('.nav-control__route-link')
   links.forEach(link => {
@@ -131,9 +136,14 @@ export const topFiltersHandler = () => {
         } else {
           state['currentTopPlots'] = state['currentTopPlots'].filter(cP => cP !== plot)
         }
+
+        console.log(state.currentTopPlots)
+        console.log(state.currentTopFilters)
+
         target.classList.toggle('chosen__plot')
         target.classList.toggle('nav-filters__button--chosen')
         filterByPlots()
+
         if (state['currentTopFilters'].length) {
           filterData()
           filtered = true
@@ -156,6 +166,9 @@ export const topFiltersHandler = () => {
     state['currentTopFilters'] = state['topFilters'].filter(filt =>
       state['currentTopPlots'].includes(filt.plot)
     )
+
+    console.log(state.topFilters)
+    console.log(state.topPlots)
 
     removeData(filterFilters)
     if (state['currentTopFilters'].length) {
@@ -218,11 +231,17 @@ export const topFiltersHandler = () => {
     if (filtered) {
       if (!resetBtn) {
         nav.insertAdjacentHTML('beforeend', `
-                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
-                `)
+            <button class='main__button--click main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+        `)
 
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {
           state['currentTopFilters'] = []
+          state['currentTopPlots'] = []
+
+          removeData(filterFilters)
+          drawTopPanel(state['topFilters'], filterFilters)
+          filterListener(filterFilters)
+
           document.querySelector('.nav-filters__reset').remove()
           if (window.location.href.includes('/main/table')) {
             getOrders('get-all')
@@ -288,74 +307,5 @@ export const topFiltersHandler = () => {
 }
 
 export const filterData = () => {
-  const filters = state['currentTopFilters'].map(filter => filter.name)
-
-  state['filteredOrders'] = state['orders'].filter(order => {
-    let flag = false
-
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (filters.includes(route.plot)) {
-          if (state['routesFilters'].started) {
-            console.log('started')
-            if (route.start_time && !route.end_time) {
-              flag = true
-            }
-          } else if (state['routesFilters'].error) {
-            console.log('error')
-            if (route.error_msg) {
-              flag = true
-            }
-          } else if (state['routesFilters'].completed) {
-            if (route.end_time) {
-              flag = true
-            }
-          } else if (state['routesFilters'].unstarted) {
-            if (!route.start_time) {
-              flag = true
-            }
-          } else if (state['routesFilters'].planned) {
-            console.log('hi')
-            if (route.plan_date) {
-              let planDate = new Date(route.plan_date).getTime()
-              let planStart = new Date(route.plan_start).getTime()
-
-              let date
-              if (!state.inPlanDate) {
-                date = getTime()
-                date = date.substring(0, date.length - 5).trim()
-              } else {
-                date = state.inPlanDate
-              }
-
-              const dateToday = new Date(date).getTime()
-
-              if (planStart <= dateToday && dateToday <= planDate && !route.exclude_days.includes(date)) {
-                if (filters.length) {
-                  if (filters.includes(route.plot)) {
-                    flag = true
-                  }
-                } else {
-                  flag = true
-                }
-              }
-            }
-
-          } else {
-            console.log(route)
-            flag = true
-          }
-
-        }
-      })
-    }
-
-    return flag
-  })
-
-  deleteOrders()
-  state['filteredOrders'].forEach(order => {
-    globalFilterOrders(order)
-  })
-  bindOrdersListeners()
+  newAllFilter()
 }

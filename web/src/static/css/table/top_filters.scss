@@ -76,7 +76,7 @@
   &__reset {
     position: absolute;
     bottom: -28px;
-    width: 131px;
+    width: 161px;
     display: block;
     align-self: center;
   }
@@ -167,13 +167,21 @@
     }
   }
 
-  &__total {
+  &__search {
     font-size: 18px;
     font-weight: 500;
     line-height: 23px;
     letter-spacing: 0em;
     text-align: center;
     color: $main_green;
+
+    &-btn {
+      &:hover {
+        svg {
+          fill: green;
+        }
+      }
+    }
   }
 
   &__routes {
@@ -221,5 +229,18 @@
         margin-bottom: 6px;
       }
     }
+  }
+}
+
+.search-orders {
+  &__label {
+
+  }
+
+  &__input {
+    margin-right: 0 !important;
+    padding-left: 9px;
+    width: 170px !important;
+    cursor: text !important;
   }
 }

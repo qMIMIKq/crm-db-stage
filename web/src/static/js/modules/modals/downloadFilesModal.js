@@ -154,7 +154,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           data.insertAdjacentHTML(`beforeend`, `
             <div class='data__file'>
               <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>Оригинал</a>
-              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.png'>
+              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileName.toLowerCase().endsWith(".pdf") ? fileName : fileNameWithoutType + ".png"}'>
                   <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.png' alt=''>
               </a>
               <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>

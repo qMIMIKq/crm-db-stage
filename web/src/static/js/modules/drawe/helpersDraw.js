@@ -1,5 +1,5 @@
-export const drawHelpers = (currentOrder) => {
-  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
+export const drawHelpers = () => {
+  document.querySelectorAll('.table-body__helper').forEach(cell => {
     if (!cell.classList.contains('table__route')) {
       const valElem = cell.querySelector('.table__data')
       const value = valElem.value

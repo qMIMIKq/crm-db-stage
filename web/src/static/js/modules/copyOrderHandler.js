@@ -48,14 +48,6 @@ export const copyOrderHandler = e => {
 
 
   table.insertAdjacentHTML('afterbegin', orderHTML)
-  drawSubmit()
-  drawManagers('.table-m-select', state['managers'], 'adfasdfsdfsdada')
-  drawDeadlineP('.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
-  bindOrdersListeners()
-  addTriggers('.table__files', triggerFilesModal)
-  addTriggers('.table__route', triggerRoutesModal)
-  addTriggers('.table__comment', triggerCommentsModal)
-  addTriggers(".order__copy", copyOrderHandler)
 
   const currElem = document.querySelector('.table-form--new')
   currElem.querySelector('#number').value = obj.number
@@ -64,6 +56,15 @@ export const copyOrderHandler = e => {
   currElem.querySelector('input[name="issued"]').value = obj.issued
   currElem.querySelector('input[name="end_time"]').value = obj.end_time
   currElem.querySelector('select[name="m"]').value = obj.m
+
+  drawSubmit()
+  drawManagers('.table-m-select', state['managers'], 'adfasdfsdfsdada')
+  drawDeadlineP('.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
+  bindOrdersListeners()
+  addTriggers(currElem,'.table__files', triggerFilesModal)
+  addTriggers(currElem,'.table__route', triggerRoutesModal)
+  addTriggers(currElem,'.table__comment', triggerCommentsModal)
+  addTriggers(currElem,".order__copy", copyOrderHandler)
 
   const routesWrapper = currElem.querySelector(".table-routes__wrapper")
   for (let key of Object.keys(obj)) {

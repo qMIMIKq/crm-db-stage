@@ -37,7 +37,6 @@ const createRes = forms => {
         if (value !== '-') {
           obj['routes_json'][key] = JSON.parse(String(value))
         }
-        console.log(obj['routes_json'])
       }
     })
     res.push(obj)

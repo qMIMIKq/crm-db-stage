@@ -12,10 +12,10 @@ import {drawDeadlineP} from "./drawe/drawDeadlineP";
 import {copyOrderHandler} from "./copyOrderHandler";
 
 const submitButtonHTML = `
-    <button class='main-header__button main__button--click header-button__submit'>Отправить</button>
+    <button class='main-header__button main__button--click header-button__submit'>=></button>
 `
 const cancelButtonHTML = `
-    <button class='main-header__button main__button--click header-button__cancel'>Отмена</button>
+    <button class='main-header__button main__button--click header-button__cancel'>X</button>
 `
 
 const addOrder = document.querySelector('.header-button__add')
@@ -82,6 +82,7 @@ addOrder.addEventListener('click', e => {
   drawManagers('.table-m-select', state['managers'], 'adfasdfsdfsdada')
   drawDeadlineP('.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
   bindOrdersListeners()
+
   addTriggers('.table__files', triggerFilesModal)
   addTriggers('.table__route', triggerRoutesModal)
   addTriggers('.table__comment', triggerCommentsModal)

@@ -8,6 +8,17 @@
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
+  display: none;
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   /* display: none; <- Crashes Chrome on hover */
   -webkit-appearance: none;
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
@@ -323,4 +334,14 @@ input:disabled {
 
 .header {
   position: relative;
+}
+
+.loupe {
+  width: 10px;
+  transition: fill .3s;
+
+  &:hover {
+    //transition: fill .3s;
+    //fill: $main_green;
+  }
 }

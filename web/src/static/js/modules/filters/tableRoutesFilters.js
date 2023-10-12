@@ -1,151 +1,11 @@
 import {state} from "../state";
-import {globalFilterOrders} from "./filterOrders";
-import {filterData} from "./topFilters";
-import {drawOrders} from "../drawe/drawOrders";
-import {deleteOrders, getOrders} from "../orders";
-import {bindOrdersListeners} from "../bindListeners";
+import {getOrders} from "../orders";
 import {getTime} from "../getTime";
+import {newAllFilter} from "./newAllFilter";
 
 export const inArchiveBtn = document.querySelector('.header-routes__archived')
 export const archiveFrom = document.querySelector('.header-routes__planned-date__from')
 export const archiveTo = document.querySelector('.header-routes__planned-date__to')
-
-export const startFilter = (filters) => {
-  state['orders'].forEach(order => {
-    let check = false
-
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.start_time && !route.end_time) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true
-            }
-          } else {
-            check = true
-          }
-        }
-      })
-    }
-
-
-    return checkDoFilter(check, order, filters)
-  })
-
-  bindOrdersListeners()
-}
-
-export const errFilter = (filters) => {
-  state['orders'].forEach(order => {
-    let check = false
-
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.error_msg) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true
-            }
-          } else {
-            check = true
-          }
-
-        }
-      })
-    }
-
-    return checkDoFilter(check, order, filters)
-  })
-
-  bindOrdersListeners()
-}
-
-export const completedFilter = (filters) => {
-  state['orders'].forEach(order => {
-    let check = false
-
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.end_time) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true
-            }
-          } else {
-            check = true
-          }
-        }
-      })
-    }
-    return checkDoFilter(check, order, filters)
-  })
-
-  bindOrdersListeners()
-}
-
-export const notInWorkFilter = filters => {
-  state['orders'].forEach(order => {
-    let check = false
-
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (!route.start_time) {
-          if (filters.length) {
-            if (filters.includes(route.plot)) {
-              check = true
-            }
-          } else {
-            check = true
-          }
-        }
-      })
-    }
-    return checkDoFilter(check, order, filters)
-  })
-
-  bindOrdersListeners()
-}
-
-const checkDoFilter = (check, order, filters) => {
-  if (check) {
-    if (state['filtered'] && filters.length) {
-      globalFilterOrders(order)
-      filterData()
-    } else if (state['filtered']) {
-      console.log('table filters')
-      globalFilterOrders(order)
-    } else {
-      drawOrders(order, state['filteredOrders'], state['managers'])
-    }
-  }
-
-  return check
-}
-
-export const plannedFilter = (filters, date) => {
-  state['orders'].forEach(order => {
-    let check = false
-
-    if (order.db_routes) {
-      order.db_routes.forEach(route => {
-        if (route.plan_dates) {
-          if (route.plan_dates.includes(date)) {
-            if (filters.length) {
-              if (filters.includes(route.plot)) {
-                check = true
-              }
-            } else {
-              check = true
-            }
-          }
-        }
-      })
-    }
-    return checkDoFilter(check, order, filters)
-  })
-
-  bindOrdersListeners()
-}
 
 export const tableRoutesFiltersHandler = () => {
   const inWorkBtn = document.querySelector(".header-routes__work")
@@ -200,9 +60,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].completed = false
     state['routesFilters'].planned = false
 
-    deleteOrders()
-    const filters = state['currentTopFilters'].map(filter => filter.name)
-    startFilter(filters)
+    newAllFilter()
   })
 
   notWorkBtn.addEventListener('click', () => {
@@ -225,9 +83,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].completed = false
     state['routesFilters'].planned = false
 
-    deleteOrders()
-    const filters = state['currentTopFilters'].map(filter => filter.name)
-    notInWorkFilter(filters)
+    newAllFilter()
   })
 
   inErrorBtn.addEventListener('click', e => {
@@ -250,9 +106,7 @@ export const tableRoutesFiltersHandler = () => {
     }
     inErrorBtn.classList.add('route__filter--chosen')
 
-    deleteOrders()
-    const filters = state['currentTopFilters'].map(filter => filter.name)
-    errFilter(filters)
+    newAllFilter()
   })
 
   completedBtn.addEventListener('click', e => {
@@ -275,9 +129,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].error = false
     state['routesFilters'].planned = false
 
-    deleteOrders()
-    const filters = state['currentTopFilters'].map(filter => filter.name)
-    completedFilter(filters)
+    newAllFilter()
   })
 
   inPlanDate.addEventListener('change', () => {
@@ -312,9 +164,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].error = false
     state['routesFilters'].completed = false
 
-    deleteOrders()
-    const filters = state['currentTopFilters'].map(filter => filter.name)
-    plannedFilter(filters, inPlanDate.value)
+    newAllFilter()
   })
 }
 

@@ -1,6 +1,5 @@
 import {controlFiltersReset} from '../filters/tableFilters';
 import {addTriggers} from '../addTriggers';
-import {showRoutesIssued} from "../showFull";
 import {drawDeadlineP} from './drawDeadlineP';
 import {state} from '../state';
 import {drawManagers} from './drawManagers';
@@ -8,9 +7,6 @@ import {drawSubmit} from "../submitControl";
 import {deleteOrdersHandler} from "../deleteOrdersHandler";
 import {colorRoutes} from "./routesDraw";
 import {drawHelpers} from "./helpersDraw";
-import {triggerFilesModal} from "../modals/downloadFilesModal";
-import {triggerRoutesModal} from "../modals/routesModal";
-import {triggerCommentsModal} from "../modals/commentsModal";
 import {getTime} from "../getTime";
 import {submitData} from "../submitOrdersData";
 import {copyOrderHandler} from "../copyOrderHandler";
@@ -18,16 +14,16 @@ import {copyOrderHandler} from "../copyOrderHandler";
 export const table = document.querySelector('.main-table')
 
 export const drawOrders = async (d, data, users) => {
+  // console.time(`draw order ${d.id}` )
+
   controlFiltersReset()
   let uniqueFileNames = []
-  let checkNewFileName = []
 
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
       const arrDotFile = file.split('.')
       const fileType = arrDotFile[arrDotFile.length - 1]
 
-      console.log(file, fileType)
       const arrSlashFile = file.split('/')
       arrSlashFile.splice(0, 3)
       const fileName = arrSlashFile.join('')
@@ -37,12 +33,8 @@ export const drawOrders = async (d, data, users) => {
       switch (fileType) {
         case 'png':
         case 'PNG':
-        // case 'DXF':
-        // case 'dxf':
-        // case 'PDF':
-        // case 'pdf':
           if (!uniqueFileNames.includes(fileNameWithoutType))
-          uniqueFileNames.push(fileNameWithoutType)
+            uniqueFileNames.push(fileNameWithoutType)
           break
         default:
           uniqueFileNames.push(fileNameWithoutType)
@@ -50,7 +42,6 @@ export const drawOrders = async (d, data, users) => {
     })
   }
 
-  // uniqueFileNames = [...new Set(uniqueFileNames)]
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity)
 
   let alertDeadline = false
@@ -117,7 +108,7 @@ export const drawOrders = async (d, data, users) => {
                 <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
             </li>
             <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
-                <select ${state['adminCheck'] || state['manCheck'] ?  "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button" name="m" id="">
+                <select ${state['adminCheck'] || state['manCheck'] ? "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button" name="m" id="">
                     <option selected value=""></option>
                 </select>
             </li>
@@ -211,11 +202,11 @@ export const drawOrders = async (d, data, users) => {
                 </ul>
             </li>
             <li class="table-body_cell table-body__helper table__p">
-                <select ${state['adminCheck'] || state['manCheck'] ?  "" : 'style="pointer-events : none"'} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                <select ${state['adminCheck'] || state['manCheck'] ? "" : 'style="pointer-events : none"'} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                     <option selected value=""></option>
                 </select>
             </li>
-            <li class="table-body_cell table-body__helper hidden-input table__comment">
+            <li class="table-body_cell hidden-input">
                 <input class="table__data hidden-input table__data--ro" 
                     name="comments" 
                     type="text"
@@ -224,7 +215,7 @@ export const drawOrders = async (d, data, users) => {
                     autocomplete="off"
                     tabindex="-1">
             </li>
-            <li class="table-body_cell table-body__helper hidden-input table__comment">
+            <li class="table-body_cell hidden-input">
                 <input class="table__data  hidden-input table__data--ro" 
                     name="all_comments" 
                     type="text"
@@ -252,14 +243,14 @@ export const drawOrders = async (d, data, users) => {
   const completedBlock = currentOrder.querySelector('.table__issued--done')
   if (completedBlock && !state['isArchive']) {
     completedBlock.insertAdjacentHTML(`afterend`, `
-            <li class="table-body_cell table-body__helper hidden__input table__complete">
-                <input class="table__data main__button tr" tabindex="-1"
-                readonly
-                type="text" 
-                autocomplete="off"
-                value="В архив">
-            </li>  
-        `)
+      <li class="table-body_cell table-body__helper hidden__input table__complete">
+          <input class="table__data table__issued--done main__button tr" tabindex="-1"
+          readonly
+          type="text" 
+          autocomplete="off"
+          value="В архив">
+      </li>  
+  `)
 
     currentOrder.querySelector('.table__complete').addEventListener('click', e => {
       currentOrder.querySelector('#completed').value = true
@@ -313,24 +304,16 @@ export const drawOrders = async (d, data, users) => {
     drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
     drawManagers(".table-m-select", users, d.m)
 
+    // console.time('routes')
     if (routes) {
       colorRoutes(routes)
     } else {
       deleteOrdersHandler(currentOrder, d.issued, false, d.id)
     }
+    // console.timeEnd('routes')
   }
 
-  drawHelpers(currentOrder)
-  addTriggers("#db_id", showRoutesIssued)
-  addTriggers(".table__files", triggerFilesModal)
-  addTriggers(".table__route", triggerRoutesModal)
-  addTriggers(".table__comment", triggerCommentsModal)
-
-  if (state.adminCheck || state.manCheck) {
-    addTriggers(".order__copy", copyOrderHandler)
-  } else {
-    currentOrder.querySelector('#order__copy').remove()
-  }
+  // console.timeEnd(`draw order ${d.id}` )
 }
 
 export const orderHTML = `
@@ -472,7 +455,7 @@ export const orderHTML = `
                             <option selected value=""></option>
                         </select>
                     </li>
-                    <li class="table-body_cell table-body__helper hidden-input table__comment">
+                    <li class="table-body_cell table-body__helper hidden-input">
                         <input class="table__data hidden-input table__data--ro" 
                             name="comments" 
                             type="text"
@@ -481,7 +464,7 @@ export const orderHTML = `
                             autocomplete="off"
                             tabindex="-1">
                     </li>
-                    <li class="table-body_cell table-body__helper hidden-input table__comment">
+                    <li class="table-body_cell table-body__helper hidden-input">
                         <input class="table__data  hidden-input table__data--ro" 
                             name="all_comments" 
                             type="text"

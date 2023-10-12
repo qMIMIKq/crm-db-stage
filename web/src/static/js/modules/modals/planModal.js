@@ -5,7 +5,7 @@ import {appAddr} from "../../../../../../appAddr";
 
 const planDateModal = `
     <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>
-      <div class='modal_content modal-plan modal_content--confirm' style='width: 470px;height: 435px;'>
+      <div class='modal_content modal-plan modal_content--confirm' style='width: 485px;height: 435px;'>
         <h2 class='confirm__title confirm__title--plan'>Период</h2>
         <input type="text" class="hidden__input" name="end_date" id="end_date">
         <div class="modal-plan__period plan-period">
@@ -129,7 +129,7 @@ export const planDateHandler = (addedDates, plot, routeID) => {
 
     let today = getTime()
     let todayStr = today.substring(0, today.length - 5).trim()
-    let modalAddedDates = addedDates.length ? addedDates : []
+    let modalAddedDates = addedDates ? addedDates : []
     console.log(modalAddedDates, addedDates)
     let resObj = {}
     let flag = !!Object.keys(modalAddedDates).length

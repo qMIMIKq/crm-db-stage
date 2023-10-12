@@ -1,8 +1,6 @@
-import {deleteOrders, getOrders} from '../orders';
+import {getOrders} from '../orders';
 import {state} from '../state';
-import {bindOrdersListeners} from "../bindListeners";
-import {globalFilterOrders} from "./filterOrders";
-import {filterData} from "./topFilters";
+import {newAllFilter} from "./newAllFilter";
 
 
 export const tableFiltersWrapper = document.querySelector('.main-table__header')
@@ -67,23 +65,10 @@ const showFilter = e => {
   label.classList.remove('hidden__input')
 }
 
-const filterOrders = (type, filter) => {
+export const filterOrders = (type, filter) => {
   state['filtered'] = true
   state['tableFilters'][type] = filter
-  console.log(type, filter)
-  console.log(state['tableFilters'])
-
-  deleteOrders()
-  const filters = state['currentTopFilters'].map(filter => filter.name)
-  state['orders'].forEach(o => {
-    globalFilterOrders(o, filters)
-  })
-
-  if (filters.length) {
-    filterData()
-  }
-
-  bindOrdersListeners()
+  newAllFilter()
 }
 
 const bindFilter = (elem) => {
@@ -103,13 +88,14 @@ export const controlFiltersReset = () => {
     const resetBtn = nav.querySelector('.header-button__reset')
     if (resetBtn === null) {
       nav.insertAdjacentHTML('beforeend', `
-          <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
+          <button class='main__button--click main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
       `)
 
       nav.querySelector('.header-button__reset').addEventListener('click', e => {
         state['filtered'] = false
+        state['searched'] = false
         state['tableFilters'] = {}
-        document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))
+        // document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))
 
         tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
           cell.style.textDecoration = 'none'
