@@ -1,15 +1,8 @@
 import {state} from "../state";
-import {deleteOrders} from "../orders";
-import {bindOrdersListeners} from "../bindListeners";
+import {deleteOrders} from "../getOrders";
 import {filterRoutesState} from "./filterRoutesState";
-import {drawOrders} from "../drawe/drawOrders";
-import {addTriggers} from "../addTriggers";
-import {showRoutesIssued} from "../showFull";
-import {triggerFilesModal} from "../modals/downloadFilesModal";
-import {triggerRoutesModal} from "../modals/routesModal";
-import {triggerCommentsModal} from "../modals/commentsModal";
-import {drawHelpers} from "../drawe/helpersDraw";
-import {copyOrderHandler} from "../copyOrderHandler";
+import {drawOrders, table} from "../drawe/drawOrders";
+import {bindOrdersListeners} from "../bindListeners";
 
 export const newAllFilter = () => {
   deleteOrders()
@@ -25,9 +18,6 @@ export const newAllFilter = () => {
 
   const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted
   const isTopRoutesFiltered = !!topRouteFilters.length
-
-  // console.log('routesTopFilter', isTopRoutesFiltered)
-  // console.log('routesStatusFilter', isRouteStatusFiltered)
 
   if (searched) {
     console.log('searched', searched)
@@ -178,7 +168,7 @@ export const newAllFilter = () => {
       console.log(flag)
       if (flag) {
         console.log('DRAW FILTERED DATA')
-        drawOrders(order, state.orders, state.managers)
+        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
       }
 
       flag = true
@@ -210,7 +200,7 @@ export const newAllFilter = () => {
 
             flag = statusFlag && plotFlag
             if (flag) {
-              drawOrders(order, state.orders, state.managers)
+              drawOrders(table, `afterbegin`, order, state.orders, state.managers)
               break
             }
           }
@@ -223,20 +213,9 @@ export const newAllFilter = () => {
     console.log('just draw data')
 
     state.orders.forEach(order => {
-      drawOrders(order, state.orders, state.managers)
+      drawOrders(table, `afterbegin`, order, state.orders, state.managers)
     })
   }
 
   bindOrdersListeners()
-  addTriggers("#db_id", showRoutesIssued)
-  addTriggers(".table__files", triggerFilesModal)
-  addTriggers(".table__route", triggerRoutesModal)
-  addTriggers(".table__comment", triggerCommentsModal)
-  drawHelpers()
-
-  if (state.adminCheck || state.manCheck) {
-    addTriggers(".order__copy", copyOrderHandler)
-  } else {
-    document.querySelectorAll('#order__copy').forEach(copy => copy.remove())
-  }
 }

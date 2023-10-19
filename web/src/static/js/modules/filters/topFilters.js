@@ -1,6 +1,6 @@
 import {getData} from '../getData';
 import {state, userInf} from "../state";
-import {getOrders} from "../orders";
+import {getOrders} from "../getOrders";
 import {getReports} from "../../report/getReports";
 import {ucFirst} from "../../ucFirst";
 import {searchOrdersHandler} from "../modals/searchOrdersModal";
@@ -76,7 +76,8 @@ export const topFiltersHandler = () => {
       } else if (link.textContent.trim().includes('Главная')) {
         sessionStorage.setItem('page', 'main')
         window.location.href = link.querySelector('.hidden__input').value
-        getOrders()
+        // getOrders('get-all', true)
+        newAllFilter()
       } else {
         console.log(window.location.href)
         window.location.href = link.querySelector('.hidden__input').value
@@ -150,7 +151,8 @@ export const topFiltersHandler = () => {
           controlFilterReset()
         } else {
           if (window.location.href.includes('/main/table')) {
-            getOrders('get-all')
+            // getOrders('get-all', true)
+            newAllFilter()
           } else {
             getReports()
           }
@@ -218,7 +220,8 @@ export const topFiltersHandler = () => {
           filtered = true
           controlFilterReset()
         } else {
-          getOrders('get-all')
+          // getOrders('get-all', true)
+          newAllFilter()
           filtered = false
           controlFilterReset()
         }
@@ -244,7 +247,8 @@ export const topFiltersHandler = () => {
 
           document.querySelector('.nav-filters__reset').remove()
           if (window.location.href.includes('/main/table')) {
-            getOrders('get-all')
+            getOrders('get-all', true)
+            newAllFilter()
           } else {
             getReports()
           }

@@ -1,5 +1,5 @@
 import {state} from "../state";
-import {getOrders} from "../orders";
+import {getOrders} from "../getOrders";
 import {getTime} from "../getTime";
 import {newAllFilter} from "./newAllFilter";
 
@@ -44,7 +44,8 @@ export const tableRoutesFiltersHandler = () => {
     if (inWorkBtn.classList.contains('route__filter--chosen')) {
       inWorkBtn.classList.remove('route__filter--chosen')
       state['routesFilters'].started = false
-      getOrders()
+      // getOrders('get-all', true)
+      newAllFilter()
       return
     }
 
@@ -60,6 +61,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].completed = false
     state['routesFilters'].planned = false
 
+    // getOrders('get-all', true)
     newAllFilter()
   })
 
@@ -67,7 +69,8 @@ export const tableRoutesFiltersHandler = () => {
     if (notWorkBtn.classList.contains('route__filter--chosen')) {
       notWorkBtn.classList.remove('route__filter--chosen')
       state['routesFilters'].unstarted = false
-      getOrders()
+      // getOrders('get-all', true)
+      newAllFilter()
       return
     }
 
@@ -90,7 +93,8 @@ export const tableRoutesFiltersHandler = () => {
     if (inErrorBtn.classList.contains('route__filter--chosen')) {
       inErrorBtn.classList.remove('route__filter--chosen')
       state['routesFilters'].error = false
-      getOrders()
+      // getOrders('get-all', true)
+      newAllFilter()
       return
     }
 
@@ -113,7 +117,8 @@ export const tableRoutesFiltersHandler = () => {
     if (completedBtn.classList.contains('route__filter--chosen')) {
       completedBtn.classList.remove('route__filter--chosen')
       state['routesFilters'].completed = false
-      getOrders()
+      // getOrders('get-all', true)
+      newAllFilter()
       return
     }
 
@@ -148,7 +153,8 @@ export const tableRoutesFiltersHandler = () => {
       state.inPlanDate = today
       console.log(state.inPlanDate)
       state['routesFilters'].planned = false
-      getOrders()
+      // getOrders('get-all', true)
+      newAllFilter()
       return
     }
 

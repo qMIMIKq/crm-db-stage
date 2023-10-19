@@ -68,7 +68,7 @@
 .data {
   display: flex;
   height: 350px;
-  padding: 5px;
+  padding: 15px;
   overflow-y: scroll;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -76,23 +76,23 @@
 
   &__file {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 260px;
+    height: 260px;
     margin-bottom: 60px;
   }
 }
 
 .link__preview {
   display: block;
-  width: 280px;
-  height: 280px;
+  width: 260px;
+  height: 260px;
   margin-bottom: 10px;
 }
 
 .file {
   &__preview {
-    width: 280px;
-    height: 280px;
+    width: 260px;
+    height: 260px;
     //object-fit: cover;
   }
 

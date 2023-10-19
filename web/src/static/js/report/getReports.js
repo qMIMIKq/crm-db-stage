@@ -1,7 +1,7 @@
 import {state} from '../modules/state';
 import {sendData} from "../modules/sendData";
 import {drawReport} from "./drawReport";
-import {deleteOrders} from "../modules/orders";
+import {deleteOrders} from "../modules/getOrders";
 import {
   bindReportsFilters,
   deleteReportsFilters,

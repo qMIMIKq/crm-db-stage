@@ -1,5 +1,5 @@
 import {state, userInf} from "../../modules/state";
-import {deleteOrders, getOrders} from "../../modules/orders";
+import {deleteOrders, getOrders} from "../../modules/getOrders";
 import {getReports} from "../getReports";
 import {getData} from "../../modules/getData";
 import {globalFilterReports} from "./globalFilterReports";
@@ -49,7 +49,7 @@ export const topReportFilter = () => {
       } else if (link.textContent.trim().includes('Главная')) {
         sessionStorage.setItem('page', 'main')
         window.location.href = link.querySelector('.hidden__input').value
-        getOrders()
+        getOrders('get-all', true)
       } else {
         console.log(window.location.href)
         window.location.href = link.querySelector('.hidden__input').value
@@ -116,7 +116,7 @@ export const topReportFilter = () => {
           controlFilterReset()
         } else {
           if (window.location.href.includes('/main/table')) {
-            getOrders('get-all')
+            getOrders('get-all', true)
           } else {
             getReports()
           }
@@ -201,7 +201,7 @@ export const topReportFilter = () => {
           state['currentTopFilters'] = []
           document.querySelector('.nav-filters__reset').remove()
           if (window.location.href.includes('/main/table')) {
-            getOrders('get-all')
+            getOrders('get-all', true)
           } else {
             getReports()
           }

@@ -1,6 +1,6 @@
 import {state} from "./state";
 import {sendData} from "./sendData";
-import {getOrders} from "./orders";
+import {getOrders} from "./getOrders";
 import {showModal} from "./modals/showModal";
 import {appAddr} from "../../../../../appAddr";
 
@@ -49,7 +49,10 @@ export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = t
     document.querySelector('.order__delete').addEventListener('click', e => {
       confirmDeleteHandler(e, () => {
         sendData(`${appAddr}/api/orders/delete/${id}`, 'POST', null).then(() => {
-          getOrders()
+          document.querySelector(`#form-${id}`).remove()
+          state.orders.filter(order => order.id === id)
+
+          getOrders('get-all', true)
         })
       }, `Подвтердить удаление заказа №${id}?`)
     })

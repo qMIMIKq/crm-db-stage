@@ -1,11 +1,11 @@
-export const drawHelpers = () => {
-  document.querySelectorAll('.table-body__helper').forEach(cell => {
+export const drawHelpers = (currentOrder) => {
+  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
     if (!cell.classList.contains('table__route')) {
       const valElem = cell.querySelector('.table__data')
       const value = valElem.value
 
       if ((valElem.classList.contains('table-m-select') && value.length > 2) || (valElem.scrollWidth > valElem.offsetWidth)) {
-        cell.addEventListener('mouseenter', () => {
+        const helperEnter = e => {
           if (value) {
             cell.insertAdjacentHTML('beforeend', `
                 <div class="check-helper">${value}</div>
@@ -21,18 +21,23 @@ export const drawHelpers = () => {
               }
             }
           }
-        })
-
-        cell.addEventListener('mouseleave', e => {
+        }
+        const helperLeave = e => {
           try {
             cell.querySelector('.check-helper').remove()
           } catch {
           }
-        })
+        }
+
+        cell.removeEventListener('mouseenter', helperEnter)
+        cell.addEventListener('mouseenter', helperEnter)
+
+        cell.removeEventListener('mouseleave', helperLeave)
+        cell.addEventListener('mouseleave', helperLeave)
       }
     } else {
       let value = cell.getAttribute('data-title')
-      cell.addEventListener('mouseenter', () => {
+      const helperEnter = e => {
         if (value) {
 
           const check = value.split('/')
@@ -63,14 +68,18 @@ export const drawHelpers = () => {
             }
           }
         }
-      })
-
-      cell.addEventListener('mouseleave', e => {
+      }
+      const helperLeave = e => {
         try {
           cell.querySelector('.check-helper').remove()
         } catch {
         }
-      })
+      }
+      cell.removeEventListener('mouseenter', helperEnter)
+      cell.addEventListener('mouseenter', () => helperEnter)
+
+      cell.removeEventListener('mouseleave', helperLeave)
+      cell.addEventListener('mouseleave', e => helperLeave)
     }
   })
 }

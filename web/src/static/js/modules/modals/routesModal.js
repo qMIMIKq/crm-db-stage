@@ -5,7 +5,7 @@ import {user} from '../../table';
 import {submitData} from "../submitOrdersData";
 import {sendData} from "../sendData";
 import {showResult} from "../submitControl";
-import {getOrders} from "../orders";
+import {getOrders} from "../getOrders";
 import {getTime} from "../getTime";
 import {planDateHandler} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
@@ -621,7 +621,7 @@ export const triggerRoutesModal = e => {
             .then(resp => {
               if (resp.ok) showResult(true)
               modalElem.remove()
-              getOrders('get-all')
+              getOrders('get-all', true)
             })
         }, 'Удалить маршрут?')
       })

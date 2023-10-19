@@ -14,13 +14,13 @@ type OrdersPG struct {
 	reportsPG *ReportsPG
 }
 
-func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
+func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 	query := fmt.Sprintf(`
 			UPDATE orders 
 				 SET order_number = $1 ,order_sample = $2, order_client = $3, order_name = $4,
 						 order_material = $5, order_quantity = $6, order_issued = $7, order_m = $8,
-						 order_endtime = $9, order_otk = $10, order_p = $11, completed = $12
-			WHERE order_id = $13
+						 order_endtime = $9, order_otk = $10, order_p = $11, completed = $12, time_of_modify = $13
+			WHERE order_id = $14
 	`)
 
 	fileQuery := fmt.Sprintf(`
@@ -44,16 +44,20 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var err error
 	for _, order := range orders {
+		log.Info().Msgf("NON CONVERTED TIME %v", time.Now())
+		timeOfModify := time.Now().Format("2006-01-02 15:04:05")
+		log.Info().Msgf("time of modify %v", timeOfModify)
+
 		if order.EndTime != "" {
 			_, err = o.db.Exec(query, order.Number, order.Sample,
 				order.Client, order.Name, order.Material, order.Quantity,
 				order.Issued, order.M, order.EndTime, order.OTK,
-				order.P, order.Completed, order.ID)
+				order.P, order.Completed, timeOfModify, order.ID)
 		} else {
 			_, err = o.db.Exec(query, order.Number, order.Sample,
 				order.Client, order.Name, order.Material, order.Quantity,
 				order.Issued, order.M, nil, order.OTK,
-				order.P, order.Completed, order.ID)
+				order.P, order.Completed, timeOfModify, order.ID)
 		}
 		if err != nil {
 			log.Err(err).Caller().Msg("Error")
@@ -119,7 +123,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			var dbRoutePos []domain.CheckRoute
 			err = o.db.Select(&dbRoutePos, routesCheck, order.ID, routePos)
 
-			log.Info().Interface("route", route.AddedDates).Msg("CHECK")
+			//log.Info().Interface("route", route.AddedDates).Msg("CHECK")
 			if len(dbRoutePos) > 0 {
 				var planDates []string
 				for _, info := range route.AddedDates {
@@ -149,7 +153,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 				_, err = o.db.Exec("DELETE FROM plans WHERE route_id = $1 AND plan_date >= $2", dbRoutePos[0].RouteID, today)
 				for _, info := range route.AddedDates {
-					log.Info().Interface("info", info).Msg("INFO !!")
+					//log.Info().Interface("info", info).Msg("INFO !!")
 					_, err := o.db.Exec(planQuery, routeID, order.ID, route.Plot, info.Date, info.DateInfo.Divider, strings.Join(info.DateInfo.Queues, ", "))
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
@@ -168,7 +172,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						order.Name, route.Quantity, route.Issued, route.DayQuantity,
 						route.User, issuedToday, order.Material, route.Plot, today, routePos, routeID,
 					).Scan(&reportID)
-					log.Info().Msgf("ADD REPORT %v", reportID)
+					//log.Info().Msgf("ADD REPORT %v", reportID)
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
 					}
@@ -227,7 +231,7 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						order.Name, route.Quantity, route.Issued, route.DayQuantity,
 						route.User, issuedToday, order.Material, route.Plot, today, routePos, routeID,
 					).Scan(&reportID)
-					log.Info().Msgf("ADD REPORT %v", reportID)
+					//log.Info().Msgf("ADD REPORT %v", reportID)
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
 					}
@@ -252,12 +256,12 @@ func (o OrdersPG) UpdateOrders(orders []*domain.Order) error {
 	return err
 }
 
-func (o OrdersPG) AddOrders(orders []*domain.Order) error {
+func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 	orderQuery := fmt.Sprintf(`
 			INSERT INTO orders
 						 (order_number,order_sample,order_client,order_name,
-						 order_material, order_quantity, order_issued, order_m, order_endtime, order_otk, order_p)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+						 order_material, order_quantity, order_issued, order_m, order_endtime, order_otk, order_p, time_of_modify)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 			RETURNING order_id
 	`)
 
@@ -297,12 +301,15 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 	var err error
 	var id string
 	for _, order := range orders {
+		timeOfModify := time.Now().Format("2006-01-02 15:04:05")
+		log.Info().Msgf("time of modify %v", timeOfModify)
+
 		if order.EndTime != "" {
 			err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
-				order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P).Scan(&id)
+				order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P, timeOfModify).Scan(&id)
 		} else {
 			err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
-				order.Name, order.Material, order.Quantity, order.Issued, order.M, nil, order.OTK, order.P).Scan(&id)
+				order.Name, order.Material, order.Quantity, order.Issued, order.M, nil, order.OTK, order.P, timeOfModify).Scan(&id)
 		}
 
 		err = o.db.Select(&files, getFilesQuery, id)
@@ -395,7 +402,7 @@ func (o OrdersPG) AddOrders(orders []*domain.Order) error {
 	return err
 }
 
-func (o OrdersPG) findFile(files []string, file string) bool {
+func (o *OrdersPG) findFile(files []string, file string) bool {
 	for _, f := range files {
 		if f == file {
 			return true
@@ -405,12 +412,12 @@ func (o OrdersPG) findFile(files []string, file string) bool {
 	return false
 }
 
-func (o OrdersPG) DeleteOrderByID(id int) error {
+func (o *OrdersPG) DeleteOrderByID(id int) error {
 	_, err := o.db.Exec("DELETE FROM orders WHERE order_id = $1", id)
 	return err
 }
 
-func (o OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
+func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	log.Info().Msgf("Getting orders, %v", params.Old)
 
 	var query string
@@ -425,6 +432,17 @@ func (o OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	} else {
 		query = fmt.Sprintf(`
 			SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC;
+		`)
+	}
+
+	if params.UpdateOnly {
+		query = fmt.Sprintf(`
+			SELECT * 
+			  FROM orders 
+			 WHERE completed = false
+			 	 AND time_of_modify > $1
+			   AND time_of_modify >= $2
+		   ORDER BY order_id ASC;
 		`)
 	}
 
@@ -470,7 +488,6 @@ func (o OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	`)
 
 	var err error
-
 	var orders []*domain.Order
 
 	if params.Old {
@@ -479,6 +496,22 @@ func (o OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 			log.Err(err).Caller().Msg("error is")
 		}
 
+	} else if params.UpdateOnly {
+		formattedStartTime := strings.Join(strings.Split(params.StartTime, " "), "T") + "Z"
+		log.Info().Msgf("Last update time %v", params.UpdateTime)
+		log.Info().Msgf("App start time %v", formattedStartTime)
+
+		if len(params.UpdateTime) > 0 {
+			err = o.db.Select(&orders, query, params.UpdateTime, formattedStartTime)
+			if err != nil {
+				log.Err(err).Caller().Msg("error is")
+			}
+		} else {
+			err = o.db.Select(&orders, query, formattedStartTime, formattedStartTime)
+			if err != nil {
+				log.Err(err).Caller().Msg("error is")
+			}
+		}
 	} else {
 		err = o.db.Select(&orders, query)
 		if err != nil {

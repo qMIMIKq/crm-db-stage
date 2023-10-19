@@ -1,20 +1,21 @@
 import "../../css/table/table.scss"
-import {getOrders} from "../modules/orders";
+import {getOrders} from "../modules/getOrders";
 import {topFiltersHandler} from "../modules/filters/topFilters";
 import {state} from "../modules/state";
 import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
 import {adminHandler} from "../modules/admin/adminHandler";
+import {getTime} from "../modules/getTime";
 
 export const user = JSON.parse(sessionStorage.getItem("user"))
-
 
 if (window.location.href.endsWith('main/table')) {
   console.log('hello')
 
+  state['startTime'] = state['startTime'] ? state['startTime'] : getTime() + `:${new Date().getSeconds()}`
   adminHandler()
   tableRoutesFiltersHandler()
   topFiltersHandler()
-  getOrders()
+  getOrders('get-all', false)
 
   const subBtn = document.querySelector(".header-button__add")
   if (!(state["adminCheck"] || state['manCheck'])) {

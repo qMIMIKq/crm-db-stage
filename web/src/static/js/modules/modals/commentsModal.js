@@ -79,6 +79,7 @@ export const triggerCommentsModal = e => {
       if (event.target === modalElem) {
         if (old) {
           submitData()
+          newComments.value = ""
         }
       }
     })

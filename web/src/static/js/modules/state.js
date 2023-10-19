@@ -12,6 +12,7 @@ export const userInf = JSON.parse(sessionStorage.getItem('user'))
 let state = {
   'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут', 'Нажал паузу'],
   'inPlanDate': '',
+  'startTime': '',
   'filtered': false,
   'searched': false,
   'inWork': false,
@@ -32,6 +33,15 @@ let state = {
   'currentInput': null,
   'checkOrders': [],
   'isArchive': false,
+  'nums': [],
+  'clients': [],
+  'materials': [],
+  'names': [],
+  'quantity': [],
+  'issued': [],
+  'managers': [],
+  'deadlines': [],
+  'timestamps': [],
   'tableFilters': {
     // 'number': '',
     // 'client': '',

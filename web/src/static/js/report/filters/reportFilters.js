@@ -1,5 +1,5 @@
 import {state} from "../../modules/state";
-import {deleteOrders} from "../../modules/orders";
+import {deleteOrders} from "../../modules/getOrders";
 import {bindOrdersListeners} from "../../modules/bindListeners";
 import {getReports} from "../getReports";
 import {globalFilterReports} from "./globalFilterReports";

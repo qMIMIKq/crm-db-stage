@@ -103,9 +103,9 @@
   overflow-y: scroll;
   max-height: 72%;
   //justify-content: space-between;
+  margin-left: 15px;
   align-items: center;
   flex-wrap: wrap;
-  margin-left: -2px;
   //min-height: 308px;
 
   &__item {
@@ -132,7 +132,11 @@
     }
 
     &--busy {
-      border: 1px solid $main_green;
+      border: 2px solid $main_green;
+
+      &:hover {
+        color: $text_black;
+      }
     }
   }
 }

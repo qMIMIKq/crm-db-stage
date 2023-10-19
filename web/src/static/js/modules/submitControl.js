@@ -1,4 +1,4 @@
-import {getOrders} from './orders';
+import {getOrders} from './getOrders';
 import {bindOrdersListeners} from './bindListeners';
 import {orderHTML, table} from './drawe/drawOrders';
 import {addTriggers} from './addTriggers';
@@ -47,6 +47,7 @@ export const deleteSubmitBtn = () => {
 
 export const cancelChange = e => {
   state['newOrders'] = false
+  document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove())
   finallyForOrders(true)
 }
 
@@ -79,19 +80,19 @@ export const showResult = status => {
 addOrder.addEventListener('click', e => {
   drawSubmit()
   table.insertAdjacentHTML('afterbegin', orderHTML)
-  drawManagers('.table-m-select', state['managers'], 'adfasdfsdfsdada')
-  drawDeadlineP('.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
-  bindOrdersListeners()
-
-  addTriggers('.table__files', triggerFilesModal)
-  addTriggers('.table__route', triggerRoutesModal)
-  addTriggers('.table__comment', triggerCommentsModal)
-  addTriggers(".order__copy", copyOrderHandler)
+  const currElem = document.querySelector('.table-form--new')
+  bindOrdersListeners(currElem)
+  drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
+  drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
+  addTriggers(currElem, '.table__files', triggerFilesModal)
+  addTriggers(currElem, '.table__route', triggerRoutesModal)
+  addTriggers(currElem, '.table__comment', triggerCommentsModal)
+  addTriggers(currElem, ".order__copy", copyOrderHandler)
 })
 
 export const finallyForOrders = success => {
   deleteSubmitBtn()
   deleteCancelBtn()
   showResult(success)
-  getOrders('get-all')
+  getOrders('get-all', true)
 }

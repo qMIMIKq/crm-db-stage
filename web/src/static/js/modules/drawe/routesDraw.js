@@ -1,9 +1,9 @@
 import {getTime} from "../getTime";
 import {state} from "../state";
 
-export const colorRoutes = (routes) => {
-  const routesWrapper = document.querySelector(".table-routes__wrapper")
-  const routesIssuedWrapper = document.querySelector(".table-routes__issued")
+export const colorRoutes = (routes, parent) => {
+  const routesWrapper = parent.querySelector(".table-routes__wrapper")
+  const routesIssuedWrapper = parent.querySelector(".table-routes__issued")
 
   let date
   if (!state.inPlanDate) {

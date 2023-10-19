@@ -1,20 +1,26 @@
 import {controlFiltersReset} from '../filters/tableFilters';
-import {addTriggers} from '../addTriggers';
 import {drawDeadlineP} from './drawDeadlineP';
 import {state} from '../state';
 import {drawManagers} from './drawManagers';
 import {drawSubmit} from "../submitControl";
 import {deleteOrdersHandler} from "../deleteOrdersHandler";
 import {colorRoutes} from "./routesDraw";
-import {drawHelpers} from "./helpersDraw";
 import {getTime} from "../getTime";
 import {submitData} from "../submitOrdersData";
+import {bindOrdersListeners} from "../bindListeners";
+import {addTriggers} from "../addTriggers";
+import {triggerFilesModal} from "../modals/downloadFilesModal";
+import {triggerRoutesModal} from "../modals/routesModal";
+import {triggerCommentsModal} from "../modals/commentsModal";
 import {copyOrderHandler} from "../copyOrderHandler";
+import {cleanSelect} from "../getOrders";
+import {drawHelpers} from "./helpersDraw";
+import {showRoutesIssued} from "../showFull";
 
 export const table = document.querySelector('.main-table')
 
-export const drawOrders = async (d, data, users) => {
-  // console.time(`draw order ${d.id}` )
+export const drawOrders = (insertPlace, position, d, data, users) => {
+  // console.time(`draw order ${d.id}`)
 
   controlFiltersReset()
   let uniqueFileNames = []
@@ -59,7 +65,7 @@ export const drawOrders = async (d, data, users) => {
     }
   }
 
-  table.insertAdjacentHTML(`afterbegin`, `
+  insertPlace.insertAdjacentHTML(position, `
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
         <ul class='main-table__item'>
             <li class='table-body_cell table__db'>
@@ -73,7 +79,7 @@ export const drawOrders = async (d, data, users) => {
                 <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__files'>
-                <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+                <input id="total_files" class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
                 <input 
@@ -109,7 +115,6 @@ export const drawOrders = async (d, data, users) => {
             </li>
             <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
                 <select ${state['adminCheck'] || state['manCheck'] ? "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button" name="m" id="">
-                    <option selected value=""></option>
                 </select>
             </li>
             <li class="table-body_cell table__endtime">
@@ -216,7 +221,7 @@ export const drawOrders = async (d, data, users) => {
                     tabindex="-1">
             </li>
             <li class="table-body_cell hidden-input">
-                <input class="table__data  hidden-input table__data--ro" 
+                <input class="table__data  hidden-input table__data--ro" §
                     name="all_comments" 
                     type="text"
                     value="${d.comments ? d.comments.join(".-.") : ""}" 
@@ -264,6 +269,7 @@ export const drawOrders = async (d, data, users) => {
         const endTimeIn = parent.querySelector('.table__endtime').querySelector('input')
         endTimeIn.value = today
         submitData()
+        currentOrder.remove()
       } else {
         drawSubmit()
       }
@@ -301,19 +307,32 @@ export const drawOrders = async (d, data, users) => {
   }
 
   if (!state['isArchive']) {
-    drawDeadlineP(".table-p-select", state['deadlinesP'], d.p)
-    drawManagers(".table-m-select", users, d.m)
+    cleanSelect(currentOrder, ".table-p-select")
+    cleanSelect(currentOrder, ".table-m-select")
 
-    // console.time('routes')
+    drawDeadlineP(currentOrder, ".table-p-select", state['deadlinesP'], d.p)
+    drawManagers(currentOrder, ".table-m-select", state.managers, d.m)
+
     if (routes) {
-      colorRoutes(routes)
+      colorRoutes(routes, currentOrder)
     } else {
       deleteOrdersHandler(currentOrder, d.issued, false, d.id)
     }
-    // console.timeEnd('routes')
   }
 
-  // console.timeEnd(`draw order ${d.id}` )
+  addTriggers(currentOrder, "#db_id", showRoutesIssued)
+  addTriggers(currentOrder, '.table__files', triggerFilesModal)
+  addTriggers(currentOrder, '.table__route', triggerRoutesModal)
+  addTriggers(currentOrder, '.table__comment', triggerCommentsModal)
+  addTriggers(currentOrder, ".order__copy", copyOrderHandler)
+  drawHelpers(currentOrder)
+  if (state.adminCheck || state.manCheck) {
+    addTriggers(currentOrder, ".order__copy", copyOrderHandler)
+  } else {
+    document.querySelectorAll('#order__copy').forEach(copy => copy.remove())
+  }
+
+  // console.timeEnd(`draw order ${d.id}`)
 }
 
 export const orderHTML = `
@@ -330,7 +349,7 @@ export const orderHTML = `
                         <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__files">
-                        <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="" tabindex="-1" autocomplete="off">
+                        <input id="total_files" class="main__button table__data  click-chose table__data--ro" type="text" readonly value="0" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__number">
                         <input id="number" class="table__data " name="number" type="text" value="" tabindex="-1" autocomplete="off">
@@ -359,7 +378,6 @@ export const orderHTML = `
                     </li>
                     <li class="table-body_cell table-body__helper table__m">
                         <select class="table__data table-m-select main__button" name="m" id="">
-                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell table-body__helper table__endtime">
@@ -452,7 +470,6 @@ export const orderHTML = `
                     </li>
                     <li class="table-body_cell table-body__helper table__p">
                         <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
-                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell table-body__helper hidden-input">

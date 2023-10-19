@@ -89,8 +89,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "addTriggers": () => (/* binding */ addTriggers)
 /* harmony export */ });
-const addTriggers = (tag, trigger) => {
-  const elems = document.querySelectorAll(tag);
+const addTriggers = (elem, tag, trigger) => {
+  const elems = elem.querySelectorAll(tag);
   elems.forEach(elem => {
     elem.addEventListener('click', trigger);
   });
@@ -1594,11 +1594,12 @@ const copyOrderHandler = e => {
   currElem.querySelector('input[name="quantity"]').value = obj.quantity;
   currElem.querySelector('input[name="issued"]').value = obj.issued;
   currElem.querySelector('input[name="end_time"]').value = obj.end_time;
-  currElem.querySelector('select[name="m"]').value = obj.m;
+  console.log(currElem.querySelector('select[name="m"]'));
   (0,_submitControl__WEBPACK_IMPORTED_MODULE_9__.drawSubmit)();
-  (0,_drawe_drawManagers__WEBPACK_IMPORTED_MODULE_2__.drawManagers)('.table-m-select', _state__WEBPACK_IMPORTED_MODULE_1__.state.managers, 'adfasdfsdfsdada');
-  (0,_drawe_drawDeadlineP__WEBPACK_IMPORTED_MODULE_3__.drawDeadlineP)('.table-p-select', _state__WEBPACK_IMPORTED_MODULE_1__.state.deadlinesP, 'adfasdfsdfsdada');
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
+  (0,_drawe_drawManagers__WEBPACK_IMPORTED_MODULE_2__.drawManagers)(currElem, '.table-m-select', _state__WEBPACK_IMPORTED_MODULE_1__.state.managers, 'adfasdfsdfsdada');
+  (0,_drawe_drawDeadlineP__WEBPACK_IMPORTED_MODULE_3__.drawDeadlineP)(currElem, '.table-p-select', _state__WEBPACK_IMPORTED_MODULE_1__.state.deadlinesP, 'adfasdfsdfsdada');
+  currElem.querySelector('select[name="m"]').value = obj.m;
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)(currElem);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(currElem, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_6__.triggerFilesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(currElem, '.table__route', _modals_routesModal__WEBPACK_IMPORTED_MODULE_7__.triggerRoutesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(currElem, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_8__.triggerCommentsModal);
@@ -1630,7 +1631,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _modals_showModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modals/showModal */ "./web/src/static/js/modules/modals/showModal.js");
 /* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
 
@@ -1679,7 +1680,9 @@ const deleteOrdersHandler = function (currentOrder, issued, routes, id) {
     document.querySelector('.order__delete').addEventListener('click', e => {
       confirmDeleteHandler(e, () => {
         (0,_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/orders/delete/${id}`, 'POST', null).then(() => {
-          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)();
+          document.querySelector(`#form-${id}`).remove();
+          _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.filter(order => order.id === id);
+          (0,_getOrders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all', true);
         });
       }, `Подвтердить удаление заказа №${id}?`);
     });
@@ -1699,12 +1702,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "drawDeadlineP": () => (/* binding */ drawDeadlineP)
 /* harmony export */ });
-const drawDeadlineP = (target, deadlines, chosenDeadline) => {
-  const block = document.querySelector(target);
+const drawDeadlineP = (currentOrder, target, deadlines, chosenDeadline) => {
+  const block = currentOrder.querySelector(target);
+  block.insertAdjacentHTML('afterbegin', `
+    <option selected value=''></option>
+  `);
   deadlines.forEach(deadline => {
     block.insertAdjacentHTML('beforeend', `
-             <option ${Number(chosenDeadline) === Number(deadline) ? 'selected' : ''} value='${deadline}'>${deadline}дн</option>
-        `);
+         <option ${Number(chosenDeadline) === Number(deadline) ? 'selected' : ''} value='${deadline}'>${deadline}дн</option>
+    `);
   });
 };
 
@@ -1721,12 +1727,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "drawManagers": () => (/* binding */ drawManagers)
 /* harmony export */ });
-const drawManagers = (target, managers, manager) => {
-  const block = document.querySelector(target);
+const drawManagers = (currentOrder, target, managers, manager) => {
+  const block = currentOrder.querySelector(target);
+  block.insertAdjacentHTML('afterbegin', `
+    <option selected value=''></option>
+  `);
   managers.forEach(man => {
     block.insertAdjacentHTML('beforeend', `
-             <option ${manager === man.nickname ? 'selected' : ''} value='${man.nickname}'>${man.nickname}</option>
-        `);
+       <option ${manager === man.nickname ? 'selected' : ''} value='${man.nickname}'>${man.nickname}</option>
+    `);
   });
 };
 
@@ -1746,17 +1755,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "table": () => (/* binding */ table)
 /* harmony export */ });
 /* harmony import */ var _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
-/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../addTriggers */ "./web/src/static/js/modules/addTriggers.js");
-/* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawe/drawDeadlineP.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawe/drawManagers.js");
-/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../deleteOrdersHandler */ "./web/src/static/js/modules/deleteOrdersHandler.js");
-/* harmony import */ var _routesDraw__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
-/* harmony import */ var _helpersDraw__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./helpersDraw */ "./web/src/static/js/modules/drawe/helpersDraw.js");
-/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
-/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _copyOrderHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../copyOrderHandler */ "./web/src/static/js/modules/copyOrderHandler.js");
+/* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawe/drawDeadlineP.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawe/drawManagers.js");
+/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../submitControl */ "./web/src/static/js/modules/submitControl.js");
+/* harmony import */ var _deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../deleteOrdersHandler */ "./web/src/static/js/modules/deleteOrdersHandler.js");
+/* harmony import */ var _routesDraw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../addTriggers */ "./web/src/static/js/modules/addTriggers.js");
+/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
+/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
+/* harmony import */ var _copyOrderHandler__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../copyOrderHandler */ "./web/src/static/js/modules/copyOrderHandler.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
+/* harmony import */ var _helpersDraw__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./helpersDraw */ "./web/src/static/js/modules/drawe/helpersDraw.js");
+/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../showFull */ "./web/src/static/js/modules/showFull.js");
+
+
+
+
+
+
 
 
 
@@ -1770,8 +1791,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const table = document.querySelector('.main-table');
-const drawOrders = async (d, data, users) => {
-  // console.time(`draw order ${d.id}` )
+const drawOrders = (insertPlace, position, d, data, users) => {
+  // console.time(`draw order ${d.id}`)
 
   (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.controlFiltersReset)();
   let uniqueFileNames = [];
@@ -1800,14 +1821,14 @@ const drawOrders = async (d, data, users) => {
     let deadline = new Date(d.end_time.split('T')[0]);
     let term = Number(d.p ? d.p.split('дн')[0] : 3);
     deadline.setDate(deadline.getDate() - term);
-    let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_9__.getTime)();
+    let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_7__.getTime)();
     today = today.split(' ')[0];
     today = new Date(today);
     if (today.getTime() >= deadline.getTime()) {
       alertDeadline = true;
     }
   }
-  table.insertAdjacentHTML(`afterbegin`, `
+  insertPlace.insertAdjacentHTML(position, `
       <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
         <ul class='main-table__item'>
             <li class='table-body_cell table__db'>
@@ -1821,31 +1842,31 @@ const drawOrders = async (d, data, users) => {
                 <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__files'>
-                <input class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+                <input id="total_files" class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
                 <input 
-                ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmManGroupper}
+                ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManGroupper}
                 id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table-body__helper table__sample'>
                 <input class='table__data   table__data--ro' name='sample' type='text' value='' readonly tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManGroupper} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManGroupper} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManGroupper} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__quantity'>
-                <input ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
+                <input ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManGroupper} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
             </li>
             <ul class="table__issueds">
                 <li class="table-body_cell table__issued">
-                    <input ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmTechGroupper} class="table__data ${orderCompleted && !_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive ? "table__issued--done tr" : ""}" tabindex="-1"
+                    <input ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmTechGroupper} class="table__data ${orderCompleted && !_state__WEBPACK_IMPORTED_MODULE_2__.state.isArchive ? "table__issued--done tr" : ""}" tabindex="-1"
                     type="number" 
                     name="issued" 
                     required  autocomplete="off"
@@ -1856,13 +1877,12 @@ const drawOrders = async (d, data, users) => {
                 <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
             </li>
             <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
-                <select ${_state__WEBPACK_IMPORTED_MODULE_3__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_3__.state.manCheck ? "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button" name="m" id="">
-                    <option selected value=""></option>
+                <select ${_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck ? "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button" name="m" id="">
                 </select>
             </li>
             <li class="table-body_cell table__endtime">
                 <input class="main__button table__data ${alertDeadline ? 'table__endtime--dead' : ''}"
-                ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmManTechGroupper} 
+                ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManTechGroupper} 
                 name="end_time" 
                 type="text"
                 placeholder=" " 
@@ -1950,7 +1970,7 @@ const drawOrders = async (d, data, users) => {
                 </ul>
             </li>
             <li class="table-body_cell table-body__helper table__p">
-                <select ${_state__WEBPACK_IMPORTED_MODULE_3__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_3__.state.manCheck ? "" : 'style="pointer-events : none"'} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
+                <select ${_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck ? "" : 'style="pointer-events : none"'} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                     <option selected value=""></option>
                 </select>
             </li>
@@ -1964,7 +1984,7 @@ const drawOrders = async (d, data, users) => {
                     tabindex="-1">
             </li>
             <li class="table-body_cell hidden-input">
-                <input class="table__data  hidden-input table__data--ro" 
+                <input class="table__data  hidden-input table__data--ro" §
                     name="all_comments" 
                     type="text"
                     value="${d.comments ? d.comments.join(".-.") : ""}" 
@@ -1974,7 +1994,7 @@ const drawOrders = async (d, data, users) => {
             </li>
             
             <li class="table-body_cell table-body__helper ${d.comments ? "table-body__attr" : ""} table__comment">
-                <input ${_state__WEBPACK_IMPORTED_MODULE_3__.state.inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
+                <input ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManTechGroupper} class="main__button table__data click-chose table__data--ro" tabindex="-1"
                     name="comment" 
                     type="text" 
                     value="${d.comments ? d.comments[d.comments.length - 1] : ""}" 
@@ -1987,7 +2007,7 @@ const drawOrders = async (d, data, users) => {
   const currentOrder = document.getElementById(`form-${d.id}`);
   const routes = d["db_routes"];
   const completedBlock = currentOrder.querySelector('.table__issued--done');
-  if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
+  if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_2__.state.isArchive) {
     completedBlock.insertAdjacentHTML(`afterend`, `
       <li class="table-body_cell table-body__helper hidden__input table__complete">
           <input class="table__data table__issued--done main__button tr" tabindex="-1"
@@ -2000,20 +2020,21 @@ const drawOrders = async (d, data, users) => {
     currentOrder.querySelector('.table__complete').addEventListener('click', e => {
       currentOrder.querySelector('#completed').value = true;
       const parent = e.target.closest('.table-form--old');
-      let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_9__.getTime)();
+      let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_7__.getTime)();
       today = today.substring(0, today.length - 5).trim();
       if (parent !== null) {
         parent.classList.remove('table-form--old');
         parent.classList.add('table-form--upd');
         const endTimeIn = parent.querySelector('.table__endtime').querySelector('input');
         endTimeIn.value = today;
-        (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_10__.submitData)();
+        (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_8__.submitData)();
+        currentOrder.remove();
       } else {
-        (0,_submitControl__WEBPACK_IMPORTED_MODULE_5__.drawSubmit)();
+        (0,_submitControl__WEBPACK_IMPORTED_MODULE_4__.drawSubmit)();
       }
     });
   }
-  if (_state__WEBPACK_IMPORTED_MODULE_3__.state.openedOrders.includes(String(d.id))) {
+  if (_state__WEBPACK_IMPORTED_MODULE_2__.state.openedOrders.includes(String(d.id))) {
     currentOrder.querySelectorAll('.table__data').forEach(item => {
       if (!item.classList.contains('tr')) {
         if (!item.classList.contains('table__data--opened')) {
@@ -2023,7 +2044,7 @@ const drawOrders = async (d, data, users) => {
         item.classList.add('table__data--chosen');
       }
     });
-    (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_6__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id, false);
+    (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id, false);
     try {
       currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input');
       const complete = currentOrder.querySelector('.table__complete');
@@ -2031,27 +2052,37 @@ const drawOrders = async (d, data, users) => {
       complete.querySelector('.tr').classList.add('table-data__chosen');
     } catch {}
   }
-  if (String(d.id) === _state__WEBPACK_IMPORTED_MODULE_3__.state.currentOrder) {
+  if (String(d.id) === _state__WEBPACK_IMPORTED_MODULE_2__.state.currentOrder) {
     currentOrder.querySelectorAll('.table__data').forEach(item => {
       if (!item.classList.contains('table__data--opened')) {
         item.classList.add('table__data--chosen');
       }
     });
   }
-  if (!_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
-    (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_2__.drawDeadlineP)(".table-p-select", _state__WEBPACK_IMPORTED_MODULE_3__.state.deadlinesP, d.p);
-    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_4__.drawManagers)(".table-m-select", users, d.m);
-
-    // console.time('routes')
+  if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.isArchive) {
+    (0,_getOrders__WEBPACK_IMPORTED_MODULE_15__.cleanSelect)(currentOrder, ".table-p-select");
+    (0,_getOrders__WEBPACK_IMPORTED_MODULE_15__.cleanSelect)(currentOrder, ".table-m-select");
+    (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_1__.drawDeadlineP)(currentOrder, ".table-p-select", _state__WEBPACK_IMPORTED_MODULE_2__.state.deadlinesP, d.p);
+    (0,_drawManagers__WEBPACK_IMPORTED_MODULE_3__.drawManagers)(currentOrder, ".table-m-select", _state__WEBPACK_IMPORTED_MODULE_2__.state.managers, d.m);
     if (routes) {
-      (0,_routesDraw__WEBPACK_IMPORTED_MODULE_7__.colorRoutes)(routes);
+      (0,_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(routes, currentOrder);
     } else {
-      (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_6__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
+      (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
     }
-    // console.timeEnd('routes')
+  }
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, "#db_id", _showFull__WEBPACK_IMPORTED_MODULE_17__.showRoutesIssued);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_11__.triggerFilesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, '.table__route', _modals_routesModal__WEBPACK_IMPORTED_MODULE_12__.triggerRoutesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_13__.triggerCommentsModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_14__.copyOrderHandler);
+  (0,_helpersDraw__WEBPACK_IMPORTED_MODULE_16__.drawHelpers)(currentOrder);
+  if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck) {
+    (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_14__.copyOrderHandler);
+  } else {
+    document.querySelectorAll('#order__copy').forEach(copy => copy.remove());
   }
 
-  // console.timeEnd(`draw order ${d.id}` )
+  // console.timeEnd(`draw order ${d.id}`)
 };
 
 const orderHTML = `
@@ -2068,7 +2099,7 @@ const orderHTML = `
                         <input id="files" class="table__data  table__data--ro hidden-input" name="files" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__files">
-                        <input class="main__button table__data  click-chose table__data--ro" type="text" readonly value="" tabindex="-1" autocomplete="off">
+                        <input id="total_files" class="main__button table__data  click-chose table__data--ro" type="text" readonly value="0" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__number">
                         <input id="number" class="table__data " name="number" type="text" value="" tabindex="-1" autocomplete="off">
@@ -2097,7 +2128,6 @@ const orderHTML = `
                     </li>
                     <li class="table-body_cell table-body__helper table__m">
                         <select class="table__data table-m-select main__button" name="m" id="">
-                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell table-body__helper table__endtime">
@@ -2190,7 +2220,6 @@ const orderHTML = `
                     </li>
                     <li class="table-body_cell table-body__helper table__p">
                         <select class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
-                            <option selected value=""></option>
                         </select>
                     </li>
                     <li class="table-body_cell table-body__helper hidden-input">
@@ -2226,6 +2255,189 @@ const orderHTML = `
 
 /***/ }),
 
+/***/ "./web/src/static/js/modules/drawe/drawUpdatedData.js":
+/*!************************************************************!*\
+  !*** ./web/src/static/js/modules/drawe/drawUpdatedData.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "drawUpdatedData": () => (/* binding */ drawUpdatedData)
+/* harmony export */ });
+/* harmony import */ var _drawOrders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../submitControl */ "./web/src/static/js/modules/submitControl.js");
+/* harmony import */ var _deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../deleteOrdersHandler */ "./web/src/static/js/modules/deleteOrdersHandler.js");
+/* harmony import */ var _drawDeadlineP__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./drawDeadlineP */ "./web/src/static/js/modules/drawe/drawDeadlineP.js");
+/* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawe/drawManagers.js");
+/* harmony import */ var _routesDraw__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
+
+
+
+
+
+
+
+
+
+
+const drawUpdatedData = (d, data, filtered) => {
+  let uniqueFileNames = [];
+  if (d.files !== null && d.files !== undefined) {
+    d.files.forEach(file => {
+      const arrDotFile = file.split('.');
+      const fileType = arrDotFile[arrDotFile.length - 1];
+      const arrSlashFile = file.split('/');
+      arrSlashFile.splice(0, 3);
+      const fileName = arrSlashFile.join('');
+      let fileNameWithoutType = fileName.split('.');
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
+      switch (fileType) {
+        case 'png':
+        case 'PNG':
+          if (!uniqueFileNames.includes(fileNameWithoutType)) uniqueFileNames.push(fileNameWithoutType);
+          break;
+        default:
+          uniqueFileNames.push(fileNameWithoutType);
+      }
+    });
+  }
+  const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity);
+  let alertDeadline = false;
+  if (d.end_time) {
+    let deadline = new Date(d.end_time.split('T')[0]);
+    let term = Number(d.p ? d.p.split('дн')[0] : 3);
+    deadline.setDate(deadline.getDate() - term);
+    let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_2__.getTime)();
+    today = today.split(' ')[0];
+    today = new Date(today);
+    if (today.getTime() >= deadline.getTime()) {
+      alertDeadline = true;
+    }
+  }
+  const currentOrder = document.querySelector(`#form-${d.id}`);
+  const orders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders;
+  if (currentOrder) {
+    for (let i = 0; i < orders.length; i++) {
+      if (orders[i].id === d.id) {
+        orders[i] = d;
+        console.log(orders[i]);
+        break;
+      }
+    }
+    if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+      return;
+    }
+    currentOrder.querySelector('#number').value = d.number;
+    currentOrder.querySelector('input[name="client"]').value = d.client;
+    currentOrder.querySelector('input[name="files"]').value = `${d.files ? d.files.join(', ') : ''}`;
+    currentOrder.querySelector('#total_files').value = uniqueFileNames.length;
+    currentOrder.querySelector('input[name="name"]').value = d.name;
+    currentOrder.querySelector('input[name="material"]').value = d.material;
+    currentOrder.querySelector('input[name="quantity"]').value = d.quantity;
+    const issued = currentOrder.querySelector('input[name="issued"]');
+    issued.value = d.issued;
+    if (orderCompleted && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+      issued.classList.add('table__issued--done');
+    } else {
+      issued.classList.remove('table__issued--done');
+    }
+    currentOrder.querySelector('select[name="m"]').value = d.m;
+    const endTime = currentOrder.querySelector('input[name="end_time"]');
+    endTime.value = `${d.end_time ? d.end_time.split("T")[0] : ''}`;
+    if (alertDeadline && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+      endTime.classList.add('table__endtime--dead');
+    } else {
+      endTime.classList.remove('table__endtime--dead');
+    }
+    currentOrder.querySelector('select[name="p"]').value = d.p;
+    currentOrder.querySelector('input[name="comment"]').value = `${d.comments ? d.comments[d.comments.length - 1] : ""}`;
+    const comments = currentOrder.querySelector('input[name="all_comments"]');
+    comments.value = `${d.comments ? d.comments.join(".-.") : ""}`;
+    currentOrder.classList.remove('table-form--upd');
+    currentOrder.classList.add('table-form--old');
+    const routes = d["db_routes"];
+    const completedBlock = currentOrder.querySelector('.table__issued--done');
+    if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+      completedBlock.insertAdjacentHTML(`afterend`, `
+      <li class="table-body_cell table-body__helper hidden__input table__complete">
+          <input class="table__data table__issued--done main__button tr" tabindex="-1"
+          readonly
+          type="text"
+          autocomplete="off"
+          value="В архив">
+      </li>
+  `);
+      currentOrder.querySelector('.table__complete').addEventListener('click', e => {
+        currentOrder.querySelector('#completed').value = true;
+        const parent = e.target.closest('.table-form--old');
+        let today = (0,_getTime__WEBPACK_IMPORTED_MODULE_2__.getTime)();
+        today = today.substring(0, today.length - 5).trim();
+        if (parent !== null) {
+          parent.classList.remove('table-form--old');
+          parent.classList.add('table-form--upd');
+          const endTimeIn = parent.querySelector('.table__endtime').querySelector('input');
+          endTimeIn.value = today;
+          (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_3__.submitData)();
+        } else {
+          (0,_submitControl__WEBPACK_IMPORTED_MODULE_4__.drawSubmit)();
+        }
+      });
+    }
+    if (_state__WEBPACK_IMPORTED_MODULE_1__.state.openedOrders.includes(String(d.id))) {
+      currentOrder.querySelectorAll('.table__data').forEach(item => {
+        if (!item.classList.contains('tr')) {
+          if (!item.classList.contains('table__data--opened')) {
+            item.classList.add('table__data--opened');
+          }
+        } else {
+          item.classList.add('table__data--chosen');
+        }
+      });
+      (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id, false);
+      try {
+        currentOrder.querySelector('.table-routes__issued').classList.remove('hidden__input');
+        const complete = currentOrder.querySelector('.table__complete');
+        complete.classList.remove('hidden__input');
+        complete.querySelector('.tr').classList.add('table-data__chosen');
+      } catch {}
+    }
+    if (String(d.id) === _state__WEBPACK_IMPORTED_MODULE_1__.state.currentOrder) {
+      currentOrder.querySelectorAll('.table__data').forEach(item => {
+        if (!item.classList.contains('table__data--opened')) {
+          item.classList.add('table__data--chosen');
+        }
+      });
+    }
+    if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+      (0,_getOrders__WEBPACK_IMPORTED_MODULE_9__.cleanSelect)(currentOrder, ".table-p-select");
+      (0,_getOrders__WEBPACK_IMPORTED_MODULE_9__.cleanSelect)(currentOrder, ".table-m-select");
+      (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_6__.drawDeadlineP)(currentOrder, ".table-p-select", _state__WEBPACK_IMPORTED_MODULE_1__.state.deadlinesP, d.p);
+      (0,_drawManagers__WEBPACK_IMPORTED_MODULE_7__.drawManagers)(currentOrder, ".table-m-select", _state__WEBPACK_IMPORTED_MODULE_1__.state.managers, d.m);
+      if (routes) {
+        (0,_routesDraw__WEBPACK_IMPORTED_MODULE_8__.colorRoutes)(routes, currentOrder);
+      } else {
+        (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
+      }
+    }
+  } else {
+    console.log('WTF');
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.push(d);
+    if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+      return;
+    }
+    document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove());
+    (0,_drawOrders__WEBPACK_IMPORTED_MODULE_0__.drawOrders)(_drawOrders__WEBPACK_IMPORTED_MODULE_0__.table, 'afterbegin', d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
+  }
+};
+
+/***/ }),
+
 /***/ "./web/src/static/js/modules/drawe/helpersDraw.js":
 /*!********************************************************!*\
   !*** ./web/src/static/js/modules/drawe/helpersDraw.js ***!
@@ -2237,13 +2449,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "drawHelpers": () => (/* binding */ drawHelpers)
 /* harmony export */ });
-const drawHelpers = () => {
-  document.querySelectorAll('.table-body__helper').forEach(cell => {
+const drawHelpers = currentOrder => {
+  currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
     if (!cell.classList.contains('table__route')) {
       const valElem = cell.querySelector('.table__data');
       const value = valElem.value;
       if (valElem.classList.contains('table-m-select') && value.length > 2 || valElem.scrollWidth > valElem.offsetWidth) {
-        cell.addEventListener('mouseenter', () => {
+        const helperEnter = e => {
           if (value) {
             cell.insertAdjacentHTML('beforeend', `
                 <div class="check-helper">${value}</div>
@@ -2258,16 +2470,20 @@ const drawHelpers = () => {
               }
             }
           }
-        });
-        cell.addEventListener('mouseleave', e => {
+        };
+        const helperLeave = e => {
           try {
             cell.querySelector('.check-helper').remove();
           } catch {}
-        });
+        };
+        cell.removeEventListener('mouseenter', helperEnter);
+        cell.addEventListener('mouseenter', helperEnter);
+        cell.removeEventListener('mouseleave', helperLeave);
+        cell.addEventListener('mouseleave', helperLeave);
       }
     } else {
       let value = cell.getAttribute('data-title');
-      cell.addEventListener('mouseenter', () => {
+      const helperEnter = e => {
         if (value) {
           const check = value.split('/');
           cell.insertAdjacentHTML('beforeend', `
@@ -2294,12 +2510,16 @@ const drawHelpers = () => {
             }
           }
         }
-      });
-      cell.addEventListener('mouseleave', e => {
+      };
+      const helperLeave = e => {
         try {
           cell.querySelector('.check-helper').remove();
         } catch {}
-      });
+      };
+      cell.removeEventListener('mouseenter', helperEnter);
+      cell.addEventListener('mouseenter', () => helperEnter);
+      cell.removeEventListener('mouseleave', helperLeave);
+      cell.addEventListener('mouseleave', e => helperLeave);
     }
   });
 };
@@ -2321,9 +2541,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
 
 
-const colorRoutes = routes => {
-  const routesWrapper = document.querySelector(".table-routes__wrapper");
-  const routesIssuedWrapper = document.querySelector(".table-routes__issued");
+const colorRoutes = (routes, parent) => {
+  const routesWrapper = parent.querySelector(".table-routes__wrapper");
+  const routesIssuedWrapper = parent.querySelector(".table-routes__issued");
   let date;
   if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.inPlanDate) {
     date = (0,_getTime__WEBPACK_IMPORTED_MODULE_0__.getTime)();
@@ -2446,31 +2666,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "newAllFilter": () => (/* binding */ newAllFilter)
 /* harmony export */ });
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-/* harmony import */ var _filterRoutesState__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filterRoutesState */ "./web/src/static/js/modules/filters/filterRoutesState.js");
-/* harmony import */ var _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
-/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../addTriggers */ "./web/src/static/js/modules/addTriggers.js");
-/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../showFull */ "./web/src/static/js/modules/showFull.js");
-/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
-/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
-/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
-/* harmony import */ var _drawe_helpersDraw__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../drawe/helpersDraw */ "./web/src/static/js/modules/drawe/helpersDraw.js");
-/* harmony import */ var _copyOrderHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../copyOrderHandler */ "./web/src/static/js/modules/copyOrderHandler.js");
-
-
-
-
-
-
-
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
+/* harmony import */ var _filterRoutesState__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./filterRoutesState */ "./web/src/static/js/modules/filters/filterRoutesState.js");
+/* harmony import */ var _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 
 
 
 
 
 const newAllFilter = () => {
-  (0,_orders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+  (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
   let flag = true;
   const searched = _state__WEBPACK_IMPORTED_MODULE_0__.state.searched;
   const filtered = _state__WEBPACK_IMPORTED_MODULE_0__.state.filtered;
@@ -2479,10 +2685,6 @@ const newAllFilter = () => {
   const tableFilters = _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters;
   const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted;
   const isTopRoutesFiltered = !!topRouteFilters.length;
-
-  // console.log('routesTopFilter', isTopRoutesFiltered)
-  // console.log('routesStatusFilter', isRouteStatusFiltered)
-
   if (searched) {
     console.log('searched', searched);
     _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
@@ -2524,7 +2726,7 @@ const newAllFilter = () => {
               let plotFlag = true;
               const route = routes[i];
               if (isRouteStatusFiltered) {
-                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_3__.filterRoutesState)(route);
+                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
                 console.log('status routes filter', statusFlag);
               }
               if (isTopRoutesFiltered) {
@@ -2545,7 +2747,7 @@ const newAllFilter = () => {
       console.log(flag);
       if (flag) {
         console.log('DRAW FILTERED DATA');
-        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_4__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
       }
       flag = true;
     });
@@ -2588,7 +2790,7 @@ const newAllFilter = () => {
               let plotFlag = true;
               const route = routes[i];
               if (isRouteStatusFiltered) {
-                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_3__.filterRoutesState)(route);
+                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
                 console.log('status routes filter', statusFlag);
               }
               if (isTopRoutesFiltered) {
@@ -2609,7 +2811,7 @@ const newAllFilter = () => {
       console.log(flag);
       if (flag) {
         console.log('DRAW FILTERED DATA');
-        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_4__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
       }
       flag = true;
     });
@@ -2627,14 +2829,14 @@ const newAllFilter = () => {
             let plotFlag = true;
             const route = routes[i];
             if (isRouteStatusFiltered) {
-              statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_3__.filterRoutesState)(route);
+              statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
             }
             if (isTopRoutesFiltered) {
               plotFlag = topRouteFilters.includes(route.plot);
             }
             flag = statusFlag && plotFlag;
             if (flag) {
-              (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_4__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+              (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
               break;
             }
           }
@@ -2645,20 +2847,10 @@ const newAllFilter = () => {
   if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
     console.log('just draw data');
     _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-      (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_4__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+      (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
     });
   }
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_2__.bindOrdersListeners)();
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)("#db_id", _showFull__WEBPACK_IMPORTED_MODULE_6__.showRoutesIssued);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(".table__files", _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_7__.triggerFilesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(".table__route", _modals_routesModal__WEBPACK_IMPORTED_MODULE_8__.triggerRoutesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(".table__comment", _modals_commentsModal__WEBPACK_IMPORTED_MODULE_9__.triggerCommentsModal);
-  (0,_drawe_helpersDraw__WEBPACK_IMPORTED_MODULE_10__.drawHelpers)();
-  if (_state__WEBPACK_IMPORTED_MODULE_0__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_0__.state.manCheck) {
-    (0,_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_11__.copyOrderHandler);
-  } else {
-    document.querySelectorAll('#order__copy').forEach(copy => copy.remove());
-  }
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
 };
 
 /***/ }),
@@ -2688,7 +2880,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "tableFiltersWrapper": () => (/* binding */ tableFiltersWrapper),
 /* harmony export */   "timestampFilter": () => (/* binding */ timestampFilter)
 /* harmony export */ });
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _newAllFilter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./newAllFilter */ "./web/src/static/js/modules/filters/newAllFilter.js");
 
@@ -2780,7 +2972,8 @@ const controlFiltersReset = () => {
         tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
           cell.style.textDecoration = 'none';
         });
-        (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)('get-all');
+        (0,_getOrders__WEBPACK_IMPORTED_MODULE_0__.getOrders)('get-all', true);
+        (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_2__.newAllFilter)();
       });
     }
   } else {
@@ -2815,7 +3008,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "tableRoutesFiltersHandler": () => (/* binding */ tableRoutesFiltersHandler)
 /* harmony export */ });
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
 /* harmony import */ var _newAllFilter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./newAllFilter */ "./web/src/static/js/modules/filters/newAllFilter.js");
 
@@ -2848,13 +3041,14 @@ const tableRoutesFiltersHandler = () => {
   });
   inArchiveBtn.addEventListener('click', () => {
     console.log('hi');
-    (0,_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-old');
+    (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-old');
   });
   inWorkBtn.addEventListener('click', e => {
     if (inWorkBtn.classList.contains('route__filter--chosen')) {
       inWorkBtn.classList.remove('route__filter--chosen');
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
+      // getOrders('get-all', true)
+      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
       return;
     }
     try {
@@ -2866,13 +3060,16 @@ const tableRoutesFiltersHandler = () => {
     _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
     _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
     _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
+
+    // getOrders('get-all', true)
     (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
   });
   notWorkBtn.addEventListener('click', () => {
     if (notWorkBtn.classList.contains('route__filter--chosen')) {
       notWorkBtn.classList.remove('route__filter--chosen');
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
+      // getOrders('get-all', true)
+      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
       return;
     }
     try {
@@ -2890,7 +3087,8 @@ const tableRoutesFiltersHandler = () => {
     if (inErrorBtn.classList.contains('route__filter--chosen')) {
       inErrorBtn.classList.remove('route__filter--chosen');
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
+      // getOrders('get-all', true)
+      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
       return;
     }
     _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = true;
@@ -2908,7 +3106,8 @@ const tableRoutesFiltersHandler = () => {
     if (completedBtn.classList.contains('route__filter--chosen')) {
       completedBtn.classList.remove('route__filter--chosen');
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
+      // getOrders('get-all', true)
+      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
       return;
     }
     try {
@@ -2935,7 +3134,8 @@ const tableRoutesFiltersHandler = () => {
       _state__WEBPACK_IMPORTED_MODULE_0__.state.inPlanDate = today;
       console.log(_state__WEBPACK_IMPORTED_MODULE_0__.state.inPlanDate);
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-      (0,_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
+      // getOrders('get-all', true)
+      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
       return;
     }
     try {
@@ -2967,7 +3167,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../getData */ "./web/src/static/js/modules/getData.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _report_getReports__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../report/getReports */ "./web/src/static/js/report/getReports.js");
 /* harmony import */ var _ucFirst__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../ucFirst */ "./web/src/static/js/ucFirst.js");
 /* harmony import */ var _modals_searchOrdersModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/searchOrdersModal */ "./web/src/static/js/modules/modals/searchOrdersModal.js");
@@ -3034,11 +3234,12 @@ const topFiltersHandler = () => {
       }
       if (link.textContent.trim().includes('Архив')) {
         sessionStorage.setItem('page', 'archive');
-        (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-old');
+        (0,_getOrders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-old');
       } else if (link.textContent.trim().includes('Главная')) {
         sessionStorage.setItem('page', 'main');
         window.location.href = link.querySelector('.hidden__input').value;
-        (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)();
+        // getOrders('get-all', true)
+        (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
       } else {
         console.log(window.location.href);
         window.location.href = link.querySelector('.hidden__input').value;
@@ -3102,7 +3303,8 @@ const topFiltersHandler = () => {
           controlFilterReset();
         } else {
           if (window.location.href.includes('/main/table')) {
-            (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
+            // getOrders('get-all', true)
+            (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
           } else {
             (0,_report_getReports__WEBPACK_IMPORTED_MODULE_3__.getReports)();
           }
@@ -3160,7 +3362,8 @@ const topFiltersHandler = () => {
           filtered = true;
           controlFilterReset();
         } else {
-          (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
+          // getOrders('get-all', true)
+          (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
           filtered = false;
           controlFilterReset();
         }
@@ -3182,7 +3385,8 @@ const topFiltersHandler = () => {
           filterListener(filterFilters);
           document.querySelector('.nav-filters__reset').remove();
           if (window.location.href.includes('/main/table')) {
-            (0,_orders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all');
+            (0,_getOrders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all', true);
+            (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
           } else {
             (0,_report_getReports__WEBPACK_IMPORTED_MODULE_3__.getReports)();
           }
@@ -3258,6 +3462,197 @@ const getData = async url => {
     console.log('beda');
   }
   return await resp.json();
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/modules/getOrders.js":
+/*!************************************************!*\
+  !*** ./web/src/static/js/modules/getOrders.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "cleanSelect": () => (/* binding */ cleanSelect),
+/* harmony export */   "deleteOrders": () => (/* binding */ deleteOrders),
+/* harmony export */   "getOrders": () => (/* binding */ getOrders)
+/* harmony export */ });
+/* harmony import */ var _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
+/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
+/* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
+/* harmony import */ var _filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./filters/newAllFilter */ "./web/src/static/js/modules/filters/newAllFilter.js");
+/* harmony import */ var _drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawe/drawUpdatedData */ "./web/src/static/js/modules/drawe/drawUpdatedData.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+
+
+
+
+
+
+
+
+
+const getOrders = function () {
+  let postfix = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'get-all';
+  let updateOnly = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  const archiveBlock = document.querySelector('.archive-block');
+  const routesBlock = document.querySelector('.routes-block');
+  document.querySelector('.main-header__title').textContent = 'Обновляем таблицу...';
+  const links = document.querySelectorAll('.nav-control__route-link');
+  const mainLink = document.querySelector('.link__main');
+  const archiveLink = document.querySelector('.link__archive');
+  _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive = postfix !== 'get-all' || sessionStorage.getItem('page') === 'archive';
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+    document.title = 'Архив';
+    links.forEach(link => {
+      link.classList.remove('nav-control__route-link--current');
+    });
+    archiveLink.classList.add('nav-control__route-link--current');
+  } else {
+    document.title = 'Заказы';
+    links.forEach(link => {
+      link.classList.remove('nav-control__route-link--current');
+    });
+    mainLink.classList.add('nav-control__route-link--current');
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+    archiveBlock.classList.remove('hidden__input');
+    routesBlock.classList.add('hidden__input');
+  } else {
+    archiveBlock.classList.add('hidden__input');
+    routesBlock.classList.remove('hidden__input');
+  }
+  console.time('get orders');
+
+  // console.log('start time', state.maxTime)
+  const params = {
+    'order_old': _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive,
+    'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__.archiveFrom.value,
+    'archive_to': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__.archiveTo.value,
+    'update_only': updateOnly,
+    'update_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime,
+    'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
+  };
+  (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
+    console.timeEnd('get orders');
+    const title = document.querySelector('.main-header__title');
+    console.time('draw orders');
+    if (!data.data) {
+      if (!updateOnly) {
+        deleteOrders();
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
+        title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? 'Архив пуст' : 'Журнал пуст';
+        return;
+      }
+      console.log('PROBLEM HERE?');
+      // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
+    }
+
+    (0,_getData__WEBPACK_IMPORTED_MODULE_2__.getData)('users/get-users').then(res => {
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
+      // deleteOrders()
+
+      const isEmptyData = checkThis => {
+        return checkThis || 'Не заполнено';
+      };
+      if (data.data) {
+        data.data.forEach(d => {
+          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime) {
+            if (d.time_of_modify) {
+              let maxGetTime = new Date(_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime).getTime();
+              let dTime = new Date(d.time_of_modify).getTime();
+              _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = dTime >= maxGetTime ? d.time_of_modify : _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime;
+            }
+          } else {
+            if (d.time_of_modify) {
+              _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = d.time_of_modify;
+            }
+          }
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.nums.push(isEmptyData(d.number));
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.clients.push(isEmptyData(d.client));
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.materials.push(isEmptyData(d.material));
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.names.push(isEmptyData(d.name));
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.quantity.push(isEmptyData(d.quantity));
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.issued.push(isEmptyData(d.issued));
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.managers.push(isEmptyData(d.m));
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.deadlines.push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено');
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.timestamps.push(d.timestamp.split('T')[0]);
+          if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
+          }
+        });
+        if (updateOnly) {
+          const routesStatusFilter = document.querySelector('.route__filter--chosen');
+          let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
+          data.data.forEach(d => {
+            (0,_drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_7__.drawUpdatedData)(d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, filtered);
+          });
+          if (filtered) {
+            (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
+          } else {
+            (0,_bindListeners__WEBPACK_IMPORTED_MODULE_8__.bindOrdersListeners)();
+          }
+          console.log('??');
+          title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
+        } else {
+          title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
+          (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
+        }
+      }
+      console.timeEnd('draw orders');
+      console.time('add filters and listeners');
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.names)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.quantity)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.quantityFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.issued)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.issuedFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.managers)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.managerFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.deadlines)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.timestamps)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.timestampFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
+      console.timeEnd('add filters and listeners');
+      title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
+      if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+        document.querySelectorAll('.table__data').forEach(field => {
+          field.setAttribute("readonly", "true");
+        });
+      }
+
+      // const lastOrder = document.querySelector('.table__data--chosen')
+      // if (lastOrder) {
+      //   lastOrder.scrollIntoView({block: 'center'})
+      // }
+
+      // document.querySelectorAll(".table-form").forEach(form => {
+      //   form.addEventListener('click', e => {
+      //     console.log("I am form hi)")
+      //   })
+      // })
+    });
+  });
+};
+
+const cleanSelect = (currentOrder, select) => {
+  const selectElem = currentOrder.querySelector(select);
+  selectElem.querySelectorAll('option').forEach(option => {
+    option.remove();
+  });
+};
+const deleteOrders = () => {
+  const orders = document.querySelectorAll('.table-form');
+  // document.querySelector('.orders__total').remove()
+
+  orders.forEach(order => {
+    order.remove();
+  });
 };
 
 /***/ }),
@@ -3376,6 +3771,7 @@ const triggerCommentsModal = e => {
       if (event.target === modalElem) {
         if (old) {
           (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_3__.submitData)();
+          newComments.value = "";
         }
       }
     });
@@ -4391,7 +4787,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
 /* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../sendData */ "./web/src/static/js/modules/sendData.js");
 /* harmony import */ var _submitControl__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../submitControl */ "./web/src/static/js/modules/submitControl.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
 /* harmony import */ var _planModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./planModal */ "./web/src/static/js/modules/modals/planModal.js");
 /* harmony import */ var _errorModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./errorModal */ "./web/src/static/js/modules/modals/errorModal.js");
@@ -4962,7 +5358,7 @@ const triggerRoutesModal = e => {
           (0,_sendData__WEBPACK_IMPORTED_MODULE_5__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_13__.appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null).then(resp => {
             if (resp.ok) (0,_submitControl__WEBPACK_IMPORTED_MODULE_6__.showResult)(true);
             modalElem.remove();
-            (0,_orders__WEBPACK_IMPORTED_MODULE_7__.getOrders)('get-all');
+            (0,_getOrders__WEBPACK_IMPORTED_MODULE_7__.getOrders)('get-all', true);
           });
         }, 'Удалить маршрут?');
       });
@@ -5328,7 +5724,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _filters_topFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../filters/topFilters */ "./web/src/static/js/modules/filters/topFilters.js");
 /* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 /* harmony import */ var _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
@@ -5456,157 +5852,6 @@ const showModal = modal => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/orders.js":
-/*!*********************************************!*\
-  !*** ./web/src/static/js/modules/orders.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "deleteOrders": () => (/* binding */ deleteOrders),
-/* harmony export */   "getOrders": () => (/* binding */ getOrders)
-/* harmony export */ });
-/* harmony import */ var _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-/* harmony import */ var _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
-/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
-/* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
-/* harmony import */ var _filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./filters/newAllFilter */ "./web/src/static/js/modules/filters/newAllFilter.js");
-
-
-
-
-
-
-
-const getOrders = function () {
-  let postfix = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'get-all';
-  const archiveBlock = document.querySelector('.archive-block');
-  const routesBlock = document.querySelector('.routes-block');
-  document.querySelector('.main-header__title').textContent = 'Обновляем таблицу...';
-  const links = document.querySelectorAll('.nav-control__route-link');
-  const mainLink = document.querySelector('.link__main');
-  const archiveLink = document.querySelector('.link__archive');
-  _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive = postfix !== 'get-all' || sessionStorage.getItem('page') === 'archive';
-  const filters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.map(filter => filter.name);
-  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
-    document.title = 'Архив';
-    links.forEach(link => {
-      link.classList.remove('nav-control__route-link--current');
-    });
-    archiveLink.classList.add('nav-control__route-link--current');
-  } else {
-    document.title = 'Заказы';
-    links.forEach(link => {
-      link.classList.remove('nav-control__route-link--current');
-    });
-    mainLink.classList.add('nav-control__route-link--current');
-  }
-  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
-    archiveBlock.classList.remove('hidden__input');
-    routesBlock.classList.add('hidden__input');
-  } else {
-    archiveBlock.classList.add('hidden__input');
-    routesBlock.classList.remove('hidden__input');
-  }
-  console.time('get orders');
-  const params = {
-    'order_old': _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive,
-    'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__.archiveFrom.value,
-    'archive_to': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__.archiveTo.value
-  };
-  (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    console.timeEnd('get orders');
-    const title = document.querySelector('.main-header__title');
-    console.time('draw orders');
-    if (!data.data) {
-      deleteOrders();
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
-      title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? 'Архив пуст' : 'Журнал пуст';
-      // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
-      return;
-    }
-    const nums = [];
-    const clients = [];
-    const materials = [];
-    const names = [];
-    const quantity = [];
-    const issued = [];
-    const managers = [];
-    const deadlines = [];
-    const timestamps = [];
-    (0,_getData__WEBPACK_IMPORTED_MODULE_2__.getData)('users/get-users').then(res => {
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
-      deleteOrders();
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
-      const isEmptyData = checkThis => {
-        return checkThis || 'Не заполнено';
-      };
-      data.data.forEach(d => {
-        nums.push(isEmptyData(d.number));
-        clients.push(isEmptyData(d.client));
-        materials.push(isEmptyData(d.material));
-        names.push(isEmptyData(d.name));
-        quantity.push(isEmptyData(d.quantity));
-        issued.push(isEmptyData(d.issued));
-        managers.push(isEmptyData(d.m));
-        deadlines.push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено');
-        timestamps.push(d.timestamp.split('T')[0]);
-        if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
-        }
-      });
-      (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
-      console.timeEnd('draw orders');
-      console.time('add filters and listeners');
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(nums)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(clients)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(materials)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(names)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(quantity)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.quantityFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(issued)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.issuedFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(managers)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.managerFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(deadlines)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(timestamps)], _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.timestampFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
-      console.timeEnd('add filters and listeners');
-      title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${data.data.length})` : `Журнал заказов (${data.data.length})`;
-      if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
-        document.querySelectorAll('.table__data').forEach(field => {
-          field.setAttribute("readonly", "true");
-        });
-      }
-      const lastOrder = document.querySelector('.table__data--chosen');
-      if (lastOrder) {
-        lastOrder.scrollIntoView({
-          block: 'center'
-        });
-      }
-
-      // document.querySelectorAll(".table-form").forEach(form => {
-      //   form.addEventListener('click', e => {
-      //     console.log("I am form hi)")
-      //   })
-      // })
-    });
-  });
-};
-
-const deleteOrders = () => {
-  const orders = document.querySelectorAll('.table-form');
-  // document.querySelector('.orders__total').remove()
-
-  orders.forEach(order => {
-    order.remove();
-  });
-};
-
-/***/ }),
-
 /***/ "./web/src/static/js/modules/sendData.js":
 /*!***********************************************!*\
   !*** ./web/src/static/js/modules/sendData.js ***!
@@ -5702,6 +5947,7 @@ const userInf = JSON.parse(sessionStorage.getItem('user'));
 let state = {
   'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут', 'Нажал паузу'],
   'inPlanDate': '',
+  'startTime': '',
   'filtered': false,
   'searched': false,
   'inWork': false,
@@ -5722,6 +5968,15 @@ let state = {
   'currentInput': null,
   'checkOrders': [],
   'isArchive': false,
+  'nums': [],
+  'clients': [],
+  'materials': [],
+  'names': [],
+  'quantity': [],
+  'issued': [],
+  'managers': [],
+  'deadlines': [],
+  'timestamps': [],
   'tableFilters': {
     // 'number': '',
     // 'client': '',
@@ -5784,7 +6039,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "finallyForOrders": () => (/* binding */ finallyForOrders),
 /* harmony export */   "showResult": () => (/* binding */ showResult)
 /* harmony export */ });
-/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 /* harmony import */ var _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
 /* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./addTriggers */ "./web/src/static/js/modules/addTriggers.js");
@@ -5839,6 +6094,7 @@ const deleteSubmitBtn = () => {
 };
 const cancelChange = e => {
   _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
+  document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove());
   finallyForOrders(true);
 };
 const deleteCancelBtn = () => {
@@ -5869,19 +6125,20 @@ const showResult = status => {
 addOrder.addEventListener('click', e => {
   drawSubmit();
   _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_2__.table.insertAdjacentHTML('afterbegin', _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_2__.orderHTML);
-  (0,_drawe_drawManagers__WEBPACK_IMPORTED_MODULE_9__.drawManagers)('.table-m-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.managers, 'adfasdfsdfsdada');
-  (0,_drawe_drawDeadlineP__WEBPACK_IMPORTED_MODULE_10__.drawDeadlineP)('.table-p-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.deadlinesP, 'adfasdfsdfsdada');
-  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_1__.bindOrdersListeners)();
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__route', _modals_routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)('.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_6__.triggerCommentsModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_11__.copyOrderHandler);
+  const currElem = document.querySelector('.table-form--new');
+  (0,_bindListeners__WEBPACK_IMPORTED_MODULE_1__.bindOrdersListeners)(currElem);
+  (0,_drawe_drawManagers__WEBPACK_IMPORTED_MODULE_9__.drawManagers)(currElem, '.table-m-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.managers, 'adfasdfsdfsdada');
+  (0,_drawe_drawDeadlineP__WEBPACK_IMPORTED_MODULE_10__.drawDeadlineP)(currElem, '.table-p-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.deadlinesP, 'adfasdfsdfsdada');
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, '.table__route', _modals_routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_6__.triggerCommentsModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_11__.copyOrderHandler);
 });
 const finallyForOrders = success => {
   deleteSubmitBtn();
   deleteCancelBtn();
   showResult(success);
-  (0,_orders__WEBPACK_IMPORTED_MODULE_0__.getOrders)('get-all');
+  (0,_getOrders__WEBPACK_IMPORTED_MODULE_0__.getOrders)('get-all', true);
 };
 
 /***/ }),
@@ -6130,7 +6387,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "reportFiltersWrapper": () => (/* binding */ reportFiltersWrapper)
 /* harmony export */ });
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../modules/state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../modules/orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _modules_bindListeners__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../modules/bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 /* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../getReports */ "./web/src/static/js/report/getReports.js");
 /* harmony import */ var _globalFilterReports__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./globalFilterReports */ "./web/src/static/js/report/filters/globalFilterReports.js");
@@ -6189,7 +6446,7 @@ const filterReports = (type, filter) => {
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type] = filter;
   console.log(type, filter);
   console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters);
-  (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(o => {
     (0,_globalFilterReports__WEBPACK_IMPORTED_MODULE_4__.globalFilterReports)(o, _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters);
   });
@@ -6255,7 +6512,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "topReportFilter": () => (/* binding */ topReportFilter)
 /* harmony export */ });
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../modules/state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../modules/orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../getReports */ "./web/src/static/js/report/getReports.js");
 /* harmony import */ var _modules_getData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../modules/getData */ "./web/src/static/js/modules/getData.js");
 /* harmony import */ var _globalFilterReports__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./globalFilterReports */ "./web/src/static/js/report/filters/globalFilterReports.js");
@@ -6305,7 +6562,7 @@ const topReportFilter = () => {
       } else if (link.textContent.trim().includes('Главная')) {
         sessionStorage.setItem('page', 'main');
         window.location.href = link.querySelector('.hidden__input').value;
-        (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
+        (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
       } else {
         console.log(window.location.href);
         window.location.href = link.querySelector('.hidden__input').value;
@@ -6365,7 +6622,7 @@ const topReportFilter = () => {
           controlFilterReset();
         } else {
           if (window.location.href.includes('/main/table')) {
-            (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all');
+            (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
           } else {
             (0,_getReports__WEBPACK_IMPORTED_MODULE_2__.getReports)();
           }
@@ -6439,7 +6696,7 @@ const topReportFilter = () => {
           _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = [];
           document.querySelector('.nav-filters__reset').remove();
           if (window.location.href.includes('/main/table')) {
-            (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all');
+            (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
           } else {
             (0,_getReports__WEBPACK_IMPORTED_MODULE_2__.getReports)();
           }
@@ -6486,7 +6743,7 @@ const filterRouteReports = () => {
   const filters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.filter(order => filters.includes(order.order_plot));
   console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders);
-  (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders.forEach(order => {
     (0,_globalFilterReports__WEBPACK_IMPORTED_MODULE_4__.globalFilterReports)(order);
   });
@@ -6509,7 +6766,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _modules_sendData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/sendData */ "./web/src/static/js/modules/sendData.js");
 /* harmony import */ var _drawReport__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawReport */ "./web/src/static/js/report/drawReport.js");
-/* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filters/reportFilters */ "./web/src/static/js/report/filters/reportFilters.js");
 /* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
 /* harmony import */ var _filters_globalFilterReports__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./filters/globalFilterReports */ "./web/src/static/js/report/filters/globalFilterReports.js");
@@ -6541,7 +6798,7 @@ const getReports = () => {
   total.textContent = 'Обновляем таблицу...';
   (0,_modules_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/reports/get-all`, 'POST', JSON.stringify(reportTime)).then(resp => resp.json()).then(data => {
     _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders = data.data;
-    (0,_modules_orders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
+    (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.deleteReportsFilters)();
     if (data.data) {
       total.textContent = `План/факт (${data.data.length})`;
@@ -6600,11 +6857,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "user": () => (/* binding */ user)
 /* harmony export */ });
 /* harmony import */ var _css_table_table_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css/table/table.scss */ "./web/src/static/css/table/table.scss");
-/* harmony import */ var _modules_orders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/orders */ "./web/src/static/js/modules/orders.js");
+/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/filters/topFilters */ "./web/src/static/js/modules/filters/topFilters.js");
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
 /* harmony import */ var _modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/admin/adminHandler */ "./web/src/static/js/modules/admin/adminHandler.js");
+/* harmony import */ var _modules_getTime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/getTime */ "./web/src/static/js/modules/getTime.js");
+
 
 
 
@@ -6614,10 +6873,11 @@ __webpack_require__.r(__webpack_exports__);
 const user = JSON.parse(sessionStorage.getItem("user"));
 if (window.location.href.endsWith('main/table')) {
   console.log('hello');
+  _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime ? _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime : (0,_modules_getTime__WEBPACK_IMPORTED_MODULE_6__.getTime)() + `:${new Date().getSeconds()}`;
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__.adminHandler)();
   (0,_modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__.tableRoutesFiltersHandler)();
   (0,_modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_2__.topFiltersHandler)();
-  (0,_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders)();
+  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', false);
   const subBtn = document.querySelector(".header-button__add");
   if (!(_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.adminCheck || _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.manCheck)) {
     subBtn.classList.add("hidden__input");
@@ -6625,7 +6885,7 @@ if (window.location.href.endsWith('main/table')) {
   }
 
   const updateMainTableData = () => {
-    setInterval(_modules_orders__WEBPACK_IMPORTED_MODULE_1__.getOrders, 1000);
+    setInterval(_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders, 1000);
   };
   // updateMainTableData()
 }
@@ -17209,7 +17469,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput[type=number] {\n  -moz-appearance: textfield;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput, select {\n  outline: none;\n}\n\nhtml {\n  height: 100%;\n}\n\nbody {\n  font-family: Inter;\n  background: rgb(236, 236, 236);\n  height: 95%;\n}\n\n.container {\n  padding: 0 15px;\n  height: 98%;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: rgb(66, 66, 66);\n  height: 80%;\n}\n@media screen and (min-width: 1522px) {\n  .main--reports {\n    margin: 0 auto 15px;\n    width: 1492px;\n  }\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: rgb(66, 66, 66);\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n.main__button--select {\n  background: rgb(217, 221, 220) !important;\n}\n.main__button--select {\n  outline: none;\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 19px;\n  letter-spacing: 0em;\n  text-align: center;\n  color: rgb(137, 175, 137);\n  cursor: pointer;\n  padding: 3px 7px;\n  border: none;\n}\n.main__button--click {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 19px;\n  letter-spacing: 0em;\n  text-align: center;\n  border-radius: 15px;\n  border: 1px solid rgb(203, 203, 203);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  background: white;\n  color: rgb(66, 66, 66);\n  cursor: pointer;\n  padding: 3px 7px;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: rgb(66, 66, 66);\n}\n.main-table__data {\n  width: 100%;\n  height: 100%;\n  overflow: scroll;\n  margin-bottom: 5px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  background: white;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n}\n\nbutton {\n  border: none;\n  background: none;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n}\ninput:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n.admin-form__user {\n  margin-right: 10px;\n}\n.admin-form__exit {\n  transition: color 0.3s;\n}\n.admin-form__exit:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n@media screen and (max-width: 1200px) {\n  .search {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n}\n.check-helper--long {\n  min-width: 300%;\n}\n.check-helper--errored {\n  padding: 0;\n  color: black;\n}\n\n.routes-block {\n  display: flex;\n  align-items: center;\n}\n\n.archive-block {\n  display: flex;\n  align-items: center;\n}\n\n.header-routes {\n  display: flex;\n  align-items: center;\n}\n\n.header {\n  position: relative;\n}\n\n.loupe {\n  width: 10px;\n  transition: fill 0.3s;\n}\n.nav-filters {\n  width: 77%;\n  position: relative;\n  height: 113px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 5px 25px;\n  display: flex;\n  flex-direction: column;\n}\n@media screen and (min-width: 1920px) {\n  .nav-filters {\n    width: 82%;\n  }\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__item {\n  margin-bottom: 7px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: rgb(137, 175, 137);\n  color: rgb(255, 255, 255);\n}\n\n.nav-filters__button {\n  width: auto;\n  max-width: 100%;\n  height: 27px;\n  white-space: nowrap;\n}\n.nav-filters__plots {\n  margin-top: 10px;\n  border-bottom: 1px solid black;\n  margin-bottom: 6px;\n  padding-bottom: 8px;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__filters {\n  flex-wrap: wrap;\n  height: 50px;\n  margin-top: 7px;\n  overflow-y: auto;\n}\n.nav-filters__reset {\n  position: absolute;\n  bottom: -28px;\n  width: 161px;\n  display: block;\n  align-self: center;\n}\n\n.nav {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n  margin-top: 10px;\n}\n\n.nav-control {\n  position: relative;\n  width: 313px;\n  height: 113px;\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 20px 20px 10px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.nav-control__group {\n  margin-bottom: 5px;\n  font-size: 14px;\n  font-weight: 500;\n  line-height: 17px;\n  letter-spacing: 0em;\n}\n.nav-control--opened {\n  z-index: 1000;\n  height: auto;\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n.nav-control__nav {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-bottom: 2px solid black;\n  margin-bottom: 5px;\n}\n.nav-control__left {\n  width: 200px;\n}\n.nav-control__admin {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-control__admin:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.nav-control__user {\n  display: flex;\n  margin-bottom: 7px;\n}\n.nav-control__name {\n  font-size: 16px;\n  font-weight: 700;\n  line-height: 21px;\n  letter-spacing: 0em;\n  color: rgb(76, 88, 102);\n  margin-right: 7px;\n}\n.nav-control__exit a {\n  color: rgb(210, 66, 66);\n  font-size: 16px;\n  font-weight: 400;\n  line-height: 21px;\n  letter-spacing: 0em;\n}\n.nav-control__search {\n  font-size: 18px;\n  font-weight: 500;\n  line-height: 23px;\n  letter-spacing: 0em;\n  text-align: center;\n  color: rgb(137, 175, 137);\n}\n.nav-control__search-btn:hover svg {\n  fill: green;\n}\n.nav-control__routes {\n  padding-bottom: 5px;\n  margin-bottom: 5px;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  border-bottom: 2px solid black;\n}\n.nav-control__route-link {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  cursor: pointer;\n}\n.nav-control__route-link:hover {\n  color: rgb(137, 175, 137);\n}\n.nav-control__route-link--current {\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  color: rgb(137, 175, 137);\n}\n.nav-control__burger {\n  position: relative;\n  top: -5px;\n  cursor: pointer;\n}\n.nav-control__burger-item {\n  display: block;\n  width: 40px;\n  height: 5px;\n  background: rgb(66, 66, 66);\n  border-radius: 15px;\n}\n.nav-control__burger-item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.search-orders__input {\n  margin-right: 0 !important;\n  width: 170px !important;\n  cursor: text !important;\n}\n\n.search-orders__input {\n  padding-left: 9px;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: rgb(137, 175, 137);\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 15px 15px 0 0;\n  padding: 5px 30px;\n  height: 49px;\n}\n.main-header__title {\n  position: relative;\n  top: -1px;\n  font-size: 27px;\n  font-weight: 700;\n  line-height: 29px;\n  letter-spacing: 0em;\n  text-align: left;\n  color: rgb(255, 255, 255);\n  margin-right: 20px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button {\n  transition: color 0.3s;\n}\n.main-header__button:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.main-header__button:not(:last-child) {\n  margin-right: 10px;\n}\n\n.header-routes__filter:not(:last-child) {\n  margin-right: 10px;\n}\n.header-routes__planned-date {\n  width: 140px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  border: 1px solid rgb(255, 255, 255);\n  color: rgb(255, 255, 255);\n  background: rgb(137, 175, 137);\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n  background: rgb(236, 236, 236);\n}\n.modal_content-block {\n  padding: 5px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n}\n.modal-header {\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: rgb(137, 175, 137);\n  color: rgb(255, 255, 255);\n  text-align: center;\n  height: 35px;\n  border-radius: 15px 15px 0px 0px;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: rgb(137, 175, 137);\n  background: rgb(255, 255, 255);\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 280px;\n  height: 280px;\n}\n.file__download {\n  color: rgb(137, 175, 137) !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: green !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: rgb(137, 175, 137) !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: rgb(137, 175, 137) !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: green !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: rgb(66, 66, 66);\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 619px;\n  height: auto;\n}\n\n.route__config {\n  padding: 13px 10px 0;\n  background: rgb(236, 236, 236);\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.route__title {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 19px;\n  margin-bottom: 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route-plan__date {\n  border: 1px solid rgb(173, 173, 173) !important;\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) !important;\n  margin-right: 0 !important;\n}\n.route-plan__date {\n  color: rgb(66, 66, 66);\n}\n.route__label {\n  text-align: center;\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 17px;\n  letter-spacing: 0em;\n  margin-bottom: 7px;\n}\n.route__btn {\n  align-items: center;\n  width: 97px;\n  border: 1px solid rgb(173, 173, 173);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n}\n.route__select {\n  width: 130px;\n  margin-bottom: 10px;\n  border: none;\n  border-radius: 7px;\n  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.25);\n  background: rgb(255, 255, 255);\n}\n.route__select:disabled {\n  background: rgb(255, 255, 255);\n}\n.route__input {\n  width: 136px;\n  height: 28px;\n  margin-right: -40px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  border-radius: 15px;\n  border: none;\n  outline: none;\n}\n.route__input:not(:disabled):focus {\n  outline: 2px solid rgb(137, 175, 137);\n}\n.route__input--small {\n  width: 80px !important;\n}\n.route__input--top {\n  width: 136px;\n  text-align: center;\n  margin-bottom: 10px;\n  height: 28px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  border-radius: 15px;\n  border: none;\n}\n.route__input--middle {\n  width: 155px;\n}\n.route__section {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n\n.section-logs {\n  width: 100%;\n  background: white;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 8px;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__input {\n  padding-left: 10px;\n}\n.section-logs__item {\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 18px;\n  letter-spacing: 0em;\n  text-align: left;\n  color: rgb(87, 87, 87);\n  margin-bottom: 5px;\n}\n.section-logs__item--system {\n  color: rgb(137, 175, 137);\n}\n.section-logs__item--error {\n  color: rgb(210, 66, 66);\n}\n.section-logs__item--pause {\n  color: rgb(224, 108, 0);\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 30px;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__prev {\n  overflow-y: scroll;\n  background: rgb(255, 255, 255);\n  height: 100%;\n  width: 100%;\n}\n.comment__item {\n  color: rgb(66, 66, 66);\n  font-size: 17px;\n  border-bottom: 1px solid black;\n}\n\n.confirm__title {\n  font-size: 20px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  margin-top: 10px;\n  text-align: center;\n  color: rgb(66, 66, 66);\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n.confirm__button--search {\n  margin-top: 20px;\n}\n\n.progress-block {\n  width: 180px;\n}\n\n.quantity-block {\n  display: flex;\n  justify-content: space-between;\n}\n.quantity-block__labels {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.quantity-block__label {\n  margin-right: 47px;\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 17px;\n  letter-spacing: 0em;\n  text-align: center;\n}\n.quantity-block__issued {\n  position: relative;\n  right: -5px;\n}\n.quantity-block__inshifts {\n  margin-right: 44px;\n  position: relative;\n  right: 10px;\n}\n\n.route-type__paused {\n  border: 2px solid rgb(224, 108, 0);\n}\n.route-type__error {\n  border: 2px solid rgb(210, 66, 66);\n}\n.route-type__start {\n  border: 2px solid rgb(24, 136, 217);\n}\n.route-type__finish {\n  border: 2px solid rgb(0, 130, 29);\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  background: rgb(236, 236, 236);\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.modal-error__input {\n  text-align: left !important;\n}\n.modal-error__input {\n  padding-left: 10px;\n  margin-top: 20px;\n  height: 28px;\n  margin-right: 0;\n  width: 90%;\n  margin-bottom: 15px;\n  background: rgb(255, 255, 255);\n}\n.modal-error__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-issued__date {\n  margin-bottom: 10px;\n  margin-right: 0;\n}\n.modal-issued__input {\n  margin-right: 0;\n  width: 20%;\n  height: 28px;\n  margin-bottom: 15px;\n}\n.modal-issued__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.user__block {\n  margin-right: 40px;\n}\n\n.endtime__block {\n  margin-right: 107px;\n}\n\n.start-route__btn {\n  color: rgb(24, 136, 217);\n}\n\n.end-route__btn {\n  color: rgb(0, 130, 29);\n}\n\n.pause-route__btn {\n  color: rgb(224, 108, 0);\n}\n\n.error-route__btn {\n  color: rgb(210, 66, 66);\n}\n\n.section-report {\n  justify-content: left;\n}\n\n.issued-modal_trigger {\n  margin-right: 75px;\n}\n\n.send__comment {\n  width: 130px;\n  border: 2px solid rgb(105, 135, 105);\n  color: rgb(105, 135, 105);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n}\n\n.section-finish__sub {\n  border-radius: 15px;\n  width: 130px;\n  height: 40px;\n  border: none;\n  background: rgb(105, 135, 105);\n  color: rgb(255, 255, 255);\n}\n.section-finish__delete {\n  border: none;\n  background: none;\n  color: rgb(210, 66, 66);\n  cursor: pointer;\n}\n\n.issued-top {\n  display: flex;\n  align-items: center;\n}\n.issued-top__item {\n  padding: 5px 0;\n  width: 39%;\n}\n.issued-top__item:not(:last-child) {\n  border-right: 1px solid black;\n}\n.issued-top__item--date {\n  width: 120px;\n}\n.issued-top__item--summary {\n  width: 80px;\n}\n\n.modal_content--comments {\n  width: 612px;\n}\n\n.comments__title {\n  font-size: 20px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  text-align: left;\n  color: rgb(255, 255, 255);\n  margin-left: 31px;\n}\n.comments-content {\n  padding: 24px;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  background: rgb(236, 236, 236);\n  border-radius: 15px;\n}\n.comments__add {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.comments-list {\n  height: 90px;\n  padding: 7px 10px;\n  overflow-y: scroll;\n  border-radius: 15px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  background: rgb(255, 255, 255);\n}\n.comments-list__item {\n  color: rgb(70, 70, 70);\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n}\n\n.comments__prev {\n  margin-bottom: 10px;\n}\n\n.comments__yours {\n  cursor: text !important;\n}\n\n.comments__yours {\n  width: 350px;\n  padding-left: 10px;\n}\n\n.modal-plan {\n  position: relative;\n}\n.modal-plan .confirm__section {\n  position: absolute;\n  bottom: 0;\n}\n\n.modal-plan {\n  padding: 5px;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-plan__today {\n  text-align: center;\n  align-self: center;\n}\n.modal-plan__section {\n  width: 250px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.modal-plan__section:not(:last-child) {\n  margin-bottom: 10px;\n}\n.modal-plan__data {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__data--center {\n  justify-content: center;\n}\n.modal-plan__input {\n  width: 120px;\n}\n.modal-plan__check {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__exclude {\n  text-align: center;\n  height: 100px;\n}\n.modal-plan__exclude-option {\n  text-align: center;\n  padding: 2px;\n}\n.modal-plan__exclude-option:hover {\n  cursor: pointer;\n}\n\n.confirm__title--plan {\n  margin-bottom: 5px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}\n\n.plan-period {\n  margin-bottom: 10px;\n}\n.plan-period__btn:not(:last-child) {\n  margin-right: 5px;\n}\n\n.plan-dates {\n  display: flex;\n  overflow-y: scroll;\n  max-height: 72%;\n  align-items: center;\n  flex-wrap: wrap;\n  margin-left: -2px;\n}\n.plan-dates__item {\n  width: 105px;\n  padding: 5px;\n  background: rgb(255, 255, 255);\n  margin-bottom: 7px;\n  transition: color 0.3s;\n  text-align: center;\n}\n.plan-dates__item:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: #09d009;\n}\n.plan-dates__item:not(:last-child) {\n  margin-right: 7px;\n}\n.plan-dates__item--inplan {\n  color: white;\n  background: rgb(137, 175, 137);\n}\n.plan-dates__item--busy {\n  border: 1px solid rgb(137, 175, 137);\n}\n\n.admin-panel {\n  min-width: 1200px;\n  height: 600px;\n  background: rgb(255, 255, 255);\n}\n\n.panel-nav {\n  margin-top: 10px;\n  color: rgb(70, 70, 70);\n  padding: 5px;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n}\n\n.nav-navigation {\n  padding: 10px;\n  width: 350px;\n  height: 200px;\n  background: rgb(236, 236, 236);\n  border-radius: 15px;\n}\n.nav-navigation__item {\n  height: 28px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.nav-navigation__item:not(:last-child) {\n  margin-bottom: 10px;\n}\n.nav-navigation__item--title {\n  width: 100%;\n  background: rgb(137, 175, 137);\n  border-radius: 15px;\n  text-align: center;\n  color: rgb(255, 255, 255);\n}\n.nav-navigation__text {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-navigation__text:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n\n.nav-content {\n  width: 70%;\n  min-height: 500px;\n  max-height: 500px;\n  display: flex;\n  flex-direction: column;\n  overflow-y: auto;\n}\n.nav-content__columns {\n  height: 40px;\n  padding: 10px;\n  border-radius: 15px 15px 0 0;\n  background: rgb(137, 175, 137);\n  color: rgb(255, 255, 255);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.nav-content__items {\n  padding: 10px;\n  background: rgb(236, 236, 236);\n}\n.nav-content__item {\n  min-height: 40px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.nav-content__column {\n  min-width: 20%;\n  text-align: center;\n}\n.nav-content__column--left {\n  text-align: left !important;\n}\n.nav-content__column-name {\n  min-width: 45%;\n  width: 45%;\n}\n.nav-content__column-shortname {\n  min-width: 15%;\n  width: 15%;\n}\n.nav-content__column-hide {\n  min-width: 10%;\n  width: 10%;\n}\n\n.nav-item {\n  width: 100%;\n}\n.nav-item__column {\n  text-align: center;\n  min-width: 20%;\n}\n.nav-item__column--left {\n  text-align: left;\n}\n.nav-item__column-name {\n  min-width: 45%;\n  width: 45%;\n}\n.nav-item__column-shortname {\n  min-width: 15%;\n  width: 15%;\n}\n.nav-item__column-hide {\n  min-width: 10%;\n  width: 10%;\n}\n.nav-item__column--edit {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-item__column--edit:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n.nav-item__pos {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-item__pos:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n\n.edit-form {\n  align-self: center;\n  width: 726px;\n  display: flex;\n  justify-content: space-between;\n  background: rgb(236, 236, 236);\n  padding: 25px;\n  border-radius: 15px;\n  position: relative;\n}\n.edit-form--group {\n  width: 300px;\n  height: 320px;\n}\n.edit-form--group .edit-form__user {\n  border-right: none;\n  width: 100%;\n  height: 100%;\n}\n.edit-form__text {\n  padding: 10px;\n  width: 250px;\n  height: 100px;\n  resize: none;\n  cursor: pointer;\n}\n.edit-form__user {\n  width: 50%;\n  border-right: 1px solid rgb(70, 70, 70);\n}\n.edit-form__block {\n  display: flex;\n  flex-direction: column;\n  margin-bottom: 15px;\n}\n.edit-form__block--checker {\n  flex-direction: row;\n}\n.edit-form__label {\n  font-size: 18px;\n  font-weight: 400;\n  line-height: 30px;\n  letter-spacing: 0em;\n}\n.edit-form__label--checker {\n  flex-direction: row;\n  margin-right: 168px;\n}\n.edit-form__input {\n  width: 250px !important;\n  height: 28px !important;\n  margin-bottom: 0 !important;\n}\n.edit-form__input {\n  padding: 5px 5px 5px 10px;\n  cursor: text;\n}\n.edit-form__group {\n  cursor: pointer !important;\n}\n.edit-form__group {\n  transition: color 0.3s;\n}\n.edit-form__group:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.edit-form__plot {\n  cursor: pointer !important;\n}\n.edit-form__plot {\n  transition: color 0.3s;\n}\n.edit-form__plot:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.edit-form__submit {\n  cursor: pointer;\n  margin-top: 20px;\n  align-self: flex-end;\n}\n.edit-form__succ {\n  position: absolute;\n  color: rgb(137, 175, 137);\n}\n.edit-form__succ--user {\n  bottom: 70px;\n  left: 25px;\n}\n.edit-form__succ--filter {\n  bottom: 80px;\n  left: 27px;\n}\n.edit-form__succ--group {\n  bottom: 80px;\n  left: 27px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 18px;\n  letter-spacing: 0em;\n  text-align: left;\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n  color: rgb(0, 0, 0);\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table__cell--top {\n  background: rgb(156, 156, 156) !important;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n.table__data {\n  font-size: 14px;\n  font-weight: 400;\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n  position: relative;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  background: rgb(217, 221, 217);\n  color: rgb(0, 0, 0);\n}\n.table__data--opened {\n  height: 56px;\n  font-size: 15px;\n  background: rgb(217, 221, 217);\n  color: rgb(0, 0, 0);\n  border-bottom: 1px solid black;\n}\n.table__data--opened.table__data--current {\n  border-bottom: 2px solid black;\n}\n.table__data--current {\n  font-weight: 600;\n  color: rgb(0, 0, 0);\n  border: 1px solid black;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  font-size: 16px;\n  font-weight: 600;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__endtime--dead {\n  color: red;\n  font-size: 15px;\n}\n.table__route {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 29px;\n  width: 50px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 500px;\n  max-width: 500px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table__comment--top {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 28px;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n  position: relative;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route {\n  color: black;\n  height: 24px;\n  width: 48px;\n}\n.route--inplan {\n  border-left: 1px solid black !important;\n}\n.route--inplan {\n  border-top: 1px solid black;\n  border-bottom: 2px solid black;\n  border-right: 2px solid black;\n}\n.route--paused {\n  color: white !important;\n}\n.route--paused {\n  background: rgb(224, 108, 0);\n  border-radius: 15px;\n}\n.route--error {\n  color: white !important;\n}\n.route--error {\n  background: rgb(210, 66, 66);\n  border-radius: 15px;\n}\n.route--started {\n  background: white !important;\n}\n.route--started {\n  border: 2px solid rgb(81, 165, 227);\n  border-radius: 15px;\n}\n.route--completed {\n  background: white !important;\n}\n.route--completed {\n  border: 2px solid rgb(0, 130, 29);\n  border-radius: 15px;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__copy {\n  background: rgb(156, 156, 156) !important;\n}\n\n.order__copy {\n  width: 10px;\n  border: none;\n  transition: color 0.3s;\n}\n.order__copy:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}\n\n.table__issued--report {\n  min-width: 105px;\n  max-width: 105px;\n}\n.table__plan--report {\n  min-width: 105px;\n  max-width: 105px;\n}\n.table__route--report {\n  min-width: 65px;\n  max-width: 65px;\n}\n.table__operator--report {\n  min-width: 95px;\n  max-width: 95px;\n}\n.table__issued-plan--report {\n  min-width: 120px;\n  max-width: 120px;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss","webpack://./web/src/static/css/table/planModal.scss","webpack://./web/src/static/css/table/adminPanel.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n@import \"planModal\";\n@import \"adminPanel\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 18px;\n    letter-spacing: 0em;\n    text-align: left;\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n    color: $table_text;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n\n    &--top {\n      background: rgba(156, 156, 156, 1) !important;\n      //color: white;\n      //background: $table_bg !important;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $main_green;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    font-size: 14px;\n    font-weight: 400;\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n    position: relative;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      //font-size: 15px;\n      background: $table_bg_main;\n      color: $table_text;\n    }\n\n    &--opened {\n      height: 56px;\n      font-size: 15px;\n      background: $table_bg_main;\n      color: $table_text;\n      border-bottom: 1px solid black;\n    }\n\n    &--opened.table__data--current {\n      border-bottom: 2px solid black;\n    }\n\n    &--current {\n      font-weight: 600;\n      color: $table_text;\n      border: 1px solid black;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      font-size: 16px;\n      font-weight: 600;\n      //animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 140px;\n    max-width: 140px;\n\n    &--dead {\n      color: red;\n      font-size: 15px;\n    }\n  }\n\n  &__route {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    height: 29px;\n    width: 50px;\n\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 500px;\n    max-width: 500px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n\n    &--top {\n      flex-grow: 1;\n      min-width: 200px;\n      max-width: 100%;\n    }\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      height: 28px;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  //&__trattr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 260%;\n  //    width: auto;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n  //\n  //&__attr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 100%;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n\n\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n    position: relative;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  color: black;\n  height: 24px;\n  width: 48px;\n\n  &--inplan {\n    border-top: 1px solid black;\n    border-bottom: 2px solid black;\n    border-right: 2px solid black;\n    border-left: 1px solid black !important;\n  }\n\n  &--planned {\n    //text-decoration: underline;\n    //font-style: italic;\n  }\n\n  &--paused {\n    background: rgba(224, 108, 0, 1);\n    color: white !important;\n    border-radius: 15px;\n  }\n\n  &--error {\n    color: white !important;\n    background: rgba(210, 66, 66, 1);\n    border-radius: 15px;\n  }\n\n  &--started {\n    background: white !important;\n    border: 2px solid rgba(81, 165, 227, 1);\n    border-radius: 15px;\n  }\n\n  &--completed {\n    background: white !important;\n    border: 2px solid rgba(0, 130, 29, 1);\n    border-radius: 15px;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__copy {\n  width: 10px;\n  border: none;\n  background: rgb(156, 156, 156) !important;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n.table {\n  &__issued--report {\n    min-width: 105px;\n    max-width: 105px;\n  }\n\n  &__plan--report {\n    min-width: 105px;\n    max-width: 105px;\n  }\n\n  &__route--report {\n    min-width: 65px;\n    max-width: 65px;\n  }\n\n  &__operator--report {\n    min-width: 95px;\n    max-width: 95px;\n  }\n\n  &__issued-plan--report {\n    min-width: 120px;\n    max-width: 120px;\n  }\n}","@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput[type=number] {\n  -moz-appearance: textfield;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput, select {\n  outline: none;\n}\n\nhtml {\n  height: 100%;\n}\n\nbody {\n  font-family: Inter;\n  background: rgba(236, 236, 236, 1);\n  height: 95%;\n}\n\n.container {\n  padding: 0 15px;\n  height: 98%;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $text_black;\n  height: 80%;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &--reports {\n    @media screen and (min-width: 1522px) {\n      margin: 0 auto 15px;\n      width: 1492px;\n    }\n  }\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $text_black;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $main_green;\n      transition: color .3s;\n    }\n\n    &--select {\n      outline: none;\n      font-size: 16px;\n      font-weight: 500;\n      line-height: 19px;\n      letter-spacing: 0em;\n      text-align: center;\n      //border-radius: 15px;\n      background: $table_bg !important;\n      color: $main_green;\n      cursor: pointer;\n      padding: 3px 7px;\n      border: none;\n    }\n\n    &--click {\n      font-size: 16px;\n      font-weight: 500;\n      line-height: 19px;\n      letter-spacing: 0em;\n      text-align: center;\n      border-radius: 15px;\n      border: $btn_border;\n      box-shadow: $btn_shadow;\n      background: white;\n      color: $text_black;\n      cursor: pointer;\n      padding: 3px 7px;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $text_black;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 100%;\n    overflow: scroll;\n    margin-bottom: 5px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n    background: white;\n\n    //@media screen and (max-width: 1200px) {\n    //  height: 75vh;\n    //}\n    //\n    //@media screen and (min-width: 1500px) {\n    //  height: 86vh;\n    //}\n    //\n    //@media screen and (min-width: 1920px) {\n    //  height: 86vh;\n    //}\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n}\n\nbutton {\n  border: none;\n  background: none;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form {\n  &__button {\n    width: 130px;\n    transition: color .3s;\n    position: absolute;\n    right: 24px;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n\n  &__user {\n    margin-right: 10px;\n  }\n\n  &__exit {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n\n.search {\n  display: flex;\n  align-items: center;\n\n  @media screen and (max-width: 1200px) {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  //bottom: -33px;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n\n  &--long {\n    min-width: 300%;\n  }\n\n  &--errored {\n    padding: 0;\n    color: black;\n  }\n}\n\n.routes-block {\n  display: flex;\n  align-items: center;\n}\n\n.archive-block {\n  display: flex;\n  align-items: center;\n}\n\n.header-routes {\n  display: flex;\n  align-items: center;\n}\n\n.header {\n  position: relative;\n}\n\n.loupe {\n  width: 10px;\n  transition: fill .3s;\n\n  &:hover {\n    //transition: fill .3s;\n    //fill: $main_green;\n  }\n}","$main_green: rgba(137, 175, 137, 1);\n\n$btn_shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n$btn_border: 1px solid rgba(203, 203, 203, 1);\n\n$input_shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.27) inset;\n\n$filter_green: linear-gradient(0deg, #698769, #698769);\n$filter_border: 1px solid rgba(130, 130, 130, 1);\n$current_filter_border: 2px solid rgba(217, 221, 220, 1);\n\n$text_gray: rgba(70, 70, 70, 1);\n$text_black: rgba(66, 66, 66, 1);\n$text_white: rgba(255, 255, 255, 1);\n\n$table_text: rgba(0, 0, 0, 1);\n$table_bg: rgba(217, 221, 220, 1);\n$table_bg_main: rgba(217, 221, 217, 1);\n\n\n$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  width: 77%;\n  position: relative;\n  height: 113px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 5px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  @media screen and (min-width: 1920px) {\n    width: 82%;\n  }\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    //&:not(:last-child) {\n    //  padding-bottom: 15px;\n    //  margin-bottom: 5px;\n    //}\n  }\n\n  &__item {\n    margin-bottom: 7px;\n\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $main_green;\n      color: $text_white;\n    }\n  }\n}\n\n.nav-filters {\n  //&__item {\n  //  min-width: 70px;\n  //  width: auto;\n  //  height: 27px;\n  //}\n\n  &__button {\n    width: auto;\n    max-width: 100%;\n    height: 27px;\n    white-space: nowrap;\n  }\n\n  &__plots {\n    margin-top: 10px;\n    border-bottom: 1px solid black;\n    margin-bottom: 6px;\n    padding-bottom: 8px;\n      //margin-bottom: 5px;\n  }\n\n  &__filters {\n    flex-wrap: wrap;\n    height: 50px;\n    margin-top: 7px;\n    margin-bottom: 0 !important;\n    overflow-y: auto;\n  }\n\n  &__reset {\n    position: absolute;\n    bottom: -28px;\n    width: 161px;\n    display: block;\n    align-self: center;\n  }\n}\n\n.nav {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n  margin-top: 10px;\n}\n\n.nav-control {\n  position: relative;\n  width: 313px;\n  height: 113px;\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 20px 20px 10px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  &__group {\n    margin-bottom: 5px;\n    font-size: 14px;\n    font-weight: 500;\n    line-height: 17px;\n    letter-spacing: 0em;\n  }\n\n  &--opened {\n    z-index: 1000;\n    height: auto;\n    position: absolute;\n    right: 0;\n    top: 0;\n  }\n\n  &__nav {\n    display: flex;\n    //flex-direction: column;\n    align-items: center;\n    justify-content: space-between;\n    border-bottom: 2px solid black;\n    margin-bottom: 5px;\n  }\n\n  &__left {\n    width: 200px;\n  }\n\n  &__admin {\n    font-size: 16px;\n    font-weight: 500;\n    line-height: 26px;\n    letter-spacing: 0em;\n    cursor: pointer;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n\n  &__user {\n    display: flex;\n    margin-bottom: 7px;\n  }\n\n  &__name {\n    font-size: 16px;\n    font-weight: 700;\n    line-height: 21px;\n    letter-spacing: 0em;\n    color: rgba(76, 88, 102, 1);\n    margin-right: 7px;\n  }\n\n  &__exit {\n    a {\n      color: rgba(210, 66, 66, 1);\n      font-size: 16px;\n      font-weight: 400;\n      line-height: 21px;\n      letter-spacing: 0em;\n    }\n  }\n\n  &__search {\n    font-size: 18px;\n    font-weight: 500;\n    line-height: 23px;\n    letter-spacing: 0em;\n    text-align: center;\n    color: $main_green;\n\n    &-btn {\n      &:hover {\n        svg {\n          fill: green;\n        }\n      }\n    }\n  }\n\n  &__routes {\n    padding-bottom: 5px;\n    margin-bottom: 5px;\n    display: flex;\n    flex-direction: column;\n    align-items: flex-end;\n    border-bottom: 2px solid black;\n  }\n\n  &__route {\n\n    &-link {\n      font-size: 16px;\n      font-weight: 500;\n      line-height: 26px;\n      letter-spacing: 0em;\n      cursor: pointer;\n\n      &:hover {\n        color: $main_green;\n      }\n\n      &--current {\n        text-decoration: underline;\n        color: $main_green;\n      }\n    }\n  }\n\n  &__burger {\n    position: relative;\n    top: -5px;\n    cursor: pointer;\n\n    &-item {\n      display: block;\n      width: 40px;\n      height: 5px;\n      background: $text_black;\n      border-radius: 15px;\n\n      &:not(:last-child) {\n        margin-bottom: 6px;\n      }\n    }\n  }\n}\n\n.search-orders {\n  &__label {\n\n  }\n\n  &__input {\n    margin-right: 0 !important;\n    padding-left: 9px;\n    width: 170px !important;\n    cursor: text !important;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $main_green;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 15px 15px 0 0;\n  padding: 5px 30px;\n  height: 49px;\n  //margin-bottom: 30px;\n\n  &__title {\n    position: relative;\n    top: -1px;\n    font-size: 27px;\n    font-weight: 700;\n    line-height: 29px;\n    letter-spacing: 0em;\n    text-align: left;\n    color: $text_white;\n    margin-right: 20px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n    //width: 400px;\n  }\n\n  &__button {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n}\n\n.header-routes {\n  &__filter {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__planned {\n    &-date {\n      width: 140px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  border: 1px solid $text_white;\n  color: $text_white;\n  background: $main_green;\n}",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n    border-radius: 15px;\n    background: rgba(236, 236, 236, 1);\n\n    &-block {\n      padding: 5px;\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      width: 100%;\n    }\n  }\n\n  &-header {\n    width: 100%;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $main_green;\n    color: $text_white;\n    text-align: center;\n    height: 35px;\n    border-radius: 15px 15px 0px 0px;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $main_green;\n    background: $text_white;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  //margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 5px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 280px;\n  height: 280px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 280px;\n    height: 280px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $main_green !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: green !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $main_green !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $main_green !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: green !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $text_black;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 619px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 13px 10px 0;\n    background: rgba(236, 236, 236, 1);\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  }\n\n  &__title {\n    font-size: 16px;\n    font-weight: 500;\n    line-height: 19px;\n    margin-bottom: 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n  &-plan__date {\n    border: 1px solid rgba(173, 173, 173, 1) !important;\n    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) !important;\n    margin-right: 0 !important;\n    color: $text_black;\n  }\n\n  &__label {\n    text-align: center;\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 17px;\n    letter-spacing: 0em;\n    margin-bottom: 7px;\n  }\n\n  &__btn {\n    align-items: center;\n    width: 97px;\n    border: 1px solid rgba(173, 173, 173, 1);\n    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n    border-radius: 15px;\n  }\n\n  &__select {\n    width: 130px;\n    margin-bottom: 10px;\n    border: none;\n    border-radius: 7px;\n    box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.25);\n    background: rgba(255, 255, 255, 1);\n\n    &:disabled {\n      background: rgba(255, 255, 255, 1);\n    }\n  }\n\n  &__input {\n    width: 136px;\n    height: 28px;\n    margin-right: -40px;\n    box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n    border-radius: 15px;\n    border: none;\n    outline: none;\n\n    &:not(:disabled) {\n      &:focus {\n        outline: 2px solid $main_green;\n      }\n    }\n\n    &--small {\n      width: 80px !important;\n\n      &:not(:last-child) {\n        //margin-right: 20px;\n      }\n    }\n\n    &--top {\n      width: 136px;\n      text-align: center;\n      margin-bottom: 10px;\n      height: 28px;\n      box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n      border-radius: 15px;\n      border: none;\n    }\n\n    &--middle {\n      width: 155px;\n    }\n  }\n\n  &__section {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    margin-bottom: 15px;\n  }\n}\n\n.report-route__btn {\n  //margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: white;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 8px;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__input {\n    padding-left: 10px;\n  }\n\n  &__item {\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 18px;\n    letter-spacing: 0em;\n    text-align: left;\n    color: rgba(87, 87, 87, 1);\n    margin-bottom: 5px;\n\n    &--system {\n      color: $main_green;\n    }\n\n    &--error {\n      color: rgba(210, 66, 66, 1);\n    }\n\n    &--pause {\n      color: rgb(224, 108, 0);\n    }\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued,\n{\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__prev {\n    //margin: 12px auto 0;\n    overflow-y: scroll;\n    background: $text_white;\n    height: 100%;\n    width: 100%;\n    //border-radius: 15px;\n  }\n\n  &__item {\n    color: $text_black;\n    font-size: 17px;\n    //padding: 10px 13px;\n    //padding: 5px 0;\n    border-bottom: 1px solid black;\n  }\n}\n\n.confirm {\n  &__title {\n    font-size: 20px;\n    font-weight: 500;\n    line-height: 26px;\n    letter-spacing: 0em;\n    margin-top: 10px;\n    text-align: center;\n    color: $text_black;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    &--search {\n      margin-top: 20px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n.progress-block {\n  width: 180px;\n}\n\n.quantity-block {\n  display: flex;\n  justify-content: space-between;\n\n  &__labels {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n  }\n\n  &__label {\n    margin-right: 47px;\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 17px;\n    letter-spacing: 0em;\n    text-align: center;\n  }\n\n  &__issued {\n    position: relative;\n    right: -5px;\n  }\n\n  &__shifts {\n    //margin-right: 33px;\n  }\n\n  &__inshifts {\n    margin-right: 44px;\n    position: relative;\n    right: 10px;\n  }\n}\n\n.route-type {\n  &__paused {\n    //color: rgba(224, 108, 0, 1) !important;\n    border: 2px solid rgba(224, 108, 0, 1);\n  }\n\n  &__error {\n    //color: rgba(210, 66, 66, 1) !important;\n    border: 2px solid rgba(210, 66, 66, 1);\n  }\n\n  &__start {\n    //color: rgba(24, 136, 217, 1) !important;\n    border: 2px solid rgba(24, 136, 217, 1);\n  }\n\n  &__finish {\n    //color: rgba(0, 130, 29, 1) !important;\n    border: 2px solid rgba(0, 130, 29, 1);\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  background: rgba(236, 236, 236, 1);\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  &__input {\n    padding-left: 10px;\n    margin-top: 20px;\n    height: 28px;\n    text-align: left !important;\n    margin-right: 0;\n    width: 90%;\n    margin-bottom: 15px;\n    background: $text_white;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n\n  &__date {\n    margin-bottom: 10px;\n    margin-right: 0;\n\n  }\n\n  &__input {\n    margin-right: 0;\n    width: 20%;\n    height: 28px;\n    margin-bottom: 15px;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}\n\n.user__block {\n  margin-right: 40px;\n}\n\n.endtime__block {\n  margin-right: 107px;\n}\n\n.start-route__btn {\n  color: rgba(24, 136, 217, 1);\n}\n\n.end-route__btn {\n  color: rgba(0, 130, 29, 1);\n}\n\n.pause-route__btn {\n  color: rgba(224, 108, 0, 1);\n}\n\n.error-route__btn {\n  color: rgba(210, 66, 66, 1);\n}\n\n.section-report {\n  justify-content: left;\n}\n\n.issued-modal_trigger {\n  margin-right: 75px;\n}\n\n.send__comment {\n  width: 130px;\n  border: 2px solid rgba(105, 135, 105, 1);\n  color: rgba(105, 135, 105, 1);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n}\n\n.section-finish {\n  &__sub {\n    border-radius: 15px;\n    width: 130px;\n    height: 40px;\n    border: none;\n    background: rgba(105, 135, 105, 1);\n    color: $text_white;\n  }\n\n  &__delete {\n    border: none;\n    background: none;\n    color: rgba(210, 66, 66, 1);\n    cursor: pointer;\n  }\n}\n\n.issued-top {\n  display: flex;\n  align-items: center;\n\n  &__item {\n    padding: 5px 0;\n    width: 39%;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n\n    &--date {\n      width: 120px;\n    }\n\n    &--summary {\n      width: 80px;\n    }\n  }\n}\n",".modal_content--comments {\n  width: 612px;\n}\n\n\n.comments {\n  &__title {\n    font-size: 20px;\n    font-weight: 500;\n    line-height: 26px;\n    letter-spacing: 0em;\n    text-align: left;\n    color: $text_white;\n    margin-left: 31px;\n  }\n\n  &-content {\n    padding: 24px;\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n    background: rgba(236, 236, 236, 1);\n    border-radius: 15px;\n  }\n\n  &__add {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n}\n\n.comments-list {\n  height: 90px;\n  padding: 7px 10px;\n  overflow-y: scroll;\n  border-radius: 15px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  background: $text_white;\n\n  &__item {\n    color: $text_gray;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n}\n\n.comments__prev {\n  margin-bottom: 10px;\n}\n\n.comments__yours {\n  width: 350px;\n  cursor: text !important;\n  padding-left: 10px;\n}",".modal-plan {\n  position: relative;\n\n  .confirm__section {\n    position: absolute;\n    bottom: 0;\n  }\n}\n\n.modal {\n  &-plan__date {\n\n  }\n\n  &-plan {\n    padding: 5px;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n\n    &__today {\n      text-align: center;\n      align-self: center;\n    }\n\n    &__section {\n      width: 250px;\n      display: flex;\n      flex-direction: column;\n      justify-content: space-between;\n      //align-items: center;\n\n      &:not(:last-child) {\n        margin-bottom: 10px;\n      }\n    }\n\n    &__data {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n\n      &--center {\n        justify-content: center;\n      }\n    }\n\n    &__input {\n      width: 120px;\n    }\n\n    &__check {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__exclude {\n      text-align: center;\n      height: 100px;\n\n      &-option {\n        text-align: center;\n        padding: 2px;\n\n        &:hover {\n          cursor: pointer;\n        }\n      }\n    }\n  }\n}\n\n.confirm__title--plan {\n  margin-bottom: 5px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}\n\n.plan-period {\n  &__btn {\n    &:not(:last-child) {\n      margin-right: 5px;\n    }\n  }\n\n  margin-bottom: 10px;\n}\n\n.plan-dates {\n  display: flex;\n  overflow-y: scroll;\n  max-height: 72%;\n  //justify-content: space-between;\n  align-items: center;\n  flex-wrap: wrap;\n  margin-left: -2px;\n  //min-height: 308px;\n\n  &__item {\n    width: 105px;\n    padding: 5px;\n    background: $text_white;\n    margin-bottom: 7px;\n    transition: color .3s;\n    text-align: center;\n\n    &:hover {\n      cursor: pointer;\n      transition: color .3s;\n      color: #09d009;\n    }\n\n    &:not(:last-child) {\n      margin-right: 7px;\n    }\n\n    &--inplan {\n      color: white;\n      background: $main_green;\n    }\n\n    &--busy {\n      border: 1px solid $main_green;\n    }\n  }\n}",".admin-panel {\n  min-width: 1200px;\n  height: 600px;\n  background: $text_white;\n}\n\n.panel-nav {\n  margin-top: 10px;\n  color: $text_gray;\n\n  padding: 5px;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n}\n\n.nav-navigation {\n  padding: 10px;\n  width: 350px;\n  height: 200px;\n  background: rgba(236, 236, 236, 1);\n  border-radius: 15px;\n\n  &__item {\n    height: 28px;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n\n    &:not(:last-child) {\n      margin-bottom: 10px;\n    }\n\n    &--title {\n      width: 100%;\n      background: $main_green;\n      border-radius: 15px;\n      text-align: center;\n      color: $text_white;\n    }\n  }\n\n  &__text {\n    cursor: pointer;\n    transition: color .3s;\n\n    &:hover {\n      color: $main_green;\n      transition: color .3s;\n    }\n  }\n}\n\n.nav-content {\n  width: 70%;\n  min-height: 500px;\n  max-height: 500px;\n  display: flex;\n  flex-direction: column;\n\n  overflow-y: auto;\n\n  &__columns {\n    height: 40px;\n    padding: 10px;\n    border-radius: 15px 15px 0 0;\n    background: $main_green;\n    color: $text_white;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    //height: 28px;\n  }\n\n  &__items {\n    padding: 10px;\n    background: rgba(236, 236, 236, 1);\n  }\n\n  &__item {\n    min-height: 40px;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__column {\n    min-width: 20%;\n    text-align: center;\n\n    &--left {\n      text-align: left !important;\n    }\n\n    &-name {\n      min-width: 45%;\n      width: 45%;\n    }\n\n    &-shortname {\n      min-width: 15%;\n      width: 15%;\n    }\n\n    &-hide {\n      min-width: 10%;\n      width: 10%;\n    }\n  }\n\n}\n\n.nav-item {\n  width: 100%;\n\n  &__column {\n    text-align: center;\n    min-width: 20%;\n\n    &--left {\n      text-align: left;\n    }\n\n    &-name {\n      min-width: 45%;\n      width: 45%;\n    }\n\n    &-shortname {\n      min-width: 15%;\n      width: 15%;\n    }\n\n    &-hide {\n      min-width: 10%;\n      width: 10%;\n    }\n\n    &--edit {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $main_green;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__pos {\n    cursor: pointer;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n}\n\n.edit-form {\n  align-self: center;\n  width: 726px;\n  display: flex;\n  justify-content: space-between;\n  background: rgba(236, 236, 236, 1);\n  padding: 25px;\n  border-radius: 15px;\n  position: relative;\n\n  &--group {\n    width: 300px;\n    height: 320px;\n\n    .edit-form__user {\n      border-right: none;\n      width: 100%;\n      height: 100%;\n    }\n  }\n\n  &__text {\n    padding: 10px;\n    width: 250px;\n    height: 100px;\n    resize: none;\n    cursor: pointer;\n  }\n\n  &__user {\n    //margin-top: 13px;\n    width: 50%;\n    //height: 284px;\n    border-right: 1px solid $text_gray;\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n    margin-bottom: 15px;\n\n    &--checker {\n      flex-direction: row;\n    }\n  }\n\n  &__label {\n    font-size: 18px;\n    font-weight: 400;\n    line-height: 30px;\n    letter-spacing: 0em;\n\n    &--checker {\n      flex-direction: row;\n      margin-right: 168px;\n    }\n  }\n\n  &__input {\n    padding: 5px 5px 5px 10px;\n    width: 250px !important;\n    height: 28px !important;\n    cursor: text;\n    margin-bottom: 0 !important;\n  }\n\n  &__group {\n    cursor: pointer !important;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n\n  &__plot {\n    cursor: pointer !important;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n\n  &__submit {\n    cursor: pointer;\n    margin-top: 20px;\n    align-self: flex-end;\n  }\n\n  &__succ {\n    position: absolute;\n    color: $main_green;\n\n    &--user {\n      bottom: 70px;\n      left: 25px;\n    }\n\n    &--filter {\n      bottom: 80px;\n      left: 27px;\n    }\n\n    &--group {\n      bottom: 80px;\n      left: 27px;\n    }\n  }\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput[type=number] {\n  -moz-appearance: textfield;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput, select {\n  outline: none;\n}\n\nhtml {\n  height: 100%;\n}\n\nbody {\n  font-family: Inter;\n  background: rgb(236, 236, 236);\n  height: 95%;\n}\n\n.container {\n  padding: 0 15px;\n  height: 98%;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: rgb(66, 66, 66);\n  height: 80%;\n}\n@media screen and (min-width: 1522px) {\n  .main--reports {\n    margin: 0 auto 15px;\n    width: 1492px;\n  }\n}\n.main__button {\n  height: 28px;\n  text-align: center;\n  border: 1px solid black;\n  border-radius: 5px;\n  background: white;\n  color: rgb(66, 66, 66);\n  transition: color 0.3s;\n  cursor: pointer;\n  padding: 5px;\n}\n.main__button:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n.main__button--select {\n  background: rgb(217, 221, 220) !important;\n}\n.main__button--select {\n  outline: none;\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 19px;\n  letter-spacing: 0em;\n  text-align: center;\n  color: rgb(137, 175, 137);\n  cursor: pointer;\n  padding: 3px 7px;\n  border: none;\n}\n.main__button--click {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 19px;\n  letter-spacing: 0em;\n  text-align: center;\n  border-radius: 15px;\n  border: 1px solid rgb(203, 203, 203);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  background: white;\n  color: rgb(66, 66, 66);\n  cursor: pointer;\n  padding: 3px 7px;\n}\n.main__input {\n  padding: 5px;\n  cursor: text;\n  border: 1px solid black;\n  border-radius: 5px;\n  color: rgb(66, 66, 66);\n}\n.main-table__data {\n  width: 100%;\n  height: 100%;\n  overflow: scroll;\n  margin-bottom: 5px;\n  border-left: 1px solid black;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  background: white;\n}\n.main__select {\n  text-align: center !important;\n}\n.main__select {\n  width: 100%;\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n}\n\n.warning {\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active,\na:hover,\na {\n  -webkit-text-decoration: none;\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n}\nselect:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n}\n\nbutton {\n  border: none;\n  background: none;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n}\nbutton:disabled:hover {\n  color: gray;\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n}\ninput:disabled:hover {\n  color: gray;\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test__form {\n  display: none;\n  visibility: hidden;\n}\n.test__list {\n  background: none;\n}\n.test__item {\n  background: transparent;\n}\n.test__input {\n  background: transparent;\n  outline: none;\n  border: none;\n}\n\n.admin-form__button {\n  width: 130px;\n  transition: color 0.3s;\n  position: absolute;\n  right: 24px;\n}\n.admin-form__button:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n.admin-form__user {\n  margin-right: 10px;\n}\n.admin-form__exit {\n  transition: color 0.3s;\n}\n.admin-form__exit:hover {\n  transition: color 0.3s;\n  color: #13d9d9;\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n.search {\n  display: flex;\n  align-items: center;\n}\n@media screen and (max-width: 1200px) {\n  .search {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n}\n.check-helper--long {\n  min-width: 300%;\n}\n.check-helper--errored {\n  padding: 0;\n  color: black;\n}\n\n.routes-block {\n  display: flex;\n  align-items: center;\n}\n\n.archive-block {\n  display: flex;\n  align-items: center;\n}\n\n.header-routes {\n  display: flex;\n  align-items: center;\n}\n\n.header {\n  position: relative;\n}\n\n.loupe {\n  width: 10px;\n  transition: fill 0.3s;\n}\n.nav-filters {\n  width: 77%;\n  position: relative;\n  height: 113px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 5px 25px;\n  display: flex;\n  flex-direction: column;\n}\n@media screen and (min-width: 1920px) {\n  .nav-filters {\n    width: 82%;\n  }\n}\n.nav-filters__list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.nav-filters__item {\n  margin-bottom: 7px;\n}\n.nav-filters__item:not(:last-child) {\n  margin-right: 10px;\n}\n.nav-filters__button--chosen {\n  background: rgb(137, 175, 137);\n  color: rgb(255, 255, 255);\n}\n\n.nav-filters__button {\n  width: auto;\n  max-width: 100%;\n  height: 27px;\n  white-space: nowrap;\n}\n.nav-filters__plots {\n  margin-top: 10px;\n  border-bottom: 1px solid black;\n  margin-bottom: 6px;\n  padding-bottom: 8px;\n}\n.nav-filters__filters {\n  margin-bottom: 0 !important;\n}\n.nav-filters__filters {\n  flex-wrap: wrap;\n  height: 50px;\n  margin-top: 7px;\n  overflow-y: auto;\n}\n.nav-filters__reset {\n  position: absolute;\n  bottom: -28px;\n  width: 161px;\n  display: block;\n  align-self: center;\n}\n\n.nav {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n  margin-top: 10px;\n}\n\n.nav-control {\n  position: relative;\n  width: 313px;\n  height: 113px;\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 20px 20px 10px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.nav-control__group {\n  margin-bottom: 5px;\n  font-size: 14px;\n  font-weight: 500;\n  line-height: 17px;\n  letter-spacing: 0em;\n}\n.nav-control--opened {\n  z-index: 1000;\n  height: auto;\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n.nav-control__nav {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-bottom: 2px solid black;\n  margin-bottom: 5px;\n}\n.nav-control__left {\n  width: 200px;\n}\n.nav-control__admin {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-control__admin:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.nav-control__user {\n  display: flex;\n  margin-bottom: 7px;\n}\n.nav-control__name {\n  font-size: 16px;\n  font-weight: 700;\n  line-height: 21px;\n  letter-spacing: 0em;\n  color: rgb(76, 88, 102);\n  margin-right: 7px;\n}\n.nav-control__exit a {\n  color: rgb(210, 66, 66);\n  font-size: 16px;\n  font-weight: 400;\n  line-height: 21px;\n  letter-spacing: 0em;\n}\n.nav-control__search {\n  font-size: 18px;\n  font-weight: 500;\n  line-height: 23px;\n  letter-spacing: 0em;\n  text-align: center;\n  color: rgb(137, 175, 137);\n}\n.nav-control__search-btn:hover svg {\n  fill: green;\n}\n.nav-control__routes {\n  padding-bottom: 5px;\n  margin-bottom: 5px;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  border-bottom: 2px solid black;\n}\n.nav-control__route-link {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  cursor: pointer;\n}\n.nav-control__route-link:hover {\n  color: rgb(137, 175, 137);\n}\n.nav-control__route-link--current {\n  -webkit-text-decoration: underline;\n  text-decoration: underline;\n  color: rgb(137, 175, 137);\n}\n.nav-control__burger {\n  position: relative;\n  top: -5px;\n  cursor: pointer;\n}\n.nav-control__burger-item {\n  display: block;\n  width: 40px;\n  height: 5px;\n  background: rgb(66, 66, 66);\n  border-radius: 15px;\n}\n.nav-control__burger-item:not(:last-child) {\n  margin-bottom: 6px;\n}\n\n.search-orders__input {\n  margin-right: 0 !important;\n  width: 170px !important;\n  cursor: text !important;\n}\n\n.search-orders__input {\n  padding-left: 9px;\n}\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: rgb(137, 175, 137);\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 15px 15px 0 0;\n  padding: 5px 30px;\n  height: 49px;\n}\n.main-header__title {\n  position: relative;\n  top: -1px;\n  font-size: 27px;\n  font-weight: 700;\n  line-height: 29px;\n  letter-spacing: 0em;\n  text-align: left;\n  color: rgb(255, 255, 255);\n  margin-right: 20px;\n}\n.main-header__nav {\n  display: flex;\n  align-items: center;\n}\n.main-header__button {\n  transition: color 0.3s;\n}\n.main-header__button:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.main-header__button:not(:last-child) {\n  margin-right: 10px;\n}\n\n.header-routes__filter:not(:last-child) {\n  margin-right: 10px;\n}\n.header-routes__planned-date {\n  width: 140px;\n}\n\n#search__target {\n  width: 120px !important;\n}\n\n#search__target {\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  border: 1px solid rgb(255, 255, 255);\n  color: rgb(255, 255, 255);\n  background: rgb(137, 175, 137);\n}\n\n.modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n}\n.modal_content {\n  display: flex;\n  flex-direction: column;\n  width: 900px;\n  height: auto;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n  background: rgb(236, 236, 236);\n}\n.modal_content-block {\n  padding: 5px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n}\n.modal-header {\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 5px;\n  background: rgb(137, 175, 137);\n  color: rgb(255, 255, 255);\n  text-align: center;\n  height: 35px;\n  border-radius: 15px 15px 0px 0px;\n}\n.modal__trigger {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  justify-content: center;\n  width: 100%;\n  height: 100px;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  color: rgb(137, 175, 137);\n  background: rgb(255, 255, 255);\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 15px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n}\n.data__file {\n  position: relative;\n  width: 260px;\n  height: 260px;\n  margin-bottom: 60px;\n}\n\n.link__preview {\n  display: block;\n  width: 260px;\n  height: 260px;\n  margin-bottom: 10px;\n}\n\n.file__preview {\n  width: 260px;\n  height: 260px;\n}\n.file__download {\n  color: rgb(137, 175, 137) !important;\n}\n.file__download {\n  cursor: pointer;\n  position: absolute;\n  width: 30px;\n  height: 40px;\n  bottom: 5px;\n  right: 10px;\n  transition: color 0.3s;\n}\n.file__download:hover {\n  color: green !important;\n}\n.file__download:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__remove {\n  color: rgb(137, 175, 137) !important;\n}\n.file__remove {\n  cursor: pointer;\n  top: 0px;\n  right: 5px;\n  position: absolute;\n  font-size: 26px;\n  transform: rotate(45deg);\n  transition: color 0.3s;\n}\n.file__remove:hover {\n  color: red !important;\n}\n.file__remove:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__original {\n  color: rgb(137, 175, 137) !important;\n}\n.file__original {\n  position: absolute;\n  top: 5px;\n  left: 5px;\n  transition: color 0.3s;\n}\n.file__original:hover {\n  color: green !important;\n}\n.file__original:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.file__name {\n  color: rgb(66, 66, 66);\n  text-align: center;\n}\n.file__all {\n  align-self: center;\n  width: 170px;\n  margin-bottom: 15px;\n}\n\n.modal_content--route {\n  width: 619px;\n  height: auto;\n}\n\n.route__config {\n  padding: 13px 10px 0;\n  background: rgb(236, 236, 236);\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.route__title {\n  font-size: 16px;\n  font-weight: 500;\n  line-height: 19px;\n  margin-bottom: 10px;\n}\n.route-block__wrapper {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n}\n.route__block {\n  display: flex;\n  flex-direction: column;\n}\n.route__input:not(:disabled) {\n  cursor: pointer;\n}\n.route-plan__date {\n  border: 1px solid rgb(173, 173, 173) !important;\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) !important;\n  margin-right: 0 !important;\n}\n.route-plan__date {\n  color: rgb(66, 66, 66);\n}\n.route__label {\n  text-align: center;\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 17px;\n  letter-spacing: 0em;\n  margin-bottom: 7px;\n}\n.route__btn {\n  align-items: center;\n  width: 97px;\n  border: 1px solid rgb(173, 173, 173);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n}\n.route__select {\n  width: 130px;\n  margin-bottom: 10px;\n  border: none;\n  border-radius: 7px;\n  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.25);\n  background: rgb(255, 255, 255);\n}\n.route__select:disabled {\n  background: rgb(255, 255, 255);\n}\n.route__input {\n  width: 136px;\n  height: 28px;\n  margin-right: -40px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  border-radius: 15px;\n  border: none;\n  outline: none;\n}\n.route__input:not(:disabled):focus {\n  outline: 2px solid rgb(137, 175, 137);\n}\n.route__input--small {\n  width: 80px !important;\n}\n.route__input--top {\n  width: 136px;\n  text-align: center;\n  margin-bottom: 10px;\n  height: 28px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  border-radius: 15px;\n  border: none;\n}\n.route__input--middle {\n  width: 155px;\n}\n.route__section {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n\n.section-logs {\n  width: 100%;\n  background: white;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 8px;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.section-logs__title {\n  text-align: center;\n  margin-bottom: 10px;\n  color: #447e9b;\n}\n.section-logs__list {\n  height: 85px;\n  overflow-y: scroll;\n}\n.section-logs__input {\n  padding-left: 10px;\n}\n.section-logs__item {\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 18px;\n  letter-spacing: 0em;\n  text-align: left;\n  color: rgb(87, 87, 87);\n  margin-bottom: 5px;\n}\n.section-logs__item--system {\n  color: rgb(137, 175, 137);\n}\n.section-logs__item--error {\n  color: rgb(210, 66, 66);\n}\n.section-logs__item--pause {\n  color: rgb(224, 108, 0);\n}\n.section-logs__comment {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 30px;\n}\n.section-logs__input {\n  width: 350px;\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n}\n.section-finish__cancel {\n  margin-right: 30px;\n}\n.section-finish__delete:hover {\n  color: red !important;\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued {\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment__prev {\n  overflow-y: scroll;\n  background: rgb(255, 255, 255);\n  height: 100%;\n  width: 100%;\n}\n.comment__item {\n  color: rgb(66, 66, 66);\n  font-size: 17px;\n  border-bottom: 1px solid black;\n}\n\n.confirm__title {\n  font-size: 20px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  margin-top: 10px;\n  text-align: center;\n  color: rgb(66, 66, 66);\n  margin-bottom: 25px;\n}\n.confirm__section {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.confirm__button {\n  margin-bottom: 10px;\n}\n.confirm__button--ok {\n  margin-right: 25px;\n}\n.confirm__button--search {\n  margin-top: 20px;\n}\n\n.progress-block {\n  width: 180px;\n}\n\n.quantity-block {\n  display: flex;\n  justify-content: space-between;\n}\n.quantity-block__labels {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.quantity-block__label {\n  margin-right: 47px;\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 17px;\n  letter-spacing: 0em;\n  text-align: center;\n}\n.quantity-block__issued {\n  position: relative;\n  right: -5px;\n}\n.quantity-block__inshifts {\n  margin-right: 44px;\n  position: relative;\n  right: 10px;\n}\n\n.route-type__paused {\n  border: 2px solid rgb(224, 108, 0);\n}\n.route-type__error {\n  border: 2px solid rgb(210, 66, 66);\n}\n.route-type__start {\n  border: 2px solid rgb(24, 136, 217);\n}\n.route-type__finish {\n  border: 2px solid rgb(0, 130, 29);\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n}\n#route__delete:disabled:hover {\n  color: gray !important;\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  background: rgb(236, 236, 236);\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n}\n.modal-error__input {\n  text-align: left !important;\n}\n.modal-error__input {\n  padding-left: 10px;\n  margin-top: 20px;\n  height: 28px;\n  margin-right: 0;\n  width: 90%;\n  margin-bottom: 15px;\n  background: rgb(255, 255, 255);\n}\n.modal-error__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-issued__date {\n  margin-bottom: 10px;\n  margin-right: 0;\n}\n.modal-issued__input {\n  margin-right: 0;\n  width: 20%;\n  height: 28px;\n  margin-bottom: 15px;\n}\n.modal-issued__title {\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n\n.user__block {\n  margin-right: 40px;\n}\n\n.endtime__block {\n  margin-right: 107px;\n}\n\n.start-route__btn {\n  color: rgb(24, 136, 217);\n}\n\n.end-route__btn {\n  color: rgb(0, 130, 29);\n}\n\n.pause-route__btn {\n  color: rgb(224, 108, 0);\n}\n\n.error-route__btn {\n  color: rgb(210, 66, 66);\n}\n\n.section-report {\n  justify-content: left;\n}\n\n.issued-modal_trigger {\n  margin-right: 75px;\n}\n\n.send__comment {\n  width: 130px;\n  border: 2px solid rgb(105, 135, 105);\n  color: rgb(105, 135, 105);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n}\n\n.section-finish__sub {\n  border-radius: 15px;\n  width: 130px;\n  height: 40px;\n  border: none;\n  background: rgb(105, 135, 105);\n  color: rgb(255, 255, 255);\n}\n.section-finish__delete {\n  border: none;\n  background: none;\n  color: rgb(210, 66, 66);\n  cursor: pointer;\n}\n\n.issued-top {\n  display: flex;\n  align-items: center;\n}\n.issued-top__item {\n  padding: 5px 0;\n  width: 39%;\n}\n.issued-top__item:not(:last-child) {\n  border-right: 1px solid black;\n}\n.issued-top__item--date {\n  width: 120px;\n}\n.issued-top__item--summary {\n  width: 80px;\n}\n\n.modal_content--comments {\n  width: 612px;\n}\n\n.comments__title {\n  font-size: 20px;\n  font-weight: 500;\n  line-height: 26px;\n  letter-spacing: 0em;\n  text-align: left;\n  color: rgb(255, 255, 255);\n  margin-left: 31px;\n}\n.comments-content {\n  padding: 24px;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  background: rgb(236, 236, 236);\n  border-radius: 15px;\n}\n.comments__add {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.comments-list {\n  height: 90px;\n  padding: 7px 10px;\n  overflow-y: scroll;\n  border-radius: 15px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  background: rgb(255, 255, 255);\n}\n.comments-list__item {\n  color: rgb(70, 70, 70);\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n}\n\n.comments__prev {\n  margin-bottom: 10px;\n}\n\n.comments__yours {\n  cursor: text !important;\n}\n\n.comments__yours {\n  width: 350px;\n  padding-left: 10px;\n}\n\n.modal-plan {\n  position: relative;\n}\n.modal-plan .confirm__section {\n  position: absolute;\n  bottom: 0;\n}\n\n.modal-plan {\n  padding: 5px;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.modal-plan__today {\n  text-align: center;\n  align-self: center;\n}\n.modal-plan__section {\n  width: 250px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.modal-plan__section:not(:last-child) {\n  margin-bottom: 10px;\n}\n.modal-plan__data {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__data--center {\n  justify-content: center;\n}\n.modal-plan__input {\n  width: 120px;\n}\n.modal-plan__check {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.modal-plan__exclude {\n  text-align: center;\n  height: 100px;\n}\n.modal-plan__exclude-option {\n  text-align: center;\n  padding: 2px;\n}\n.modal-plan__exclude-option:hover {\n  cursor: pointer;\n}\n\n.confirm__title--plan {\n  margin-bottom: 5px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}\n\n.plan-period {\n  margin-bottom: 10px;\n}\n.plan-period__btn:not(:last-child) {\n  margin-right: 5px;\n}\n\n.plan-dates {\n  display: flex;\n  overflow-y: scroll;\n  max-height: 72%;\n  margin-left: 15px;\n  align-items: center;\n  flex-wrap: wrap;\n}\n.plan-dates__item {\n  width: 105px;\n  padding: 5px;\n  background: rgb(255, 255, 255);\n  margin-bottom: 7px;\n  transition: color 0.3s;\n  text-align: center;\n}\n.plan-dates__item:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: #09d009;\n}\n.plan-dates__item:not(:last-child) {\n  margin-right: 7px;\n}\n.plan-dates__item--inplan {\n  color: white;\n  background: rgb(137, 175, 137);\n}\n.plan-dates__item--busy {\n  border: 2px solid rgb(137, 175, 137);\n}\n.plan-dates__item--busy:hover {\n  color: rgb(66, 66, 66);\n}\n\n.admin-panel {\n  min-width: 1200px;\n  height: 600px;\n  background: rgb(255, 255, 255);\n}\n\n.panel-nav {\n  margin-top: 10px;\n  color: rgb(70, 70, 70);\n  padding: 5px;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n}\n\n.nav-navigation {\n  padding: 10px;\n  width: 350px;\n  height: 200px;\n  background: rgb(236, 236, 236);\n  border-radius: 15px;\n}\n.nav-navigation__item {\n  height: 28px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.nav-navigation__item:not(:last-child) {\n  margin-bottom: 10px;\n}\n.nav-navigation__item--title {\n  width: 100%;\n  background: rgb(137, 175, 137);\n  border-radius: 15px;\n  text-align: center;\n  color: rgb(255, 255, 255);\n}\n.nav-navigation__text {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-navigation__text:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n\n.nav-content {\n  width: 70%;\n  min-height: 500px;\n  max-height: 500px;\n  display: flex;\n  flex-direction: column;\n  overflow-y: auto;\n}\n.nav-content__columns {\n  height: 40px;\n  padding: 10px;\n  border-radius: 15px 15px 0 0;\n  background: rgb(137, 175, 137);\n  color: rgb(255, 255, 255);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.nav-content__items {\n  padding: 10px;\n  background: rgb(236, 236, 236);\n}\n.nav-content__item {\n  min-height: 40px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.nav-content__column {\n  min-width: 20%;\n  text-align: center;\n}\n.nav-content__column--left {\n  text-align: left !important;\n}\n.nav-content__column-name {\n  min-width: 45%;\n  width: 45%;\n}\n.nav-content__column-shortname {\n  min-width: 15%;\n  width: 15%;\n}\n.nav-content__column-hide {\n  min-width: 10%;\n  width: 10%;\n}\n\n.nav-item {\n  width: 100%;\n}\n.nav-item__column {\n  text-align: center;\n  min-width: 20%;\n}\n.nav-item__column--left {\n  text-align: left;\n}\n.nav-item__column-name {\n  min-width: 45%;\n  width: 45%;\n}\n.nav-item__column-shortname {\n  min-width: 15%;\n  width: 15%;\n}\n.nav-item__column-hide {\n  min-width: 10%;\n  width: 10%;\n}\n.nav-item__column--edit {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-item__column--edit:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n.nav-item__pos {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.nav-item__pos:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n\n.edit-form {\n  align-self: center;\n  width: 726px;\n  display: flex;\n  justify-content: space-between;\n  background: rgb(236, 236, 236);\n  padding: 25px;\n  border-radius: 15px;\n  position: relative;\n}\n.edit-form--group {\n  width: 300px;\n  height: 320px;\n}\n.edit-form--group .edit-form__user {\n  border-right: none;\n  width: 100%;\n  height: 100%;\n}\n.edit-form__text {\n  padding: 10px;\n  width: 250px;\n  height: 100px;\n  resize: none;\n  cursor: pointer;\n}\n.edit-form__user {\n  width: 50%;\n  border-right: 1px solid rgb(70, 70, 70);\n}\n.edit-form__block {\n  display: flex;\n  flex-direction: column;\n  margin-bottom: 15px;\n}\n.edit-form__block--checker {\n  flex-direction: row;\n}\n.edit-form__label {\n  font-size: 18px;\n  font-weight: 400;\n  line-height: 30px;\n  letter-spacing: 0em;\n}\n.edit-form__label--checker {\n  flex-direction: row;\n  margin-right: 168px;\n}\n.edit-form__input {\n  width: 250px !important;\n  height: 28px !important;\n  margin-bottom: 0 !important;\n}\n.edit-form__input {\n  padding: 5px 5px 5px 10px;\n  cursor: text;\n}\n.edit-form__group {\n  cursor: pointer !important;\n}\n.edit-form__group {\n  transition: color 0.3s;\n}\n.edit-form__group:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.edit-form__plot {\n  cursor: pointer !important;\n}\n.edit-form__plot {\n  transition: color 0.3s;\n}\n.edit-form__plot:hover {\n  transition: color 0.3s;\n  color: rgb(137, 175, 137);\n}\n.edit-form__submit {\n  cursor: pointer;\n  margin-top: 20px;\n  align-self: flex-end;\n}\n.edit-form__succ {\n  position: absolute;\n  color: rgb(137, 175, 137);\n}\n.edit-form__succ--user {\n  bottom: 70px;\n  left: 25px;\n}\n.edit-form__succ--filter {\n  bottom: 80px;\n  left: 27px;\n}\n.edit-form__succ--group {\n  bottom: 80px;\n  left: 27px;\n}\n\n.main-table__header {\n  display: flex;\n  align-items: center;\n  position: sticky;\n  z-index: 10;\n  top: 0;\n  width: 100%;\n}\n.main-table__item {\n  display: flex;\n  align-items: center;\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table__cell {\n  font-size: 14px;\n  font-weight: 400;\n  line-height: 18px;\n  letter-spacing: 0em;\n  text-align: left;\n  height: 28px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: default;\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n  background: white;\n  color: rgb(0, 0, 0);\n}\n.table__cell:not(:last-child) {\n  border-right: 1px solid black;\n}\n.table__cell--top {\n  background: rgb(156, 156, 156) !important;\n}\n.table:last-child {\n  border-right: none;\n}\n.table__use label {\n  cursor: pointer;\n  transition: color 0.3s;\n}\n.table__use label:hover {\n  color: rgb(137, 175, 137);\n  transition: color 0.3s;\n}\n.table__data {\n  font-size: 14px;\n  font-weight: 400;\n  height: 28px;\n  width: 100%;\n  text-align: center;\n  border-radius: 1px;\n  border: none;\n  background: white;\n  color: black;\n  outline: 3.3px #447e9b;\n  position: relative;\n}\n.table__data--ro {\n  cursor: default;\n  outline: none;\n}\n.table__data--chosen {\n  background: rgb(217, 221, 217);\n  color: rgb(0, 0, 0);\n}\n.table__data--opened {\n  height: 56px;\n  font-size: 15px;\n  background: rgb(217, 221, 217);\n  color: rgb(0, 0, 0);\n  border-bottom: 1px solid black;\n}\n.table__data--opened.table__data--current {\n  border-bottom: 2px solid black;\n}\n.table__data--current {\n  font-weight: 600;\n  color: rgb(0, 0, 0);\n  border: 1px solid black;\n}\n.table__db {\n  display: flex;\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__timestamp {\n  min-width: 100px;\n  max-width: 100px;\n}\n.table__files {\n  min-width: 32px;\n  max-width: 32px;\n  position: relative;\n}\n.table__number {\n  min-width: 80px;\n  max-width: 80px;\n}\n.table__sample {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table__client {\n  min-width: 160px;\n  max-width: 160px;\n}\n.table__name {\n  min-width: 260px;\n  max-width: 260px;\n}\n.table__material {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__quantity {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued {\n  border-right: 1px solid black !important;\n}\n.table__issued {\n  min-width: 70px;\n  max-width: 70px;\n}\n.table__issued--done {\n  color: green;\n  font-size: 16px;\n  font-weight: 600;\n}\n.table__complete {\n  border-right: none !important;\n}\n.table__complete {\n  border-top: 1px solid black;\n  border-bottom: 1px solid black;\n}\n.table__complete input {\n  height: 26px;\n}\n.table__m {\n  min-width: 36px;\n  max-width: 36px;\n}\n.table__endtime {\n  min-width: 140px;\n  max-width: 140px;\n}\n.table__endtime--dead {\n  color: red;\n  font-size: 15px;\n}\n.table__route {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 29px;\n  width: 50px;\n}\n.table__route:last-child {\n  border-right: 1px solid black !important;\n}\n.table__routes {\n  min-width: 500px;\n  max-width: 500px;\n}\n.table__p {\n  min-width: 60px;\n  max-width: 60px;\n}\n.table-p-select, .table-m-select {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  cursor: pointer;\n}\n.table__comment {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table__comment--top {\n  flex-grow: 1;\n  min-width: 200px;\n  max-width: 100%;\n}\n.table-routes__wrapper {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 28px;\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body_cell {\n  max-height: 56px;\n  font-size: 16px;\n  border-right: 1px solid black;\n  border-bottom: 1px solid black;\n  position: relative;\n}\n.table-body_cell:last-child {\n  border-right: none;\n}\n.table-body_cell--opened {\n  height: 56px;\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n  50% {\n    background: green;\n    color: white;\n  }\n  100% {\n    background: white;\n    color: black;\n  }\n}\n.table__route:first-child {\n  border-left: none;\n}\n.table__route--issued {\n  border-top: none;\n  max-height: 28px;\n}\n.table__route--issued:last-child {\n  border-right: 1px solid black;\n}\n.table__route--issued:first-child {\n  border-left: none;\n}\n.table__route--issued input {\n  height: 26px;\n}\n\n.route {\n  color: black;\n  height: 24px;\n  width: 48px;\n}\n.route--inplan {\n  border-left: 1px solid black !important;\n}\n.route--inplan {\n  border-top: 1px solid black;\n  border-bottom: 2px solid black;\n  border-right: 2px solid black;\n}\n.route--paused {\n  color: white !important;\n}\n.route--paused {\n  background: rgb(224, 108, 0);\n  border-radius: 15px;\n}\n.route--error {\n  color: white !important;\n}\n.route--error {\n  background: rgb(210, 66, 66);\n  border-radius: 15px;\n}\n.route--started {\n  background: white !important;\n}\n.route--started {\n  border: 2px solid rgb(81, 165, 227);\n  border-radius: 15px;\n}\n.route--completed {\n  background: white !important;\n}\n.route--completed {\n  border: 2px solid rgb(0, 130, 29);\n  border-radius: 15px;\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__copy {\n  background: rgb(156, 156, 156) !important;\n}\n\n.order__copy {\n  width: 10px;\n  border: none;\n  transition: color 0.3s;\n}\n.order__copy:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color 0.3s;\n}\n.order__delete:hover {\n  cursor: pointer;\n  transition: color 0.3s;\n  color: white;\n}\n\n.table__issued--report {\n  min-width: 105px;\n  max-width: 105px;\n}\n.table__plan--report {\n  min-width: 105px;\n  max-width: 105px;\n}\n.table__route--report {\n  min-width: 65px;\n  max-width: 65px;\n}\n.table__operator--report {\n  min-width: 95px;\n  max-width: 95px;\n}\n.table__issued-plan--report {\n  min-width: 120px;\n  max-width: 120px;\n}", "",{"version":3,"sources":["webpack://./web/src/static/css/table/table.scss","webpack://./web/src/static/css/main.scss","webpack://./web/src/static/css/var.scss","webpack://./web/src/static/css/table/top_filters.scss","webpack://./web/src/static/css/table/table_nav.scss","webpack://./web/src/static/css/table/files_modal.scss","webpack://./web/src/static/css/table/route_modal.scss","webpack://./web/src/static/css/table/comments_modal.scss","webpack://./web/src/static/css/table/planModal.scss","webpack://./web/src/static/css/table/adminPanel.scss"],"names":[],"mappings":"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","sourcesContent":["@import \"../main\";\n@import \"top_filters\";\n@import \"table_nav\";\n@import \"files_modal\";\n@import \"route_modal\";\n@import \"comments_modal\";\n@import \"planModal\";\n@import \"adminPanel\";\n\n.main-table {\n  &__header {\n    display: flex;\n    align-items: center;\n    position: sticky;\n    z-index: 10;\n    top: 0;\n    width: 100%;\n    //border: 1px solid black;\n    //border-top: none;\n  }\n\n  &__item {\n    display: flex;\n    align-items: center;\n  }\n}\n\ninput.table__data {\n  padding: 0 10px;\n}\n\ninput.tr {\n  padding: 0;\n}\n\n.table {\n  &__cell {\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 18px;\n    letter-spacing: 0em;\n    text-align: left;\n    height: 28px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    cursor: default;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    background: white;\n    color: $table_text;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n\n    &--top {\n      background: rgba(156, 156, 156, 1) !important;\n      //color: white;\n      //background: $table_bg !important;\n    }\n  }\n\n  &:last-child {\n    border-right: none;\n  }\n\n  &-form {\n\n    input {\n      //color: $button_color;\n    }\n  }\n\n  &__use {\n    label {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $main_green;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__data {\n    font-size: 14px;\n    font-weight: 400;\n    height: 28px;\n    width: 100%;\n    text-align: center;\n    border-radius: 1px;\n    border: none;\n    background: white;\n    color: black;\n    outline: 3.3px $button_color;\n    position: relative;\n\n    &--ro {\n      cursor: default;\n      outline: none;\n    }\n\n    &--chosen {\n      //font-size: 15px;\n      background: $table_bg_main;\n      color: $table_text;\n    }\n\n    &--opened {\n      height: 56px;\n      font-size: 15px;\n      background: $table_bg_main;\n      color: $table_text;\n      border-bottom: 1px solid black;\n    }\n\n    &--opened.table__data--current {\n      border-bottom: 2px solid black;\n    }\n\n    &--current {\n      font-weight: 600;\n      color: $table_text;\n      border: 1px solid black;\n      //font-size: 16px;\n    }\n  }\n\n  &__db {\n    display: flex;\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__timestamp {\n    min-width: 100px;\n    max-width: 100px;\n  }\n\n  &__files {\n    min-width: 32px;\n    max-width: 32px;\n    position: relative;\n  }\n\n  &__number {\n    min-width: 80px;\n    max-width: 80px;\n  }\n\n  &__sample {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &__client {\n    min-width: 160px;\n    max-width: 160px;\n  }\n\n  &__name {\n    min-width: 260px;\n    max-width: 260px;\n  }\n\n  &__material {\n    min-width: 140px;\n    max-width: 140px;\n  }\n\n  &__quantity {\n    min-width: 70px;\n    max-width: 70px;\n  }\n\n  &__issued {\n    min-width: 70px;\n    max-width: 70px;\n    border-right: 1px solid black !important;\n\n    &--done {\n      color: green;\n      font-size: 16px;\n      font-weight: 600;\n      //animation: issued-ready infinite 4s;\n    }\n  }\n\n  &__complete {\n    border-right: none !important;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n\n    input {\n      height: 26px;\n    }\n  }\n\n  &__m {\n    min-width: 36px;\n    max-width: 36px;\n  }\n\n  &__endtime {\n    min-width: 140px;\n    max-width: 140px;\n\n    &--dead {\n      color: red;\n      font-size: 15px;\n    }\n  }\n\n  &__route {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    height: 29px;\n    width: 50px;\n\n    &:last-child {\n      border-right: 1px solid black !important;\n    }\n  }\n\n  &__routes {\n    min-width: 500px;\n    max-width: 500px;\n  }\n\n  &-routes__issued {\n    //border-top: 1px solid black;\n  }\n\n  &__p {\n    min-width: 60px;\n    max-width: 60px;\n  }\n\n  &-p-select,\n  &-m-select {\n    -webkit-appearance: none;\n    -moz-appearance: none;\n    appearance: none;\n    cursor: pointer;\n  }\n\n  &__comment {\n    flex-grow: 1;\n    min-width: 200px;\n    max-width: 100%;\n\n    &--top {\n      flex-grow: 1;\n      min-width: 200px;\n      max-width: 100%;\n    }\n  }\n\n  &-routes {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      height: 28px;\n    }\n  }\n}\n\n.files__ico {\n  width: 30px;\n  height: 20px;\n}\n\n.table-body {\n  //&__trattr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 260%;\n  //    width: auto;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n  //\n  //&__attr {\n  //  position: relative;\n  //\n  //  &:hover:after {\n  //    box-sizing: border-box;\n  //    min-width: 100%;\n  //    text-align: center;\n  //    content: attr(data-title);\n  //    position: absolute; /* Абсолютное позиционирование */\n  //    left: 0;\n  //    top: 130%; /* Положение подсказки */\n  //    z-index: 1; /* Отображаем подсказку поверх других элементов */\n  //    background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  //    font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  //    font-size: 11px; /* Размер текста подсказки */\n  //    padding: 5px 5px; /* Поля */\n  //    border: 1px solid #333;\n  //  }\n  //}\n\n\n  &_cell {\n    max-height: 56px;\n    font-size: 16px;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n    position: relative;\n\n    &:last-child {\n      border-right: none;\n    }\n\n    &--opened {\n      height: 56px;\n    }\n  }\n}\n\n@keyframes issued-ready {\n  0% {\n    background: white;\n    color: black;\n  }\n\n  50% {\n    background: green;\n    color: white;\n  }\n\n  100% {\n    background: white;\n    color: black;\n  }\n}\n\n.table__route {\n  &:first-child {\n    border-left: none;\n  }\n\n  &--issued {\n    border-top: none;\n    max-height: 28px;\n\n    &:last-child {\n      border-right: 1px solid black;\n    }\n\n    &:first-child {\n      border-left: none;\n    }\n\n    input {\n      height: 26px;\n    }\n  }\n}\n\n.route {\n  color: black;\n  height: 24px;\n  width: 48px;\n\n  &--inplan {\n    border-top: 1px solid black;\n    border-bottom: 2px solid black;\n    border-right: 2px solid black;\n    border-left: 1px solid black !important;\n  }\n\n  &--planned {\n    //text-decoration: underline;\n    //font-style: italic;\n  }\n\n  &--paused {\n    background: rgba(224, 108, 0, 1);\n    color: white !important;\n    border-radius: 15px;\n  }\n\n  &--error {\n    color: white !important;\n    background: rgba(210, 66, 66, 1);\n    border-radius: 15px;\n  }\n\n  &--started {\n    background: white !important;\n    border: 2px solid rgba(81, 165, 227, 1);\n    border-radius: 15px;\n  }\n\n  &--completed {\n    background: white !important;\n    border: 2px solid rgba(0, 130, 29, 1);\n    border-radius: 15px;\n  }\n}\n\n.table-info {\n  display: flex;\n  align-items: center;\n}\n\n.order__copy {\n  width: 10px;\n  border: none;\n  background: rgb(156, 156, 156) !important;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n.order__delete {\n  width: 20px;\n  border: none;\n  background: red;\n  transition: color .3s;\n\n  &:hover {\n    cursor: pointer;\n    transition: color .3s;\n    color: white;\n  }\n}\n\n.table {\n  &__issued--report {\n    min-width: 105px;\n    max-width: 105px;\n  }\n\n  &__plan--report {\n    min-width: 105px;\n    max-width: 105px;\n  }\n\n  &__route--report {\n    min-width: 65px;\n    max-width: 65px;\n  }\n\n  &__operator--report {\n    min-width: 95px;\n    max-width: 95px;\n  }\n\n  &__issued-plan--report {\n    min-width: 120px;\n    max-width: 120px;\n  }\n}","@import \"var\";\n\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  display: none;\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput[type=number] {\n  -moz-appearance: textfield;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n  /* display: none; <- Crashes Chrome on hover */\n  -webkit-appearance: none;\n  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\ninput, select {\n  outline: none;\n}\n\nhtml {\n  height: 100%;\n}\n\nbody {\n  font-family: Inter;\n  background: rgba(236, 236, 236, 1);\n  height: 95%;\n}\n\n.container {\n  padding: 0 15px;\n  height: 98%;\n}\n\nul {\n  list-style: none;\n}\n\n.hidden-input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.hidden__input {\n  display: none !important;\n  visibility: hidden !important;\n}\n\n.main {\n  color: $text_black;\n  height: 80%;\n  //border-left: 1px solid black;\n  //border-right: 1px solid black;\n\n  &--reports {\n    @media screen and (min-width: 1522px) {\n      margin: 0 auto 15px;\n      width: 1492px;\n    }\n  }\n\n  &__button {\n    height: 28px;\n    text-align: center;\n    border: 1px solid black;\n    border-radius: 5px;\n    background: white;\n    color: $text_black;\n    transition: color .3s;\n    cursor: pointer;\n    padding: 5px;\n\n    &:hover {\n      color: $main_green;\n      transition: color .3s;\n    }\n\n    &--select {\n      outline: none;\n      font-size: 16px;\n      font-weight: 500;\n      line-height: 19px;\n      letter-spacing: 0em;\n      text-align: center;\n      //border-radius: 15px;\n      background: $table_bg !important;\n      color: $main_green;\n      cursor: pointer;\n      padding: 3px 7px;\n      border: none;\n    }\n\n    &--click {\n      font-size: 16px;\n      font-weight: 500;\n      line-height: 19px;\n      letter-spacing: 0em;\n      text-align: center;\n      border-radius: 15px;\n      border: $btn_border;\n      box-shadow: $btn_shadow;\n      background: white;\n      color: $text_black;\n      cursor: pointer;\n      padding: 3px 7px;\n    }\n  }\n\n  &__input {\n    padding: 5px;\n    cursor: text;\n    border: 1px solid black;\n    border-radius: 5px;\n    color: $text_black;\n  }\n\n  &-table__data {\n    width: 100%;\n    height: 100%;\n    overflow: scroll;\n    margin-bottom: 5px;\n    border-left: 1px solid black;\n    border-right: 1px solid black;\n    border-bottom: 1px solid black;\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n    background: white;\n\n    //@media screen and (max-width: 1200px) {\n    //  height: 75vh;\n    //}\n    //\n    //@media screen and (min-width: 1500px) {\n    //  height: 86vh;\n    //}\n    //\n    //@media screen and (min-width: 1920px) {\n    //  height: 86vh;\n    //}\n  }\n\n  &__select {\n    text-align: center !important;\n    width: 100%;\n  }\n}\n\n.success {\n  color: green !important;\n}\n\n.error {\n  color: red !important;\n}\n\n.warning {\n  color: #c0c03b !important;\n  margin-right: 10px;\n}\n\n.click-chose,\n.click-select {\n  cursor: pointer !important;\n}\n\na:active, /* активная/посещенная ссылка */\na:hover, /* при наведении */\na {\n  text-decoration: none;\n  color: #666;\n}\n\nselect:disabled {\n  cursor: default;\n  background: none;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n}\n\nbutton {\n  border: none;\n  background: none;\n}\n\nbutton:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\ninput:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray;\n  }\n}\n\n.select-user {\n  margin-bottom: 25px;\n  width: 100px;\n  align-self: center;\n}\n\n.test {\n  &__form {\n    display: none;\n    visibility: hidden;\n  }\n\n  &__list {\n    background: none;\n  }\n\n  &__item {\n    background: transparent;\n  }\n\n  &__input {\n    background: transparent;\n    outline: none;\n    border: none;\n  }\n}\n\n.admin-form {\n  &__button {\n    width: 130px;\n    transition: color .3s;\n    position: absolute;\n    right: 24px;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n\n  &__user {\n    margin-right: 10px;\n  }\n\n  &__exit {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $hover_aqua;\n    }\n  }\n}\n\n.header-user__block {\n  position: absolute;\n  display: flex;\n}\n\n\n.search {\n  display: flex;\n  align-items: center;\n\n  @media screen and (max-width: 1200px) {\n    display: none;\n  }\n}\n\n.orders__total {\n  margin-right: 10px;\n}\n\n.table__db {\n  position: relative;\n}\n\n.check-helper {\n  text-align: center;\n  z-index: 1;\n  position: absolute;\n  min-width: 100%;\n  //bottom: -33px;\n  background: rgba(255, 255, 230, 0.9); /* Полупрозрачный цвет фона */\n  font-family: Arial, sans-serif; /* Гарнитура шрифта */\n  font-size: 11px; /* Размер текста подсказки */\n  padding: 5px 5px; /* Поля */\n  border: 1px solid #333;\n\n  &--long {\n    min-width: 300%;\n  }\n\n  &--errored {\n    padding: 0;\n    color: black;\n  }\n}\n\n.routes-block {\n  display: flex;\n  align-items: center;\n}\n\n.archive-block {\n  display: flex;\n  align-items: center;\n}\n\n.header-routes {\n  display: flex;\n  align-items: center;\n}\n\n.header {\n  position: relative;\n}\n\n.loupe {\n  width: 10px;\n  transition: fill .3s;\n\n  &:hover {\n    //transition: fill .3s;\n    //fill: $main_green;\n  }\n}","$main_green: rgba(137, 175, 137, 1);\n\n$btn_shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n$btn_border: 1px solid rgba(203, 203, 203, 1);\n\n$input_shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.27) inset;\n\n$filter_green: linear-gradient(0deg, #698769, #698769);\n$filter_border: 1px solid rgba(130, 130, 130, 1);\n$current_filter_border: 2px solid rgba(217, 221, 220, 1);\n\n$text_gray: rgba(70, 70, 70, 1);\n$text_black: rgba(66, 66, 66, 1);\n$text_white: rgba(255, 255, 255, 1);\n\n$table_text: rgba(0, 0, 0, 1);\n$table_bg: rgba(217, 221, 220, 1);\n$table_bg_main: rgba(217, 221, 217, 1);\n\n\n$hover_aqua: #13d9d9;\n$button_color: #447e9b;\n$gray_bg: #f3efef;",".nav-filters {\n  width: 77%;\n  position: relative;\n  height: 113px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 5px 25px;\n\n  display: flex;\n  flex-direction: column;\n\n  @media screen and (min-width: 1920px) {\n    width: 82%;\n  }\n\n  &__list {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    //&:not(:last-child) {\n    //  padding-bottom: 15px;\n    //  margin-bottom: 5px;\n    //}\n  }\n\n  &__item {\n    margin-bottom: 7px;\n\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__button {\n    &--chosen {\n      background: $main_green;\n      color: $text_white;\n    }\n  }\n}\n\n.nav-filters {\n  //&__item {\n  //  min-width: 70px;\n  //  width: auto;\n  //  height: 27px;\n  //}\n\n  &__button {\n    width: auto;\n    max-width: 100%;\n    height: 27px;\n    white-space: nowrap;\n  }\n\n  &__plots {\n    margin-top: 10px;\n    border-bottom: 1px solid black;\n    margin-bottom: 6px;\n    padding-bottom: 8px;\n      //margin-bottom: 5px;\n  }\n\n  &__filters {\n    flex-wrap: wrap;\n    height: 50px;\n    margin-top: 7px;\n    margin-bottom: 0 !important;\n    overflow-y: auto;\n  }\n\n  &__reset {\n    position: absolute;\n    bottom: -28px;\n    width: 161px;\n    display: block;\n    align-self: center;\n  }\n}\n\n.nav {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 10px;\n  margin-top: 10px;\n}\n\n.nav-control {\n  position: relative;\n  width: 313px;\n  height: 113px;\n  border: 1px solid black;\n  border-radius: 15px;\n  padding: 20px 20px 10px;\n  background: white;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  &__group {\n    margin-bottom: 5px;\n    font-size: 14px;\n    font-weight: 500;\n    line-height: 17px;\n    letter-spacing: 0em;\n  }\n\n  &--opened {\n    z-index: 1000;\n    height: auto;\n    position: absolute;\n    right: 0;\n    top: 0;\n  }\n\n  &__nav {\n    display: flex;\n    //flex-direction: column;\n    align-items: center;\n    justify-content: space-between;\n    border-bottom: 2px solid black;\n    margin-bottom: 5px;\n  }\n\n  &__left {\n    width: 200px;\n  }\n\n  &__admin {\n    font-size: 16px;\n    font-weight: 500;\n    line-height: 26px;\n    letter-spacing: 0em;\n    cursor: pointer;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n\n  &__user {\n    display: flex;\n    margin-bottom: 7px;\n  }\n\n  &__name {\n    font-size: 16px;\n    font-weight: 700;\n    line-height: 21px;\n    letter-spacing: 0em;\n    color: rgba(76, 88, 102, 1);\n    margin-right: 7px;\n  }\n\n  &__exit {\n    a {\n      color: rgba(210, 66, 66, 1);\n      font-size: 16px;\n      font-weight: 400;\n      line-height: 21px;\n      letter-spacing: 0em;\n    }\n  }\n\n  &__search {\n    font-size: 18px;\n    font-weight: 500;\n    line-height: 23px;\n    letter-spacing: 0em;\n    text-align: center;\n    color: $main_green;\n\n    &-btn {\n      &:hover {\n        svg {\n          fill: green;\n        }\n      }\n    }\n  }\n\n  &__routes {\n    padding-bottom: 5px;\n    margin-bottom: 5px;\n    display: flex;\n    flex-direction: column;\n    align-items: flex-end;\n    border-bottom: 2px solid black;\n  }\n\n  &__route {\n\n    &-link {\n      font-size: 16px;\n      font-weight: 500;\n      line-height: 26px;\n      letter-spacing: 0em;\n      cursor: pointer;\n\n      &:hover {\n        color: $main_green;\n      }\n\n      &--current {\n        text-decoration: underline;\n        color: $main_green;\n      }\n    }\n  }\n\n  &__burger {\n    position: relative;\n    top: -5px;\n    cursor: pointer;\n\n    &-item {\n      display: block;\n      width: 40px;\n      height: 5px;\n      background: $text_black;\n      border-radius: 15px;\n\n      &:not(:last-child) {\n        margin-bottom: 6px;\n      }\n    }\n  }\n}\n\n.search-orders {\n  &__label {\n\n  }\n\n  &__input {\n    margin-right: 0 !important;\n    padding-left: 9px;\n    width: 170px !important;\n    cursor: text !important;\n  }\n}","@import \"../var\";\n\n.main-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: $main_green;\n  border: 1px solid black;\n  border-bottom: none;\n  border-radius: 15px 15px 0 0;\n  padding: 5px 30px;\n  height: 49px;\n  //margin-bottom: 30px;\n\n  &__title {\n    position: relative;\n    top: -1px;\n    font-size: 27px;\n    font-weight: 700;\n    line-height: 29px;\n    letter-spacing: 0em;\n    text-align: left;\n    color: $text_white;\n    margin-right: 20px;\n  }\n\n  &__nav {\n    display: flex;\n    align-items: center;\n    //width: 400px;\n  }\n\n  &__button {\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n}\n\n.header-routes {\n  &__filter {\n    &:not(:last-child) {\n      margin-right: 10px;\n    }\n  }\n\n  &__planned {\n    &-date {\n      width: 140px;\n    }\n  }\n}\n\n#search__target {\n  width: 120px !important;\n  margin-right: 5px;\n}\n\n#search__input {\n  height: 28px;\n  margin-right: 5px;\n}\n\n.route__filter--chosen {\n  border: 1px solid $text_white;\n  color: $text_white;\n  background: $main_green;\n}",".modal {\n  display: none;\n  background: transparent;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n\n  &_content {\n    display: flex;\n    flex-direction: column;\n    width: 900px;\n    height: auto;\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n    border-radius: 15px;\n    background: rgba(236, 236, 236, 1);\n\n    &-block {\n      padding: 5px;\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      width: 100%;\n    }\n  }\n\n  &-header {\n    width: 100%;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 5px;\n    background: $main_green;\n    color: $text_white;\n    text-align: center;\n    height: 35px;\n    border-radius: 15px 15px 0px 0px;\n  }\n\n  &__trigger {\n    display: flex;\n    align-items: center;\n    cursor: pointer;\n    justify-content: center;\n    width: 100%;\n    height: 100px;\n    //background: ;\n    border-top: 1px solid black;\n    border-bottom: 1px solid black;\n    color: $main_green;\n    background: $text_white;\n  }\n}\n\n.modal_vis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.body_block {\n  overflow: hidden;\n  //margin-right: 15px;\n}\n\n.data {\n  display: flex;\n  height: 350px;\n  padding: 15px;\n  overflow-y: scroll;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  margin-bottom: 70px;\n\n  &__file {\n    position: relative;\n    width: 260px;\n    height: 260px;\n    margin-bottom: 60px;\n  }\n}\n\n.link__preview {\n  display: block;\n  width: 260px;\n  height: 260px;\n  margin-bottom: 10px;\n}\n\n.file {\n  &__preview {\n    width: 260px;\n    height: 260px;\n    //object-fit: cover;\n  }\n\n  &__download {\n    cursor: pointer;\n    position: absolute;\n    width: 30px;\n    height: 40px;\n    bottom: 5px;\n    right: 10px;\n    color: $main_green !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: green !important;\n      transition: color .3s;\n    }\n  }\n\n  &__remove {\n    cursor: pointer;\n    top: 0px;\n    right: 5px;\n    position: absolute;\n    color: $main_green !important;\n    font-size: 26px;\n    transform: rotate(45deg);\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: red !important;\n      transition: color .3s;\n    }\n  }\n\n\n  &__original {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    color: $main_green !important;\n    transition: color .3s;\n\n    &:hover {\n      cursor: pointer;\n      color: green !important;\n      transition: color .3s;\n    }\n  }\n\n  &__name {\n    color: $text_black;\n    text-align: center;\n  }\n\n  &__all {\n    align-self: center;\n    width: 170px;\n    margin-bottom: 15px;\n  }\n}",".modal_content--route {\n  width: 619px;\n  height: auto;\n}\n\n.route {\n  &__config {\n    padding: 13px 10px 0;\n    background: rgba(236, 236, 236, 1);\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n  }\n\n  &__title {\n    font-size: 16px;\n    font-weight: 500;\n    line-height: 19px;\n    margin-bottom: 10px;\n  }\n\n  &-block {\n    &__wrapper {\n      display: flex;\n      align-items: center;\n      margin-bottom: 10px;\n    }\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n  }\n\n  &__input {\n    &:not(:disabled), {\n      cursor: pointer;\n    }\n\n    &:not(:read-only) {\n\n    }\n  }\n\n  &-plan__date {\n    border: 1px solid rgba(173, 173, 173, 1) !important;\n    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) !important;\n    margin-right: 0 !important;\n    color: $text_black;\n  }\n\n  &__label {\n    text-align: center;\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 17px;\n    letter-spacing: 0em;\n    margin-bottom: 7px;\n  }\n\n  &__btn {\n    align-items: center;\n    width: 97px;\n    border: 1px solid rgba(173, 173, 173, 1);\n    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n    border-radius: 15px;\n  }\n\n  &__select {\n    width: 130px;\n    margin-bottom: 10px;\n    border: none;\n    border-radius: 7px;\n    box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.25);\n    background: rgba(255, 255, 255, 1);\n\n    &:disabled {\n      background: rgba(255, 255, 255, 1);\n    }\n  }\n\n  &__input {\n    width: 136px;\n    height: 28px;\n    margin-right: -40px;\n    box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n    border-radius: 15px;\n    border: none;\n    outline: none;\n\n    &:not(:disabled) {\n      &:focus {\n        outline: 2px solid $main_green;\n      }\n    }\n\n    &--small {\n      width: 80px !important;\n\n      &:not(:last-child) {\n        //margin-right: 20px;\n      }\n    }\n\n    &--top {\n      width: 136px;\n      text-align: center;\n      margin-bottom: 10px;\n      height: 28px;\n      box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n      border-radius: 15px;\n      border: none;\n    }\n\n    &--middle {\n      width: 155px;\n    }\n  }\n\n  &__section {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    margin-bottom: 15px;\n  }\n}\n\n.report-route__btn {\n  //margin-right: 30px;\n}\n\n.section-logs {\n  width: 100%;\n  background: white;\n  border-radius: 5px;\n  padding: 5px;\n  margin-bottom: 8px;\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  &__title {\n    text-align: center;\n    margin-bottom: 10px;\n    color: $button_color;\n  }\n\n  &__list {\n    height: 85px;\n    overflow-y: scroll;\n  }\n\n  &__input {\n    padding-left: 10px;\n  }\n\n  &__item {\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 18px;\n    letter-spacing: 0em;\n    text-align: left;\n    color: rgba(87, 87, 87, 1);\n    margin-bottom: 5px;\n\n    &--system {\n      color: $main_green;\n    }\n\n    &--error {\n      color: rgba(210, 66, 66, 1);\n    }\n\n    &--pause {\n      color: rgb(224, 108, 0);\n    }\n  }\n\n  &__comment {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    margin-bottom: 30px;\n  }\n\n  &__input {\n    width: 350px;\n  }\n}\n\n.section-finish {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 15px;\n\n  &__cancel {\n    margin-right: 30px;\n  }\n\n  &__delete {\n    &:hover {\n      color: red !important;\n    }\n  }\n}\n\n#quantity,\n#day_quantity,\n#issued,\n#error-route__msg,\n#error__time,\n#route__issued,\n{\n  text-align: center;\n}\n\n#error-route__msg,\n.issued-route__num:not(:disabled) {\n  cursor: text;\n}\n\n.modal_content--issued {\n  width: 250px;\n  height: 300px;\n}\n\n.comment {\n  &__prev {\n    //margin: 12px auto 0;\n    overflow-y: scroll;\n    background: $text_white;\n    height: 100%;\n    width: 100%;\n    //border-radius: 15px;\n  }\n\n  &__item {\n    color: $text_black;\n    font-size: 17px;\n    //padding: 10px 13px;\n    //padding: 5px 0;\n    border-bottom: 1px solid black;\n  }\n}\n\n.confirm {\n  &__title {\n    font-size: 20px;\n    font-weight: 500;\n    line-height: 26px;\n    letter-spacing: 0em;\n    margin-top: 10px;\n    text-align: center;\n    color: $text_black;\n    margin-bottom: 25px;\n  }\n\n  &__section {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  &__button {\n    &--ok {\n      margin-right: 25px;\n    }\n\n    &--search {\n      margin-top: 20px;\n    }\n\n    margin-bottom: 10px;\n  }\n}\n\n.progress-block {\n  width: 180px;\n}\n\n.quantity-block {\n  display: flex;\n  justify-content: space-between;\n\n  &__labels {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n  }\n\n  &__label {\n    margin-right: 47px;\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 17px;\n    letter-spacing: 0em;\n    text-align: center;\n  }\n\n  &__issued {\n    position: relative;\n    right: -5px;\n  }\n\n  &__shifts {\n    //margin-right: 33px;\n  }\n\n  &__inshifts {\n    margin-right: 44px;\n    position: relative;\n    right: 10px;\n  }\n}\n\n.route-type {\n  &__paused {\n    //color: rgba(224, 108, 0, 1) !important;\n    border: 2px solid rgba(224, 108, 0, 1);\n  }\n\n  &__error {\n    //color: rgba(210, 66, 66, 1) !important;\n    border: 2px solid rgba(210, 66, 66, 1);\n  }\n\n  &__start {\n    //color: rgba(24, 136, 217, 1) !important;\n    border: 2px solid rgba(24, 136, 217, 1);\n  }\n\n  &__finish {\n    //color: rgba(0, 130, 29, 1) !important;\n    border: 2px solid rgba(0, 130, 29, 1);\n  }\n}\n\n#route__delete:disabled {\n  cursor: default;\n  color: gray;\n\n  &:hover {\n    color: gray !important;\n  }\n}\n\n.modal-error {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  background: rgba(236, 236, 236, 1);\n  box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n\n  &__input {\n    padding-left: 10px;\n    margin-top: 20px;\n    height: 28px;\n    text-align: left !important;\n    margin-right: 0;\n    width: 90%;\n    margin-bottom: 15px;\n    background: $text_white;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}\n\n.modal-issued {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n\n  &__date {\n    margin-bottom: 10px;\n    margin-right: 0;\n\n  }\n\n  &__input {\n    margin-right: 0;\n    width: 20%;\n    height: 28px;\n    margin-bottom: 15px;\n  }\n\n  &__title {\n    margin-top: 10px;\n    margin-bottom: 15px;\n  }\n}\n\n.user__block {\n  margin-right: 40px;\n}\n\n.endtime__block {\n  margin-right: 107px;\n}\n\n.start-route__btn {\n  color: rgba(24, 136, 217, 1);\n}\n\n.end-route__btn {\n  color: rgba(0, 130, 29, 1);\n}\n\n.pause-route__btn {\n  color: rgba(224, 108, 0, 1);\n}\n\n.error-route__btn {\n  color: rgba(210, 66, 66, 1);\n}\n\n.section-report {\n  justify-content: left;\n}\n\n.issued-modal_trigger {\n  margin-right: 75px;\n}\n\n.send__comment {\n  width: 130px;\n  border: 2px solid rgba(105, 135, 105, 1);\n  color: rgba(105, 135, 105, 1);\n  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);\n  border-radius: 15px;\n}\n\n.section-finish {\n  &__sub {\n    border-radius: 15px;\n    width: 130px;\n    height: 40px;\n    border: none;\n    background: rgba(105, 135, 105, 1);\n    color: $text_white;\n  }\n\n  &__delete {\n    border: none;\n    background: none;\n    color: rgba(210, 66, 66, 1);\n    cursor: pointer;\n  }\n}\n\n.issued-top {\n  display: flex;\n  align-items: center;\n\n  &__item {\n    padding: 5px 0;\n    width: 39%;\n\n    &:not(:last-child) {\n      border-right: 1px solid black;\n    }\n\n    &--date {\n      width: 120px;\n    }\n\n    &--summary {\n      width: 80px;\n    }\n  }\n}\n",".modal_content--comments {\n  width: 612px;\n}\n\n\n.comments {\n  &__title {\n    font-size: 20px;\n    font-weight: 500;\n    line-height: 26px;\n    letter-spacing: 0em;\n    text-align: left;\n    color: $text_white;\n    margin-left: 31px;\n  }\n\n  &-content {\n    padding: 24px;\n    box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);\n    background: rgba(236, 236, 236, 1);\n    border-radius: 15px;\n  }\n\n  &__add {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n}\n\n.comments-list {\n  height: 90px;\n  padding: 7px 10px;\n  overflow-y: scroll;\n  border-radius: 15px;\n  box-shadow: 2px 2px 1px 0px rgba(0, 0, 0, 0.25) inset;\n  background: $text_white;\n\n  &__item {\n    color: $text_gray;\n    margin-bottom: 5px;\n    display: flex;\n    align-items: center;\n  }\n}\n\n.comment__button {\n  width: 100px;\n  align-self: center;\n}\n\n.comments__prev {\n  margin-bottom: 10px;\n}\n\n.comments__yours {\n  width: 350px;\n  cursor: text !important;\n  padding-left: 10px;\n}",".modal-plan {\n  position: relative;\n\n  .confirm__section {\n    position: absolute;\n    bottom: 0;\n  }\n}\n\n.modal {\n  &-plan__date {\n\n  }\n\n  &-plan {\n    padding: 5px;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n\n    &__today {\n      text-align: center;\n      align-self: center;\n    }\n\n    &__section {\n      width: 250px;\n      display: flex;\n      flex-direction: column;\n      justify-content: space-between;\n      //align-items: center;\n\n      &:not(:last-child) {\n        margin-bottom: 10px;\n      }\n    }\n\n    &__data {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n\n      &--center {\n        justify-content: center;\n      }\n    }\n\n    &__input {\n      width: 120px;\n    }\n\n    &__check {\n      display: flex;\n      //flex-direction: column;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    &__exclude {\n      text-align: center;\n      height: 100px;\n\n      &-option {\n        text-align: center;\n        padding: 2px;\n\n        &:hover {\n          cursor: pointer;\n        }\n      }\n    }\n  }\n}\n\n.confirm__title--plan {\n  margin-bottom: 5px;\n}\n\n.exclude-date {\n  background: gray;\n}\n\n.modal-plan__exclude {\n  height: 100px;\n  border: 1px solid black;\n  border-radius: 5px;\n  overflow-x: scroll;\n}\n\n.plan-period {\n  &__btn {\n    &:not(:last-child) {\n      margin-right: 5px;\n    }\n  }\n\n  margin-bottom: 10px;\n}\n\n.plan-dates {\n  display: flex;\n  overflow-y: scroll;\n  max-height: 72%;\n  //justify-content: space-between;\n  margin-left: 15px;\n  align-items: center;\n  flex-wrap: wrap;\n  //min-height: 308px;\n\n  &__item {\n    width: 105px;\n    padding: 5px;\n    background: $text_white;\n    margin-bottom: 7px;\n    transition: color .3s;\n    text-align: center;\n\n    &:hover {\n      cursor: pointer;\n      transition: color .3s;\n      color: #09d009;\n    }\n\n    &:not(:last-child) {\n      margin-right: 7px;\n    }\n\n    &--inplan {\n      color: white;\n      background: $main_green;\n    }\n\n    &--busy {\n      border: 2px solid $main_green;\n\n      &:hover {\n        color: $text_black;\n      }\n    }\n  }\n}",".admin-panel {\n  min-width: 1200px;\n  height: 600px;\n  background: $text_white;\n}\n\n.panel-nav {\n  margin-top: 10px;\n  color: $text_gray;\n\n  padding: 5px;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n}\n\n.nav-navigation {\n  padding: 10px;\n  width: 350px;\n  height: 200px;\n  background: rgba(236, 236, 236, 1);\n  border-radius: 15px;\n\n  &__item {\n    height: 28px;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n\n    &:not(:last-child) {\n      margin-bottom: 10px;\n    }\n\n    &--title {\n      width: 100%;\n      background: $main_green;\n      border-radius: 15px;\n      text-align: center;\n      color: $text_white;\n    }\n  }\n\n  &__text {\n    cursor: pointer;\n    transition: color .3s;\n\n    &:hover {\n      color: $main_green;\n      transition: color .3s;\n    }\n  }\n}\n\n.nav-content {\n  width: 70%;\n  min-height: 500px;\n  max-height: 500px;\n  display: flex;\n  flex-direction: column;\n\n  overflow-y: auto;\n\n  &__columns {\n    height: 40px;\n    padding: 10px;\n    border-radius: 15px 15px 0 0;\n    background: $main_green;\n    color: $text_white;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    //height: 28px;\n  }\n\n  &__items {\n    padding: 10px;\n    background: rgba(236, 236, 236, 1);\n  }\n\n  &__item {\n    min-height: 40px;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  &__column {\n    min-width: 20%;\n    text-align: center;\n\n    &--left {\n      text-align: left !important;\n    }\n\n    &-name {\n      min-width: 45%;\n      width: 45%;\n    }\n\n    &-shortname {\n      min-width: 15%;\n      width: 15%;\n    }\n\n    &-hide {\n      min-width: 10%;\n      width: 10%;\n    }\n  }\n\n}\n\n.nav-item {\n  width: 100%;\n\n  &__column {\n    text-align: center;\n    min-width: 20%;\n\n    &--left {\n      text-align: left;\n    }\n\n    &-name {\n      min-width: 45%;\n      width: 45%;\n    }\n\n    &-shortname {\n      min-width: 15%;\n      width: 15%;\n    }\n\n    &-hide {\n      min-width: 10%;\n      width: 10%;\n    }\n\n    &--edit {\n      cursor: pointer;\n      transition: color .3s;\n\n      &:hover {\n        color: $main_green;\n        transition: color .3s;\n      }\n    }\n  }\n\n  &__pos {\n    cursor: pointer;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n}\n\n.edit-form {\n  align-self: center;\n  width: 726px;\n  display: flex;\n  justify-content: space-between;\n  background: rgba(236, 236, 236, 1);\n  padding: 25px;\n  border-radius: 15px;\n  position: relative;\n\n  &--group {\n    width: 300px;\n    height: 320px;\n\n    .edit-form__user {\n      border-right: none;\n      width: 100%;\n      height: 100%;\n    }\n  }\n\n  &__text {\n    padding: 10px;\n    width: 250px;\n    height: 100px;\n    resize: none;\n    cursor: pointer;\n  }\n\n  &__user {\n    //margin-top: 13px;\n    width: 50%;\n    //height: 284px;\n    border-right: 1px solid $text_gray;\n  }\n\n  &__block {\n    display: flex;\n    flex-direction: column;\n    margin-bottom: 15px;\n\n    &--checker {\n      flex-direction: row;\n    }\n  }\n\n  &__label {\n    font-size: 18px;\n    font-weight: 400;\n    line-height: 30px;\n    letter-spacing: 0em;\n\n    &--checker {\n      flex-direction: row;\n      margin-right: 168px;\n    }\n  }\n\n  &__input {\n    padding: 5px 5px 5px 10px;\n    width: 250px !important;\n    height: 28px !important;\n    cursor: text;\n    margin-bottom: 0 !important;\n  }\n\n  &__group {\n    cursor: pointer !important;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n\n  &__plot {\n    cursor: pointer !important;\n    transition: color .3s;\n\n    &:hover {\n      transition: color .3s;\n      color: $main_green;\n    }\n  }\n\n  &__submit {\n    cursor: pointer;\n    margin-top: 20px;\n    align-self: flex-end;\n  }\n\n  &__succ {\n    position: absolute;\n    color: $main_green;\n\n    &--user {\n      bottom: 70px;\n      left: 25px;\n    }\n\n    &--filter {\n      bottom: 80px;\n      left: 27px;\n    }\n\n    &--group {\n      bottom: 80px;\n      left: 27px;\n    }\n  }\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

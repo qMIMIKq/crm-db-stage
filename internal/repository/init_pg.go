@@ -108,6 +108,7 @@ func (i InitPG) InitDB() error {
 		(
 				order_id        SERIAL UNIQUE PRIMARY KEY NOT NULL,
 				order_timestamp timestamptz  default CURRENT_TIMESTAMP::timestamptz,
+				time_of_modify  timestamp,
 				order_number    varchar(255),
 				order_sample    varchar(255),
 				order_client    varchar(255),

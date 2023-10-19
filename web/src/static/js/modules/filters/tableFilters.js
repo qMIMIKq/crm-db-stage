@@ -1,4 +1,4 @@
-import {getOrders} from '../orders';
+import {getOrders} from '../getOrders';
 import {state} from '../state';
 import {newAllFilter} from "./newAllFilter";
 
@@ -100,7 +100,8 @@ export const controlFiltersReset = () => {
         tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
           cell.style.textDecoration = 'none'
         })
-        getOrders('get-all')
+        getOrders('get-all', true)
+        newAllFilter()
       })
     }
   } else {
