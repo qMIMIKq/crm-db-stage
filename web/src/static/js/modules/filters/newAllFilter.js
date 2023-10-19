@@ -3,6 +3,7 @@ import {deleteOrders, hideOrders} from "../getOrders";
 import {filterRoutesState} from "./filterRoutesState";
 import {drawOrders, table} from "../drawe/drawOrders";
 import {bindOrdersListeners} from "../bindListeners";
+import {controlFiltersReset} from "./tableFilters";
 
 export const newAllFilter = (init) => {
   hideOrders()
@@ -18,6 +19,8 @@ export const newAllFilter = (init) => {
 
   const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted
   const isTopRoutesFiltered = !!topRouteFilters.length
+
+  controlFiltersReset()
 
   if (searched) {
     state.orders.forEach(order => {
@@ -235,8 +238,6 @@ export const newAllFilter = (init) => {
         // order.classList.remove('hidden__input')
       })
     }
-
-
   }
 
   bindOrdersListeners()

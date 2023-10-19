@@ -2709,6 +2709,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filterRoutesState__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./filterRoutesState */ "./web/src/static/js/modules/filters/filterRoutesState.js");
 /* harmony import */ var _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
 /* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _tableFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
+
 
 
 
@@ -2724,6 +2726,7 @@ const newAllFilter = init => {
   const tableFilters = _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters;
   const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted;
   const isTopRoutesFiltered = !!topRouteFilters.length;
+  (0,_tableFilters__WEBPACK_IMPORTED_MODULE_5__.controlFiltersReset)();
   if (searched) {
     _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
       for (let type in _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters) {
