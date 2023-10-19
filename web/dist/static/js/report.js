@@ -1410,18 +1410,37 @@ const changeElemHandler = e => {
     (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.drawSubmit)();
   }
 };
-let label, bigListener, action, cls;
+let label, listener, action, cls;
 const bindOrdersListeners = currentElem => {
-  document.querySelectorAll('.table__data').forEach(label => {
-    if (!label.classList.contains('click-chose') && !label.classList.contains('click-select')) {
-      setChooseListeners(label, 'focus', 'add', 'table__data--chosen');
-      setChooseListeners(label, 'blur', 'remove', 'table__data--chosen');
-      setChooseListeners(label, 'focus', 'show-current', 'table__data--current');
-      setChooseListeners(label, 'blur', 'remove', 'table__data--current');
-    } else if (!label.classList.contains('click-select')) {
-      setChooseListeners(label, 'click', 'add', 'table__data--chosen');
+  document.querySelectorAll('.table__data').forEach(innerLabel => {
+    label = innerLabel;
+    if (!innerLabel.classList.contains('click-chose') && !innerLabel.classList.contains('click-select')) {
+      listener = 'focus';
+      action = 'add';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'focus', 'add', 'table__data--chosen');
+      listener = 'blur';
+      action = 'remove';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'blur', 'remove', 'table__data--chosen');
+      listener = 'focus';
+      action = 'show-current';
+      cls = 'table__data--current';
+      setChooseListeners(innerLabel, 'focus', 'show-current', 'table__data--current');
+      listener = 'blur';
+      action = 'remove';
+      cls = 'table__data--current';
+      setChooseListeners(innerLabel, 'blur', 'remove', 'table__data--current');
+    } else if (!innerLabel.classList.contains('click-select')) {
+      listener = 'click';
+      action = 'add';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'click', 'add', 'table__data--chosen');
     } else {
-      setChooseListeners(label, 'click', 'toggle', 'table__data--chosen');
+      listener = 'click';
+      action = 'toggle';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'click', 'toggle', 'table__data--chosen');
     }
   });
   document.querySelectorAll('.table__data').forEach(label => {
@@ -1443,8 +1462,10 @@ const bindOrdersListeners = currentElem => {
   });
 };
 const chooseHandler = e => {
+  console.log(cls, action, listener);
   const parent = e.target.closest('.main-table__item');
   document.querySelectorAll('.table__data--chosen').forEach(chosen => {
+    chosen.classList.remove('table__data--current');
     if (parent.querySelector('#db_id').classList.contains('table__data--opened')) {
       if (!chosen.classList.contains('tr')) {
         chosen.classList.remove(cls);
@@ -1454,11 +1475,15 @@ const chooseHandler = e => {
     }
   });
   parent.querySelectorAll('.table__data').forEach(item => {
+    // item.classList.remove('table__data--current')
     switch (action) {
       case 'add':
+        e.target.classList.add('table__data--current');
         if (!label.classList.contains('table__data--opened')) {
           _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
           item.classList.add(cls);
+
+          // item.classList.add('table__data--current')
           // if (item.parentElement.classList.contains('table__route')) {
           //   item.parentElement.classList.add('table__data--chosen')
           // }
@@ -1475,6 +1500,7 @@ const chooseHandler = e => {
         e.target.classList.add(cls);
         break;
       case 'toggle':
+        // item.classList.remove('table__data--current')
         _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
         if (!e.target.classList.contains('table__data--opened')) {
           item.classList.remove('table__data--chosen');
@@ -1483,6 +1509,7 @@ const chooseHandler = e => {
         }
         break;
       default:
+        item.classList.remove('table__data--current');
         if (cls === 'table__data--current') {
           _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
           item.classList.remove(cls);
@@ -1495,13 +1522,10 @@ const chooseHandler = e => {
     }
   });
 };
-const setChooseListeners = (innerLabel, listener, innerAction, innerCls) => {
-  action = innerAction;
-  cls = innerCls;
-  label = innerLabel;
+const setChooseListeners = (innerLabel, innerListener) => {
   if (!innerLabel.classList.contains('table__data--clicker')) {
-    innerLabel.removeEventListener(listener, chooseHandler);
-    innerLabel.addEventListener(listener, chooseHandler);
+    innerLabel.removeEventListener(innerListener, chooseHandler);
+    innerLabel.addEventListener(innerListener, chooseHandler);
   }
 };
 
