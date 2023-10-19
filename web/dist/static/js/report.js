@@ -2547,6 +2547,8 @@ const colorRoutes = (routes, parent) => {
     if (dataInput) {
       const infoParent = dataInput.parentNode;
       const routeInfo = infoParent.querySelector(`input[value="-"]`);
+      routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned');
+      routeInfo.parentNode.classList.remove('route--inplan');
       dataInput.value = JSON.stringify(route);
       routeInfo.value = route.plot;
       if (route.plan_dates) {
@@ -2737,7 +2739,7 @@ const newAllFilter = () => {
       console.log(flag);
       if (flag) {
         console.log('DRAW FILTERED DATA');
-        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
       }
       flag = true;
     });
@@ -3579,6 +3581,7 @@ const getOrders = function () {
         if (updateOnly) {
           const routesStatusFilter = document.querySelector('.route__filter--chosen');
           let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
+          console.log('updatedData', data.data);
           data.data.forEach(d => {
             (0,_drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_7__.drawUpdatedData)(d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, filtered);
           });
@@ -5347,6 +5350,12 @@ const triggerRoutesModal = e => {
         confirmChangeTimeHandler(e, () => {
           (0,_sendData__WEBPACK_IMPORTED_MODULE_5__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_13__.appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null).then(resp => {
             if (resp.ok) (0,_submitControl__WEBPACK_IMPORTED_MODULE_6__.showResult)(true);
+            routeInput.value = "";
+            const infoParent = routeInput.parentNode;
+            const routeInfo = infoParent.querySelector(`.click-chose`);
+            routeInfo.value = '-';
+            routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned');
+            console.log(routeInput);
             modalElem.remove();
             (0,_getOrders__WEBPACK_IMPORTED_MODULE_7__.getOrders)('get-all', true);
           });

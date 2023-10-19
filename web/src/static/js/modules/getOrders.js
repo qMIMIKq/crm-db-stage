@@ -130,6 +130,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
               const routesStatusFilter = document.querySelector('.route__filter--chosen')
               let filtered = state.filtered || !!state.currentTopFilters.length || routesStatusFilter
 
+              console.log('updatedData', data.data)
               data.data.forEach(d => {
                 drawUpdatedData(d, state.orders, filtered)
               })

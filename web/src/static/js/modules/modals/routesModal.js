@@ -620,6 +620,12 @@ export const triggerRoutesModal = e => {
           sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
             .then(resp => {
               if (resp.ok) showResult(true)
+              routeInput.value = ""
+              const infoParent = routeInput.parentNode
+              const routeInfo = infoParent.querySelector(`.click-chose`)
+              routeInfo.value = '-'
+              routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
+              console.log(routeInput)
               modalElem.remove()
               getOrders('get-all', true)
             })

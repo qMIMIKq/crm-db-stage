@@ -14,11 +14,14 @@ export const colorRoutes = (routes, parent) => {
   }
 
   routes.forEach(route => {
+
     const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
     const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
     if (dataInput) {
       const infoParent = dataInput.parentNode
       const routeInfo = infoParent.querySelector(`input[value="-"]`)
+      routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
+      routeInfo.parentNode.classList.remove('route--inplan')
 
       dataInput.value = JSON.stringify(route)
       routeInfo.value = route.plot

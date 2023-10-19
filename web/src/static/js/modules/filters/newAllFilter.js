@@ -91,7 +91,7 @@ export const newAllFilter = () => {
       console.log(flag)
       if (flag) {
         console.log('DRAW FILTERED DATA')
-        drawOrders(order, state.orders, state.managers)
+        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
       }
 
       flag = true
