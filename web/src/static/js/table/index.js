@@ -23,8 +23,10 @@ if (window.location.href.endsWith('main/table')) {
   }
 
   const updateMainTableData = () => {
-    setInterval(getOrders, 1000)
+    setInterval(() => {
+      getOrders('get-all', true)
+    }, 5000)
   }
-// updateMainTableData()
+  updateMainTableData()
 }
 
