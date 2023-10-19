@@ -6862,8 +6862,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
 /* harmony import */ var _modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/admin/adminHandler */ "./web/src/static/js/modules/admin/adminHandler.js");
-/* harmony import */ var _modules_getTime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/getTime */ "./web/src/static/js/modules/getTime.js");
-
 
 
 
@@ -6873,7 +6871,9 @@ __webpack_require__.r(__webpack_exports__);
 const user = JSON.parse(sessionStorage.getItem("user"));
 if (window.location.href.endsWith('main/table')) {
   console.log('hello');
-  _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime ? _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime : (0,_modules_getTime__WEBPACK_IMPORTED_MODULE_6__.getTime)() + `:${new Date().getSeconds()}`;
+  _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime ? _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime : new Date().toISOString();
+  // state['startTime'] = state['startTime'] ? state['startTime'] : getTime() + `:${new Date().getSeconds()}`
+
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__.adminHandler)();
   (0,_modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__.tableRoutesFiltersHandler)();
   (0,_modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_2__.topFiltersHandler)();

@@ -497,17 +497,16 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 		}
 
 	} else if params.UpdateOnly {
-		formattedStartTime := strings.Join(strings.Split(params.StartTime, " "), "T") + "Z"
 		log.Info().Msgf("Last update time %v", params.UpdateTime)
-		log.Info().Msgf("App start time %v", formattedStartTime)
+		log.Info().Msgf("App start time %v", params.StartTime)
 
 		if len(params.UpdateTime) > 0 {
-			err = o.db.Select(&orders, query, params.UpdateTime, formattedStartTime)
+			err = o.db.Select(&orders, query, params.UpdateTime, params.StartTime)
 			if err != nil {
 				log.Err(err).Caller().Msg("error is")
 			}
 		} else {
-			err = o.db.Select(&orders, query, formattedStartTime, formattedStartTime)
+			err = o.db.Select(&orders, query, params.StartTime, params.StartTime)
 			if err != nil {
 				log.Err(err).Caller().Msg("error is")
 			}
