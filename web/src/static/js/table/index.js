@@ -8,10 +8,7 @@ import {adminHandler} from "../modules/admin/adminHandler";
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
 if (window.location.href.endsWith('main/table')) {
-  console.log('hello')
-
   state['startTime'] = state['startTime'] ? state['startTime'] : new Date().toISOString().split('.')[0]
-  console.log(state['startTime'])
   // state['startTime'] = state['startTime'] ? state['startTime'] : getTime() + `:${new Date().getSeconds()}`
 
   adminHandler()

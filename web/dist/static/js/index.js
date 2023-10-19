@@ -1433,18 +1433,37 @@ const changeElemHandler = e => {
     (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.drawSubmit)();
   }
 };
-let label, bigListener, action, cls;
+let label, listener, action, cls;
 const bindOrdersListeners = currentElem => {
-  document.querySelectorAll('.table__data').forEach(label => {
-    if (!label.classList.contains('click-chose') && !label.classList.contains('click-select')) {
-      setChooseListeners(label, 'focus', 'add', 'table__data--chosen');
-      setChooseListeners(label, 'blur', 'remove', 'table__data--chosen');
-      setChooseListeners(label, 'focus', 'show-current', 'table__data--current');
-      setChooseListeners(label, 'blur', 'remove', 'table__data--current');
-    } else if (!label.classList.contains('click-select')) {
-      setChooseListeners(label, 'click', 'add', 'table__data--chosen');
+  document.querySelectorAll('.table__data').forEach(innerLabel => {
+    label = innerLabel;
+    if (!innerLabel.classList.contains('click-chose') && !innerLabel.classList.contains('click-select')) {
+      listener = 'focus';
+      action = 'add';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'focus', 'add', 'table__data--chosen');
+      listener = 'blur';
+      action = 'remove';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'blur', 'remove', 'table__data--chosen');
+      listener = 'focus';
+      action = 'show-current';
+      cls = 'table__data--current';
+      setChooseListeners(innerLabel, 'focus', 'show-current', 'table__data--current');
+      listener = 'blur';
+      action = 'remove';
+      cls = 'table__data--current';
+      setChooseListeners(innerLabel, 'blur', 'remove', 'table__data--current');
+    } else if (!innerLabel.classList.contains('click-select')) {
+      listener = 'click';
+      action = 'add';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'click', 'add', 'table__data--chosen');
     } else {
-      setChooseListeners(label, 'click', 'toggle', 'table__data--chosen');
+      listener = 'click';
+      action = 'toggle';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'click', 'toggle', 'table__data--chosen');
     }
   });
   document.querySelectorAll('.table__data').forEach(label => {
@@ -1466,6 +1485,7 @@ const bindOrdersListeners = currentElem => {
   });
 };
 const chooseHandler = e => {
+  console.log(cls, action, listener);
   const parent = e.target.closest('.main-table__item');
   document.querySelectorAll('.table__data--chosen').forEach(chosen => {
     if (parent.querySelector('#db_id').classList.contains('table__data--opened')) {
@@ -1494,10 +1514,12 @@ const chooseHandler = e => {
         }
         break;
       case 'show-current':
+        console.log('HELLO');
         _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
         e.target.classList.add(cls);
         break;
       case 'toggle':
+        console.log('HELLO TOGGLE');
         _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
         if (!e.target.classList.contains('table__data--opened')) {
           item.classList.remove('table__data--chosen');
@@ -1518,13 +1540,11 @@ const chooseHandler = e => {
     }
   });
 };
-const setChooseListeners = (innerLabel, listener, innerAction, innerCls) => {
-  action = innerAction;
-  cls = innerCls;
-  label = innerLabel;
+const setChooseListeners = (innerLabel, innerListener) => {
+  console.log(label, cls, listener, action);
   if (!innerLabel.classList.contains('table__data--clicker')) {
-    innerLabel.removeEventListener(listener, chooseHandler);
-    innerLabel.addEventListener(listener, chooseHandler);
+    innerLabel.removeEventListener(innerListener, chooseHandler);
+    innerLabel.addEventListener(innerListener, chooseHandler);
   }
 };
 
@@ -6892,9 +6912,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const user = JSON.parse(sessionStorage.getItem("user"));
 if (window.location.href.endsWith('main/table')) {
-  console.log('hello');
   _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime ? _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime : new Date().toISOString().split('.')[0];
-  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime);
   // state['startTime'] = state['startTime'] ? state['startTime'] : getTime() + `:${new Date().getSeconds()}`
 
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__.adminHandler)();
