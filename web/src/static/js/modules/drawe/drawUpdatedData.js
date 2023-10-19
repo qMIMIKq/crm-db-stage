@@ -8,6 +8,7 @@ import {drawDeadlineP} from "./drawDeadlineP";
 import {drawManagers} from "./drawManagers";
 import {colorRoutes} from "./routesDraw";
 import {cleanSelect} from "../getOrders";
+import {bindOrdersListeners} from "../bindListeners";
 
 export const drawUpdatedData = (d, data, filtered) => {
   let uniqueFileNames = []
@@ -100,6 +101,8 @@ export const drawUpdatedData = (d, data, filtered) => {
     currentOrder.classList.remove('table-form--upd')
     currentOrder.classList.add('table-form--old')
 
+    console.log(currentOrder.classList)
+
     const routes = d["db_routes"]
 
     const completedBlock = currentOrder.querySelector('.table__issued--done')
@@ -161,6 +164,7 @@ export const drawUpdatedData = (d, data, filtered) => {
       })
     }
 
+    // bindOrdersListeners(currentOrder)
     if (!state['isArchive']) {
       cleanSelect(currentOrder, ".table-p-select")
       cleanSelect(currentOrder, ".table-m-select")

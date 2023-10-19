@@ -1422,7 +1422,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const bindOrdersListeners = () => {
+const changeElemHandler = e => {
+  const parent = e.target.closest('.table-form--old');
+  if (parent !== null) {
+    parent.classList.remove('table-form--old');
+    parent.classList.add('table-form--upd');
+    (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_2__.submitData)();
+    // submitSingleOrder(parent.getAttribute('id'))
+  } else {
+    (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.drawSubmit)();
+  }
+};
+let label, bigListener, action, cls;
+const bindOrdersListeners = currentElem => {
   document.querySelectorAll('.table__data').forEach(label => {
     if (!label.classList.contains('click-chose') && !label.classList.contains('click-select')) {
       setChooseListeners(label, 'focus', 'add', 'table__data--chosen');
@@ -1436,17 +1448,8 @@ const bindOrdersListeners = () => {
     }
   });
   document.querySelectorAll('.table__data').forEach(label => {
-    label.addEventListener('change', e => {
-      const parent = e.target.closest('.table-form--old');
-      if (parent !== null) {
-        parent.classList.remove('table-form--old');
-        parent.classList.add('table-form--upd');
-        (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_2__.submitData)();
-        // submitSingleOrder(parent.getAttribute('id'))
-      } else {
-        (0,_submitControl__WEBPACK_IMPORTED_MODULE_0__.drawSubmit)();
-      }
-    });
+    label.removeEventListener('change', changeElemHandler);
+    label.addEventListener('change', changeElemHandler);
   });
   document.querySelectorAll('input').forEach(el => {
     el.tabIndex = -1;
@@ -1462,61 +1465,66 @@ const bindOrdersListeners = () => {
     el.tabIndex = -1;
   });
 };
-const setChooseListeners = (label, listener, action, cls) => {
-  if (!label.classList.contains('table__data--clicker')) {
-    label.addEventListener(listener, e => {
-      const parent = e.target.closest('.main-table__item');
-      document.querySelectorAll('.table__data--chosen').forEach(chosen => {
-        if (parent.querySelector('#db_id').classList.contains('table__data--opened')) {
-          if (!chosen.classList.contains('tr')) {
-            chosen.classList.remove(cls);
-          }
-        } else if (chosen.classList.contains('tr') && chosen.parentNode.parentNode.parentNode.parentNode.querySelector('#db_id').classList.contains('table__data--opened')) {} else {
-          chosen.classList.remove(cls);
-        }
-      });
-      parent.querySelectorAll('.table__data').forEach(item => {
-        switch (action) {
-          case 'add':
-            if (!label.classList.contains('table__data--opened')) {
-              _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
-              item.classList.add(cls);
-              // if (item.parentElement.classList.contains('table__route')) {
-              //   item.parentElement.classList.add('table__data--chosen')
-              // }
+const chooseHandler = e => {
+  const parent = e.target.closest('.main-table__item');
+  document.querySelectorAll('.table__data--chosen').forEach(chosen => {
+    if (parent.querySelector('#db_id').classList.contains('table__data--opened')) {
+      if (!chosen.classList.contains('tr')) {
+        chosen.classList.remove(cls);
+      }
+    } else if (chosen.classList.contains('tr') && chosen.parentNode.parentNode.parentNode.parentNode.querySelector('#db_id').classList.contains('table__data--opened')) {} else {
+      chosen.classList.remove(cls);
+    }
+  });
+  parent.querySelectorAll('.table__data').forEach(item => {
+    switch (action) {
+      case 'add':
+        if (!label.classList.contains('table__data--opened')) {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
+          item.classList.add(cls);
+          // if (item.parentElement.classList.contains('table__route')) {
+          //   item.parentElement.classList.add('table__data--chosen')
+          // }
 
-              // if (parent.classList.contains('table__route')) {
-              //   parent.classList.add('table__data--chosen')
-              // }
+          // if (parent.classList.contains('table__route')) {
+          //   parent.classList.add('table__data--chosen')
+          // }
 
-              _state__WEBPACK_IMPORTED_MODULE_1__.state.currentOrder = parent.querySelector('#db_id').value;
-            }
-            break;
-          case 'show-current':
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
-            e.target.classList.add(cls);
-            break;
-          case 'toggle':
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
-            if (!e.target.classList.contains('table__data--opened')) {
-              item.classList.remove('table__data--chosen');
-            } else {
-              item.classList.add(cls);
-            }
-            break;
-          default:
-            if (cls === 'table__data--current') {
-              _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
-              item.classList.remove(cls);
-              return;
-            }
-            if (!label.classList.contains('table__data--opened')) {
-              _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
-              item.classList.remove(cls);
-            }
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.currentOrder = parent.querySelector('#db_id').value;
         }
-      });
-    });
+        break;
+      case 'show-current':
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
+        e.target.classList.add(cls);
+        break;
+      case 'toggle':
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
+        if (!e.target.classList.contains('table__data--opened')) {
+          item.classList.remove('table__data--chosen');
+        } else {
+          item.classList.add(cls);
+        }
+        break;
+      default:
+        if (cls === 'table__data--current') {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
+          item.classList.remove(cls);
+          return;
+        }
+        if (!label.classList.contains('table__data--opened')) {
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
+          item.classList.remove(cls);
+        }
+    }
+  });
+};
+const setChooseListeners = (innerLabel, listener, innerAction, innerCls) => {
+  action = innerAction;
+  cls = innerCls;
+  label = innerLabel;
+  if (!innerLabel.classList.contains('table__data--clicker')) {
+    innerLabel.removeEventListener(listener, chooseHandler);
+    innerLabel.addEventListener(listener, chooseHandler);
   }
 };
 
@@ -2276,6 +2284,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawe/drawManagers.js");
 /* harmony import */ var _routesDraw__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
 /* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+
 
 
 
@@ -2361,6 +2371,7 @@ const drawUpdatedData = (d, data, filtered) => {
     comments.value = `${d.comments ? d.comments.join(".-.") : ""}`;
     currentOrder.classList.remove('table-form--upd');
     currentOrder.classList.add('table-form--old');
+    console.log(currentOrder.classList);
     const routes = d["db_routes"];
     const completedBlock = currentOrder.querySelector('.table__issued--done');
     if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
@@ -2414,6 +2425,8 @@ const drawUpdatedData = (d, data, filtered) => {
         }
       });
     }
+
+    // bindOrdersListeners(currentOrder)
     if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
       (0,_getOrders__WEBPACK_IMPORTED_MODULE_9__.cleanSelect)(currentOrder, ".table-p-select");
       (0,_getOrders__WEBPACK_IMPORTED_MODULE_9__.cleanSelect)(currentOrder, ".table-m-select");
@@ -6871,7 +6884,8 @@ __webpack_require__.r(__webpack_exports__);
 const user = JSON.parse(sessionStorage.getItem("user"));
 if (window.location.href.endsWith('main/table')) {
   console.log('hello');
-  _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime ? _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime : new Date().toISOString();
+  _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime ? _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime : new Date().toISOString().split('.')[0];
+  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime);
   // state['startTime'] = state['startTime'] ? state['startTime'] : getTime() + `:${new Date().getSeconds()}`
 
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__.adminHandler)();
