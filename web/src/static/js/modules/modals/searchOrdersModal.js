@@ -1,6 +1,6 @@
 import {showModal} from "./showModal";
 import {state} from "../state";
-import {deleteOrders} from "../getOrders";
+import {hideOrders} from "../getOrders";
 import {filterData} from "../filters/topFilters";
 import {bindOrdersListeners} from "../bindListeners";
 import {drawOrders} from "../drawe/drawOrders";

@@ -1,7 +1,7 @@
 import {state} from '../modules/state';
 import {sendData} from "../modules/sendData";
 import {drawReport} from "./drawReport";
-import {deleteOrders} from "../modules/getOrders";
+import {hideOrders} from "../modules/getOrders";
 import {
   bindReportsFilters,
   deleteReportsFilters,
@@ -40,7 +40,7 @@ export const getReports = () => {
     .then(resp => resp.json())
     .then(data => {
       state.orders = data.data
-      deleteOrders()
+      hideOrders()
       deleteReportsFilters()
 
       if (data.data) {

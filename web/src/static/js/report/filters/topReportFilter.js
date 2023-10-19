@@ -1,5 +1,5 @@
 import {state, userInf} from "../../modules/state";
-import {deleteOrders, getOrders} from "../../modules/getOrders";
+import {hideOrders, getOrders} from "../../modules/getOrders";
 import {getReports} from "../getReports";
 import {getData} from "../../modules/getData";
 import {globalFilterReports} from "./globalFilterReports";
@@ -262,7 +262,7 @@ export const filterRouteReports = () => {
 
   console.log(state.filteredOrders)
 
-  deleteOrders()
+  hideOrders()
   state['filteredOrders'].forEach(order => {
     globalFilterReports(order)
   })

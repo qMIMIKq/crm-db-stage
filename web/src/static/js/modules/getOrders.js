@@ -78,7 +78,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
 
       if (!data.data) {
         if (!updateOnly) {
-          deleteOrders()
+          hideOrders()
           state.orders = data.data
           title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
           return
@@ -203,5 +203,14 @@ export const deleteOrders = () => {
 
   orders.forEach(order => {
     order.remove()
+  })
+}
+
+export const hideOrders = () => {
+  const orders = document.querySelectorAll('.table-form')
+  // document.querySelector('.orders__total').remove()
+
+  orders.forEach(order => {
+    order.classList.add('hidden__input')
   })
 }

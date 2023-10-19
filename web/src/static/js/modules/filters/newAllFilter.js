@@ -1,11 +1,11 @@
 import {state} from "../state";
-import {deleteOrders} from "../getOrders";
+import {deleteOrders, hideOrders} from "../getOrders";
 import {filterRoutesState} from "./filterRoutesState";
 import {drawOrders, table} from "../drawe/drawOrders";
 import {bindOrdersListeners} from "../bindListeners";
 
 export const newAllFilter = () => {
-  deleteOrders()
+  hideOrders()
 
   let flag = true
 
@@ -20,7 +20,6 @@ export const newAllFilter = () => {
   const isTopRoutesFiltered = !!topRouteFilters.length
 
   if (searched) {
-    console.log('searched', searched)
     state.orders.forEach(order => {
       for (let type in state['tableFilters']) {
         const filter = tableFilters[type]
@@ -55,9 +54,7 @@ export const newAllFilter = () => {
 
       if (flag) {
         if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          console.log('routes filters')
           if (order.db_routes) {
-            console.log('we have routes')
             const routes = order.db_routes
 
             for (let i = 0; i < routes.length; i++) {
@@ -88,10 +85,10 @@ export const newAllFilter = () => {
         flag = false
       }
 
-      console.log(flag)
       if (flag) {
-        console.log('DRAW FILTERED DATA')
-        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+
+        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
       }
 
       flag = true
@@ -132,9 +129,7 @@ export const newAllFilter = () => {
 
       if (flag) {
         if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          console.log('routes filters')
           if (order.db_routes) {
-            console.log('we have routes')
             const routes = order.db_routes
 
             for (let i = 0; i < routes.length; i++) {
@@ -144,12 +139,10 @@ export const newAllFilter = () => {
               const route = routes[i]
               if (isRouteStatusFiltered) {
                 statusFlag = filterRoutesState(route)
-                console.log('status routes filter', statusFlag)
               }
 
               if (isTopRoutesFiltered) {
                 plotFlag = topRouteFilters.includes(route.plot)
-                console.log('top routes filter', plotFlag)
               }
 
               flag = statusFlag && plotFlag
@@ -157,7 +150,6 @@ export const newAllFilter = () => {
             }
 
           } else {
-            console.log('no routes')
             flag = false
           }
         }
@@ -165,10 +157,9 @@ export const newAllFilter = () => {
         flag = false
       }
 
-      console.log(flag)
       if (flag) {
-        console.log('DRAW FILTERED DATA')
-        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
       }
 
       flag = true
@@ -177,8 +168,6 @@ export const newAllFilter = () => {
 
   if (!searched && !filtered) {
     if (isRouteStatusFiltered || isTopRoutesFiltered) {
-      console.log('hello', isRouteStatusFiltered, isTopRoutesFiltered)
-
       state.orders.forEach(order => {
         if (!order.db_routes) {
           flag = false
@@ -200,7 +189,8 @@ export const newAllFilter = () => {
 
             flag = statusFlag && plotFlag
             if (flag) {
-              drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+              // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+              document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
               break
             }
           }
@@ -210,10 +200,13 @@ export const newAllFilter = () => {
   }
 
   if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
-    console.log('just draw data')
+    deleteOrders()
 
     state.orders.forEach(order => {
       drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+      // console.log(order.id)
+      // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+      // order.classList.remove('hidden__input')
     })
   }
 

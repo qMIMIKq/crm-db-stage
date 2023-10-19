@@ -1,5 +1,5 @@
 import {state} from "../../modules/state";
-import {deleteOrders} from "../../modules/getOrders";
+import {hideOrders} from "../../modules/getOrders";
 import {bindOrdersListeners} from "../../modules/bindListeners";
 import {getReports} from "../getReports";
 import {globalFilterReports} from "./globalFilterReports";
@@ -62,7 +62,7 @@ const filterReports = (type, filter) => {
   console.log(type, filter)
   console.log(state['tableFilters'])
 
-  deleteOrders()
+  hideOrders()
   state['orders'].forEach(o => {
     globalFilterReports(o, state.topFilters)
   })

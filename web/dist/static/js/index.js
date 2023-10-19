@@ -2715,7 +2715,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const newAllFilter = () => {
-  (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+  (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.hideOrders)();
   let flag = true;
   const searched = _state__WEBPACK_IMPORTED_MODULE_0__.state.searched;
   const filtered = _state__WEBPACK_IMPORTED_MODULE_0__.state.filtered;
@@ -2725,7 +2725,6 @@ const newAllFilter = () => {
   const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted;
   const isTopRoutesFiltered = !!topRouteFilters.length;
   if (searched) {
-    console.log('searched', searched);
     _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
       for (let type in _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters) {
         const filter = tableFilters[type];
@@ -2756,9 +2755,7 @@ const newAllFilter = () => {
       }
       if (flag) {
         if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          console.log('routes filters');
           if (order.db_routes) {
-            console.log('we have routes');
             const routes = order.db_routes;
             for (let i = 0; i < routes.length; i++) {
               let statusFlag = true;
@@ -2783,11 +2780,12 @@ const newAllFilter = () => {
       } else {
         flag = false;
       }
-      console.log(flag);
       if (flag) {
-        console.log('DRAW FILTERED DATA');
-        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input');
+
+        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
       }
+
       flag = true;
     });
   } else if (filtered) {
@@ -2820,9 +2818,7 @@ const newAllFilter = () => {
       }
       if (flag) {
         if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          console.log('routes filters');
           if (order.db_routes) {
-            console.log('we have routes');
             const routes = order.db_routes;
             for (let i = 0; i < routes.length; i++) {
               let statusFlag = true;
@@ -2830,34 +2826,29 @@ const newAllFilter = () => {
               const route = routes[i];
               if (isRouteStatusFiltered) {
                 statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
-                console.log('status routes filter', statusFlag);
               }
               if (isTopRoutesFiltered) {
                 plotFlag = topRouteFilters.includes(route.plot);
-                console.log('top routes filter', plotFlag);
               }
               flag = statusFlag && plotFlag;
               if (flag) break;
             }
           } else {
-            console.log('no routes');
             flag = false;
           }
         }
       } else {
         flag = false;
       }
-      console.log(flag);
       if (flag) {
-        console.log('DRAW FILTERED DATA');
-        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input');
       }
       flag = true;
     });
   }
   if (!searched && !filtered) {
     if (isRouteStatusFiltered || isTopRoutesFiltered) {
-      console.log('hello', isRouteStatusFiltered, isTopRoutesFiltered);
       _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
         if (!order.db_routes) {
           flag = false;
@@ -2875,7 +2866,8 @@ const newAllFilter = () => {
             }
             flag = statusFlag && plotFlag;
             if (flag) {
-              (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+              // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+              document.querySelector(`#form-${order.id}`).classList.remove('hidden__input');
               break;
             }
           }
@@ -2884,11 +2876,15 @@ const newAllFilter = () => {
     }
   }
   if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
-    console.log('just draw data');
+    (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
     _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
       (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+      // console.log(order.id)
+      // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+      // order.classList.remove('hidden__input')
     });
   }
+
   (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
 };
 
@@ -3516,7 +3512,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "cleanSelect": () => (/* binding */ cleanSelect),
 /* harmony export */   "deleteOrders": () => (/* binding */ deleteOrders),
-/* harmony export */   "getOrders": () => (/* binding */ getOrders)
+/* harmony export */   "getOrders": () => (/* binding */ getOrders),
+/* harmony export */   "hideOrders": () => (/* binding */ hideOrders)
 /* harmony export */ });
 /* harmony import */ var _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
@@ -3583,7 +3580,7 @@ const getOrders = function () {
     console.time('draw orders');
     if (!data.data) {
       if (!updateOnly) {
-        deleteOrders();
+        hideOrders();
         _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
         title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? 'Архив пуст' : 'Журнал пуст';
         return;
@@ -3692,6 +3689,14 @@ const deleteOrders = () => {
 
   orders.forEach(order => {
     order.remove();
+  });
+};
+const hideOrders = () => {
+  const orders = document.querySelectorAll('.table-form');
+  // document.querySelector('.orders__total').remove()
+
+  orders.forEach(order => {
+    order.classList.add('hidden__input');
   });
 };
 
@@ -6492,7 +6497,7 @@ const filterReports = (type, filter) => {
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type] = filter;
   console.log(type, filter);
   console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters);
-  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.hideOrders)();
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(o => {
     (0,_globalFilterReports__WEBPACK_IMPORTED_MODULE_4__.globalFilterReports)(o, _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters);
   });
@@ -6789,7 +6794,7 @@ const filterRouteReports = () => {
   const filters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.filter(order => filters.includes(order.order_plot));
   console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders);
-  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.hideOrders)();
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders.forEach(order => {
     (0,_globalFilterReports__WEBPACK_IMPORTED_MODULE_4__.globalFilterReports)(order);
   });
@@ -6844,7 +6849,7 @@ const getReports = () => {
   total.textContent = 'Обновляем таблицу...';
   (0,_modules_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/reports/get-all`, 'POST', JSON.stringify(reportTime)).then(resp => resp.json()).then(data => {
     _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders = data.data;
-    (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
+    (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_3__.hideOrders)();
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_4__.deleteReportsFilters)();
     if (data.data) {
       total.textContent = `План/факт (${data.data.length})`;
