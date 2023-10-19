@@ -4,7 +4,7 @@ import {filterRoutesState} from "./filterRoutesState";
 import {drawOrders, table} from "../drawe/drawOrders";
 import {bindOrdersListeners} from "../bindListeners";
 
-export const newAllFilter = () => {
+export const newAllFilter = (init) => {
   hideOrders()
 
   let flag = true
@@ -86,9 +86,12 @@ export const newAllFilter = () => {
       }
 
       if (flag) {
-        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
-
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        const hiddenOrder = document.querySelector(`#form-${order.id}`)
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input')
+        } else {
+          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        }
       }
 
       flag = true
@@ -159,7 +162,12 @@ export const newAllFilter = () => {
 
       if (flag) {
         // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+        const hiddenOrder = document.querySelector(`#form-${order.id}`)
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input')
+        } else {
+          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        }
       }
 
       flag = true
@@ -190,7 +198,12 @@ export const newAllFilter = () => {
             flag = statusFlag && plotFlag
             if (flag) {
               // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-              document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+              const hiddenOrder = document.querySelector(`#form-${order.id}`)
+              if (hiddenOrder !== null) {
+                hiddenOrder.classList.remove('hidden__input')
+              } else {
+                drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+              }
               break
             }
           }
@@ -200,14 +213,30 @@ export const newAllFilter = () => {
   }
 
   if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
-    deleteOrders()
+    if (init) {
+      deleteOrders()
 
-    state.orders.forEach(order => {
-      drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-      // console.log(order.id)
-      // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
-      // order.classList.remove('hidden__input')
-    })
+      state.orders.forEach(order => {
+        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        // console.log(order.id)
+        // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+        // order.classList.remove('hidden__input')
+      })
+    } else {
+      state.orders.forEach(order => {
+        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        // console.log(order.id)
+        const hiddenOrder = document.querySelector(`#form-${order.id}`)
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input')
+        } else {
+          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        }
+        // order.classList.remove('hidden__input')
+      })
+    }
+
+
   }
 
   bindOrdersListeners()

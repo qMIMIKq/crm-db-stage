@@ -2714,7 +2714,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const newAllFilter = () => {
+const newAllFilter = init => {
   (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.hideOrders)();
   let flag = true;
   const searched = _state__WEBPACK_IMPORTED_MODULE_0__.state.searched;
@@ -2781,11 +2781,13 @@ const newAllFilter = () => {
         flag = false;
       }
       if (flag) {
-        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input');
-
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        const hiddenOrder = document.querySelector(`#form-${order.id}`);
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input');
+        } else {
+          (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        }
       }
-
       flag = true;
     });
   } else if (filtered) {
@@ -2842,7 +2844,12 @@ const newAllFilter = () => {
       }
       if (flag) {
         // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        document.querySelector(`#form-${order.id}`).classList.remove('hidden__input');
+        const hiddenOrder = document.querySelector(`#form-${order.id}`);
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input');
+        } else {
+          (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        }
       }
       flag = true;
     });
@@ -2867,7 +2874,12 @@ const newAllFilter = () => {
             flag = statusFlag && plotFlag;
             if (flag) {
               // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-              document.querySelector(`#form-${order.id}`).classList.remove('hidden__input');
+              const hiddenOrder = document.querySelector(`#form-${order.id}`);
+              if (hiddenOrder !== null) {
+                hiddenOrder.classList.remove('hidden__input');
+              } else {
+                (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+              }
               break;
             }
           }
@@ -2876,13 +2888,27 @@ const newAllFilter = () => {
     }
   }
   if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
-    (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-      (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-      // console.log(order.id)
-      // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
-      // order.classList.remove('hidden__input')
-    });
+    if (init) {
+      (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+        (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        // console.log(order.id)
+        // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+        // order.classList.remove('hidden__input')
+      });
+    } else {
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        // console.log(order.id)
+        const hiddenOrder = document.querySelector(`#form-${order.id}`);
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input');
+        } else {
+          (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        }
+        // order.classList.remove('hidden__input')
+      });
+    }
   }
 
   (0,_bindListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
@@ -3640,7 +3666,7 @@ const getOrders = function () {
           title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
           _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
           _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
-          (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
+          (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)(true);
         }
       }
       console.timeEnd('draw orders');
