@@ -3,6 +3,7 @@ package domain
 type Report struct {
 	ReportID      int    `json:"report_id" db:"report_id"`
 	ReportDate    string `json:"report_date" db:"report_date"`
+	TimeStamp     string `json:"timestamp" db:"order_timestamp"`
 	OrderID       int    `json:"order_id" db:"order_id"`
 	OrderNumber   string `json:"order_number" db:"order_number"`
 	OrderClient   string `json:"order_client" db:"order_client"`

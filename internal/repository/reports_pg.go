@@ -2,6 +2,7 @@ package repository
 
 import (
 	"crm/internal/domain"
+	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
@@ -56,6 +57,30 @@ func (r ReportsPG) RemoveForUpdateReports(id string) error {
 
 	_, err := r.db.Exec(query, id, today)
 	return err
+}
+
+func (r ReportsPG) AddReports2(route *domain.Route, order *domain.Order, id, routePos string, routeID int, new bool) error {
+	var reportQuery string
+
+	if new {
+		reportQuery = fmt.Sprintf(`
+			INSERT INTO reports 
+						 (report_date, order_id, order_number, order_client, order_name, quantity, issued, plan, operator, issued_plan, order_material, order_plot, adding_date, route_position, route_id)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+			RETURNING report_id
+	 `)
+	} else {
+		reportQuery = fmt.Sprintf(`
+			INSERT INTO reports 
+						 (report_date, order_id, order_number, order_client, order_name, quantity, issued, plan, operator, issued_plan, order_material, order_plot, adding_date, route_position, route_id)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+			RETURNING report_id
+	 `)
+	}
+
+	log.Info().Msgf(reportQuery)
+
+	return errors.New("fucker)")
 }
 
 func (r ReportsPG) AddReports(route *domain.Route, order *domain.Order, id, routePos string, routeID int, new bool) error {

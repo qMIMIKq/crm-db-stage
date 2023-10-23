@@ -27,6 +27,6 @@ if (window.location.href.endsWith('main/table')) {
       getOrders('get-all', true)
     }, 5000)
   }
-  updateMainTableData()
+  // updateMainTableData()
 }
 
