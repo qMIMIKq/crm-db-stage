@@ -65,12 +65,18 @@ type Reports interface {
 
 type Plans interface {
 	GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error)
+	UpdatePlan(data *domain.PlanData) error
 }
 
 type Groups interface {
 	GetGroups() ([]domain.Group, error)
 	GetGroupByID(groupID string) (domain.Group, error)
 	EditGroup(group domain.Group) error
+}
+
+type Planning interface {
+	CreatePlanningObject(route *domain.Route, order *domain.Order, id, routePos string, routeID int, new bool) (int, error)
+	GetAllPlanning() ([]*domain.Planning, error)
 }
 
 type Repository struct {
@@ -85,6 +91,7 @@ type Repository struct {
 	Users
 	Files
 	Reports
+	Planning
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -94,11 +101,12 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Filters:       NewFiltersPG(db),
 		Plots:         NewPlotsPG(db),
 		Files:         NewFilesMwPg(db),
-		Orders:        NewOrdersPG(db, NewReportsPG(db)),
+		Orders:        NewOrdersPG(db, NewReportsPG(db), NewPlanningPG(db)),
 		Routes:        NewRoutesPG(db),
 		Init:          NewInitPG(db),
 		Reports:       NewReportsPG(db),
-		Plans:         NewPlansPG(db),
+		Plans:         NewPlansPG(db, NewReportsPG(db)),
+		Planning:      NewPlanningPG(db),
 		Groups:        NewGroupsPG(db),
 	}
 }

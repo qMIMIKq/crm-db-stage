@@ -1,60 +1,43 @@
-import {getData} from '../getData';
-import {state, userInf} from "../state";
-import {getOrders} from "../getOrders";
-import {getReports} from "../../report/getReports";
-import {ucFirst} from "../../ucFirst";
-import {searchOrdersHandler} from "../modals/searchOrdersModal";
-import {newAllFilter} from "./newAllFilter";
+import {state, userInf} from "../modules/state";
+import {ucFirst} from "../ucFirst";
+import {getOrders, hideOrders} from "../modules/getOrders";
+import {getReports} from "../report/getReports";
+import {getData} from "../modules/getData";
+import {globalFilterReports} from "../report/filters/globalFilterReports";
+import {searchOrdersHandler} from "../modules/modals/searchOrdersModal";
 
-export const topFiltersHandler = () => {
+export const topPlansFilters = () => {
   let filtered
   const plotFilters = document.querySelector('.nav-filters__plots')
   const filterFilters = document.querySelector('.nav-filters__filters')
-  const navControl = document.querySelector('.nav-control')
-  const burgerMenu = navControl.querySelector('.nav-control__burger')
   const selectUser = document.querySelector('.select-user')
   const nav = document.querySelector('.nav-filters')
   const extensions = ['все']
 
-  plotFilters.querySelectorAll('li').forEach(filter => filter.remove())
-  filterFilters.querySelectorAll('li').forEach(filter => filter.remove())
-  burgerMenu.remove()
-
+  const navControl = document.querySelector('.nav-control')
+  const userName = navControl.querySelector('.nav-control__name')
+  userName.textContent = userInf.nickname
   const userGroup = document.querySelector('.nav-control__group')
   userGroup.textContent = ucFirst(userInf.group)
 
-  const userName = navControl.querySelector('.nav-control__name')
-  userName.textContent = userInf.nickname
-
+  const burgerMenu = navControl.querySelector('.nav-control__burger')
   const navRoutes = navControl.querySelector('.nav-control__routes')
-
-  navControl.querySelector('.nav-control__nav').insertAdjacentHTML('beforeend', `
-    <div class="nav-control__burger">
-        <span class="nav-control__burger-item"></span>
-        <span class="nav-control__burger-item"></span>
-        <span class="nav-control__burger-item"></span>
-    </div>
-  `)
-
-  const burgerTrigger = e => {
+  const adminModalBtn = document.querySelector('.nav-control__admin')
+  burgerMenu.addEventListener('click', () => {
     navControl.classList.toggle('nav-control--opened')
     navRoutes.classList.toggle('hidden__input')
 
     if (userInf.groupId === '1') {
-      const adminModalBtn = document.querySelector('.nav-control__admin')
       adminModalBtn.classList.toggle('hidden-input')
     } else {
       navRoutes.style.paddingBottom = '6px'
     }
-  }
-
-  // burgerMenu.removeEventListener('click', burgerTrigger)
-  navControl.querySelector('.nav-control__burger').addEventListener('click', burgerTrigger)
-
-  const searchBtn = document.querySelector('.nav-control__search-btn')
-  searchBtn.addEventListener('click', () => {
-    searchOrdersHandler()
   })
+
+  // const searchBtn = document.querySelector('.nav-control__search-btn')
+  // searchBtn.addEventListener('click', () => {
+  //   searchOrdersHandler()
+  // })
 
   const links = navControl.querySelectorAll('.nav-control__route-link')
   links.forEach(link => {
@@ -62,21 +45,17 @@ export const topFiltersHandler = () => {
       console.log(window.location.href)
       navControl.classList.toggle('nav-control--opened')
       navRoutes.classList.toggle('hidden__input')
-
-      if (userInf.groupId === '1') {
-        const adminModalBtn = document.querySelector('.nav-control__admin')
-        adminModalBtn.classList.toggle('hidden-input')
-      } else {
-        navRoutes.style.paddingBottom = '6px'
-      }
+      adminModalBtn.classList.toggle('hidden-input')
 
       if (link.textContent.trim().includes('Архив')) {
         sessionStorage.setItem('page', 'archive')
-        getOrders('get-old')
+        window.location.href = link.querySelector('.hidden__input').value
+
+        // getOrders('get-old')
       } else if (link.textContent.trim().includes('Главная')) {
         sessionStorage.setItem('page', 'main')
         window.location.href = link.querySelector('.hidden__input').value
-        newAllFilter()
+        getOrders('get-all', true)
       } else {
         console.log(window.location.href)
         window.location.href = link.querySelector('.hidden__input').value
@@ -100,14 +79,12 @@ export const topFiltersHandler = () => {
       let condition = !checkExt(extensions, d.name)
       if (condition) {
         if (short) {
-          if (!d.disable) {
-            block.insertAdjacentHTML('beforeend', `
-              <li class='nav-filters__item'>
-                  <button class='nav-filters__button main__button--click'>${d.short_name}</button>
-                  <input class='hidden__input' value="${d.name}"/>
-               </li>
+          block.insertAdjacentHTML('beforeend', `
+            <li class='nav-filters__item'>
+                <button class='nav-filters__button main__button--click'>${d.short_name}</button>
+                <input class='hidden__input' value="${d.name}"/>
+             </li>
           `)
-          }
         } else {
           block.insertAdjacentHTML('beforeend', `
             <li class='nav-filters__item'>
@@ -136,21 +113,16 @@ export const topFiltersHandler = () => {
           state['currentTopPlots'] = state['currentTopPlots'].filter(cP => cP !== plot)
         }
 
-        console.log(state.currentTopPlots)
-        console.log(state.currentTopFilters)
-
         target.classList.toggle('chosen__plot')
         target.classList.toggle('nav-filters__button--chosen')
         filterByPlots()
-
         if (state['currentTopFilters'].length) {
-          filterData()
+          filterRouteReports()
           filtered = true
           controlFilterReset()
         } else {
           if (window.location.href.includes('/main/table')) {
-            // getOrders('get-all', true)
-            newAllFilter()
+            getOrders('get-all', true)
           } else {
             getReports()
           }
@@ -166,9 +138,6 @@ export const topFiltersHandler = () => {
     state['currentTopFilters'] = state['topFilters'].filter(filt =>
       state['currentTopPlots'].includes(filt.plot)
     )
-
-    console.log(state.topFilters)
-    console.log(state.topPlots)
 
     removeData(filterFilters)
     if (state['currentTopFilters'].length) {
@@ -214,13 +183,12 @@ export const topFiltersHandler = () => {
         target.classList.toggle('nav-filters__button--chosen')
 
         if (state['currentTopFilters'].length) {
-          filterData()
           filtered = true
+          filterRouteReports()
           controlFilterReset()
         } else {
-          // getOrders('get-all', true)
-          newAllFilter()
           filtered = false
+          getReports()
           controlFilterReset()
         }
       })
@@ -232,21 +200,14 @@ export const topFiltersHandler = () => {
     if (filtered) {
       if (!resetBtn) {
         nav.insertAdjacentHTML('beforeend', `
-            <button class='main__button--click main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
-        `)
+                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+                `)
 
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {
           state['currentTopFilters'] = []
-          state['currentTopPlots'] = []
-
-          removeData(filterFilters)
-          drawTopPanel(state['topFilters'], filterFilters)
-          filterListener(filterFilters)
-
           document.querySelector('.nav-filters__reset').remove()
           if (window.location.href.includes('/main/table')) {
             getOrders('get-all', true)
-            newAllFilter()
           } else {
             getReports()
           }
@@ -260,18 +221,11 @@ export const topFiltersHandler = () => {
         })
       }
     } else {
-      document.querySelector('.nav-filters__reset').remove()
+      try {
+        document.querySelector('.nav-filters__reset').remove()
+      } catch {
+      }
     }
-  }
-
-  const drawUsers = users => {
-    users.forEach(u => {
-      document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
-            <option value='${u.id}'>
-                ${u.name}
-            </option>
-        `)
-    })
   }
 
   const draw = async () => {
@@ -297,7 +251,6 @@ export const topFiltersHandler = () => {
     if (selectUser !== null) {
       await getData('users/get-operators')
         .then(data => {
-          drawUsers(data.data)
           state['currentTopPlots'] = data.data[0].plot
           removePlotsByUser(data.data[0].plot, state['topPlots'])
           filterByPlots()
@@ -308,6 +261,16 @@ export const topFiltersHandler = () => {
   draw()
 }
 
-export const filterData = () => {
-  newAllFilter()
+export const filterRouteReports = () => {
+  const filters = state['currentTopFilters'].map(filter => filter.name)
+
+  state.filteredOrders = state.orders.filter(order => filters.includes(order.order_plot))
+
+  console.log(state.filteredOrders)
+
+  hideOrders()
+  state['filteredOrders'].forEach(order => {
+    globalFilterReports(order)
+  })
+  // bindOrdersListeners()
 }

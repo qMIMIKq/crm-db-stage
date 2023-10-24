@@ -68,6 +68,8 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     'start_time': state['startTime']
   }
 
+  console.log(params)
+
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {

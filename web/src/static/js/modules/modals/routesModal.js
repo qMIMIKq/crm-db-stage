@@ -2,16 +2,16 @@ import {showModal} from './showModal';
 import {getData} from '../getData';
 import {state} from '../state';
 import {user} from '../../table';
-import {submitData} from "../submitOrdersData";
 import {sendData} from "../sendData";
 import {showResult} from "../submitControl";
 import {getOrders} from "../getOrders";
 import {getTime} from "../getTime";
-import {planDateHandler} from "./planModal";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
 import {changePauseHandler} from "./pauseModal";
 import {appAddr} from "../../../../../../appAddr";
+import {planDateHandler} from "./planModal";
+import {submitData} from "../submitOrdersData";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -298,7 +298,7 @@ export const addReportMsg = (report, selector) => {
 }
 
 export const addLog = (name, log, selector) => {
-  const today = getTime()
+  const today = getTime().replaceAll('-', '.')
   let logMsg = `${today}    ${name} ${log}`
   const visible = saveData(logMsg, selector)
   saveData(logMsg, '#route__comments')
@@ -315,7 +315,7 @@ export const activateOnInput = (e, cls) => {
 }
 
 export const setDateToInput = inputId => {
-  const today = getTime()
+  const today = getTime().replaceAll('-', '.')
   const timeInput = document.querySelector('#' + inputId)
   timeInput.value = today
 }
@@ -509,14 +509,6 @@ export const triggerRoutesModal = e => {
     'faster': false
   }
 
-  planDateInput.addEventListener('click', e => {
-    if (info) {
-      planDateHandler(addedDates, routePlot.value, routeInfo['route_id'])
-    } else {
-      planDateHandler(addedDates, routePlot.value, '0')
-    }
-  })
-
   const errInput = document.querySelector('#error-route__msg')
   const errTime = document.querySelector('.error__time')
   const errBtn = routeForm.querySelector('.error-route__btn')
@@ -582,6 +574,11 @@ export const triggerRoutesModal = e => {
       issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
     }
 
+    planned = routeInfo['planned']
+    // if (planned) {
+    //   planDateInput.value = 'В планировании'
+    // }
+
     if (routeInfo['db_plan']) {
       dbAddedDates = routeInfo['db_plan']
       planDateInput.value = 'В плане'
@@ -597,15 +594,13 @@ export const triggerRoutesModal = e => {
       })
     }
 
+    console.log(addedDates)
+
     planObj = {
       'exclude': routeInfo['exclude_days'],
       'planStart': routeInfo['plan_start'],
       'planEnd': routeInfo['plan_date'],
       'faster': routeInfo['plan_faster']
-    }
-
-    if (planObj.planEnd) {
-      planned = true
     }
 
     if (routeInfo['issued'] && !operStatus) {
@@ -753,6 +748,21 @@ export const triggerRoutesModal = e => {
     drawPlots()
   }
 
+  let plannedObj = {
+    'planned': planned
+  }
+
+  planDateInput.addEventListener('click', e => {
+    // planned = true
+    // planDateInput.value = 'В планировании'
+
+    if (info) {
+      planDateHandler(addedDates, routePlot.value, routeInfo['route_id'], plannedObj, planDateInput)
+    } else {
+      planDateHandler(addedDates, routePlot.value, '0', plannedObj, planDateInput)
+    }
+  })
+
   if (operStatus || manStatus) {
     disableBtn('route__select--plot')
     disableBtn('report-route__btn')
@@ -883,7 +893,6 @@ export const triggerRoutesModal = e => {
       input.removeAttribute('disabled')
     })
 
-
     const formData = new FormData(routeForm)
     const obj = {}
     formData.forEach((value, key) => {
@@ -899,12 +908,13 @@ export const triggerRoutesModal = e => {
     obj['exclude_days'] = planObj.exclude
     obj['route_id'] = routeInfo.route_id
 
+    obj['planned'] = plannedObj['planned']
 
     let today = getTime()
     today = today.substring(0, today.length - 5)
     obj['issued_today'] = issuedTodayStart.value
 
-    obj['planned'] = !!(dbID && planned)
+    // obj['planned'] = !!(dbID && planned)
     obj['report_changer'] = reportChanger
 
     let resAddedDates = []
@@ -915,6 +925,9 @@ export const triggerRoutesModal = e => {
       })
     }
 
+    console.log(resAddedDates)
+
+    // console.log(resAddedDates)
     obj['added_dates'] = resAddedDates
     console.log(obj)
 

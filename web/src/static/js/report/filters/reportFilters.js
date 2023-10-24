@@ -1,9 +1,6 @@
 import {state} from "../../modules/state";
-import {hideOrders} from "../../modules/getOrders";
-import {bindOrdersListeners} from "../../modules/bindListeners";
 import {getReports} from "../getReports";
-import {globalFilterReports} from "./globalFilterReports";
-import {filterRouteReports} from "./topReportFilter";
+import {newAllFilter} from "../../modules/filters/newAllFilter";
 
 export const reportFiltersWrapper = document.querySelector('.main-table__header')
 export const idReportFilter = document.querySelector('#id')
@@ -62,15 +59,7 @@ const filterReports = (type, filter) => {
   console.log(type, filter)
   console.log(state['tableFilters'])
 
-  hideOrders()
-  state['orders'].forEach(o => {
-    globalFilterReports(o, state.topFilters)
-  })
-
-  if (state.topFilters.length) {
-    filterRouteReports()
-  }
-  bindOrdersListeners()
+  newAllFilter(false)
 }
 
 const bindFilter = (elem) => {

@@ -24,7 +24,7 @@ type Route struct {
 	PlanStart       string          `json:"plan_start" db:"plan_start"`
 	PlanExcludeDays string          `json:"exclude_days" db:"plan_exclude_days"`
 	PlanFaster      bool            `json:"plan_faster" db:"plan_faster"`
-	Planned         bool            `json:"planned"`
+	Planned         bool            `json:"planned" db:"planned"`
 	ReportChanger   []ReportChanger `json:"report_changer"`
 	AddedDates      []DateInfo      `json:"added_dates"`
 	PlanDates       string          `db:"plan_dates" json:"plan_dates"`
@@ -33,11 +33,9 @@ type Route struct {
 }
 
 type DbPlanInfo struct {
-	OrderID   string `json:"order_id" db:"order_id"`
-	RoutePlot string `json:"route_plot" db:"route_plot"`
-	PlanDate  string `json:"date" db:"plan_date"`
-	Divider   string `json:"divider" db:"divider"`
-	Queues    string `json:"queues" db:"queues"`
+	PlanDate string `json:"date" db:"plan_date"`
+	Divider  string `json:"divider" db:"divider"`
+	Queues   string `json:"queues" db:"queues"`
 }
 
 type DateInfo struct {

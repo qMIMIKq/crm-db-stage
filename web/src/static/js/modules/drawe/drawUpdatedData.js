@@ -60,7 +60,6 @@ export const drawUpdatedData = (d, data, filtered) => {
     for (let i = 0; i < orders.length; i++) {
       if (orders[i].id === d.id) {
         orders[i] = d
-        console.log(orders[i])
         break
       }
     }
@@ -86,7 +85,7 @@ export const drawUpdatedData = (d, data, filtered) => {
 
     currentOrder.querySelector('select[name="m"]').value = d.m
     const endTime = currentOrder.querySelector('input[name="end_time"]')
-    endTime.value = `${d.end_time ? d.end_time.split("T")[0] : ''}`
+    endTime.value = `${d.end_time ? d.end_time.split("T")[0].replaceAll('-', '.') : ''}`
     if (alertDeadline && !state.isArchive) {
       endTime.classList.add('table__endtime--dead')
     } else {
@@ -100,8 +99,6 @@ export const drawUpdatedData = (d, data, filtered) => {
 
     currentOrder.classList.remove('table-form--upd')
     currentOrder.classList.add('table-form--old')
-
-    console.log(currentOrder.classList)
 
     const routes = d["db_routes"]
 

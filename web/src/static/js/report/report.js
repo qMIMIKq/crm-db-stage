@@ -1,6 +1,6 @@
 import "../../css/table/table.scss"
 import {getReports} from "./getReports"
-import {reportRoutesDatesFilter} from "./reportRoutesDatesFilter"
+import {reportRoutesDatesFilter} from "./filters/reportRoutesDatesFilter"
 import {topReportFilter} from "./filters/topReportFilter"
 import {adminHandler} from "../modules/admin/adminHandler";
 

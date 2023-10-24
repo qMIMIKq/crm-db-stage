@@ -463,6 +463,21 @@ input.tr {
     max-width: 65px;
   }
 
+  &__route--date {
+    //border-right: 1px solid black;
+    //min-width: 750px;
+
+    &__list {
+      display: flex;
+      align-items: center;
+    }
+
+    &__item {
+      margin-right: 5px;
+      height: 28px
+    }
+  }
+
   &__operator--report {
     min-width: 95px;
     max-width: 95px;

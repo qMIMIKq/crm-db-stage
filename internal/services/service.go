@@ -64,6 +64,7 @@ type Reports interface {
 
 type Plans interface {
 	GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error)
+	UpdatePlan(data *domain.PlanData) error
 }
 
 type Groups interface {
@@ -72,6 +73,10 @@ type Groups interface {
 	GetGroupByID(groupID string) (domain.Group, error)
 	EditGroup(group domain.Group) error
 }
+type Planning interface {
+	GetAllPlanning() ([]*domain.Planning, error)
+}
+
 type Services struct {
 	Groups
 	Plans
@@ -84,6 +89,7 @@ type Services struct {
 	Orders
 	Time
 	Reports
+	Planning
 }
 
 func NewService(repos *repository.Repository) *Services {
@@ -99,5 +105,6 @@ func NewService(repos *repository.Repository) *Services {
 		Groups:        NewGroupsService(repos.Groups),
 		Reports:       NewReportsService(repos.Reports),
 		Plans:         NewPlansService(repos.Plans),
+		Planning:      NewPlanningService(repos.Planning),
 	}
 }

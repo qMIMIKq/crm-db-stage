@@ -218,6 +218,22 @@ func (i InitPG) InitDB() error {
 				divider    varchar(255),
 				queues     varchar(255)
 		);
+
+		create table planning
+		(
+			planning_id     serial unique PRIMARY KEY NOT NULL,
+			route_id        integer      default 0,
+			route_plot      varchar(255) default '',
+			order_id        varchar(255),
+			order_timestamp timestamptz,
+			time_of_modify  timestamp,
+			order_number    varchar(255),
+			order_client    varchar(255),
+			order_name      varchar(255),
+			order_material  varchar(255),
+			order_quantity  varchar(255),
+			order_issued    varchar(255) default ''
+		);
 	`)
 
 		_, err = i.db.Exec(initQuery)

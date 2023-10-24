@@ -10,7 +10,7 @@ type err struct {
 }
 
 func newErrorResponse(c *gin.Context, status int, msg error) {
-	log.Warn().Msgf("error is %s", msg)
+	log.Warn().Caller().Msgf("error is %s", msg)
 	c.AbortWithStatusJSON(status, err{msg.Error()})
 }
 

@@ -26,6 +26,9 @@ type GetOrder struct {
 	ArchiveFrom string `json:"archive_from"`
 	ArchiveTo   string `json:"archive_to"`
 	Old         bool   `json:"order_old"`
+	Planning    bool   `json:"planning"`
+	PlanFrom    string `json:"plan_from"`
+	PlanTo      string `json:"plan_to"`
 	UpdateOnly  bool   `json:"update_only"`
 	UpdateTime  string `json:"update_time"`
 	StartTime   string `json:"start_time"`

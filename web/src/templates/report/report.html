@@ -59,6 +59,12 @@
                         </button>
                     </li>
                     <li class="nav-control__route">
+                        <button class="nav-control__route-link link__plan">
+                            Планирование
+                            <input class="hidden__input" value="/main/plan"/>
+                        </button>
+                    </li>
+                    <li class="nav-control__route">
                         <button class="nav-control__route-link link__report">
                             План/Факт
                             <input class="hidden__input" value="/main/report"/>
@@ -97,7 +103,7 @@
                 </button>
                 <button class="main__button hidden__input header-routes__filter header-routes__error">Ошибка</button>
                 <button class="main__button hidden__input header-routes__filter header-routes__completed">Сдал</button>
-                <button class="main__button--click header-routes__filter header-routes__planned--report">В плане</button>
+                <button class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В плане</button>
                 <label>От</label>
                 <input type="date" class="main__button--click header-routes__filter header-routes__planned-date--report__from">
                 <label>До</label>
@@ -107,42 +113,49 @@
 
         <div class="main-table__data">
             <ul class="main-table__header">
-                <li class="table__cell table__use table__db">
+                <li class="table__cell table__cell--top table__use table__db">
                     <label for="numbers">№</label>
                     <input class="hidden__input filter__type" value="order_id" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="все" id="id">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__timestamp">
+                <li class="table__cell table__cell--top table__use table__timestamp">
                     <label for="numbers">Дата</label>
                     <input class="hidden__input filter__type" value="timestamp" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__number">
+                <li class="table__cell table__cell--top table__use table__timestamp">
+                    <label for="numbers">Дата план</label>
+                    <input class="hidden__input filter__type" value="timestamp" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__use table__number">
                     <label for="numbers">№ заказа</label>
                     <input class="hidden__input filter__type" value="order_number" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="все" id="numbers">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__client">
+                <li class="table__cell table__cell--top table__use table__client">
                     <label for="clients">Клиент</label>
                     <input class="hidden__input filter__type" value="client" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="clients" id="clients">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__name">
+                <li class="table__cell table__cell--top table__use table__name">
                     <label for="name">Наименование</label>
                     <input class="hidden__input filter__type" value="name" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="name" id="name">
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__material">
+                <li class="table__cell table__cell--top table__use table__material">
                     <label for="materials">Материалы</label>
                     <input class="hidden__input filter__type" value="material" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="materials"
@@ -150,7 +163,7 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__quantity">
+                <li class="table__cell table__cell--top table__use table__quantity">
                     <label for="quantity">Тираж</label>
                     <input class="hidden__input filter__type" value="quantity" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="quantity"
@@ -158,7 +171,7 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__issued--report">
+                <li class="table__cell table__cell--top table__use table__issued--report">
                     <label for="issued">Выдано всего</label>
                     <input class="hidden__input filter__type" value="issued" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="issued"
@@ -166,7 +179,7 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__use table__route--report">
+                <li class="table__cell table__cell--top table__use table__route--report">
                     <label for="order_plot">Станок</label>
                     <input class="hidden__input filter__type" value="order_plot" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="issued"
@@ -174,8 +187,8 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__operator--report">Оператор</li>
-                <li class="table__cell table__use table__plan--report">
+                <li class="table__cell table__cell--top table__operator--report">Оператор</li>
+                <li class="table__cell table__cell--top table__use table__plan--report">
                     <label for="order_operator">План за смену</label>
                     <input class="hidden__input filter__type" value="order_operator" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="issued"
@@ -183,8 +196,8 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__issued-plan--report">Выдано за смену</li>
-                <li class="table__cell table__use table__issued-plan--report">
+                <li class="table__cell table__cell--top table__issued-plan--report">Выдано за смену</li>
+                <li class="table__cell table__cell--top table__use table__issued-plan--report">
                     <label for="issued">Процент</label>
                     <input class="hidden__input filter__type" value="issued" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="issued"

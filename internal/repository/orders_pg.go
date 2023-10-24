@@ -10,8 +10,9 @@ import (
 )
 
 type OrdersPG struct {
-	db        *sqlx.DB
-	reportsPG *ReportsPG
+	db         *sqlx.DB
+	reportsPG  *ReportsPG
+	planningPG *PlanningPG
 }
 
 func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
@@ -84,8 +85,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
 													issued, start_time, end_time, pause_time, error_time, 
 													error_value, day_quantity, theor_end, dyn_end, plan_date, 
- 												  plan_start, plan_faster, plan_exclude_days, last_comment, plan_dates)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+ 												  plan_start, plan_faster, plan_exclude_days, last_comment, plan_dates, planned, issued_plan)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
 			RETURNING route_id
 		`)
 
@@ -102,8 +103,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						 issued = $4, start_time = $5, end_time = $6,
 						 pause_time = $7, pause_value = $8, error_time = $9, error_value = $10, day_quantity = $11, 
 						 theor_end = $12, dyn_end = $13, plan_date = $14, plan_start = $15,
-						 plan_faster = $16, plan_exclude_days = $17, last_comment = $18, plan_dates = $19
-			 WHERE order_id = $20 AND route_position = $21
+						 plan_faster = $16, plan_exclude_days = $17, last_comment = $18, plan_dates = $19, planned = $20, issued_plan = $21
+			 WHERE order_id = $22 AND route_position = $23
 			RETURNING route_id
 		`)
 
@@ -124,18 +125,20 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			if len(dbRoutePos) > 0 {
 				var planDates []string
 				for _, info := range route.AddedDates {
-					if len(info.Date) > 4 {
-						planDates = append(planDates, info.Date)
-					}
+					planDates = append(planDates, info.Date)
 				}
 
 				err = o.db.QueryRow(routesUpdateQuery, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime, route.EndTime,
 					route.PauseTime, route.PauseMsg, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
 					route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
-					route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "), order.ID, routePos).Scan(&routeID)
+					route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "), route.Planned, route.IssuedToday, order.ID, routePos).Scan(&routeID)
 				if err != nil {
 					log.Err(err).Caller().Msg("Error")
+				}
+
+				if route.Planned {
+					go o.planningPG.CreatePlanningObject(route, order, order.ID, routePos, routeID, false)
 				}
 
 				planQuery := fmt.Sprintf(`
@@ -143,9 +146,12 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							 VALUES ($1, $2, $3, $4, $5, $6)
 				`)
 
-				_, err = o.db.Exec("DELETE FROM plans WHERE route_id = $1 AND plan_date >= $2", dbRoutePos[0].RouteID, today)
+				_, err = o.db.Exec("DELETE FROM plans WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, info := range route.AddedDates {
-					if len(info.Date) > 4 {
+					checkPlanDate, _ := time.Parse(layout, strings.Split(info.Date, "T")[0])
+					checkToday, _ := time.Parse(layout, today)
+
+					if checkPlanDate.Unix() >= checkToday.Unix() {
 						_, err := o.db.Exec(planQuery, routeID, order.ID, route.Plot, info.Date, info.DateInfo.Divider, strings.Join(info.DateInfo.Queues, ", "))
 						if err != nil {
 							log.Err(err).Caller().Msg("ERROR")
@@ -160,22 +166,18 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 
 					reportQuery := fmt.Sprintf(`
-					INSERT INTO reports 
-								 (report_date, order_id, order_number, order_client, order_name, quantity, issued, plan, operator, issued_plan, order_material, order_plot, adding_date, route_position, route_id, order_timestamp)
-					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-					RETURNING report_id
-				`)
+						INSERT INTO reports
+									 (report_date, order_id, order_number, order_client, order_name, quantity, issued, plan, operator, issued_plan, order_material, order_plot, adding_date, route_position, route_id, order_timestamp)
+						VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+						RETURNING report_id
+					`)
 
-					checkPlanDate, _ := time.Parse(layout, info.Date)
-					checkToday, _ := time.Parse(layout, today)
-
-					if len(info.Date) > 4 && checkPlanDate.Unix() >= checkToday.Unix() {
-						log.Info().Msgf("INFO DATE IS %v", info.Date)
+					if checkPlanDate.Unix() >= checkToday.Unix() {
 						var reportID int
 						err = o.db.QueryRow(
 							reportQuery, info.Date, order.ID, order.Number, order.Client,
 							order.Name, route.Quantity, route.Issued, route.DayQuantity,
-							route.User, issuedToday, order.Material, route.Plot, today, routePos, route.RouteID, order.TimeStamp,
+							route.User, issuedToday, order.Material, route.Plot, today, routePos, routeID, order.TimeStamp,
 						).Scan(&reportID)
 						log.Info().Msgf("ADD REPORT %v", reportID)
 						if err != nil {
@@ -195,18 +197,21 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			} else {
 				var planDates []string
 				for _, info := range route.AddedDates {
-					if len(info.Date) > 4 {
-						planDates = append(planDates, info.Date)
-					}
+					planDates = append(planDates, info.Date)
 				}
 
 				err = o.db.QueryRow(routesQuery, order.ID,
 					routePos, route.User, route.Plot,
 					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.PauseTime, route.ErrorTime,
 					route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart,
-					route.PlanFaster, route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", ")).Scan(&routeID)
+					route.PlanFaster, route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "), route.Planned, route.IssuedToday).Scan(&routeID)
 				if err != nil {
 					log.Err(err).Caller().Msg("ERROR")
+				}
+
+				if route.Planned {
+					go o.planningPG.CreatePlanningObject(route, order, order.ID, routePos, routeID, false)
+					//log.Info().Msgf("ID IS %v ; ERROR IS %v", planningId, err)
 				}
 
 				planQuery := fmt.Sprintf(`
@@ -215,7 +220,10 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				`)
 
 				for _, info := range route.AddedDates {
-					if len(info.Date) > 4 {
+					checkPlanDate, _ := time.Parse(layout, info.Date)
+					checkToday, _ := time.Parse(layout, today)
+
+					if checkPlanDate.Unix() >= checkToday.Unix() {
 						_, err := o.db.Exec(planQuery, routeID, order.ID, route.Plot, info.Date, info.DateInfo.Divider, strings.Join(info.DateInfo.Queues, ", "))
 						if err != nil {
 							log.Err(err).Caller().Msg("ERROR")
@@ -230,22 +238,18 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 
 					reportQuery := fmt.Sprintf(`
-					INSERT INTO reports 
-								 (report_date, order_id, order_number, order_client, order_name, quantity, issued, plan, operator, issued_plan, order_material, order_plot, adding_date, route_position, route_id, order_timestamp)
-					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-					RETURNING report_id
+						INSERT INTO reports
+									 (report_date, order_id, order_number, order_client, order_name, quantity, issued, plan, operator, issued_plan, order_material, order_plot, adding_date, route_position, route_id, order_timestamp)
+						VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+						RETURNING report_id
 				`)
 
-					checkPlanDate, _ := time.Parse(layout, info.Date)
-					checkToday, _ := time.Parse(layout, today)
-
-					if len(info.Date) > 4 && checkPlanDate.Unix() >= checkToday.Unix() {
-						log.Info().Msgf("INFO DATE IS %v", info.Date)
+					if checkPlanDate.Unix() >= checkToday.Unix() {
 						var reportID int
 						err = o.db.QueryRow(
 							reportQuery, info.Date, order.ID, order.Number, order.Client,
 							order.Name, route.Quantity, route.Issued, route.DayQuantity,
-							route.User, issuedToday, order.Material, route.Plot, today, routePos, route.RouteID, order.TimeStamp,
+							route.User, issuedToday, order.Material, route.Plot, today, routePos, routeID, order.TimeStamp,
 						).Scan(&reportID)
 						log.Info().Msgf("ADD REPORT %v", reportID)
 						if err != nil {
@@ -302,8 +306,8 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			INSERT INTO routes (order_id, route_position, worker, plot_id, quantity,
 													issued, start_time, end_time, pause_time, pause_value, error_time, 
 													error_value, day_quantity, theor_end, dyn_end, plan_date, 
-													plan_start, plan_faster, plan_exclude_days, last_comment, plan_dates)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+													plan_start, plan_faster, plan_exclude_days, last_comment, plan_dates, planned, issued_plan)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
 			RETURNING route_id
 		`)
 
@@ -348,9 +352,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 
 			var planDates []string
 			for _, info := range route.AddedDates {
-				if len(info.Date) > 4 {
-					planDates = append(planDates, info.Date)
-				}
+				planDates = append(planDates, info.Date)
 			}
 
 			err = o.db.QueryRow(routesQuery, id,
@@ -358,7 +360,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				route.Quantity, route.Issued, route.StartTime, route.PauseTime, route.PauseMsg,
 				route.EndTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
 				route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
-				route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", ")).Scan(&routeID)
+				route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "), route.Planned, route.IssuedToday).Scan(&routeID)
 
 			planQuery := fmt.Sprintf(`
 					INSERT INTO plans (route_id, order_id, route_plot, plan_date, divider, queues)
@@ -366,11 +368,12 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				`)
 
 			for _, info := range route.AddedDates {
-				if len(info.Date) > 4 {
-					_, err := o.db.Exec(planQuery, routeID, order.ID, route.Plot, info.Date, info.DateInfo.Divider, strings.Join(info.DateInfo.Queues, ", "))
-					if err != nil {
-						log.Err(err).Caller().Msg("ERROR")
-					}
+				checkPlanDate, _ := time.Parse(layout, info.Date)
+				checkToday, _ := time.Parse(layout, today)
+
+				_, err := o.db.Exec(planQuery, routeID, id, route.Plot, info.Date, info.DateInfo.Divider, strings.Join(info.DateInfo.Queues, ", "))
+				if err != nil {
+					log.Err(err).Caller().Msg("ERROR")
 				}
 
 				var issuedToday string
@@ -387,16 +390,12 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 					RETURNING report_id
 				`)
 
-				checkPlanDate, _ := time.Parse(layout, info.Date)
-				checkToday, _ := time.Parse(layout, today)
-
-				if len(info.Date) > 4 && checkPlanDate.Unix() >= checkToday.Unix() {
-					log.Info().Msgf("INFO DATE IS %v", info.Date)
+				if checkPlanDate.Unix() >= checkToday.Unix() {
 					var reportID int
 					err = o.db.QueryRow(
-						reportQuery, info.Date, order.ID, order.Number, order.Client,
+						reportQuery, info.Date, id, order.Number, order.Client,
 						order.Name, route.Quantity, route.Issued, route.DayQuantity,
-						route.User, issuedToday, order.Material, route.Plot, today, routePos, route.RouteID, today,
+						route.User, issuedToday, order.Material, route.Plot, today, routePos, routeID, today,
 					).Scan(&reportID)
 					log.Info().Msgf("ADD REPORT %v", reportID)
 					if err != nil {
@@ -453,6 +452,8 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 						 AND order_endtime <= $2
 		   ORDER BY order_id ASC;
 		`)
+	} else if params.Planning {
+
 	} else {
 		query = fmt.Sprintf(`
 			SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC;
@@ -504,12 +505,12 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 		 ORDER BY plan_date
 	`)
 
-	queryRouteBusyPlan := fmt.Sprintf(`
-		SELECT plan_date, divider, queues
-		  FROM plans
-     WHERE route_plot = $1 AND plan_date >= $2 AND route_id != $3
-		 ORDER BY plan_date
-	`)
+	//queryRouteBusyPlan := fmt.Sprintf(`
+	//	SELECT plan_date, divider, queues
+	//	  FROM plans
+	//   WHERE route_plot = $1 AND plan_date >= $2 AND route_id != $3
+	//	 ORDER BY plan_date
+	//`)
 
 	var err error
 	var orders []*domain.Order
@@ -520,6 +521,8 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 			log.Err(err).Caller().Msg("error is")
 		}
 
+	} else if params.Planning {
+
 	} else if params.UpdateOnly {
 		if len(params.UpdateTime) > 0 {
 			err = o.db.Select(&orders, query, params.UpdateTime, params.StartTime)
@@ -527,6 +530,8 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 				log.Err(err).Caller().Msg("error is")
 			}
 		} else {
+			log.Info().Msgf("start time %v", params.StartTime)
+
 			err = o.db.Select(&orders, query, params.StartTime, params.StartTime)
 			if err != nil {
 				log.Err(err).Caller().Msg("error is")
@@ -580,10 +585,10 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 				route.AddedDates = append(route.AddedDates, newAdded)
 			}
 
-			err = o.db.Select(&route.BusyDates, queryRouteBusyPlan, route.Plot, today, route.RouteID)
-			if err != nil {
-				log.Err(err).Caller().Msg("error is")
-			}
+			//err = o.db.Select(&route.BusyDates, queryRouteBusyPlan, route.Plot, today, route.RouteID)
+			//if err != nil {
+			//	log.Err(err).Caller().Msg("error is")
+			//}
 		}
 	}
 
@@ -604,6 +609,6 @@ func (o *OrdersPG) getOrderSubInfo(order *domain.Order, queryFiles, queryComment
 	*outErr = err
 }
 
-func NewOrdersPG(db *sqlx.DB, reportsPg *ReportsPG) *OrdersPG {
-	return &OrdersPG{db: db, reportsPG: reportsPg}
+func NewOrdersPG(db *sqlx.DB, reportsPg *ReportsPG, planningPG *PlanningPG) *OrdersPG {
+	return &OrdersPG{db: db, reportsPG: reportsPg, planningPG: planningPG}
 }

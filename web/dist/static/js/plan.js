@@ -6925,6 +6925,329 @@ const getPlans = updateOnly => {
 
 /***/ }),
 
+/***/ "./web/src/static/js/plan/newPlanCheck.js":
+/*!************************************************!*\
+  !*** ./web/src/static/js/plan/newPlanCheck.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "reportPlanningDatesFilter": () => (/* binding */ reportPlanningDatesFilter)
+/* harmony export */ });
+/* harmony import */ var _modules_getTime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/getTime */ "./web/src/static/js/modules/getTime.js");
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _drawPlan__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawPlan */ "./web/src/static/js/plan/drawPlan.js");
+/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
+
+
+
+
+const reportPlanningDatesFilter = () => {
+  const filterBtn = document.querySelector('.header-routes__planned--report');
+  const filterDateFrom = document.querySelector('.header-routes__planned-date--report__from');
+  const filterDateTo = document.querySelector('.header-routes__planned-date--report__to');
+  let today = (0,_modules_getTime__WEBPACK_IMPORTED_MODULE_0__.getTime)();
+  today = today.substring(0, today.length - 5).trim();
+  filterDateFrom.value = today.trim();
+  filterDateTo.value = today.trim();
+  let check = new Date(filterDateTo.value);
+  check.setDate(check.getDate() + 30);
+  filterDateTo.value = `${check.getFullYear()}-${String(check.getMonth() + 1).padStart(2, '0')}-${String(check.getDate()).padStart(2, '0')}`;
+  filterDateTo.setAttribute('min', String(today.trim()));
+  filterDateFrom.setAttribute('min', String(today.trim()));
+  const recreatePlansTable = () => {
+    (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
+    let startDate = new Date(filterDateFrom.value);
+    let endDate = new Date(filterDateTo.value);
+    endDate.setDate(endDate.getDate() + 1);
+    let res = (0,_drawPlan__WEBPACK_IMPORTED_MODULE_2__.getDays)(startDate, endDate);
+    _modules_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.forEach(plan => {
+      console.log(plan);
+      (0,_drawPlan__WEBPACK_IMPORTED_MODULE_2__.drawPlan)(plan);
+    });
+    document.querySelector('.table__route--date').style.minWidth = `${res * 95}px`;
+  };
+  filterDateFrom.addEventListener('change', () => {
+    filterDateTo.setAttribute('min', String(filterDateFrom.value));
+    if (new Date(filterDateFrom.value).getTime() >= new Date(filterDateTo.value).getTime()) {
+      filterDateTo.value = filterDateFrom.value;
+    }
+    recreatePlansTable();
+  });
+  filterDateTo.addEventListener('change', () => {
+    recreatePlansTable();
+  });
+
+  // filterBtn.addEventListener('click', () => {
+  //
+  // })
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/plan/topPlansFilters.js":
+/*!***************************************************!*\
+  !*** ./web/src/static/js/plan/topPlansFilters.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "filterRouteReports": () => (/* binding */ filterRouteReports),
+/* harmony export */   "topPlansFilters": () => (/* binding */ topPlansFilters)
+/* harmony export */ });
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+/* harmony import */ var _ucFirst__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ucFirst */ "./web/src/static/js/ucFirst.js");
+/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
+/* harmony import */ var _report_getReports__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../report/getReports */ "./web/src/static/js/report/getReports.js");
+/* harmony import */ var _modules_getData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/getData */ "./web/src/static/js/modules/getData.js");
+/* harmony import */ var _report_filters_globalFilterReports__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../report/filters/globalFilterReports */ "./web/src/static/js/report/filters/globalFilterReports.js");
+/* harmony import */ var _modules_modals_searchOrdersModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/modals/searchOrdersModal */ "./web/src/static/js/modules/modals/searchOrdersModal.js");
+
+
+
+
+
+
+
+const topPlansFilters = () => {
+  let filtered;
+  const plotFilters = document.querySelector('.nav-filters__plots');
+  const filterFilters = document.querySelector('.nav-filters__filters');
+  const selectUser = document.querySelector('.select-user');
+  const nav = document.querySelector('.nav-filters');
+  const extensions = ['все'];
+  const navControl = document.querySelector('.nav-control');
+  const userName = navControl.querySelector('.nav-control__name');
+  userName.textContent = _modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.nickname;
+  const userGroup = document.querySelector('.nav-control__group');
+  userGroup.textContent = (0,_ucFirst__WEBPACK_IMPORTED_MODULE_1__.ucFirst)(_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.group);
+  const burgerMenu = navControl.querySelector('.nav-control__burger');
+  const navRoutes = navControl.querySelector('.nav-control__routes');
+  const adminModalBtn = document.querySelector('.nav-control__admin');
+  burgerMenu.addEventListener('click', () => {
+    navControl.classList.toggle('nav-control--opened');
+    navRoutes.classList.toggle('hidden__input');
+    if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.groupId === '1') {
+      adminModalBtn.classList.toggle('hidden-input');
+    } else {
+      navRoutes.style.paddingBottom = '6px';
+    }
+  });
+
+  // const searchBtn = document.querySelector('.nav-control__search-btn')
+  // searchBtn.addEventListener('click', () => {
+  //   searchOrdersHandler()
+  // })
+
+  const links = navControl.querySelectorAll('.nav-control__route-link');
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      console.log(window.location.href);
+      navControl.classList.toggle('nav-control--opened');
+      navRoutes.classList.toggle('hidden__input');
+      adminModalBtn.classList.toggle('hidden-input');
+      if (link.textContent.trim().includes('Архив')) {
+        sessionStorage.setItem('page', 'archive');
+        window.location.href = link.querySelector('.hidden__input').value;
+
+        // getOrders('get-old')
+      } else if (link.textContent.trim().includes('Главная')) {
+        sessionStorage.setItem('page', 'main');
+        window.location.href = link.querySelector('.hidden__input').value;
+        (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all', true);
+      } else {
+        console.log(window.location.href);
+        window.location.href = link.querySelector('.hidden__input').value;
+      }
+    });
+  });
+  const checkExt = (extensions, ext) => {
+    let flag = false;
+    extensions.forEach(d => {
+      if (d === ext) {
+        flag = true;
+      }
+    });
+    return flag;
+  };
+  const drawTopPanel = (data, block, short) => {
+    data.forEach(d => {
+      let condition = !checkExt(extensions, d.name);
+      if (condition) {
+        if (short) {
+          block.insertAdjacentHTML('beforeend', `
+            <li class='nav-filters__item'>
+                <button class='nav-filters__button main__button--click'>${d.short_name}</button>
+                <input class='hidden__input' value="${d.name}"/>
+             </li>
+          `);
+        } else {
+          block.insertAdjacentHTML('beforeend', `
+            <li class='nav-filters__item'>
+                <button class='nav-filters__button main__button--click'>${d.name}</button>
+             </li>
+          `);
+        }
+      }
+    });
+  };
+  const removeData = block => {
+    block.innerHTML = '';
+  };
+  const plotListener = block => {
+    const btns = block.querySelectorAll('button');
+    btns.forEach(btn => {
+      btn.addEventListener('click', e => {
+        const target = e.target;
+        const plot = target.parentNode.querySelector('input').value;
+        if (!target.classList.contains('chosen__plot')) {
+          _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopPlots.push(plot);
+        } else {
+          _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopPlots = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopPlots.filter(cP => cP !== plot);
+        }
+        target.classList.toggle('chosen__plot');
+        target.classList.toggle('nav-filters__button--chosen');
+        filterByPlots();
+        if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.length) {
+          filterRouteReports();
+          filtered = true;
+          controlFilterReset();
+        } else {
+          if (window.location.href.includes('/main/table')) {
+            (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all', true);
+          } else {
+            (0,_report_getReports__WEBPACK_IMPORTED_MODULE_3__.getReports)();
+          }
+          filtered = false;
+          controlFilterReset();
+        }
+      });
+    });
+  };
+  const filterByPlots = () => {
+    _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters.filter(filt => _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopPlots.includes(filt.plot));
+    removeData(filterFilters);
+    if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.length) {
+      drawTopPanel(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters, filterFilters);
+    } else {
+      drawTopPanel(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters, filterFilters);
+    }
+    filterListener(filterFilters);
+  };
+  const removePlotsByUser = (plot, plots) => {
+    const newPlots = [];
+    plots.forEach(f => {
+      console.log(f);
+      if (f.name === plot) {
+        newPlots.push(f);
+      }
+    });
+    removeData(plotFilters);
+    drawTopPanel(newPlots, plotFilters);
+  };
+  const filterListener = block => {
+    block.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const target = e.target;
+        const filter = target.textContent;
+        if (!target.classList.contains('chosen__filter')) {
+          if (!document.querySelector('.chosen__plot')) {
+            _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.push({
+              'name': filter
+            });
+          } else {
+            _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = [{
+              'name': filter
+            }];
+          }
+        } else {
+          _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.filter(cF => cF.name !== filter);
+        }
+        target.classList.toggle('chosen__filter');
+        target.classList.toggle('nav-filters__button--chosen');
+        if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.length) {
+          filtered = true;
+          filterRouteReports();
+          controlFilterReset();
+        } else {
+          filtered = false;
+          (0,_report_getReports__WEBPACK_IMPORTED_MODULE_3__.getReports)();
+          controlFilterReset();
+        }
+      });
+    });
+  };
+  const controlFilterReset = () => {
+    const resetBtn = document.querySelector('.nav-filters__reset');
+    if (filtered) {
+      if (!resetBtn) {
+        nav.insertAdjacentHTML('beforeend', `
+                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+                `);
+        document.querySelector('.nav-filters__reset').addEventListener('click', () => {
+          _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = [];
+          document.querySelector('.nav-filters__reset').remove();
+          if (window.location.href.includes('/main/table')) {
+            (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all', true);
+          } else {
+            (0,_report_getReports__WEBPACK_IMPORTED_MODULE_3__.getReports)();
+          }
+          nav.querySelectorAll('.nav-filters__button').forEach(btn => {
+            console.log(btn);
+            btn.classList.remove('nav-filters__button--chosen');
+            btn.classList.remove('chosen__plot');
+            btn.classList.remove('chosen__filter');
+          });
+        });
+      }
+    } else {
+      try {
+        document.querySelector('.nav-filters__reset').remove();
+      } catch {}
+    }
+  };
+  const draw = async () => {
+    let plots = [];
+    let filters = [];
+    await (0,_modules_getData__WEBPACK_IMPORTED_MODULE_4__.getData)('filters/get-all').then(data => {
+      data.data = data.data.filter(d => !d.disable);
+      drawTopPanel(data.data, filterFilters);
+      filters = data.data;
+      _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters = filters;
+    }).then(_ => filterListener(filterFilters));
+    await (0,_modules_getData__WEBPACK_IMPORTED_MODULE_4__.getData)('plots/get-all').then(data => {
+      drawTopPanel(data.data, plotFilters, true);
+      plots = data.data;
+      _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots = plots;
+    }).then(_ => plotListener(plotFilters));
+    if (selectUser !== null) {
+      await (0,_modules_getData__WEBPACK_IMPORTED_MODULE_4__.getData)('users/get-operators').then(data => {
+        _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopPlots = data.data[0].plot;
+        removePlotsByUser(data.data[0].plot, _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots);
+        filterByPlots();
+        plotListener(plotFilters);
+      });
+    }
+  };
+  draw();
+};
+const filterRouteReports = () => {
+  const filters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
+  _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.filter(order => filters.includes(order.order_plot));
+  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders);
+  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.hideOrders)();
+  _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filteredOrders.forEach(order => {
+    (0,_report_filters_globalFilterReports__WEBPACK_IMPORTED_MODULE_5__.globalFilterReports)(order);
+  });
+  // bindOrdersListeners()
+};
+
+/***/ }),
+
 /***/ "./web/src/static/js/report/drawReport.js":
 /*!************************************************!*\
   !*** ./web/src/static/js/report/drawReport.js ***!
@@ -7172,70 +7495,6 @@ const setChosenFilter = e => {
   } else {
     e.target.parentNode.querySelector('label').style.textDecoration = 'none';
   }
-};
-
-/***/ }),
-
-/***/ "./web/src/static/js/report/filters/reportRoutesDatesFilter.js":
-/*!*********************************************************************!*\
-  !*** ./web/src/static/js/report/filters/reportRoutesDatesFilter.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "reportRoutesDatesFilter": () => (/* binding */ reportRoutesDatesFilter)
-/* harmony export */ });
-/* harmony import */ var _modules_getTime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../modules/getTime */ "./web/src/static/js/modules/getTime.js");
-/* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../getReports */ "./web/src/static/js/report/getReports.js");
-/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
-/* harmony import */ var _plan_drawPlan__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../plan/drawPlan */ "./web/src/static/js/plan/drawPlan.js");
-/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../modules/state */ "./web/src/static/js/modules/state.js");
-
-
-
-
-
-const reportRoutesDatesFilter = () => {
-  const filterBtn = document.querySelector('.header-routes__planned--report');
-  const filterDateFrom = document.querySelector('.header-routes__planned-date--report__from');
-  const filterDateTo = document.querySelector('.header-routes__planned-date--report__to');
-  let today = (0,_modules_getTime__WEBPACK_IMPORTED_MODULE_0__.getTime)();
-  today = today.substring(0, today.length - 5).trim();
-
-  // const recreatePlansTable = () => {
-  //   deleteOrders()
-  //   let startDate = new Date(filterDateFrom.value)
-  //   let endDate = new Date(filterDateTo.value)
-  //   endDate.setDate(endDate.getDate() + 1)
-  //
-  //   let res = getDays(startDate, endDate)
-  //
-  //   state.orders.forEach(plan => {
-  //     console.log(plan)
-  //     drawPlan(plan)
-  //   })
-  //
-  //   document.querySelector('.table__route--date').style.minWidth = `${res * 95}px`
-  // }
-
-  filterDateFrom.value = today.trim();
-  filterDateTo.value = today.trim();
-  filterDateTo.setAttribute('min', String(today.trim()));
-  filterDateFrom.addEventListener('change', () => {
-    filterDateTo.setAttribute('min', String(filterDateFrom.value));
-    if (new Date(filterDateFrom.value).getTime() >= new Date(filterDateTo.value).getTime()) {
-      filterDateTo.value = filterDateFrom.value;
-    }
-    (0,_getReports__WEBPACK_IMPORTED_MODULE_1__.getReports)();
-  });
-  filterDateTo.addEventListener('change', () => {
-    (0,_getReports__WEBPACK_IMPORTED_MODULE_1__.getReports)();
-  });
-  filterBtn.addEventListener('click', () => {
-    (0,_getReports__WEBPACK_IMPORTED_MODULE_1__.getReports)();
-  });
 };
 
 /***/ }),
@@ -22880,32 +23139,34 @@ _global["default"]._babelPolyfill = true;
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
-/*!********************************************!*\
-  !*** ./web/src/static/js/report/report.js ***!
-  \********************************************/
+/*!****************************************!*\
+  !*** ./web/src/static/js/plan/plan.js ***!
+  \****************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "user": () => (/* binding */ user)
 /* harmony export */ });
 /* harmony import */ var _css_table_table_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css/table/table.scss */ "./web/src/static/css/table/table.scss");
-/* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getReports */ "./web/src/static/js/report/getReports.js");
-/* harmony import */ var _filters_reportRoutesDatesFilter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./filters/reportRoutesDatesFilter */ "./web/src/static/js/report/filters/reportRoutesDatesFilter.js");
-/* harmony import */ var _filters_topReportFilter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters/topReportFilter */ "./web/src/static/js/report/filters/topReportFilter.js");
-/* harmony import */ var _modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/admin/adminHandler */ "./web/src/static/js/modules/admin/adminHandler.js");
+/* harmony import */ var _modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/admin/adminHandler */ "./web/src/static/js/modules/admin/adminHandler.js");
+/* harmony import */ var _modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/filters/topFilters */ "./web/src/static/js/modules/filters/topFilters.js");
+/* harmony import */ var _getPlans__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getPlans */ "./web/src/static/js/plan/getPlans.js");
+/* harmony import */ var _newPlanCheck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./newPlanCheck */ "./web/src/static/js/plan/newPlanCheck.js");
+/* harmony import */ var _topPlansFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./topPlansFilters */ "./web/src/static/js/plan/topPlansFilters.js");
+
 
 
 
 
 
 const user = JSON.parse(sessionStorage.getItem("user"));
-if (window.location.href.endsWith('main/report')) {
-  (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_4__.adminHandler)();
-  (0,_filters_topReportFilter__WEBPACK_IMPORTED_MODULE_3__.topReportFilter)();
-  (0,_filters_reportRoutesDatesFilter__WEBPACK_IMPORTED_MODULE_2__.reportRoutesDatesFilter)();
-  (0,_getReports__WEBPACK_IMPORTED_MODULE_1__.getReports)();
+if (window.location.href.endsWith('main/plan')) {
+  (0,_topPlansFilters__WEBPACK_IMPORTED_MODULE_5__.topPlansFilters)();
+  (0,_newPlanCheck__WEBPACK_IMPORTED_MODULE_4__.reportPlanningDatesFilter)();
+  (0,_getPlans__WEBPACK_IMPORTED_MODULE_3__.getPlans)(false);
+  (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_1__.adminHandler)();
 }
 })();
 
 /******/ })()
 ;
-//# sourceMappingURL=report.js.map
+//# sourceMappingURL=plan.js.map

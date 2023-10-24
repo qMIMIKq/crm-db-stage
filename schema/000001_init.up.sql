@@ -167,31 +167,48 @@ create table comments
 
 CREATE TABLE reports
 (
-    report_id      serial unique PRIMARY KEY NOT NULL,
-    report_date    date,
-    order_id       int,
-    order_number   varchar(255),
-    order_client   varchar(255),
-    order_name     varchar(255),
-    order_material varchar(255),
-    order_plot     varchar(255),
-    adding_date    date,
-    quantity       varchar(255),
-    issued         varchar(255),
-    plan           varchar(255),
-    operator       varchar(255),
-    issued_plan    varchar(255),
-    route_position varchar(255) default '0',
-    route_id       integer      default 0
+    report_id       serial unique PRIMARY KEY NOT NULL,
+    report_date     date,
+    order_id        int          default 0,
+    order_number    varchar(255),
+    order_client    varchar(255),
+    order_name      varchar(255),
+    order_material  varchar(255),
+    order_plot      varchar(255),
+    adding_date     date,
+    quantity        varchar(255),
+    issued          varchar(255),
+    plan            varchar(255),
+    operator        varchar(255),
+    issued_plan     varchar(255),
+    route_position  varchar(255) default '0',
+    route_id        integer      default 0,
+    order_timestamp date
 );
 
 create table plans
 (
     plan_id    serial unique PRIMARY KEY NOT NULL,
-    route_id   integer      default 0,
-    order_id   integer      default 0,
+    route_id   int references routes (route_id) on update cascade on delete cascade,
+    order_id   int references orders (order_id) on update cascade on delete cascade,
     route_plot varchar(255) default '',
     plan_date  date,
     divider    varchar(255),
     queues     varchar(255)
+);
+
+create table planning
+(
+    planning_id     serial unique PRIMARY KEY NOT NULL,
+    route_id        int references routes (route_id) on update cascade on delete cascade,
+    route_plot      varchar(255) default '',
+    order_id        int references orders (order_id) on update cascade on delete cascade,
+    order_timestamp timestamptz,
+    time_of_modify  timestamp,
+    order_number    varchar(255),
+    order_client    varchar(255),
+    order_name      varchar(255),
+    order_material  varchar(255),
+    order_quantity  varchar(255),
+    order_issued    varchar(255) default ''
 );

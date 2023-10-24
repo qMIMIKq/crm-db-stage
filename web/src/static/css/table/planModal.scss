@@ -108,13 +108,27 @@
   flex-wrap: wrap;
   //min-height: 308px;
 
+  .plan-dates__item {
+    margin-bottom: 4px;
+  }
+
   &__item {
-    width: 105px;
-    padding: 5px;
+    //width: 105px;
+    //padding: 5px;
     background: $text_white;
-    margin-bottom: 7px;
+    //margin-bottom: 7px;
+
+    width: 95px;
     transition: color .3s;
     text-align: center;
+    height: 28px;
+    padding: 4px 10px;
+
+    &--small {
+      padding: 4px 0;
+      width: 55px;
+      box-shadow: none;
+    }
 
     &:hover {
       cursor: pointer;
@@ -122,9 +136,13 @@
       color: #09d009;
     }
 
-    &:not(:last-child) {
-      margin-right: 7px;
-    }
+    //&:not(:last-child) {
+    //  margin-right: 7px;
+    //}
+
+    //&:not(:last-child) {
+    //  border-right: 1px solid black;
+    //}
 
     &--inplan {
       color: white;
@@ -132,7 +150,8 @@
     }
 
     &--busy {
-      border: 2px solid $main_green;
+      color: green;
+      cursor: default !important;
 
       &:hover {
         color: $text_black;

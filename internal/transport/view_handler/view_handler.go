@@ -21,6 +21,7 @@ func (h *ViewHandler) InitViewRoutes(router *gin.Engine) {
 	{
 		main.GET("/table", h.indexView)
 		main.GET("/report", h.reportView)
+		main.GET("/plan", h.planningView)
 	}
 }
 
