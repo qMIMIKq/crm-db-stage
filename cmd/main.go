@@ -8,6 +8,7 @@ import (
 	"crm/internal/transport"
 	"crm/pkg/database"
 	"crm/pkg/logger"
+	"fmt"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/exec"
