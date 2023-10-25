@@ -32,7 +32,7 @@ export const reportPlanningDatesFilter = () => {
       drawPlan(plan)
       maxRes = Math.max(document.querySelector('.table__route--date__list').querySelectorAll('.plan-dates__item').length, maxRes)
     })
-    document.querySelector('.table__route--date__list').style.minWidth = `${maxRes * 55}px`
+    document.querySelector('.table__route--date__list').style.minWidth = `${maxRes * 38}px`
   }
 
   filterDateFrom.addEventListener('change', () => {

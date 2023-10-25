@@ -20,7 +20,7 @@ export const drawReport = async (d, data) => {
               <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input id='db_id' class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp ? d.timestamp.split('T')[0].replaceAll("-", ".") : ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
               <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>

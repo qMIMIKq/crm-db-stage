@@ -509,7 +509,7 @@ const planningHandler = (currentOrder, d, addedDates) => {
     }
 
     drawData()
-    document.querySelector('.table__route--date').style.minWidth = `${maxRes * 55}px`
+    document.querySelector('.table__route--date').style.minWidth = `${maxRes * 38}px`
 
     const planToday = document.querySelector('.plan-period__today')
     const planWeek = document.querySelector('.plan-period__week')
