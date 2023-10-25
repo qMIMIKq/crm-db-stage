@@ -356,6 +356,12 @@ input.tr {
     border-left: none;
   }
 
+  &--date {
+    flex-grow: 1;
+    //overflow: auto;
+    //width: 100%;
+  }
+
   &--issued {
     border-top: none;
     max-height: 28px;

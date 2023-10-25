@@ -57,7 +57,7 @@ function getWeekDay(date) {
   return days[date.getDay()];
 }
 
-export const drawPlan = async (d, data) => {
+export const drawPlan = (d, data) => {
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
       <ul class='main-table__item'>
@@ -340,7 +340,7 @@ const planningHandler = (currentOrder, d, addedDates) => {
     //   addHandlers()
     // }
 
-    let maxRes = -1
+
     const drawData = (startDate, endDate) => {
       const from = document.querySelector('.header-routes__planned-date--report__from').value
       const to = document.querySelector('.header-routes__planned-date--report__to').value
@@ -503,13 +503,10 @@ const planningHandler = (currentOrder, d, addedDates) => {
       })
 
       // console.log()
-
-      maxRes = Math.max(document.querySelector('.table__route--date__list').querySelectorAll('.plan-dates__item').length, maxRes)
       addHandlers()
     }
 
     drawData()
-    document.querySelector('.table__route--date').style.minWidth = `${(maxRes * 37)}px`
 
     const planToday = document.querySelector('.plan-period__today')
     const planWeek = document.querySelector('.plan-period__week')

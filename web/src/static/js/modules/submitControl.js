@@ -60,12 +60,12 @@ export const deleteCancelBtn = () => {
 }
 
 export const showResult = status => {
-  const nav = document.querySelector(".main-header__title")
-  if (status) {
-    nav.textContent = 'Успешно'
-  } else {
-    nav.textContent = 'Неудачно'
-  }
+  // const nav = document.querySelector(".main-header__title")
+  // if (status) {
+  //   nav.textContent = 'Успешно'
+  // } else {
+  //   nav.textContent = 'Неудачно'
+  // }
 
   // setTimeout(() => {
   //   if (sucTitle !== null) {

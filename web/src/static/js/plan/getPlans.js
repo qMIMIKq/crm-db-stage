@@ -2,7 +2,6 @@ import {state} from "../modules/state";
 import {sendData} from "../modules/sendData";
 import {appAddr} from "../../../../../appAddr";
 import {deleteOrders, hideOrders} from "../modules/getOrders";
-import {drawPlan, getDays} from "./drawPlan";
 import {newAllPlanFilter} from "./newAllPlanFilter";
 
 export const getPlans = (updateOnly) => {
@@ -10,6 +9,7 @@ export const getPlans = (updateOnly) => {
   const from = document.querySelector(".header-routes__planned-date--report__from").value
   const to = document.querySelector(".header-routes__planned-date--report__to").value
   const loader = document.querySelector('.spinner-loader')
+  const dynamicDate = document.querySelector('.table__route--date')
   loader.classList.remove('hidden__input')
 
   console.log('get plans')
@@ -45,7 +45,7 @@ export const getPlans = (updateOnly) => {
         if (!updateOnly) {
           hideOrders()
           state.orders = data.data
-          title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
+          title.textContent = 'Планирование (0)'
           return
         }
 
@@ -63,6 +63,7 @@ export const getPlans = (updateOnly) => {
       if (data.data) {
         state.orders = data.data
 
+        title.textContent = `Планирование (${state.orders.length})`
         // data.data.forEach(d => {
         //   drawPlan(d, data, from, to)
         // })
@@ -94,8 +95,19 @@ export const getPlans = (updateOnly) => {
         //   state['filteredOrders'] = state['orders'].filter(o => o)
         //   newAllFilter(true)
         // }
+      } else {
+
       }
 
+      let maxLength = -1
+      setTimeout(() => {
+        document.querySelectorAll('.table__route--date__list').forEach(datesList => {
+          maxLength = Math.max(datesList.querySelectorAll('.plan-dates__item').length, maxLength)
+        })
+
+        dynamicDate.style.minWidth = `${(maxLength * 37) - 3}px`
+        console.log(maxLength)
+      }, 200)
       console.timeEnd('draw orders')
 
       console.time('add filters and listeners')

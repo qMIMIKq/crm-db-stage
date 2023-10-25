@@ -13,15 +13,23 @@
   //margin-bottom: 30px;
 
   &__title {
+    //min-width: 330px;
     position: relative;
-    top: -1px;
     font-size: 27px;
     font-weight: 700;
     line-height: 29px;
     letter-spacing: 0em;
     text-align: left;
     color: $text_white;
-    margin-right: 20px;
+    margin-right: 10px;
+
+    //&--plan {
+    //  min-width: 280px;
+    //}
+    //
+    //&--report {
+    //  min-width: 240px;
+    //}
   }
 
   &__nav {
