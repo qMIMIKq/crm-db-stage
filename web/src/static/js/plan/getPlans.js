@@ -9,6 +9,8 @@ export const getPlans = (updateOnly) => {
   deleteOrders()
   const from = document.querySelector(".header-routes__planned-date--report__from").value
   const to = document.querySelector(".header-routes__planned-date--report__to").value
+  const loader = document.querySelector('.spinner-loader')
+  loader.classList.remove('hidden__input')
 
   console.log('get plans')
 
@@ -66,6 +68,7 @@ export const getPlans = (updateOnly) => {
         // })
 
         newAllPlanFilter(true)
+        loader.classList.add('hidden__input')
         // console.log()
 
         // if (updateOnly) {

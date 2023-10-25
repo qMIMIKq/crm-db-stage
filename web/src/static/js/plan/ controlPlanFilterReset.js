@@ -8,8 +8,10 @@ export const controlPlanFiltersReset = () => {
   if (state['filtered']) {
     const nav = document.querySelector('.main-header__nav')
     const resetBtn = nav.querySelector('.header-button__reset')
+    const loader = document.querySelector('.spinner-loader')
+
     if (resetBtn === null) {
-      nav.insertAdjacentHTML('beforeend', `
+      loader.insertAdjacentHTML('beforebegin', `
           <button class='main__button--click main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
       `)
 

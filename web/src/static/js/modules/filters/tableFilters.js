@@ -85,9 +85,10 @@ const filterListener = (e) => {
 export const controlFiltersReset = () => {
   if (state['filtered']) {
     const nav = document.querySelector('.main-header__nav')
+    const spinner = document.querySelector('.spinner-loader')
     const resetBtn = nav.querySelector('.header-button__reset')
     if (resetBtn === null) {
-      nav.insertAdjacentHTML('beforeend', `
+      spinner.insertAdjacentHTML('beforebegin', `
           <button class='main__button--click main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
       `)
 

@@ -24,7 +24,8 @@ import {bindOrdersListeners} from "./bindListeners";
 export const getOrders = (postfix = 'get-all', updateOnly = false) => {
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
-  document.querySelector('.main-header__title').textContent = 'Обновляем таблицу...'
+  const loader = document.querySelector('.spinner-loader')
+  loader.classList.remove('hidden__input')
 
   const links = document.querySelectorAll('.nav-control__route-link')
   const mainLink = document.querySelector('.link__main')
@@ -170,6 +171,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           console.timeEnd('add filters and listeners')
 
           title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+          loader.classList.add('hidden__input')
           if (state['isArchive']) {
             document.querySelectorAll('.table__data').forEach(field => {
               field.setAttribute("readonly", "true")

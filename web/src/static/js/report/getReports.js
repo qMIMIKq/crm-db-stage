@@ -34,7 +34,8 @@ export const getReports = () => {
   }
 
   const total = document.querySelector('.main-header__title')
-  total.textContent = 'Обновляем таблицу...'
+  const loader = document.querySelector('.spinner-loader')
+  loader.classList.remove('hidden__input')
 
   sendData(`${appAddr}/api/reports/get-all`, 'POST', JSON.stringify(reportTime))
     .then(resp => resp.json())
@@ -85,6 +86,7 @@ export const getReports = () => {
         }
       })
 
+      loader.classList.add('hidden__input')
       drawReportsFilter([...new Set(ids)], idReportFilter)
       drawReportsFilter([...new Set(nums)], numsReportFilter)
 
