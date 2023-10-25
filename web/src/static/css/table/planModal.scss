@@ -123,13 +123,15 @@
     transition: color .3s;
     text-align: center;
     height: 28px;
-    padding: 4px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &--small {
       font-size: 14px;
-      padding: 4px 0;
-      width: 39px;
+      width: 37px;
       box-shadow: none;
+      padding-bottom: 1px;
 
       //margin: 0 1px;
 
