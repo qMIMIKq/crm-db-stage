@@ -128,8 +128,14 @@
     &--small {
       font-size: 14px;
       padding: 4px 0;
-      width: 38px;
+      width: 39px;
       box-shadow: none;
+
+      //margin: 0 1px;
+
+      &:not(:last-child) {
+        margin-right: 3px;
+      }
     }
 
     &:hover {
