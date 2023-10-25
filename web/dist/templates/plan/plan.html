@@ -83,14 +83,6 @@
         </nav>
     </header>
 
-    <form class="test__form" action="">
-        <ul class="test__list">
-            <li class="test__item">
-                <input class="test__input" type="text">
-            </li>
-        </ul>
-    </form>
-
     <main class="main">
         <header class="main__header main-header">
             <div class="main-header__nav">
@@ -109,15 +101,6 @@
             </div>
 
             <div class="main-header__routes header-routes">
-                <div class="routes-block hidden__input">
-                    <button class="main__button--click header-routes__filter header-routes__work">В работе</button>
-                    <button class="main__button--click header-routes__filter header-routes__unwork">Не в работе</button>
-                    <button class="main__button--click header-routes__filter header-routes__error">Ошибка</button>
-                    <button class="main__button--click header-routes__filter header-routes__completed">Сдал</button>
-                    <button class="main__button--click header-routes__filter header-routes__planned">В плане</button>
-                    <input type="date" class="main__button--click header-routes__filter header-routes__planned-date">
-                </div>
-
                 <button class="main__button hidden__input route__btn plan-period__btn plan-period__today">
                     <input type="number" class="hidden__input" value="1">
                     1 день
@@ -131,25 +114,15 @@
                     30 дней
                 </button>
 
-                <div class="archive-block hidden__input">
-                    <button class="main__button--click header-routes__filter header-routes__archived">В плане</button>
-                    <label>От</label>
-                    <input type="date"
-                           class="main__button--click header-routes__filter header-routes__planned-date__from"
-                           name="archive_from">
-                    <label>До</label>
-                    <input type="date"
-                           class="main__button--click header-routes__filter header-routes__planned-date__to"
-                           name="archive_to">
-                </div>
+                <button class="main__button--click plan-divider">Делитель смены</button>
 
                 <button class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В
                     плане
                 </button>
-                <label>От</label>
+                <label class="planned__label">От</label>
                 <input type="date"
                        class="main__button--click  header-routes__filter header-routes__planned-date--report__from">
-                <label>До</label>
+                <label class="planned__label">До</label>
                 <input type="date"
                        class="main__button--click  header-routes__filter header-routes__planned-date--report__to">
             </div>

@@ -151,7 +151,6 @@ export const tableRoutesFiltersHandler = () => {
       inPlanBtn.classList.remove('route__filter--chosen')
       inPlanDate.value = today
       state.inPlanDate = today
-      console.log(state.inPlanDate)
       state['routesFilters'].planned = false
       // getOrders('get-all', true)
       newAllFilter()

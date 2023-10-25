@@ -4,6 +4,7 @@ import {filterRoutesState} from "./filterRoutesState";
 import {drawOrders, table} from "../drawe/drawOrders";
 import {bindOrdersListeners} from "../bindListeners";
 import {controlFiltersReset} from "./tableFilters";
+import {colorRoutes} from "../drawe/routesDraw";
 
 export const newAllFilter = (init) => {
   hideOrders()
@@ -92,6 +93,9 @@ export const newAllFilter = (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          if (order.db_routes && order.db_routes.length) {
+            colorRoutes(order.db_routes, hiddenOrder)
+          }
         } else {
           drawOrders(table, `afterbegin`, order, state.orders, state.managers)
         }
@@ -168,6 +172,9 @@ export const newAllFilter = (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          if (order.db_routes && order.db_routes.length) {
+            colorRoutes(order.db_routes, hiddenOrder)
+          }
         } else {
           drawOrders(table, `afterbegin`, order, state.orders, state.managers)
         }
@@ -204,6 +211,9 @@ export const newAllFilter = (init) => {
               const hiddenOrder = document.querySelector(`#form-${order.id}`)
               if (hiddenOrder !== null) {
                 hiddenOrder.classList.remove('hidden__input')
+                if (order.db_routes && order.db_routes.length) {
+                  colorRoutes(order.db_routes, hiddenOrder)
+                }
               } else {
                 drawOrders(table, `afterbegin`, order, state.orders, state.managers)
               }
@@ -232,6 +242,9 @@ export const newAllFilter = (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          if (order.db_routes && order.db_routes.length) {
+            colorRoutes(order.db_routes, hiddenOrder)
+          }
         } else {
           drawOrders(table, `afterbegin`, order, state.orders, state.managers)
         }

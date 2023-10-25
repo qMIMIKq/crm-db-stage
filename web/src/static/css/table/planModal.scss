@@ -100,12 +100,13 @@
 
 .plan-dates {
   display: flex;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 72%;
   //justify-content: space-between;
   margin-left: 15px;
   align-items: center;
   flex-wrap: wrap;
+  margin-bottom: 10px;
   //min-height: 308px;
 
   .plan-dates__item {

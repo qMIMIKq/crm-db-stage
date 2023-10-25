@@ -3,11 +3,14 @@ import {sendData} from "../modules/sendData";
 import {appAddr} from "../../../../../appAddr";
 import {deleteOrders, hideOrders} from "../modules/getOrders";
 import {drawPlan, getDays} from "./drawPlan";
+import {newAllPlanFilter} from "./newAllPlanFilter";
 
 export const getPlans = (updateOnly) => {
   deleteOrders()
   const from = document.querySelector(".header-routes__planned-date--report__from").value
   const to = document.querySelector(".header-routes__planned-date--report__to").value
+
+  console.log('get plans')
 
   const links = document.querySelectorAll('.nav-control__route-link')
   const planLink = document.querySelector('.link__plan')
@@ -58,10 +61,11 @@ export const getPlans = (updateOnly) => {
       if (data.data) {
         state.orders = data.data
 
-        data.data.forEach(d => {
-          drawPlan(d, data, from, to)
-        })
+        // data.data.forEach(d => {
+        //   drawPlan(d, data, from, to)
+        // })
 
+        newAllPlanFilter(true)
         // console.log()
 
         // if (updateOnly) {

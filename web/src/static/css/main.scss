@@ -64,9 +64,9 @@ ul {
   //border-right: 1px solid black;
 
   &--reports {
-    @media screen and (min-width: 1522px) {
+    @media screen and (min-width: 1607px) {
       margin: 0 auto 15px;
-      width: 1492px;
+      width: 1607px;
     }
   }
 
@@ -343,5 +343,21 @@ input:disabled {
   &:hover {
     //transition: fill .3s;
     //fill: $main_green;
+  }
+}
+
+.planned__label {
+  margin-right: 7px;
+}
+
+.plan-divider {
+  margin-right: 15px;
+
+  &--modal {
+    position: absolute;
+    bottom: 55px;
+    left: 19px;
+    //margin-left: 15px;
+    //align-self: flex-start;
   }
 }

@@ -5,7 +5,7 @@ import {appAddr} from "../../../../../../appAddr";
 
 const planDateModal = `
     <div id='modal' style='z-index: 10000' class='modal modal-plan__date bounceIn'>
-      <div class='modal_content modal-plan modal_content--confirm' style='width: 418px;height: 435px;'>
+      <div class='modal_content modal-plan modal_content--confirm' style='width: 435px;height: 435px;'>
         <h2 class='confirm__title confirm__title--plan'>Период</h2>
         <input type="text" class="hidden__input" name="end_date" id="end_date">
         <div class="modal-plan__period plan-period">
@@ -25,6 +25,8 @@ const planDateModal = `
          
          <ul class="modal-plan__dates plan-dates">
          </ul>
+         
+         <button class="main__button--click plan-divider--modal">Делитель смены</button>
         
         <div class='confirm__section'>
             <button class='main__button route__btn confirm__button confirm__button--ok'>ОК</button>
@@ -84,6 +86,11 @@ export const planDateHandler = (addedDates, plot, routeID, planned, planDateInpu
   const planToday = modal.querySelector('.plan-period__today')
   const planWeek = modal.querySelector('.plan-period__week')
   const planMonth = modal.querySelector('.plan-period__month')
+
+  const planDivider = modal.querySelector('.plan-divider--modal')
+  planDivider.addEventListener('click', () => {
+    planDivider.classList.toggle('route__filter--chosen')
+  })
 
   let newBusy = []
   sendData(`${appAddr}/api/plans/get-busy`, 'POST', JSON.stringify({"plot": plot, "route_id": routeID}))
@@ -159,6 +166,10 @@ export const planDateHandler = (addedDates, plot, routeID, planned, planDateInpu
           }
 
           const addingModal = showModal(planDateModalAdd)
+          if (planDivider.classList.contains('route__filter--chosen')) {
+            addingModal.classList.remove('hidden__input')
+          }
+
           const okBtn = addingModal.querySelector('.confirm__button--ok')
           const cnclBtn = addingModal.querySelector('.confirm__button--cncl')
           const dltBtn = addingModal.querySelector('.confirm__button--dlt')
@@ -245,13 +256,16 @@ export const planDateHandler = (addedDates, plot, routeID, planned, planDateInpu
             drawData(new Date(todayStr), new Date(endDateInput.value))
             addingModal.click()
           })
+
+          if (!planDivider.classList.contains('route__filter--chosen')) {
+            if (!dltBtn.classList.contains('hidden__input')) {
+              dltBtn.click()
+            } else {
+              okBtn.click()
+            }
+          }
         })
       })
-    }
-
-    if (flag) {
-      // drawAddedData()
-      // addHandlers()
     }
 
     const drawData = (startDate, endDate) => {

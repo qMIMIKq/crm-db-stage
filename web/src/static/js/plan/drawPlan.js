@@ -14,7 +14,7 @@ export const getDays = (start, end) => {
 }
 
 const planDateModalAdd = `
-    <div id='modal' style='z-index: 10001' class='modal modal-plan__date bounceIn'>
+    <div id='modal' style='z-index: 10001' class='modal hidden__input modal-plan__date bounceIn'>
       <div class='modal_content modal-plan modal_content--confirm' style='width: 450px;height: 175px'>
         <h2 class='confirm__title confirm__title--plan'>Добавить</h2>
         
@@ -58,16 +58,14 @@ function getWeekDay(date) {
 }
 
 export const drawPlan = async (d, data) => {
-  console.log(d)
-
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
-              <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
+              <input id='db_id' class='table__data main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input id='db_id' class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
               <input 
@@ -94,7 +92,7 @@ export const drawPlan = async (d, data) => {
               value="${d.issued}">
           </li>
           <li class="table-body_cell table__route--report">
-              <input readonly type="text" class="table__data" value="${d.route_plot}">
+              <input readonly type="text" class="table__data table__data--ro" value="${d.route_plot}">
           </li>
           <li class="table-body_cell hidden__input table__route--report">
               <input readonly type="text" class="table__data" value="${d.route_id}">
@@ -120,7 +118,6 @@ export const drawPlan = async (d, data) => {
   let dbAddedDates = []
   let addedDates = []
 
-  console.log(d['db_plan'])
   if (d['db_plan']) {
     dbAddedDates = d['db_plan']
 
@@ -224,6 +221,10 @@ const planningHandler = (currentOrder, d, addedDates) => {
           }
 
           const addingModal = showModal(planDateModalAdd)
+          if (document.querySelector('.plan-divider').classList.contains('route__filter--chosen')) {
+            addingModal.classList.remove('hidden__input')
+          }
+
           const okBtn = addingModal.querySelector('.confirm__button--ok')
           const cnclBtn = addingModal.querySelector('.confirm__button--cncl')
           const dltBtn = addingModal.querySelector('.confirm__button--dlt')
@@ -322,6 +323,14 @@ const planningHandler = (currentOrder, d, addedDates) => {
             // deleteData()
             // drawData()
           })
+
+          if (!document.querySelector('.plan-divider').classList.contains('route__filter--chosen')) {
+            if (!dltBtn.classList.contains('hidden__input')) {
+              dltBtn.click()
+            } else {
+              okBtn.click()
+            }
+          }
         })
       })
     }
@@ -331,6 +340,7 @@ const planningHandler = (currentOrder, d, addedDates) => {
     //   addHandlers()
     // }
 
+    let maxRes = -1
     const drawData = (startDate, endDate) => {
       const from = document.querySelector('.header-routes__planned-date--report__from').value
       const to = document.querySelector('.header-routes__planned-date--report__to').value
@@ -492,11 +502,14 @@ const planningHandler = (currentOrder, d, addedDates) => {
         }
       })
 
-      document.querySelector('.table__route--date').style.minWidth = `${res * 55}px`
+      // console.log()
+
+      maxRes = Math.max(document.querySelector('.table__route--date__list').querySelectorAll('.plan-dates__item').length, maxRes)
       addHandlers()
     }
 
     drawData()
+    document.querySelector('.table__route--date').style.minWidth = `${maxRes * 55}px`
 
     const planToday = document.querySelector('.plan-period__today')
     const planWeek = document.querySelector('.plan-period__week')

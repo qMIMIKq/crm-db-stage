@@ -580,6 +580,9 @@ export const triggerRoutesModal = e => {
     // }
 
     if (routeInfo['db_plan']) {
+      let today = getTime()
+      today = today.substring(0, today.length - 5).trim()
+
       dbAddedDates = routeInfo['db_plan']
       planDateInput.value = 'В плане'
 
@@ -587,14 +590,17 @@ export const triggerRoutesModal = e => {
         dateInfo['queues'] = dateInfo['queues'].split(', ')
         dateInfo['date'] = dateInfo['date'].split('T')[0]
 
+        if (today === dateInfo['date']) {
+          console.log('TODAY PLANNED')
+          planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
+        }
+
         addedDates[dateInfo['date']] = {
           'divider': dateInfo.divider,
           'queues': dateInfo.queues
         }
       })
     }
-
-    console.log(addedDates)
 
     planObj = {
       'exclude': routeInfo['exclude_days'],

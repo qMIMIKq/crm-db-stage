@@ -1,10 +1,10 @@
 import {state, userInf} from "../modules/state";
 import {ucFirst} from "../ucFirst";
-import {getOrders, hideOrders} from "../modules/getOrders";
-import {getReports} from "../report/getReports";
+import {getOrders} from "../modules/getOrders";
 import {getData} from "../modules/getData";
-import {globalFilterReports} from "../report/filters/globalFilterReports";
-import {searchOrdersHandler} from "../modules/modals/searchOrdersModal";
+import {searchPlansHandler} from "./searchPlansHandler";
+import {newAllPlanFilter} from "./newAllPlanFilter";
+import {getPlans} from "./getPlans";
 
 export const topPlansFilters = () => {
   let filtered
@@ -34,10 +34,10 @@ export const topPlansFilters = () => {
     }
   })
 
-  // const searchBtn = document.querySelector('.nav-control__search-btn')
-  // searchBtn.addEventListener('click', () => {
-  //   searchOrdersHandler()
-  // })
+  const searchBtn = document.querySelector('.nav-control__search-btn')
+  searchBtn.addEventListener('click', () => {
+    searchPlansHandler()
+  })
 
   const links = navControl.querySelectorAll('.nav-control__route-link')
   links.forEach(link => {
@@ -121,12 +121,7 @@ export const topPlansFilters = () => {
           filtered = true
           controlFilterReset()
         } else {
-          if (window.location.href.includes('/main/table')) {
-            getOrders('get-all', true)
-          } else {
-            getReports()
-          }
-
+          getPlans(true)
           filtered = false
           controlFilterReset()
         }
@@ -188,7 +183,7 @@ export const topPlansFilters = () => {
           controlFilterReset()
         } else {
           filtered = false
-          getReports()
+          getPlans()
           controlFilterReset()
         }
       })
@@ -200,17 +195,13 @@ export const topPlansFilters = () => {
     if (filtered) {
       if (!resetBtn) {
         nav.insertAdjacentHTML('beforeend', `
-                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
-                `)
+            <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+        `)
 
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {
           state['currentTopFilters'] = []
           document.querySelector('.nav-filters__reset').remove()
-          if (window.location.href.includes('/main/table')) {
-            getOrders('get-all', true)
-          } else {
-            getReports()
-          }
+          getPlans(false)
 
           nav.querySelectorAll('.nav-filters__button').forEach(btn => {
             console.log(btn)
@@ -262,15 +253,9 @@ export const topPlansFilters = () => {
 }
 
 export const filterRouteReports = () => {
-  const filters = state['currentTopFilters'].map(filter => filter.name)
+  // const filters = state['currentTopFilters'].map(filter => filter.name)
 
-  state.filteredOrders = state.orders.filter(order => filters.includes(order.order_plot))
+  newAllPlanFilter()
 
-  console.log(state.filteredOrders)
-
-  hideOrders()
-  state['filteredOrders'].forEach(order => {
-    globalFilterReports(order)
-  })
   // bindOrdersListeners()
 }
