@@ -6987,7 +6987,7 @@ if (window.location.href.endsWith('main/table')) {
       (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
     }, 5000);
   };
-  // updateMainTableData()
+  updateMainTableData();
 }
 
 /***/ }),
