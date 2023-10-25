@@ -5,7 +5,8 @@
   justify-content: space-between;
   align-items: center;
   background: $main_green;
-  border: 1px solid black;
+  //border: 1px solid black;
+  border: $btn_border;
   border-bottom: none;
   border-radius: 15px 15px 0 0;
   padding: 5px 30px;

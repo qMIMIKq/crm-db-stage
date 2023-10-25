@@ -5,7 +5,8 @@
   background: white;
   box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);
 
-  border: 1px solid black;
+  //border: 1px solid black;
+  border: $btn_border;
   border-radius: 15px;
   padding: 5px 25px;
 
@@ -59,7 +60,7 @@
 
   &__plots {
     margin-top: 10px;
-    border-bottom: 1px solid black;
+    border-bottom: $btn_border;
     margin-bottom: 6px;
     padding-bottom: 8px;
       //margin-bottom: 5px;
@@ -94,7 +95,8 @@
   position: relative;
   width: 313px;
   height: 113px;
-  border: 1px solid black;
+  //border: 1px solid black;
+  border: $btn_border;
   border-radius: 15px;
   padding: 20px 20px 10px;
   background: white;
@@ -121,7 +123,7 @@
     //flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid $btn_border_color;
     margin-bottom: 5px;
   }
 
@@ -136,6 +138,7 @@
     letter-spacing: 0em;
     cursor: pointer;
     transition: color .3s;
+    color: $text_gray;
 
     &:hover {
       transition: color .3s;
@@ -190,7 +193,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid $btn_border_color;
   }
 
   &__route {
@@ -201,6 +204,7 @@
       line-height: 26px;
       letter-spacing: 0em;
       cursor: pointer;
+      color: $text_gray;
 
       &:hover {
         color: $main_green;
@@ -222,7 +226,7 @@
       display: block;
       width: 40px;
       height: 5px;
-      background: $text_black;
+      background: $text_gray;
       border-radius: 15px;
 
       &:not(:last-child) {

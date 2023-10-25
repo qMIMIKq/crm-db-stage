@@ -33,7 +33,7 @@ html {
 }
 
 body {
-  font-family: Inter;
+  font-family: Inter, sans-serif;
   background: rgba(236, 236, 236, 1);
   height: 95%;
 }
@@ -130,9 +130,12 @@ ul {
     height: 100%;
     overflow: auto;
     margin-bottom: 5px;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
+    //border-left: 1px solid black;
+    //border-right: 1px solid black;
+    //border-bottom: 1px solid black;
+    border-left: $btn_border;
+    border-right: $btn_border;
+    border-bottom: $btn_border;
     box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);
     background: white;
 
@@ -267,7 +270,7 @@ input:disabled {
 
     &:hover {
       transition: color .3s;
-      color: $hover_aqua;
+      color: $text_black;
     }
   }
 }

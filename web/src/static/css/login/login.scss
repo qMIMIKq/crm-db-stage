@@ -53,7 +53,7 @@
     font-weight: 500;
     line-height: 19px;
     letter-spacing: 0em;
-    color: $text_gray;
+    color: $text_black;
     margin-bottom: 12px;
   }
 
@@ -78,7 +78,7 @@
 
     &:hover {
       transition: color .3s;
-      color: $hover_aqua;
+      color: $text_black;
     }
   }
 }

@@ -45,13 +45,13 @@ input.tr {
     justify-content: center;
     align-items: center;
     cursor: default;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    border-top: $btn_border;
+    border-bottom: $btn_border;
     background: white;
     color: $table_text;
 
     &:not(:last-child) {
-      border-right: 1px solid black;
+      border-right: $btn_border;
     }
 
     &--top {
@@ -93,7 +93,7 @@ input.tr {
     border-radius: 1px;
     border: none;
     background: white;
-    color: black;
+    color: $text_gray;
     outline: 3.3px $button_color;
     position: relative;
 
@@ -113,17 +113,17 @@ input.tr {
       font-size: 15px;
       background: $table_bg_main;
       color: $table_text;
-      border-bottom: 1px solid black;
+      border-bottom: $btn_border;
     }
 
-    &--opened.table__data--current {
-      border-bottom: 2px solid black;
-    }
+    //&--opened.table__data--current {
+    //  border-bottom: 2px solid black;
+    //}
 
     &--current {
       font-weight: 600;
       color: $table_text;
-      border: 1px solid black;
+      border: 2px solid black;
       //font-size: 16px;
     }
   }
@@ -178,7 +178,7 @@ input.tr {
   &__issued {
     min-width: 70px;
     max-width: 70px;
-    border-right: 1px solid black !important;
+    border-right: $btn_border !important;
 
     &--done {
       color: green;
@@ -190,8 +190,8 @@ input.tr {
 
   &__complete {
     border-right: none !important;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    border-top: $btn_border;
+    border-bottom: $btn_border;
 
     input {
       height: 26px;
@@ -221,7 +221,7 @@ input.tr {
     width: 50px;
 
     &:last-child {
-      border-right: 1px solid black !important;
+      border-right: $btn_border !important;
     }
   }
 
@@ -320,8 +320,8 @@ input.tr {
   &_cell {
     max-height: 56px;
     font-size: 16px;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
+    border-right: $btn_border;
+    border-bottom: $btn_border;
     position: relative;
 
     &:last-child {
@@ -367,7 +367,7 @@ input.tr {
     max-height: 28px;
 
     &:last-child {
-      border-right: 1px solid black;
+      border-right: $btn_border;
     }
 
     &:first-child {
@@ -386,10 +386,10 @@ input.tr {
   width: 48px;
 
   &--inplan {
-    border-top: 1px solid black;
+    border-top: 2px solid black;
     border-bottom: 2px solid black;
     border-right: 2px solid black;
-    border-left: 1px solid black !important;
+    border-left: 2px solid black !important;
   }
 
   &--planned {
@@ -430,6 +430,7 @@ input.tr {
 .order__copy {
   width: 10px;
   border: none;
+  color: $text_black;
   background: rgb(156, 156, 156) !important;
   transition: color .3s;
 
