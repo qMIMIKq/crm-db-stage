@@ -123,7 +123,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
                 name="end_time" 
                 type="text"
                 placeholder=" " 
-                value="${d.end_time ? d.end_time.split("T")[0].replaceAll('-', '.') : ''}" 
+                value="${d.end_time ? d.end_time.split("T")[0] : ''}" 
                 onfocus="this.type='date'"
                 onblur="(this.type='text')"
                 tabindex="-1" 

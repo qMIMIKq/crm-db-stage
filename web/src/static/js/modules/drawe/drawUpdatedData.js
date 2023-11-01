@@ -85,7 +85,13 @@ export const drawUpdatedData = (d, data, filtered) => {
 
     currentOrder.querySelector('select[name="m"]').value = d.m
     const endTime = currentOrder.querySelector('input[name="end_time"]')
-    endTime.value = `${d.end_time ? d.end_time.split("T")[0].replaceAll('-', '.') : ''}`
+    if (d.end_time) {
+      endTime.value = d.end_time.split("T")[0]
+    }
+
+    console.log(d.end_time)
+    console.log(endTime.value)
+
     if (alertDeadline && !state.isArchive) {
       endTime.classList.add('table__endtime--dead')
     } else {

@@ -1,1 +1,223 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1"><link rel="icon" href="../../static/assets/favicon/favicon.png" type="image/png"><meta http-equiv="X-UA-Compatible" content="ie=edge"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&family=Yanone+Kaffeesatz:wght@200;300;400;500;600;700&display=swap" rel="stylesheet"><title>{{.Title}}</title><script defer="defer" src="../../static/js/plan.0b9647ddbc113613a505.js"></script><link href="../../static/css/plan.0b9647ddbc113613a505.css" rel="stylesheet"></head><body><div class="container"><header class="header"><nav class="header__nav nav"><div class="nav__filters nav-filters">{{if eq .GroupID "5"}} <select name="user" class="select-user main__button--select main__select"></select> {{end}}<ul class="nav-filters__list nav-filters__plots"></ul><ul class="nav-filters__list nav-filters__filters"></ul></div><div class="nav__control nav-control"><div class="nav-control__nav"><div class="nav-control__left"><div class="nav-control__group"></div><div class="nav-control__user"><div class="nav-control__name">SuperAdmin</div><div class="nav-control__exit"><a class="admin-form__exit" href="http://91.142.94.150:8182/login">Выход</a></div></div></div><div class="nav-control__burger"><span class="nav-control__burger-item"></span> <span class="nav-control__burger-item"></span> <span class="nav-control__burger-item"></span></div></div><ul class="nav-control__routes hidden__input"><li class="nav-control__route"><button class="nav-control__route-link link__main">Главная <input class="hidden__input" value="/main/table"/></button></li><li class="nav-control__route"><button class="nav-control__route-link link__archive">Архив <input class="hidden__input" value="/main/table"/></button></li><li class="nav-control__route"><button class="nav-control__route-link link__plan">Планирование <input class="hidden__input" value="/main/plan"/></button></li><li class="nav-control__route"><button class="nav-control__route-link link__report">План/Факт <input class="hidden__input" value="/main/report"/></button></li><li class="nav-control__route nav-control__admin hidden-input">Администрирование</li></ul>{{/*<div class="nav-control__total">*/}} {{/* Всего в работе*/}} {{/*</div>*/}}</div></nav></header><main class="main"><header class="main__header main-header"><div class="main-header__nav"><h3 class="main-header__title main-header__title--plan">Планирование</h3><button class="main-header__button nav-control__search-btn main__button--click"><svg class="loupe" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" enable-background="new 0 0 512 512"><g><g><path d="m304.7,10.9c-108.5,0-196.4,87.9-196.4,196.4 0,46.9 16.4,89.9 43.8,123.7l-135,135c-8,8-8,20.9 0,28.9 8,8 20.9,8 28.9,0l135-135c33.8,27.4 76.8,43.8 123.7,43.8 108.5,0 196.4-87.9 196.4-196.4s-88-196.4-196.4-196.4zm0,352c-85.9,0-155.6-69.7-155.6-155.6 0-85.9 69.7-155.6 155.6-155.6 85.9,0 155.6,69.7 155.6,155.6 5.68434e-14,85.9-69.7,155.6-155.6,155.6z"/></g></g></svg></button> <button class="main__button--click hidden__input main-header__button header-button__add">+</button> <svg class="spinner-loader hidden__input" xmlns="http://www.w3.org/2000/svg" style="margin:auto;background:0 0;display:block;shape-rendering:auto" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><path fill="none" stroke="rgba(70, 70, 70, 1)" stroke-width="8" stroke-dasharray="42.76482137044271 42.76482137044271" d="M24.3 30C11.4 30 5 43.3 5 50s6.4 20 19.3 20c19.3 0 32.1-40 51.4-40 C88.6 30 95 43.3 95 50s-6.4 20-19.3 20C56.4 70 43.6 30 24.3 30z" stroke-linecap="round" style="transform:scale(.8);transform-origin:50px 50px"><animate attributeName="stroke-dashoffset" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0;256.58892822265625"></animate></path></svg></div><div class="main-header__routes header-routes"><button class="main__button hidden__input route__btn plan-period__btn plan-period__today"><input type="number" class="hidden__input" value="1"> 1 день</button> <button class="main__button hidden__input route__btn plan-period__btn plan-period__week"><input type="number" class="hidden__input" value="7"> 7 дней</button> <button class="main__button hidden__input route__btn plan-period__btn plan-period__month"><input type="number" class="hidden__input" value="30"> 30 дней</button> <button class="main__button--click plan-divider">Делитель смены</button> <button class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В плане</button> <label class="planned__label">От</label> <input type="date" class="main__button--click header-routes__filter header-routes__planned-date--report__from"> <label class="planned__label">До</label> <input type="date" class="main__button--click header-routes__filter header-routes__planned-date--report__to"></div></header><div class="main-table__data"><ul class="main-table__header"><li class="table__cell table__cell--top table__db"><label for="numbers">№</label> <input class="hidden__input filter__type" value="order_id"> <select class="table__filter main__button main__select hidden__input" name="все" id="id"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__timestamp"><label for="numbers">Вход</label> <input class="hidden__input filter__type" value="timestamp"> <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__number"><label for="numbers">№ заказа</label> <input class="hidden__input filter__type" value="order_number"> <select class="table__filter main__button main__select hidden__input" name="все" id="numbers"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__client"><label for="clients">Клиент</label> <input class="hidden__input filter__type" value="client"> <select class="table__filter main__button main__select hidden__input" name="clients" id="clients"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__name"><label for="name">Наименование</label> <input class="hidden__input filter__type" value="name"> <select class="table__filter main__button main__select hidden__input" name="name" id="name"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__material"><label for="materials">Материалы</label> <input class="hidden__input filter__type" value="material"> <select class="table__filter main__button main__select hidden__input" name="materials" id="materials"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__quantity"><label for="quantity">Тираж</label> <input class="hidden__input filter__type" value="quantity"> <select class="table__filter main__button main__select hidden__input" name="quantity" id="quantity"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__issued--report"><label for="issued">Выдано всего</label> <input class="hidden__input filter__type" value="issued"> <select class="table__filter main__button main__select hidden__input" name="issued" id="issued"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__route--report"><label for="order_plot">Станок</label> <input class="hidden__input filter__type" value="order_plot"> <select class="table__filter main__button main__select hidden__input" name="issued" id="order_plot"><option value="все">Все</option></select></li><li class="table__cell table__cell--top table__route--date"><label for="order_plot">Даты плана</label></li></ul><div class="main__table main-table"></div></div></main></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="icon" href="../../static/assets/favicon/favicon.png" type="image/png">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&family=Yanone+Kaffeesatz:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>{{.Title}}</title>
+<script defer src="../../static/js/plan.js"></script></head>
+<body>
+<div class="container">
+    <header class="header">
+        <nav class="header__nav nav">
+            <div class="nav__filters nav-filters">
+                {{if eq .GroupID "5"}}
+                    <select name="user" class="select-user main__button--select main__select">
+
+                    </select>
+                {{end}}
+
+                <ul class="nav-filters__list nav-filters__plots"></ul>
+                <ul class="nav-filters__list nav-filters__filters"></ul>
+            </div>
+            <div class="nav__control nav-control">
+                <div class="nav-control__nav">
+                    <div class="nav-control__left">
+                        <div class="nav-control__group">
+
+                        </div>
+                        <div class="nav-control__user">
+                            <div class="nav-control__name">SuperAdmin</div>
+                            <div class="nav-control__exit">
+                                <a class="admin-form__exit" href="http://91.142.94.150:8182/login">Выход</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-control__burger">
+                        <span class="nav-control__burger-item"></span>
+                        <span class="nav-control__burger-item"></span>
+                        <span class="nav-control__burger-item"></span>
+                    </div>
+                </div>
+
+                <ul class="nav-control__routes hidden__input">
+                    <li class="nav-control__route">
+                        <button class="nav-control__route-link link__main">
+                            Главная
+                            <input class="hidden__input" value="/main/table"/>
+                        </button>
+                    </li>
+                    <li class="nav-control__route">
+                        <button class="nav-control__route-link link__archive">
+                            Архив
+                            <input class="hidden__input" value="/main/table"/>
+                        </button>
+                    </li>
+                    <li class="nav-control__route">
+                        <button class="nav-control__route-link link__plan">
+                            Планирование
+                            <input class="hidden__input" value="/main/plan"/>
+                        </button>
+                    </li>
+                    <li class="nav-control__route">
+                        <button class="nav-control__route-link link__report">
+                            План/Факт
+                            <input class="hidden__input" value="/main/report"/>
+                        </button>
+                    </li>
+                    <li class="nav-control__route nav-control__admin hidden-input">
+                        Администрирование
+                    </li>
+                </ul>
+
+                {{/*                <div class="nav-control__total">*/}}
+                {{/*                    Всего в работе*/}}
+                {{/*                </div>*/}}
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <header class="main__header main-header">
+            <div class="main-header__nav">
+                <h3 class="main-header__title main-header__title--plan">Планирование</h3>
+                <button class="main-header__button nav-control__search-btn main__button--click">
+                    <svg class="loupe" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                         enable-background="new 0 0 512 512">
+                        <g>
+                            <g>
+                                <path d="m304.7,10.9c-108.5,0-196.4,87.9-196.4,196.4 0,46.9 16.4,89.9 43.8,123.7l-135,135c-8,8-8,20.9 0,28.9 8,8 20.9,8 28.9,0l135-135c33.8,27.4 76.8,43.8 123.7,43.8 108.5,0 196.4-87.9 196.4-196.4s-88-196.4-196.4-196.4zm0,352c-85.9,0-155.6-69.7-155.6-155.6 0-85.9 69.7-155.6 155.6-155.6 85.9,0 155.6,69.7 155.6,155.6 5.68434e-14,85.9-69.7,155.6-155.6,155.6z"/>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+                <button class="main__button--click hidden__input main-header__button header-button__add">+</button>
+                <svg class="spinner-loader hidden__input" xmlns="http://www.w3.org/2000/svg"
+                     style="margin: auto; background: none; display: block; shape-rendering: auto;"
+                     width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                    <path fill="none" stroke="rgba(70, 70, 70, 1)" stroke-width="8"
+                          stroke-dasharray="42.76482137044271 42.76482137044271"
+                          d="M24.3 30C11.4 30 5 43.3 5 50s6.4 20 19.3 20c19.3 0 32.1-40 51.4-40 C88.6 30 95 43.3 95 50s-6.4 20-19.3 20C56.4 70 43.6 30 24.3 30z"
+                          stroke-linecap="round" style="transform:scale(0.8);transform-origin:50px 50px">
+                        <animate attributeName="stroke-dashoffset" repeatCount="indefinite" dur="1s" keyTimes="0;1"
+                                 values="0;256.58892822265625"></animate>
+                    </path>
+                </svg>
+            </div>
+
+            <div class="main-header__routes header-routes">
+                <button class="main__button hidden__input route__btn plan-period__btn plan-period__today">
+                    <input type="number" class="hidden__input" value="1">
+                    1 день
+                </button>
+                <button class="main__button hidden__input route__btn plan-period__btn plan-period__week">
+                    <input type="number" class="hidden__input" value="7">
+                    7 дней
+                </button>
+                <button class="main__button hidden__input route__btn plan-period__btn plan-period__month">
+                    <input type="number" class="hidden__input" value="30">
+                    30 дней
+                </button>
+
+                <button class="main__button--click plan-divider">Делитель смены</button>
+
+                <button class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В
+                    плане
+                </button>
+                <label class="planned__label">От</label>
+                <input type="date"
+                       class="main__button--click  header-routes__filter header-routes__planned-date--report__from">
+                <label class="planned__label">До</label>
+                <input type="date"
+                       class="main__button--click  header-routes__filter header-routes__planned-date--report__to">
+            </div>
+        </header>
+
+        <div class="main-table__data">
+            <ul class="main-table__header">
+                <li class="table__cell table__cell--top table__db">
+                    <label for="numbers">№</label>
+                    <input class="hidden__input filter__type" value="order_id" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="все" id="id">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__timestamp">
+                    <label for="numbers">Вход</label>
+                    <input class="hidden__input filter__type" value="timestamp" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__number">
+                    <label for="numbers">№ заказа</label>
+                    <input class="hidden__input filter__type" value="order_number" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="все" id="numbers">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__client">
+                    <label for="clients">Клиент</label>
+                    <input class="hidden__input filter__type" value="client" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="clients" id="clients">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__name">
+                    <label for="name">Наименование</label>
+                    <input class="hidden__input filter__type" value="name" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="name" id="name">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__material">
+                    <label for="materials">Материалы</label>
+                    <input class="hidden__input filter__type" value="material" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="materials"
+                            id="materials">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__quantity">
+                    <label for="quantity">Тираж</label>
+                    <input class="hidden__input filter__type" value="quantity" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="quantity"
+                            id="quantity">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__issued--report">
+                    <label for="issued">Выдано всего</label>
+                    <input class="hidden__input filter__type" value="issued" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                            id="issued">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__route--report">
+                    <label for="order_plot">Станок</label>
+                    <input class="hidden__input filter__type" value="order_plot" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                            id="order_plot">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
+                <li class="table__cell table__cell--top table__route--date">
+                    <label for="order_plot">Даты плана</label>
+                </li>
+            </ul>
+
+            <div class="main__table main-table">
+            </div>
+        </div>
+    </main>
+</div>
+
+
+</body>
+</html>
