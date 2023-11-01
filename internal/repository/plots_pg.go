@@ -55,18 +55,26 @@ func (p *PlotsPG) GetPlotByID(plotId string) (domain.Plot, error) {
 			 WHERE plot_id = $1
 	`)
 
-	canDeleteQuery := fmt.Sprintf(`
+	canDeleteFilterQuery := fmt.Sprintf(`
 		SELECT filter_id FROM filters WHERE plot_id = $1
+	`)
+
+	canDeleteUsersQuery := fmt.Sprintf(`
+		SELECT user_id FROM users_rights WHERE plot_id = $1
 	`)
 
 	var plot domain.Plot
 	err := p.db.Get(&plot, query, plotId)
 
-	var checkID int
-	err = p.db.Get(&checkID, canDeleteQuery, plotId)
-	if err != nil {
+	var checkFilterID int
+	var checkUserID int
+	p.db.Get(&checkFilterID, canDeleteFilterQuery, plotId)
+	p.db.Get(&checkUserID, canDeleteUsersQuery, plotId)
+
+	log.Info().Msgf("filter id %v ; user id %v", checkFilterID, checkUserID)
+
+	if checkFilterID == 0 && checkUserID == 0 {
 		plot.CanDelete = true
-		err = nil
 	} else {
 		plot.CanDelete = false
 	}

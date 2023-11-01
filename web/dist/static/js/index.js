@@ -5890,8 +5890,8 @@ const drawUsers = (plotName, userI) => {
     console.log(check, userI);
     if (!check && userI) {
       usersSelect.insertAdjacentHTML('beforeend', `
-            <option selected value='${userI}'>${userI}</option>
-        `);
+          <option selected value='${userI}'>${userI}</option>
+      `);
     }
   });
 };
