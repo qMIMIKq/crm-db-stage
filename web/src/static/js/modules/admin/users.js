@@ -1,6 +1,7 @@
 import {ucFirst} from "../../ucFirst";
 import {sendData} from "../sendData";
 import {appAddr} from "../../../../../../appAddr";
+import {confirmChangeTimeHandler} from "../modals/routesModal";
 
 export const drawUsers = (modal, users) => {
   let err = false
@@ -92,7 +93,12 @@ export const drawUsers = (modal, users) => {
                   <div class="edit-form__block edit-form__block--checker">
                       <label class="edit-form__label edit-form__label--checker" for="disable">Скрыть</label>
                       <input style="cursor: pointer" ${user.disable ? 'checked' : ''} id="disable" class="" name="disable" type="checkbox">
-                  </div>        
+                  </div>       
+                  
+                  <div class="edit-form__block edit-form__block--checker">
+                      <label class="edit-form__label edit-form__label--checker" for="disable">Общий</label>
+                      <input style="cursor: pointer" ${user.general ? 'checked' : ''} id="disable" class="" name="general" type="checkbox">
+                  </div>    
               </div>
               
   
@@ -122,7 +128,8 @@ export const drawUsers = (modal, users) => {
                              type="password">
                   </div>
       
-                  <div class="edit-form__block">
+                  <div class="edit-form__block edit-form__block--do">
+                      <input class='section-finish__btn edit-form__delete section-finish__delete' type='button' value="УДАЛИТЬ">
                       <button class="section-finish__btn section-finish__sub edit-form__submit" type="submit">Сохранить</button>
                   </div>
               </div>
@@ -150,6 +157,16 @@ export const drawUsers = (modal, users) => {
           drawData("groups/get-all", editGroup, userGroup)
           drawData("plots/get-all", editPlot, userPlot)
 
+          const deleteBtn = modal.querySelector('.edit-form__delete')
+          deleteBtn.addEventListener('click', e => {
+            confirmChangeTimeHandler(e, () => {
+              sendData(`${appAddr}/api/users/delete/${user.id}`, 'POST', null)
+                .then(resp => {
+                  modal.querySelector('.nav-navigation__users').click()
+                })
+            }, 'Удалить пользователя?')
+          })
+
           const editForm = modal.querySelector('.edit__form')
           editForm.addEventListener('submit', e => {
             console.log(e.target)
@@ -162,10 +179,10 @@ export const drawUsers = (modal, users) => {
                 ok = false
                 err = true
                 editForm.insertAdjacentHTML("beforeend", `
-            <div class="edit-form__error">
-                <h3>Пароли не совпадают</h3>
-            </div>
-        `)
+                <div class="edit-form__error">
+                    <h3>Пароли не совпадают</h3>
+                </div>
+            `)
               }
 
               return
@@ -180,6 +197,7 @@ export const drawUsers = (modal, users) => {
                 case "password_repeat":
                   break
                 case 'disable':
+                case 'general':
                   obj[key] = value === "on"
                   break
                 default:

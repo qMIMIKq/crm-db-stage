@@ -139,6 +139,22 @@ export const tableRoutesFiltersHandler = () => {
 
   inPlanDate.addEventListener('change', () => {
     state.inPlanDate = inPlanDate.value
+
+    if (inPlanBtn.classList.contains('route__filter--chosen')) {
+      try {
+        document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      } catch {
+      }
+      inPlanBtn.classList.add('route__filter--chosen')
+
+      state['routesFilters'].planned = true
+      state['routesFilters'].started = false
+      state['routesFilters'].unstarted = false
+      state['routesFilters'].error = false
+      state['routesFilters'].completed = false
+
+      newAllFilter()
+    }
   })
 
 

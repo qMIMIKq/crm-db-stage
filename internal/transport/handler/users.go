@@ -48,6 +48,17 @@ func (h *Handler) getAllUsers(c *gin.Context) {
 	})
 }
 
+func (h *Handler) deleteUser(c *gin.Context) {
+	userID := c.Param("user-id")
+
+	if err := h.services.Users.DeleteUser(userID); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	newOkResponse(c, http.StatusOK)
+}
+
 func (h *Handler) getUserByID(c *gin.Context) {
 	data := map[string]string{}
 

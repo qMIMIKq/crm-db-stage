@@ -32,8 +32,12 @@ export const userAdd = (modal) => {
                       <label class="edit-form__label" for="nickname">Никнейм</label>
                       <input style="cursor: text;" required id="nickname" class="route__input edit-form__input edit-form__name" name="nickname" type="text">
                   </div>
+                  
+                  <div class="edit-form__block edit-form__block--checker">
+                      <label class="edit-form__label edit-form__label--checker" for="disable">Общий</label>
+                      <input style="cursor: pointer" id="general" class="" name="general" type="checkbox">
+                  </div>
               </div>
-              
   
               <div class="edit-form__status">
                   <div class="edit-form__block">
@@ -87,6 +91,9 @@ export const userAdd = (modal) => {
       switch (key) {
         case "id":
           obj[key] = Number(value)
+          break
+        case 'general':
+          obj[key] = value === 'on'
           break
         default:
           obj[key] = value.trim()

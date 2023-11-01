@@ -2,7 +2,7 @@ import {showModal} from "../modals/showModal"
 import {appAddr} from "../../../../../../appAddr";
 import {drawUsers} from "./users";
 import {drawGroups} from "./groups";
-import {drawAdminPlots} from "./drawPlots";
+import {drawAdminPlots} from "./plots";
 import {drawAdminFilters} from "./filters";
 import {drawConstructor} from "./constructor";
 import {userAdd} from "./userAdd";

@@ -12,7 +12,6 @@ export const drawReport = async (d, data) => {
     percents = (d.issued_plan / d.plan) * 100
   }
 
-
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.report_id}" class='table-form table-form--old' method='POST'>
       <ul class='main-table__item'>

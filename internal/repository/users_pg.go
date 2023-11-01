@@ -13,7 +13,11 @@ type UsersPG struct {
 
 func (u UsersPG) GetUserByID(id string) (domain.UserInfo, error) {
 	query := fmt.Sprintf(`
-		SELECT u.user_id, u.login, u.user_name, u.nickname, u.disable, g.group_name, p.plot_name, g.group_id, p.plot_id
+		SELECT u.user_id, u.login, 
+		       u.user_name, u.nickname, 
+		       u.disable, u.general, 
+		       g.group_name, g.group_id, 
+					 p.plot_name, p.plot_id
       FROM users_rights ur
            JOIN users u on u.user_id = ur.user_id
            JOIN groups g on g.group_id = ur.group_id
@@ -33,7 +37,7 @@ func (u UsersPG) GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
-			SELECT u.user_id, u.user_name, 
+			SELECT u.user_id, u.user_name, u.general, 
 				     g.group_name, g.group_id, 
              p.plot_name, p.plot_id
 				FROM users_rights ur
@@ -43,6 +47,7 @@ func (u UsersPG) GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo
        WHERE g.group_name = $1
          AND p.plot_id = $2
 				 AND u.disable = false
+         AND u.general = false
        ORDER BY u.user_name DESC;
   `)
 
@@ -54,13 +59,16 @@ func (u UsersPG) GetOperators() ([]domain.UserInfo, error) {
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
-			SELECT u.user_id, u.user_name, u.nickname, g.group_name, p.plot_name
+			SELECT u.user_id, u.user_name, 
+			       u.nickname, u.general, 
+			       g.group_name, p.plot_name
 				FROM users_rights ur
              JOIN users u on u.user_id = ur.user_id
              JOIN groups g on g.group_id = ur.group_id
              JOIN plots p on p.plot_id = ur.plot_id
        WHERE g.group_name = $1 
 				 AND u.disable = false
+         AND u.general = false
        ORDER BY u.user_name DESC;
   `)
 
@@ -119,6 +127,20 @@ func (u UsersPG) GetUsersByGroup(group string) ([]domain.UserInfo, error) {
 	return users, err
 }
 
+func (u *UsersPG) DeleteUser(userID string) error {
+	query := fmt.Sprintf(`
+		DELETE FROM users WHERE user_id = $1
+		RETURNING nickname
+	`)
+
+	var userNickname string
+	err := u.db.QueryRow(query, userID).Scan(&userNickname)
+
+	log.Info().Msgf("user nickname %s", userNickname)
+
+	return err
+}
+
 func (u *UsersPG) EditUser(user domain.UserInfo) error {
 	tx, err := u.db.Begin()
 	if err != nil {
@@ -141,6 +163,13 @@ func (u *UsersPG) EditUser(user domain.UserInfo) error {
 
 	setter += fmt.Sprintf(", disable = $%d", len(args)+1)
 	args = append(args, user.Disable)
+
+	log.Info().Interface("user", user).Msg("UPDATE USER IS")
+
+	setter += fmt.Sprintf(", general = $%d", len(args)+1)
+	args = append(args, user.General)
+
+	log.Info().Interface("args", args).Msg("ARGS")
 
 	setter += fmt.Sprintf(" WHERE users.user_id = $%d", len(args)+1)
 	userQuery := fmt.Sprintf(`UPDATE users %s`, setter)
@@ -179,13 +208,13 @@ func (u UsersPG) CreateUser(user domain.UserInfo) (int, error) {
 	}
 
 	userQuery := fmt.Sprintf(`
-			INSERT INTO users (user_name, login, password, nickname)
-			VALUES ($1, $2, $3, $4)								 
+			INSERT INTO users (user_name, login, password, nickname, general)
+			VALUES ($1, $2, $3, $4, $5)								 
    RETURNING user_id;
 	`)
 
 	var id int
-	err = tx.QueryRow(userQuery, user.Name, user.Login, user.Password, user.Nickname).Scan(&id)
+	err = tx.QueryRow(userQuery, user.Name, user.Login, user.Password, user.Nickname, user.General).Scan(&id)
 	if err != nil {
 		tx.Rollback()
 		return 0, err

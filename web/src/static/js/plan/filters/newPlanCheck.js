@@ -1,7 +1,7 @@
-import {getTime} from "../modules/getTime";
-import {state} from "../modules/state";
-import {drawPlan} from "./drawPlan";
-import {deleteOrders} from "../modules/getOrders";
+import {getTime} from "../../modules/getTime";
+import {state} from "../../modules/state";
+import {drawPlan} from "../drawPlan";
+import {deleteOrders} from "../../modules/getOrders";
 
 export const reportPlanningDatesFilter = () => {
   const filterBtn = document.querySelector('.header-routes__planned--report')

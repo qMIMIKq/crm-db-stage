@@ -22,13 +22,13 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-  const updateMainTableData = () => {
-    setInterval(() => {
-      if (!state.isArchive) {
-        getOrders('get-all', true)
-      }
-    }, 5000)
-  }
-  updateMainTableData()
+  // const updateMainTableData = () => {
+  //   setInterval(() => {
+  //     if (!state.isArchive) {
+  //       getOrders('get-all', true)
+  //     }
+  //   }, 5000)
+  // }
+  // updateMainTableData()
 }
 

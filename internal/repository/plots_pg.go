@@ -11,6 +11,20 @@ type PlotsPG struct {
 	db *sqlx.DB
 }
 
+func (p *PlotsPG) DeletePlot(plotID string) error {
+	query := fmt.Sprintf(`
+		DELETE FROM plots WHERE plot_id = $1
+		RETURNING nickname
+	`)
+
+	var filterNickname string
+	err := p.db.QueryRow(query, plotID).Scan(&filterNickname)
+
+	log.Info().Msgf("user nickname %s", filterNickname)
+
+	return err
+}
+
 func (p *PlotsPG) EditPlot(plot domain.Plot) error {
 	log.Info().Interface("plot", plot).Msg("PLOT IS")
 

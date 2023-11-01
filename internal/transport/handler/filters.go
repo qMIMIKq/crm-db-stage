@@ -79,6 +79,17 @@ func (h *Handler) editFilter(c *gin.Context) {
 	})
 }
 
+func (h *Handler) deleteFilter(c *gin.Context) {
+	filterID := c.Param("filter-id")
+
+	if err := h.services.Filters.DeleteFilter(filterID); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	newOkResponse(c, http.StatusOK)
+}
+
 func (h *Handler) editFilterPosition(c *gin.Context) {
 	var filters []domain.FilterInfo
 	if err := c.Bind(&filters); err != nil {

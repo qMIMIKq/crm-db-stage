@@ -1,11 +1,11 @@
 import {state} from "../../modules/state";
-import {getReports} from "../getReports";
-import {newAllFilter} from "../../modules/filters/newAllFilter";
+import {newAllReportFilter} from "./newAllReportFilter";
 
 export const reportFiltersWrapper = document.querySelector('.main-table__header')
 export const idReportFilter = document.querySelector('#id')
 export const numsReportFilter = document.querySelector('#numbers')
 export const plotsReportFilter = document.querySelector('#order_plot')
+export const operatorReportFilter = document.querySelector('#operator')
 
 
 export const deleteReportsFilters = () => {
@@ -34,6 +34,7 @@ export const bindReportsFilters = () => {
       select.classList.remove('hidden__input')
     })
   })
+
   tableFilters.forEach(filter => {
     filter.addEventListener('blur', e => {
       showFilter(e)
@@ -56,10 +57,7 @@ const showFilter = e => {
 const filterReports = (type, filter) => {
   state['filtered'] = true
   state['tableFilters'][type] = filter
-  console.log(type, filter)
-  console.log(state['tableFilters'])
-
-  newAllFilter(false)
+  newAllReportFilter(false)
 }
 
 const bindFilter = (elem) => {
@@ -79,18 +77,20 @@ export const controlReportsFiltersReset = () => {
     const resetBtn = nav.querySelector('.header-button__reset')
     if (resetBtn === null) {
       nav.insertAdjacentHTML('beforeend', `
-          <button class='main__button main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
+          <button class='main__button--click main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
       `)
 
       nav.querySelector('.header-button__reset').addEventListener('click', e => {
         state['filtered'] = false
+        state['searched'] = false
         state['tableFilters'] = {}
         document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))
 
         reportFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
           cell.style.textDecoration = 'none'
         })
-        getReports('get-all')
+
+        newAllReportFilter(false)
       })
     }
   } else {

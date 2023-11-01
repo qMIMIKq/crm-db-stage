@@ -13,6 +13,7 @@ type UserCreate struct {
 	Password string   `json:"password" binding:"required"`
 	Plots    []string `json:"plots" binding:"required"`
 	GroupID  int      `json:"group_id" binding:"required"`
+	General  bool     `json:"general" db:"general"`
 }
 
 type Users []UserInfo
@@ -28,4 +29,5 @@ type UserInfo struct {
 	PlotID   string `json:"plot_id" db:"plot_id"`
 	Login    string `json:"login" db:"login"`
 	Password string `json:"password"`
+	General  bool   `json:"general" db:"general"`
 }

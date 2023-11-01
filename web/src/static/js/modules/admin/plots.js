@@ -2,6 +2,7 @@ import {sendData} from "../sendData";
 import {appAddr} from "../../../../../../appAddr";
 import {ucFirst} from "../../ucFirst";
 import {topFiltersHandler} from "../filters/topFilters";
+import {confirmChangeTimeHandler} from "../modals/routesModal";
 
 export const drawAdminPlots = (modal, datas) => {
   let ok = false
@@ -57,7 +58,6 @@ export const drawAdminPlots = (modal, datas) => {
 
           const d = data.data
 
-          console.log(d.can_delete)
           navContent.insertAdjacentHTML('afterbegin', `
             <form class="edit__form edit__form--group edit-form edit-form--group" method="post" style="height: 290px">
 <!--              <h3 class="edit-form__title">Изменение пользователя ${d.name}</h3>-->
@@ -81,20 +81,25 @@ export const drawAdminPlots = (modal, datas) => {
                       <input style="cursor: pointer" ${d.disable ? 'checked' : ''} id="disable" class="" name="disable" type="checkbox">
                   </div>        
       
-                  <div class="edit-form__block edit-form__block--ctrl">
-                      <button class="section-finish__btn section-finish__sub edit-form__submit" type="submit">Сохранить</button>
+                  <div class="edit-form__block edit-form__block--do">
+                       <input class='${d.can_delete ? '' : 'hidden__input'} section-finish__btn edit-form__delete section-finish__delete' type='button' value="УДАЛИТЬ">
+                      <button ${d.can_delete ? "style= align-self: flex-end;" : ''} class="section-finish__btn section-finish__sub edit-form__submit" type="submit">Сохранить</button>
                   </div>
               </div>
         </form>
         `)
 
-          const editForm = modal.querySelector('.edit__form')
-          if (d.can_delete) {
-            editForm.querySelector('.edit-form__block--ctrl').insertAdjacentHTML('beforeend', `
-              <button disabled class="section-finish__btn hidden__input section-finish__delete" type="submit">Удалить</button>
-            `)
-          }
+          const deleteBtn = modal.querySelector('.section-finish__delete')
+          deleteBtn.addEventListener('click', e => {
+            confirmChangeTimeHandler(e, () => {
+              sendData(`${appAddr}/api/plots/delete/${d.id}`, 'POST', null)
+                .then(resp => {
+                  modal.querySelector('.nav-navigation__plots').click()
+                })
+            }, 'Удалить участок?')
+          })
 
+          const editForm = modal.querySelector('.edit__form')
           editForm.addEventListener('submit', e => {
             e.preventDefault()
 

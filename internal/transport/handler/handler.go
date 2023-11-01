@@ -32,6 +32,7 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			plots.POST("/get-plot", h.getPlot)
 			plots.POST("/add", h.addPlot)
 			plots.PUT("/edit", h.editPlot)
+			plots.POST("/delete/:plot-id", h.deletePlot)
 		}
 
 		filters := api.Group("/filters")
@@ -41,6 +42,7 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			filters.GET("/get-all-hidden", h.getByHiddenFilters)
 			filters.POST("/add", h.addFilter)
 			filters.PUT("/edit", h.editFilter)
+			filters.POST("/delete/:filter-id", h.deleteFilter)
 			filters.PUT("/edit-position", h.editFilterPosition)
 		}
 
@@ -52,6 +54,7 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			users.GET("/get-all", h.getAllUsers)
 			users.POST("/get-user", h.getUserByID)
 			users.POST("/add", h.addUser)
+			users.POST("/delete/:user-id", h.deleteUser)
 			users.PUT("/edit", h.editUser)
 		}
 

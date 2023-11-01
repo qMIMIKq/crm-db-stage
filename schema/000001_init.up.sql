@@ -59,15 +59,16 @@ CREATE TABLE users
     login     VARCHAR(255),
     password  VARCHAR(255),
     nickname  VARCHAR(255),
-    disable   boolean DEFAULT FALSE
+    disable   boolean DEFAULT FALSE,
+    general   boolean DEFAULT FALSE
 );
 
 CREATE TABLE users_rights
 (
-    right_id SERIAL UNIQUE PRIMARY KEY        NOT NULL,
-    user_id  int references users (user_id)   NOT NULL,
-    group_id INT REFERENCES groups (group_id) NOT NULL,
-    plot_id  INT REFERENCES plots (plot_id)   NOT NULL
+    right_id SERIAL UNIQUE PRIMARY KEY                        NOT NULL,
+    user_id  int references users (user_id) ON DELETE CASCADE NOT NULL,
+    group_id INT REFERENCES groups (group_id)                 NOT NULL,
+    plot_id  INT REFERENCES plots (plot_id)                   NOT NULL
 );
 
 CREATE TABLE clients
@@ -169,7 +170,7 @@ CREATE TABLE reports
 (
     report_id       serial unique PRIMARY KEY NOT NULL,
     report_date     date,
-    order_id        int          default 0,
+    order_id        INT REFERENCES orders (order_id) ON DELETE CASCADE,
     order_number    varchar(255),
     order_client    varchar(255),
     order_name      varchar(255),
@@ -182,7 +183,7 @@ CREATE TABLE reports
     operator        varchar(255),
     issued_plan     varchar(255),
     route_position  varchar(255) default '0',
-    route_id        integer      default 0,
+    route_id        INT REFERENCES routes (route_id) ON DELETE CASCADE,
     order_timestamp date
 );
 

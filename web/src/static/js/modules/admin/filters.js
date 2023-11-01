@@ -1,6 +1,8 @@
 import {sendData} from "../sendData";
 import {appAddr} from "../../../../../../appAddr";
 import {topFiltersHandler} from "../filters/topFilters";
+import {confirmChangeTimeHandler} from "../modals/routesModal";
+import {getOrders} from "../getOrders";
 
 export const drawAdminFilters = (modal, datas) => {
   let ok = false
@@ -91,7 +93,8 @@ export const drawAdminFilters = (modal, datas) => {
                            value="${d.end_time}">
                   </div>
       
-                  <div class="edit-form__block">
+                  <div class="edit-form__block edit-form__block--do">
+                      <input class='section-finish__btn edit-form__delete section-finish__delete' type='button' value="УДАЛИТЬ">
                       <button class="section-finish__btn section-finish__sub edit-form__submit" type="submit">Сохранить</button>
                   </div>
               </div>
@@ -114,6 +117,18 @@ export const drawAdminFilters = (modal, datas) => {
               })
           }
           drawData("plots/get-all", editPlot, filterPlot)
+
+          const deleteBtn = modal.querySelector('.section-finish__delete')
+          console.log(deleteBtn)
+          deleteBtn.addEventListener('click', e => {
+            confirmChangeTimeHandler(e, () => {
+              sendData(`${appAddr}/api/filters/delete/${d.id}`, 'POST', null)
+                .then(resp => {
+                  modal.querySelector('.nav-navigation__filters').click()
+                  getOrders('get-all', false)
+                })
+            }, 'Удалить фильтр?')
+          })
 
           const editForm = modal.querySelector('.edit__form')
           editForm.addEventListener("submit", e => {

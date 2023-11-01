@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&family=Yanone+Kaffeesatz:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <title>{{.Title}}</title>
 <script defer src="../../static/js/report.js"></script></head>
 <body>
@@ -150,7 +152,7 @@
                 </li>
                 <li class="table__cell table__cell--top table__use table__timestamp">
                     <label for="numbers">Дата план</label>
-                    <input class="hidden__input filter__type" value="timestamp" type="text">
+                    <input class="hidden__input filter__type" value="report_date" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
                         <option value="все">Все</option>
                     </select>
@@ -164,21 +166,21 @@
                 </li>
                 <li class="table__cell table__cell--top table__use table__client">
                     <label for="clients">Клиент</label>
-                    <input class="hidden__input filter__type" value="client" type="text">
+                    <input class="hidden__input filter__type" value="order_client" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="clients" id="clients">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__use table__name">
                     <label for="name">Наименование</label>
-                    <input class="hidden__input filter__type" value="name" type="text">
+                    <input class="hidden__input filter__type" value="order_name" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="name" id="name">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__use table__material">
                     <label for="materials">Материалы</label>
-                    <input class="hidden__input filter__type" value="material" type="text">
+                    <input class="hidden__input filter__type" value="order_material" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="materials"
                             id="materials">
                         <option value="все">Все</option>
@@ -208,10 +210,17 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
-                <li class="table__cell table__cell--top table__operator--report">Оператор</li>
+                <li class="table__cell table__cell--top table__use table__operator--report">
+                    <label for="order_operator">Оператор</label>
+                    <input class="hidden__input filter__type" value="operator" type="text">
+                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                            id="operator">
+                        <option value="все">Все</option>
+                    </select>
+                </li>
                 <li class="table__cell table__cell--top table__use table__plan--report">
                     <label for="order_operator">План за смену</label>
-                    <input class="hidden__input filter__type" value="order_operator" type="text">
+                    <input class="hidden__input filter__type" value="plan" type="text">
                     <select class="table__filter main__button main__select hidden__input" name="issued"
                             id="order_operator">
                         <option value="все">Все</option>

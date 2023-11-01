@@ -9,6 +9,10 @@ type PlotsService struct {
 	repo repository.Plots
 }
 
+func (p PlotsService) DeletePlot(plotID string) error {
+	return p.repo.DeletePlot(plotID)
+}
+
 func (p PlotsService) EditPlot(plot domain.Plot) error {
 	return p.repo.EditPlot(plot)
 }

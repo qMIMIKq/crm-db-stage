@@ -21,6 +21,11 @@ import {newAllFilter} from "./filters/newAllFilter";
 import {drawUpdatedData} from "./drawe/drawUpdatedData";
 import {bindOrdersListeners} from "./bindListeners";
 
+
+export const isEmptyData = checkThis => {
+  return checkThis || 'Не заполнено'
+}
+
 export const getOrders = (postfix = 'get-all', updateOnly = false) => {
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
@@ -95,10 +100,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         .then(res => {
           deleteTableFilters()
           // deleteOrders()
-
-          const isEmptyData = checkThis => {
-            return checkThis || 'Не заполнено'
-          }
 
           if (data.data) {
             data.data.forEach(d => {

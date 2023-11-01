@@ -1,6 +1,6 @@
-import {showModal} from "../modules/modals/showModal";
-import {state} from "../modules/state";
-import {newAllPlanFilter} from "./newAllPlanFilter";
+import {showModal} from "../../modules/modals/showModal";
+import {state} from "../../modules/state";
+import {newAllReportFilter} from "./newAllReportFilter";
 
 const searchOrdersModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
@@ -15,7 +15,7 @@ const searchOrdersModal = `
             placeholder="Клиент"
             type='text'
             class='route__input search-orders__input main__input'
-            name='client' 
+            name='order_client' 
             id='search-orders__client'>
         </div>
         
@@ -25,7 +25,7 @@ const searchOrdersModal = `
             placeholder="Наименование"
             type='text'
             class='route__input search-orders__input main__input'
-            name='name' 
+            name='order_name' 
             id='search-orders__name'>
         </div>
         
@@ -35,7 +35,7 @@ const searchOrdersModal = `
             placeholder="Материал"
             type='text'
             class='route__input search-orders__input main__input'
-            name='material' 
+            name='order_material' 
             id='search-orders__material'>
         </div>
         
@@ -45,7 +45,7 @@ const searchOrdersModal = `
             placeholder="№ Заказа"
             type='text'
             class='route__input search-orders__input main__input'
-            name='number' 
+            name='order_number' 
             id='search-orders__number'>
         </div>
         
@@ -57,7 +57,7 @@ const searchOrdersModal = `
    </div>
 `
 
-export const searchPlansHandler = () => {
+export const searchReportsHandler = () => {
   const searchModal = showModal(searchOrdersModal)
   const inputs = searchModal.querySelectorAll('input')
   const searchBtn = searchModal.querySelector('.confirm__button--search')
@@ -72,6 +72,6 @@ export const searchPlansHandler = () => {
     })
 
     searchModal.click()
-    newAllPlanFilter()
+    newAllReportFilter()
   })
 }

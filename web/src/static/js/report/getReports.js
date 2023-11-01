@@ -1,17 +1,15 @@
 import {state} from '../modules/state';
 import {sendData} from "../modules/sendData";
-import {drawReport} from "./drawReport";
-import {hideOrders} from "../modules/getOrders";
+import {hideOrders, isEmptyData} from "../modules/getOrders";
 import {
   bindReportsFilters,
   deleteReportsFilters,
   drawReportsFilter,
   idReportFilter,
-  numsReportFilter
+  numsReportFilter, operatorReportFilter
 } from "./filters/reportFilters";
 import {appAddr} from "../../../../../appAddr";
-import {globalFilterReports} from "./filters/globalFilterReports";
-import {filterRouteReports} from "./filters/topReportFilter";
+import {newAllReportFilter} from "./filters/newAllReportFilter";
 
 export const getReports = () => {
   const totalOrders = document.querySelector('.orders__total')
@@ -56,39 +54,24 @@ export const getReports = () => {
 
       const nums = []
       const ids = []
+      const operators = []
 
       // deleteTableFilters()
       // deleteOrders()
       state['orders'] = data.data
-      state['filteredOrders'] = state['orders'].filter(o => o)
-      const filters = state['currentTopFilters'].map(filter => filter.name)
-      console.log(filters)
-
-      console.log(state.filtered)
+      console.log(state.orders)
 
       data.data.forEach(d => {
-        nums.push(d.order_number)
-        ids.push(d.order_id)
-
-        if (state['filtered'] && filters.length) {
-          // console.log('big filter')
-          globalFilterReports(d, filters)
-          filterRouteReports()
-        } else if (state['filtered']) {
-          console.log('table filter')
-          globalFilterReports(d)
-        } else if (filters.length) {
-          console.log('top filter')
-          filterRouteReports()
-        } else {
-          console.log('draw only')
-          drawReport(d, data)
-        }
+        nums.push(isEmptyData(d.order_number))
+        ids.push(isEmptyData(d.order_id))
+        operators.push(isEmptyData(d.operator))
       })
 
+      newAllReportFilter(true)
       loader.classList.add('hidden__input')
       drawReportsFilter([...new Set(ids)], idReportFilter)
       drawReportsFilter([...new Set(nums)], numsReportFilter)
+      drawReportsFilter([...new Set(operators)], operatorReportFilter)
 
       bindReportsFilters()
     })

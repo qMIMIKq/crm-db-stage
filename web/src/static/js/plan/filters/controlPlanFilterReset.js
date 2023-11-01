@@ -1,7 +1,7 @@
-import {state} from "../modules/state";
-import {getOrders} from "../modules/getOrders";
-import {newAllFilter} from "../modules/filters/newAllFilter";
-import {getPlans} from "./getPlans";
+import {state} from "../../modules/state";
+import {getOrders} from "../../modules/getOrders";
+import {newAllFilter} from "../../modules/filters/newAllFilter";
+import {getPlans} from "../getPlans";
 import {newAllPlanFilter} from "./newAllPlanFilter";
 
 export const controlPlanFiltersReset = () => {

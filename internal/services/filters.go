@@ -29,6 +29,10 @@ func (f FiltersService) GetFilterByID(filterId string) (domain.FilterInfo, error
 	return f.repo.GetFilterByID(filterId)
 }
 
+func (f FiltersService) DeleteFilter(filterID string) error {
+	return f.repo.DeleteFilter(filterID)
+}
+
 func NewFiltersService(repo repository.Filters) *FiltersService {
 	return &FiltersService{repo: repo}
 }

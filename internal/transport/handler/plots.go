@@ -48,6 +48,17 @@ func (h *Handler) addPlot(c *gin.Context) {
 	})
 }
 
+func (h *Handler) deletePlot(c *gin.Context) {
+	plotID := c.Param("plot-id")
+
+	if err := h.services.Plots.DeletePlot(plotID); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	newOkResponse(c, http.StatusOK)
+}
+
 func (h *Handler) editPlot(c *gin.Context) {
 	var plot domain.Plot
 	if err := c.Bind(&plot); err != nil {

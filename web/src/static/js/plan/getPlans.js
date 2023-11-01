@@ -2,7 +2,7 @@ import {state} from "../modules/state";
 import {sendData} from "../modules/sendData";
 import {appAddr} from "../../../../../appAddr";
 import {deleteOrders, hideOrders} from "../modules/getOrders";
-import {newAllPlanFilter} from "./newAllPlanFilter";
+import {newAllPlanFilter} from "./filters/newAllPlanFilter";
 
 export const getPlans = (updateOnly) => {
   deleteOrders()

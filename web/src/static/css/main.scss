@@ -4,6 +4,8 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  //font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 input::-webkit-outer-spin-button,
@@ -26,14 +28,20 @@ input::-webkit-inner-spin-button {
 
 input, select {
   outline: none;
+  //font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 html {
   height: 100%;
+  //font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 body {
-  font-family: Inter, sans-serif;
+  //font-family: Inter, sans-serif;
+  //font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-family: 'Nunito', sans-serif;
   background: rgba(236, 236, 236, 1);
   height: 95%;
 }
@@ -71,6 +79,9 @@ ul {
   }
 
   &__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 28px;
     text-align: center;
     border: 1px solid black;

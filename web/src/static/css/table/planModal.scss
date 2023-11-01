@@ -89,6 +89,10 @@
 }
 
 .plan-period {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   &__btn {
     &:not(:last-child) {
       margin-right: 5px;

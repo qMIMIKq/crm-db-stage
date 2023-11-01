@@ -333,8 +333,8 @@ const disableBtn = btnClass => {
   btn.classList.remove('clickable')
 }
 
-const confirmChangeTimeModal = `
-    <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
+export const confirmChangeTimeModal = `
+    <div id='modal' style='z-index: 1000001' class='modal modal--confirm bounceIn'>
         <div class='modal_content modal_content--confirm' style='width: 350px'>
             <h2 class='confirm__title'>Подтвердить сброс времени?</h2>
             <div class='confirm__section'>
@@ -345,7 +345,7 @@ const confirmChangeTimeModal = `
    </div>
 `
 
-const confirmChangeTimeHandler = (e, operation, alertContent) => {
+export const confirmChangeTimeHandler = (e, operation, alertContent) => {
   if (e.target.value === '') {
     return
   }
@@ -376,7 +376,10 @@ const confirmChangeTimeHandler = (e, operation, alertContent) => {
     e.target.value = ''
     operation()
     modal.click()
-    addLog(user.nickname, logMsg, '#visible__comments')
+    try {
+      addLog(user.nickname, logMsg, '#visible__comments')
+    } catch {
+    }
   })
 
   cncltn.addEventListener('click', () => {
@@ -565,6 +568,7 @@ export const triggerRoutesModal = e => {
   let dbAddedDates = []
 
   if (info) {
+    console.log(routeInfo)
     planDateInput.removeAttribute('disabled')
     let comments = routeInfo['comments']
     if (routeInfo['last_comment']) {
@@ -1010,13 +1014,18 @@ const createReportObj = (data) => {
 export const drawPlots = (plotI, user) => {
   const plotsResp = getData('filters/get-all')
 
-
   plotsResp.then(plots => {
     const plotsSelect = document.querySelector('#route__plot')
     const plotsConnection = document.querySelector('#plot-connection')
 
     plots.data = plots.data.filter(d => !d.disable)
+    let check
+
     plots.data.forEach(plot => {
+      if (!check) {
+        check = String(plotI) === String(plot.name)
+      }
+
       plotsSelect.insertAdjacentHTML('beforeend', `
           <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>
       `)
@@ -1025,6 +1034,16 @@ export const drawPlots = (plotI, user) => {
           <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.plot}</option>
       `)
     })
+
+    if (!check && plotI) {
+      plotsSelect.insertAdjacentHTML('beforeend', `
+          <option selected value='${plotI}'>${plotI}</option>
+      `)
+
+      plotsConnection.insertAdjacentHTML('beforeend', `
+          <option selected value='${plotI}'>${plotI}</option>
+      `)
+    }
 
     if (plotI) {
       drawUsers(plotsConnection.querySelector('option[selected]').textContent, user)
@@ -1038,22 +1057,39 @@ export const drawUsers = (plotName, userI) => {
     elem.remove()
   })
 
+  usersSelect.insertAdjacentHTML(`beforeend`, `
+    <option selected disabled>Выберите оператора</option>
+  `)
+
+  let check = false
+
   const usersResp = getData('users/get-all-operators')
   usersResp.then(users => {
-    if (plotName) {
-      users.data = users.data.filter(u => u.plot === plotName)
+    if (users.data) {
+      if (plotName) {
+        users.data = users.data.filter(u => u.plot === plotName)
+      }
+
+      users.data.forEach(user => {
+        if (!check) {
+          check = String(userI) === String(user.nickname)
+        }
+
+        usersSelect.insertAdjacentHTML('beforeend', `
+          <option ${String(userI) === String(user.nickname) ? 'selected' : ''} value='${user.nickname}'>${user.nickname}</option>
+        `)
+      })
     }
 
-    users.data.forEach(user => {
+    console.log(check, userI)
+
+    if (!check && userI) {
       usersSelect.insertAdjacentHTML('beforeend', `
-          <option ${String(userI) === String(user.nickname) ? 'selected' : ''} value='${user.nickname}'>${user.nickname}</option>
-      `)
-    })
+            <option selected value='${userI}'>${userI}</option>
+        `)
+    }
   })
 
-  usersSelect.insertAdjacentHTML(`beforeend`, `
-        <option selected disabled>Выберите оператора</option>
-    `)
 }
 
 const controlQuantityAccess = (routeQuantity) => {

@@ -16,6 +16,7 @@ type Plots interface {
 	GetPlots() ([]domain.Plot, error)
 	CreatePlot(plot domain.Plot) (int, error)
 	EditPlot(plot domain.Plot) error
+	DeletePlot(plotID string) error
 }
 
 type Filters interface {
@@ -24,6 +25,7 @@ type Filters interface {
 	CreateFilter(filter domain.FilterInfo) (int, error)
 	EditFilter(filter domain.FilterInfo) error
 	UpdatePosition(filters []domain.FilterInfo) error
+	DeleteFilter(filterID string) error
 }
 
 type Users interface {
@@ -34,6 +36,7 @@ type Users interface {
 	GetUserByID(id string) (user domain.UserInfo, err error)
 	CreateUser(user domain.UserInfo) (int, error)
 	EditUser(user domain.UserInfo) error
+	DeleteUser(userID string) error
 }
 
 type Files interface {

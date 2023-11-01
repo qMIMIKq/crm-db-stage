@@ -1,9 +1,10 @@
 import {state, userInf} from "../../modules/state";
-import {hideOrders, getOrders} from "../../modules/getOrders";
-import {getReports} from "../getReports";
+import {getOrders, hideOrders} from "../../modules/getOrders";
 import {getData} from "../../modules/getData";
 import {globalFilterReports} from "./globalFilterReports";
 import {ucFirst} from "../../ucFirst";
+import {newAllReportFilter} from "./newAllReportFilter";
+import {searchReportsHandler} from "./serchReportsHandler";
 
 export const topReportFilter = () => {
   let filtered
@@ -31,6 +32,11 @@ export const topReportFilter = () => {
     } else {
       navRoutes.style.paddingBottom = '6px'
     }
+  })
+
+  const searchBtn = document.querySelector('.nav-control__search-btn')
+  searchBtn.addEventListener('click', () => {
+    searchReportsHandler()
   })
 
   const links = navControl.querySelectorAll('.nav-control__route-link')
@@ -110,16 +116,13 @@ export const topReportFilter = () => {
         target.classList.toggle('chosen__plot')
         target.classList.toggle('nav-filters__button--chosen')
         filterByPlots()
+
         if (state['currentTopFilters'].length) {
-          filterRouteReports()
+          newAllReportFilter()
           filtered = true
           controlFilterReset()
         } else {
-          if (window.location.href.includes('/main/table')) {
-            getOrders('get-all', true)
-          } else {
-            getReports()
-          }
+          newAllReportFilter()
 
           filtered = false
           controlFilterReset()
@@ -178,11 +181,11 @@ export const topReportFilter = () => {
 
         if (state['currentTopFilters'].length) {
           filtered = true
-          filterRouteReports()
+          newAllReportFilter()
           controlFilterReset()
         } else {
           filtered = false
-          getReports()
+          newAllReportFilter()
           controlFilterReset()
         }
       })
@@ -194,17 +197,14 @@ export const topReportFilter = () => {
     if (filtered) {
       if (!resetBtn) {
         nav.insertAdjacentHTML('beforeend', `
-                    <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
-                `)
+            <button class='main__button--click main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+        `)
 
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {
           state['currentTopFilters'] = []
           document.querySelector('.nav-filters__reset').remove()
-          if (window.location.href.includes('/main/table')) {
-            getOrders('get-all', true)
-          } else {
-            getReports()
-          }
+
+          newAllReportFilter()
 
           nav.querySelectorAll('.nav-filters__button').forEach(btn => {
             console.log(btn)

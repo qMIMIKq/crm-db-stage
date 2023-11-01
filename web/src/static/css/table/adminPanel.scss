@@ -168,6 +168,10 @@
   border-radius: 15px;
   position: relative;
 
+  &__delete {
+    //align-self: flex-start;
+  }
+
   &--group {
     width: 300px;
     height: 320px;
@@ -198,9 +202,18 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 15px;
+    width: 251px;
+
+    &--do {
+      margin-top: 20px;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     &--checker {
       flex-direction: row;
+      justify-content: space-between;
     }
   }
 
@@ -246,8 +259,8 @@
 
   &__submit {
     cursor: pointer;
-    margin-top: 20px;
-    align-self: flex-end;
+    //margin-top: 20px;
+    //align-self: flex-end;
   }
 
   &__succ {

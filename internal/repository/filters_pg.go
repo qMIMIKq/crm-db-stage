@@ -89,6 +89,25 @@ func (f FiltersPG) GetFilterByID(filterId string) (domain.FilterInfo, error) {
 	return filter, err
 }
 
+func (f *FiltersPG) DeleteFilter(filterID string) error {
+	queryFilter := fmt.Sprintf(`
+		DELETE FROM filters WHERE filter_id = $1
+		RETURNING filter_name
+	`)
+
+	queryRoute := fmt.Sprintf(`
+		DELETE FROM routes WHERE plot_id = $1
+	`)
+
+	var filterNickname string
+	err := f.db.QueryRow(queryFilter, filterID).Scan(&filterNickname)
+	_, err = f.db.Exec(queryRoute, filterNickname)
+
+	log.Info().Msgf("user nickname %s", filterNickname)
+
+	return err
+}
+
 func NewFiltersPG(db *sqlx.DB) *FiltersPG {
 	return &FiltersPG{db: db}
 }

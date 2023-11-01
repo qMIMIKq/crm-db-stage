@@ -1,10 +1,10 @@
-import {state, userInf} from "../modules/state";
-import {ucFirst} from "../ucFirst";
-import {getOrders} from "../modules/getOrders";
-import {getData} from "../modules/getData";
+import {state, userInf} from "../../modules/state";
+import {ucFirst} from "../../ucFirst";
+import {getOrders} from "../../modules/getOrders";
+import {getData} from "../../modules/getData";
 import {searchPlansHandler} from "./searchPlansHandler";
 import {newAllPlanFilter} from "./newAllPlanFilter";
-import {getPlans} from "./getPlans";
+import {getPlans} from "../getPlans";
 
 export const topPlansFilters = () => {
   let filtered

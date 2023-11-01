@@ -17,6 +17,11 @@ func (u UsersService) EditUser(user domain.UserInfo) error {
 
 	return u.repo.EditUser(user)
 }
+
+func (u UsersService) DeleteUser(userID string) error {
+	return u.repo.DeleteUser(userID)
+}
+
 func (u UsersService) CreateUser(user domain.UserInfo) (int, error) {
 	user.Password = hasher.GeneratePasswordHash(user.Password, salt)
 	return u.repo.CreateUser(user)
