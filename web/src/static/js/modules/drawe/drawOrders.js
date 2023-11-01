@@ -312,12 +312,12 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
 
     drawDeadlineP(currentOrder, ".table-p-select", state['deadlinesP'], d.p)
     drawManagers(currentOrder, ".table-m-select", state.managers, d.m)
+  }
 
-    if (routes) {
-      colorRoutes(routes, currentOrder)
-    } else {
-      deleteOrdersHandler(currentOrder, d.issued, false, d.id)
-    }
+  if (routes) {
+    colorRoutes(routes, currentOrder)
+  } else {
+    deleteOrdersHandler(currentOrder, d.issued, false, d.id)
   }
 
   addTriggers(currentOrder, "#db_id", showRoutesIssued)
@@ -326,6 +326,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
   addTriggers(currentOrder, '.table__comment', triggerCommentsModal)
   addTriggers(currentOrder, ".order__copy", copyOrderHandler)
   drawHelpers(currentOrder)
+
   if (state.adminCheck || state.manCheck) {
     addTriggers(currentOrder, ".order__copy", copyOrderHandler)
   } else {

@@ -8,7 +8,8 @@ import {drawDeadlineP} from "./drawDeadlineP";
 import {drawManagers} from "./drawManagers";
 import {colorRoutes} from "./routesDraw";
 import {cleanSelect} from "../getOrders";
-import {bindOrdersListeners} from "../bindListeners";
+import {addTriggers} from "../addTriggers";
+import {showRoutesIssued} from "../showFull";
 
 export const drawUpdatedData = (d, data, filtered) => {
   let uniqueFileNames = []
@@ -77,10 +78,14 @@ export const drawUpdatedData = (d, data, filtered) => {
     currentOrder.querySelector('input[name="quantity"]').value = d.quantity
     const issued = currentOrder.querySelector('input[name="issued"]')
     issued.value = d.issued
+
     if (orderCompleted && !state.isArchive) {
       issued.classList.add('table__issued--done')
+
     } else {
       issued.classList.remove('table__issued--done')
+      issued.classList.remove('tr')
+      currentOrder.querySelector('.table__complete').remove()
     }
 
     currentOrder.querySelector('select[name="m"]').value = d.m
@@ -89,8 +94,8 @@ export const drawUpdatedData = (d, data, filtered) => {
       endTime.value = d.end_time.split("T")[0]
     }
 
-    console.log(d.end_time)
-    console.log(endTime.value)
+    // console.log(d.end_time)
+    // console.log(endTime.value)
 
     if (alertDeadline && !state.isArchive) {
       endTime.classList.add('table__endtime--dead')
@@ -110,15 +115,18 @@ export const drawUpdatedData = (d, data, filtered) => {
 
     const completedBlock = currentOrder.querySelector('.table__issued--done')
     if (completedBlock && !state['isArchive']) {
+      completedBlock.classList.add('tr')
+
       completedBlock.insertAdjacentHTML(`afterend`, `
-      <li class="table-body_cell table-body__helper hidden__input table__complete">
-          <input class="table__data table__issued--done main__button tr" tabindex="-1"
-          readonly
-          type="text"
-          autocomplete="off"
-          value="В архив">
-      </li>
-  `)
+        <li class="table-body_cell table-body__helper hidden__input table__complete">
+            <input class="table__data table__issued--done main__button tr" tabindex="-1"
+            readonly
+            type="text"
+            autocomplete="off"
+            value="В архив">
+        </li>
+      `)
+
       currentOrder.querySelector('.table__complete').addEventListener('click', e => {
         currentOrder.querySelector('#completed').value = true
         const parent = e.target.closest('.table-form--old')

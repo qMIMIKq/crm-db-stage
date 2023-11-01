@@ -94,7 +94,7 @@ export const drawAdminFilters = (modal, datas) => {
                   </div>
       
                   <div class="edit-form__block edit-form__block--do">
-                      <input class='section-finish__btn edit-form__delete section-finish__delete' type='button' value="УДАЛИТЬ">
+                      <input class='${d.can_delete ? '' : 'hidden__input'} section-finish__btn edit-form__delete section-finish__delete' type='button' value="УДАЛИТЬ">
                       <button class="section-finish__btn section-finish__sub edit-form__submit" type="submit">Сохранить</button>
                   </div>
               </div>

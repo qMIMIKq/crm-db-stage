@@ -502,6 +502,8 @@ const planningHandler = (currentOrder, d, addedDates) => {
         }
       })
 
+      console.log(excludes)
+
       // console.log()
       addHandlers()
     }

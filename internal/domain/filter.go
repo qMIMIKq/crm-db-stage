@@ -9,4 +9,5 @@ type FilterInfo struct {
 	Position  int    `json:"position" db:"position"`
 	StartTime string `json:"start_time" db:"start_time"`
 	EndTime   string `json:"end_time" db:"end_time"`
+	CanDelete bool   `json:"can_delete"`
 }

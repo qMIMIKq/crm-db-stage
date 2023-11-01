@@ -62,7 +62,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     routesBlock.classList.remove('hidden__input')
   }
 
-  console.time('get orders')
+  // console.time('get orders')
 
   // console.log('start time', state.maxTime)
   const params = {
@@ -74,15 +74,15 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     'start_time': state['startTime']
   }
 
-  console.log(params)
+  // console.log(params)
 
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
-      console.timeEnd('get orders')
+      // console.timeEnd('get orders')
       const title = document.querySelector('.main-header__title')
 
-      console.time('draw orders')
+      // console.time('draw orders')
 
       if (!data.data) {
         if (!updateOnly) {
@@ -91,6 +91,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
           return
         }
+        title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
 
         console.log('PROBLEM HERE?')
         // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
@@ -127,13 +128,13 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
 
               if (!state['filtered']) {
                 state['managers'] = res.data.filter(user => user.group === 'менеджер')
+                state['managers'] = state['managers'].map(user => user.nickname)
               }
             })
 
             if (updateOnly) {
               const routesStatusFilter = document.querySelector('.route__filter--chosen')
               let filtered = state.filtered || !!state.currentTopFilters.length || routesStatusFilter
-              console.log('updatedData', data.data)
               data.data.forEach(d => {
                 drawUpdatedData(d, state.orders, filtered)
               })
@@ -144,8 +145,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
                 bindOrdersListeners()
               }
 
-              console.log('??')
-
               title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
             } else {
               title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
@@ -155,9 +154,9 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
             }
           }
 
-          console.timeEnd('draw orders')
+          // console.timeEnd('draw orders')
 
-          console.time('add filters and listeners')
+          // console.time('add filters and listeners')
           drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
           drawTableFilter([...new Set(state['clients'])].sort(), clientsFilter)
           drawTableFilter([...new Set(state['materials'])].sort(), materialsFilter)
@@ -169,7 +168,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
           bindTableFilters()
 
-          console.timeEnd('add filters and listeners')
+          // console.timeEnd('add filters and listeners')
 
           title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
           loader.classList.add('hidden__input')

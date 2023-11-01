@@ -585,7 +585,7 @@ const drawAdminFilters = (modal, datas) => {
                   </div>
       
                   <div class="edit-form__block edit-form__block--do">
-                      <input class='section-finish__btn edit-form__delete section-finish__delete' type='button' value="УДАЛИТЬ">
+                      <input class='${d.can_delete ? '' : 'hidden__input'} section-finish__btn edit-form__delete section-finish__delete' type='button' value="УДАЛИТЬ">
                       <button class="section-finish__btn section-finish__sub edit-form__submit" type="submit">Сохранить</button>
                   </div>
               </div>
@@ -1734,7 +1734,7 @@ const deleteOrdersHandler = function (currentOrder, issued, routes, id) {
       confirmDeleteHandler(e, () => {
         (0,_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/orders/delete/${id}`, 'POST', null).then(() => {
           document.querySelector(`#form-${id}`).remove();
-          _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.filter(order => order.id === id);
+          _state__WEBPACK_IMPORTED_MODULE_0__.state.orders = _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.filter(order => String(order.id) !== String(id));
           (0,_getOrders__WEBPACK_IMPORTED_MODULE_2__.getOrders)('get-all', true);
         });
       }, `Подвтердить удаление заказа №${id}?`);
@@ -2117,11 +2117,11 @@ const drawOrders = (insertPlace, position, d, data, users) => {
     (0,_getOrders__WEBPACK_IMPORTED_MODULE_15__.cleanSelect)(currentOrder, ".table-m-select");
     (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_1__.drawDeadlineP)(currentOrder, ".table-p-select", _state__WEBPACK_IMPORTED_MODULE_2__.state.deadlinesP, d.p);
     (0,_drawManagers__WEBPACK_IMPORTED_MODULE_3__.drawManagers)(currentOrder, ".table-m-select", _state__WEBPACK_IMPORTED_MODULE_2__.state.managers, d.m);
-    if (routes) {
-      (0,_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(routes, currentOrder);
-    } else {
-      (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
-    }
+  }
+  if (routes) {
+    (0,_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(routes, currentOrder);
+  } else {
+    (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
   }
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, "#db_id", _showFull__WEBPACK_IMPORTED_MODULE_17__.showRoutesIssued);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_11__.triggerFilesModal);
@@ -2329,7 +2329,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _drawManagers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawManagers */ "./web/src/static/js/modules/drawe/drawManagers.js");
 /* harmony import */ var _routesDraw__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
 /* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../addTriggers */ "./web/src/static/js/modules/addTriggers.js");
+/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../showFull */ "./web/src/static/js/modules/showFull.js");
+
 
 
 
@@ -2400,14 +2402,18 @@ const drawUpdatedData = (d, data, filtered) => {
       issued.classList.add('table__issued--done');
     } else {
       issued.classList.remove('table__issued--done');
+      issued.classList.remove('tr');
+      currentOrder.querySelector('.table__complete').remove();
     }
     currentOrder.querySelector('select[name="m"]').value = d.m;
     const endTime = currentOrder.querySelector('input[name="end_time"]');
     if (d.end_time) {
       endTime.value = d.end_time.split("T")[0];
     }
-    console.log(d.end_time);
-    console.log(endTime.value);
+
+    // console.log(d.end_time)
+    // console.log(endTime.value)
+
     if (alertDeadline && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
       endTime.classList.add('table__endtime--dead');
     } else {
@@ -2422,15 +2428,16 @@ const drawUpdatedData = (d, data, filtered) => {
     const routes = d["db_routes"];
     const completedBlock = currentOrder.querySelector('.table__issued--done');
     if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+      completedBlock.classList.add('tr');
       completedBlock.insertAdjacentHTML(`afterend`, `
-      <li class="table-body_cell table-body__helper hidden__input table__complete">
-          <input class="table__data table__issued--done main__button tr" tabindex="-1"
-          readonly
-          type="text"
-          autocomplete="off"
-          value="В архив">
-      </li>
-  `);
+        <li class="table-body_cell table-body__helper hidden__input table__complete">
+            <input class="table__data table__issued--done main__button tr" tabindex="-1"
+            readonly
+            type="text"
+            autocomplete="off"
+            value="В архив">
+        </li>
+      `);
       currentOrder.querySelector('.table__complete').addEventListener('click', e => {
         currentOrder.querySelector('#completed').value = true;
         const parent = e.target.closest('.table-form--old');
@@ -3645,7 +3652,8 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-  console.time('get orders');
+
+  // console.time('get orders')
 
   // console.log('start time', state.maxTime)
   const params = {
@@ -3656,11 +3664,15 @@ const getOrders = function () {
     'update_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime,
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
-  console.log(params);
+
+  // console.log(params)
+
   (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    console.timeEnd('get orders');
+    // console.timeEnd('get orders')
     const title = document.querySelector('.main-header__title');
-    console.time('draw orders');
+
+    // console.time('draw orders')
+
     if (!data.data) {
       if (!updateOnly) {
         hideOrders();
@@ -3668,6 +3680,7 @@ const getOrders = function () {
         title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? 'Архив пуст' : 'Журнал пуст';
         return;
       }
+      title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
       console.log('PROBLEM HERE?');
       // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
     }
@@ -3700,12 +3713,12 @@ const getOrders = function () {
           _state__WEBPACK_IMPORTED_MODULE_1__.state.timestamps.push(d.timestamp.split('T')[0]);
           if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
             _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = _state__WEBPACK_IMPORTED_MODULE_1__.state.managers.map(user => user.nickname);
           }
         });
         if (updateOnly) {
           const routesStatusFilter = document.querySelector('.route__filter--chosen');
           let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
-          console.log('updatedData', data.data);
           data.data.forEach(d => {
             (0,_drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_7__.drawUpdatedData)(d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, filtered);
           });
@@ -3714,7 +3727,6 @@ const getOrders = function () {
           } else {
             (0,_bindListeners__WEBPACK_IMPORTED_MODULE_8__.bindOrdersListeners)();
           }
-          console.log('??');
           title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
         } else {
           title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
@@ -3723,8 +3735,10 @@ const getOrders = function () {
           (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)(true);
         }
       }
-      console.timeEnd('draw orders');
-      console.time('add filters and listeners');
+
+      // console.timeEnd('draw orders')
+
+      // console.time('add filters and listeners')
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
@@ -3735,7 +3749,9 @@ const getOrders = function () {
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.deadlines)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.timestamps)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.timestampFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
-      console.timeEnd('add filters and listeners');
+
+      // console.timeEnd('add filters and listeners')
+
       title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
       loader.classList.add('hidden__input');
       if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
@@ -6086,6 +6102,7 @@ const showRoutesIssued = e => {
     issued.classList.toggle('hidden__input');
   }
   const complete = parent.querySelector('.table__complete');
+  console.log(complete);
   if (complete) {
     complete.classList.toggle('hidden__input');
   }
@@ -6886,6 +6903,7 @@ const planningHandler = (currentOrder, d, addedDates) => {
           }
         }
       });
+      console.log(excludes);
 
       // console.log()
       addHandlers();

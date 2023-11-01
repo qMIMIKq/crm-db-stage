@@ -83,8 +83,26 @@ func (f FiltersPG) GetFilterByID(filterId string) (domain.FilterInfo, error) {
      WHERE f.filter_id = $1
 	`)
 
+	checkDeleteQuery := fmt.Sprintf(`
+		SELECT r.route_id
+		 FROM routes r
+		 JOIN orders o USING (order_id)
+		WHERE r.plot_id = $1
+			AND o.completed = false
+		LIMIT 1
+	`)
+
 	var filter domain.FilterInfo
 	err := f.db.Get(&filter, query, filterId)
+
+	var filterCheckID int
+	f.db.Get(&filterCheckID, checkDeleteQuery, filter.Name)
+	log.Info().Msgf("filter check id %v", filterCheckID)
+	if filterCheckID == 0 {
+		filter.CanDelete = true
+	} else {
+		filter.CanDelete = false
+	}
 
 	return filter, err
 }
@@ -96,7 +114,11 @@ func (f *FiltersPG) DeleteFilter(filterID string) error {
 	`)
 
 	queryRoute := fmt.Sprintf(`
-		DELETE FROM routes WHERE plot_id = $1
+		DELETE FROM routes 
+		 USING orders
+		 WHERE plot_id = $1
+		   AND routes.order_id = orders.order_id
+			 AND orders.completed = false
 	`)
 
 	var filterNickname string

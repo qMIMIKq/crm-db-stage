@@ -170,7 +170,7 @@ CREATE TABLE reports
 (
     report_id       serial unique PRIMARY KEY NOT NULL,
     report_date     date,
-    order_id        INT REFERENCES orders (order_id) ON DELETE CASCADE,
+    order_id        INT,
     order_number    varchar(255),
     order_client    varchar(255),
     order_name      varchar(255),
@@ -183,7 +183,7 @@ CREATE TABLE reports
     operator        varchar(255),
     issued_plan     varchar(255),
     route_position  varchar(255) default '0',
-    route_id        INT REFERENCES routes (route_id) ON DELETE CASCADE,
+    route_id        int,
     order_timestamp date
 );
 

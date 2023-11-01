@@ -50,8 +50,7 @@ export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = t
       confirmDeleteHandler(e, () => {
         sendData(`${appAddr}/api/orders/delete/${id}`, 'POST', null).then(() => {
           document.querySelector(`#form-${id}`).remove()
-          state.orders.filter(order => order.id === id)
-
+          state.orders = state.orders.filter(order => String(order.id) !== String(id))
           getOrders('get-all', true)
         })
       }, `Подвтердить удаление заказа №${id}?`)
