@@ -3,6 +3,7 @@ import {sendData} from "../modules/sendData";
 import {appAddr} from "../../../../../appAddr";
 import {deleteOrders, hideOrders} from "../modules/getOrders";
 import {newAllPlanFilter} from "./filters/newAllPlanFilter";
+import {globalDatesObj} from "./drawPlan";
 
 export const getPlans = (updateOnly) => {
   deleteOrders()
@@ -99,15 +100,45 @@ export const getPlans = (updateOnly) => {
 
       }
 
-      let maxLength = -1
+      const datesList = document.querySelectorAll('.table__route--date__list')
       setTimeout(() => {
-        document.querySelectorAll('.table__route--date__list').forEach(datesList => {
-          maxLength = Math.max(datesList.querySelectorAll('.plan-dates__item').length, maxLength)
+        datesList.forEach(dateList => {
+          const dates = dateList.querySelectorAll('.plan-dates__item')
+          let maxDivider = {}
+
+          for (let i = 0; i < dates.length; i++) {
+            const dateItem = dates[i]
+            const trimmedDate = dateItem.textContent.trim()
+
+            if (!maxDivider[trimmedDate]) {
+              maxDivider[trimmedDate] = 1
+            } else {
+              maxDivider[trimmedDate]++
+            }
+
+            while (maxDivider[trimmedDate] < globalDatesObj[trimmedDate]) {
+              const nextDate = dates[i + maxDivider[trimmedDate]]
+              const nextTrimmedDate = nextDate.textContent.trim()
+
+              if (trimmedDate !== nextTrimmedDate) {
+                dates[i].insertAdjacentHTML('afterend', `
+                  <li class="plan-dates__item plan-dates__item--busy plan-dates__item--small route__btn">
+
+                  </li>
+                `)
+              }
+
+              maxDivider[trimmedDate]++
+            }
+          }
         })
 
-        dynamicDate.style.minWidth = `${(maxLength * 37) - 3}px`
-        console.log(maxLength)
-      }, 200)
+        const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
+        dynamicDate.style.minWidth = `${(sum * 37) - 3}px`
+        console.log(sum)
+
+      }, 60 * datesList.length)
+
       console.timeEnd('draw orders')
 
       console.time('add filters and listeners')

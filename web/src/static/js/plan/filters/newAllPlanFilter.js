@@ -4,13 +4,12 @@ import {controlPlanFiltersReset} from "./controlPlanFilterReset";
 import {drawPlan} from "../drawPlan";
 import {planShowCurrentLine} from "../planShowCurrentLine";
 
-export const newAllPlanFilter = (init) => {
+export const newAllPlanFilter = async (init) => {
   hideOrders()
 
   let flag = true
 
   const searched = state.searched
-  console.log(searched)
 
   const topRouteFilters = state.currentTopFilters.map(filter => filter.name)
   const tableFilters = state.tableFilters

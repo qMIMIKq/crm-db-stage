@@ -6444,6 +6444,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "drawPlan": () => (/* binding */ drawPlan),
 /* harmony export */   "getDays": () => (/* binding */ getDays),
+/* harmony export */   "globalDatesObj": () => (/* binding */ globalDatesObj),
 /* harmony export */   "table": () => (/* binding */ table)
 /* harmony export */ });
 /* harmony import */ var _modules_sendData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/sendData */ "./web/src/static/js/modules/sendData.js");
@@ -6503,6 +6504,8 @@ function getWeekDay(date) {
   let days = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
   return days[date.getDay()];
 }
+let globalDatesObj = {};
+let foundedPlots = [];
 const drawPlan = (d, data) => {
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
@@ -6903,7 +6906,32 @@ const planningHandler = (currentOrder, d, addedDates) => {
           }
         }
       });
-      console.log(excludes);
+      if (!foundedPlots.includes(d.route_plot)) {
+        foundedPlots.push(d.route_plot);
+        let maxDivider = {};
+        datesList.querySelectorAll('.plan-dates__item').forEach(dateItem => {
+          const maxDiv = maxDivider[dateItem.textContent.trim()];
+          if (!maxDiv) {
+            maxDivider[dateItem.textContent.trim()] = 1;
+          } else {
+            maxDivider[dateItem.textContent.trim()]++;
+          }
+        });
+        for (const [date, divider] of Object.entries(maxDivider)) {
+          const globalDate = globalDatesObj[date];
+          if (!globalDate) {
+            globalDatesObj[date] = divider;
+          } else {
+            globalDatesObj[date] = Math.max(globalDatesObj[date], divider);
+          }
+
+          // console.log(date, divider)
+        }
+
+        console.log('global dates', globalDatesObj);
+      }
+
+      // console.log(globalDatesObj)
 
       // console.log()
       addHandlers();
@@ -7013,11 +7041,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const newAllPlanFilter = init => {
+const newAllPlanFilter = async init => {
   (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.hideOrders)();
   let flag = true;
   const searched = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.searched;
-  console.log(searched);
   const topRouteFilters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
   const tableFilters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters;
   const isTopRoutesFiltered = !!topRouteFilters.length;
@@ -7158,20 +7185,41 @@ const reportPlanningDatesFilter = () => {
   filterDateTo.setAttribute('min', String(today.trim()));
   filterDateFrom.setAttribute('min', String(today.trim()));
   const dynamicDate = document.querySelector('.table__route--date');
-  let maxRes = -1;
   const recreatePlansTable = () => {
     (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
     _modules_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.forEach(plan => {
       (0,_drawPlan__WEBPACK_IMPORTED_MODULE_2__.drawPlan)(plan);
     });
-    let maxLength = -1;
+    const datesList = document.querySelectorAll('.table__route--date__list');
     setTimeout(() => {
-      document.querySelectorAll('.table__route--date__list').forEach(datesList => {
-        maxLength = Math.max(datesList.querySelectorAll('.plan-dates__item').length, maxLength);
+      datesList.forEach(dateList => {
+        const dates = dateList.querySelectorAll('.plan-dates__item');
+        let maxDivider = {};
+        for (let i = 0; i < dates.length; i++) {
+          const dateItem = dates[i];
+          const trimmedDate = dateItem.textContent.trim();
+          if (!maxDivider[trimmedDate]) {
+            maxDivider[trimmedDate] = 1;
+          } else {
+            maxDivider[trimmedDate]++;
+          }
+          while (maxDivider[trimmedDate] < _drawPlan__WEBPACK_IMPORTED_MODULE_2__.globalDatesObj[trimmedDate]) {
+            const nextDate = dates[i + maxDivider[trimmedDate]];
+            const nextTrimmedDate = nextDate.textContent.trim();
+            if (trimmedDate !== nextTrimmedDate) {
+              dates[i].insertAdjacentHTML('afterend', `
+                <li class="plan-dates__item plan-dates__item--busy plan-dates__item--small route__btn">
+  
+                </li>
+              `);
+            }
+            maxDivider[trimmedDate]++;
+          }
+        }
       });
-      dynamicDate.style.minWidth = `${maxLength * 37 - 3}px`;
-      console.log(maxLength);
-    }, 200);
+      const sum = Object.values(_drawPlan__WEBPACK_IMPORTED_MODULE_2__.globalDatesObj).reduce((a, b) => a + b, 0);
+      dynamicDate.style.minWidth = `${sum * 37 - 3}px`;
+    }, 60 * datesList.length);
   };
   filterDateFrom.addEventListener('change', () => {
     filterDateTo.setAttribute('min', String(filterDateFrom.value));
@@ -7474,14 +7522,13 @@ const topPlansFilters = () => {
     if (filtered) {
       if (!resetBtn) {
         nav.insertAdjacentHTML('beforeend', `
-            <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+            <button class='main__button--click main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
         `);
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {
           _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = [];
           document.querySelector('.nav-filters__reset').remove();
           (0,_getPlans__WEBPACK_IMPORTED_MODULE_6__.getPlans)(false);
           nav.querySelectorAll('.nav-filters__button').forEach(btn => {
-            console.log(btn);
             btn.classList.remove('nav-filters__button--chosen');
             btn.classList.remove('chosen__plot');
             btn.classList.remove('chosen__filter');
@@ -7545,6 +7592,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
 /* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _filters_newAllPlanFilter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filters/newAllPlanFilter */ "./web/src/static/js/plan/filters/newAllPlanFilter.js");
+/* harmony import */ var _drawPlan__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawPlan */ "./web/src/static/js/plan/drawPlan.js");
+
 
 
 
@@ -7631,14 +7680,37 @@ const getPlans = updateOnly => {
       //   newAllFilter(true)
       // }
     } else {}
-    let maxLength = -1;
+    const datesList = document.querySelectorAll('.table__route--date__list');
     setTimeout(() => {
-      document.querySelectorAll('.table__route--date__list').forEach(datesList => {
-        maxLength = Math.max(datesList.querySelectorAll('.plan-dates__item').length, maxLength);
+      datesList.forEach(dateList => {
+        const dates = dateList.querySelectorAll('.plan-dates__item');
+        let maxDivider = {};
+        for (let i = 0; i < dates.length; i++) {
+          const dateItem = dates[i];
+          const trimmedDate = dateItem.textContent.trim();
+          if (!maxDivider[trimmedDate]) {
+            maxDivider[trimmedDate] = 1;
+          } else {
+            maxDivider[trimmedDate]++;
+          }
+          while (maxDivider[trimmedDate] < _drawPlan__WEBPACK_IMPORTED_MODULE_5__.globalDatesObj[trimmedDate]) {
+            const nextDate = dates[i + maxDivider[trimmedDate]];
+            const nextTrimmedDate = nextDate.textContent.trim();
+            if (trimmedDate !== nextTrimmedDate) {
+              dates[i].insertAdjacentHTML('afterend', `
+                  <li class="plan-dates__item plan-dates__item--busy plan-dates__item--small route__btn">
+
+                  </li>
+                `);
+            }
+            maxDivider[trimmedDate]++;
+          }
+        }
       });
-      dynamicDate.style.minWidth = `${maxLength * 37 - 3}px`;
-      console.log(maxLength);
-    }, 200);
+      const sum = Object.values(_drawPlan__WEBPACK_IMPORTED_MODULE_5__.globalDatesObj).reduce((a, b) => a + b, 0);
+      dynamicDate.style.minWidth = `${sum * 37 - 3}px`;
+      console.log(sum);
+    }, 60 * datesList.length);
     console.timeEnd('draw orders');
     console.time('add filters and listeners');
     // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)

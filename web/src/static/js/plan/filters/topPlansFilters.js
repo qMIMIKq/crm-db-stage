@@ -195,7 +195,7 @@ export const topPlansFilters = () => {
     if (filtered) {
       if (!resetBtn) {
         nav.insertAdjacentHTML('beforeend', `
-            <button class='main__button main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+            <button class='main__button--click main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
         `)
 
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {
@@ -204,7 +204,6 @@ export const topPlansFilters = () => {
           getPlans(false)
 
           nav.querySelectorAll('.nav-filters__button').forEach(btn => {
-            console.log(btn)
             btn.classList.remove('nav-filters__button--chosen')
             btn.classList.remove('chosen__plot')
             btn.classList.remove('chosen__filter')
