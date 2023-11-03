@@ -1506,7 +1506,6 @@ const bindOrdersListeners = currentElem => {
   });
 };
 const chooseHandler = e => {
-  console.log(cls, action, listener);
   const parent = e.target.closest('.main-table__item');
   document.querySelectorAll('.table__data--chosen').forEach(chosen => {
     chosen.classList.remove('table__data--current');
@@ -1635,7 +1634,11 @@ const copyOrderHandler = e => {
           'comments': [{
             'date': today,
             'value': `${userName} Выбрал этап ${data.plot}`
-          }]
+          }],
+          'end_time': '',
+          'start_time': '',
+          'error_time': '',
+          'error_msg': ''
         };
       }
     }
@@ -2630,8 +2633,8 @@ const colorRoutes = (routes, parent) => {
       routeInfo.parentNode.classList.remove('route--inplan');
       dataInput.value = JSON.stringify(route);
       routeInfo.value = route.plot;
+      routeInfo.classList.add('route');
       if (route.plan_dates) {
-        routeInfo.classList.add('route');
         if (route.plan_dates.includes(date)) {
           routeInfo.classList.add('route--planned');
           routeInfo.parentNode.classList.add('route--inplan');
@@ -3654,10 +3657,8 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-
-  // console.time('get orders')
-
-  // console.log('start time', state.maxTime)
+  console.time('get orders');
+  console.log('start time', _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime);
   const params = {
     'order_old': _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive,
     'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__.archiveFrom.value,
@@ -3666,15 +3667,10 @@ const getOrders = function () {
     'update_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime,
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
-
-  // console.log(params)
-
   (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    // console.timeEnd('get orders')
+    console.timeEnd('get orders');
     const title = document.querySelector('.main-header__title');
-
-    // console.time('draw orders')
-
+    console.time('draw orders');
     if (!data.data) {
       if (!updateOnly) {
         hideOrders();
@@ -3683,7 +3679,7 @@ const getOrders = function () {
         return;
       }
       title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? `Архив заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})` : `Журнал заказов (${_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.length})`;
-      console.log('PROBLEM HERE?');
+
       // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
     }
 

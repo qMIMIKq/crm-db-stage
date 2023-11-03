@@ -75,8 +75,6 @@ export const bindOrdersListeners = (currentElem) => {
 }
 
 const chooseHandler = e => {
-  console.log(cls, action, listener)
-
   const parent = e.target.closest('.main-table__item')
   document.querySelectorAll('.table__data--chosen').forEach(chosen => {
     chosen.classList.remove('table__data--current')

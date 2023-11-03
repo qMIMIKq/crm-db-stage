@@ -24,9 +24,9 @@ export const colorRoutes = (routes, parent) => {
 
       dataInput.value = JSON.stringify(route)
       routeInfo.value = route.plot
+      routeInfo.classList.add('route')
 
       if (route.plan_dates) {
-        routeInfo.classList.add('route')
 
         if (route.plan_dates.includes(date)) {
           routeInfo.classList.add('route--planned')

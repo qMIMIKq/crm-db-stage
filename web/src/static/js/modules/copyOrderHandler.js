@@ -40,7 +40,11 @@ export const copyOrderHandler = e => {
           'comments': [{
             'date': today,
             'value': `${userName} Выбрал этап ${data.plot}`
-          }]
+          }],
+          'end_time': '',
+          'start_time': '',
+          'error_time': '',
+          'error_msg': '',
         }
       }
     }
