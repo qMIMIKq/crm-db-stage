@@ -7,7 +7,7 @@ export const drawManagers = (currentOrder, target, managers, manager) => {
 
   managers.forEach(man => {
     block.insertAdjacentHTML('beforeend', `
-       <option ${manager === man.nickname ? 'selected' : ''} value='${man.nickname}'>${man.nickname}</option>
+       <option ${manager === man ? 'selected' : ''} value='${man}'>${man}</option>
     `)
   })
 }

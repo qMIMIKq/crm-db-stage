@@ -175,6 +175,7 @@ export const newAllFilter = (init) => {
           if (order.db_routes && order.db_routes.length) {
             colorRoutes(order.db_routes, hiddenOrder)
           }
+
         } else {
           drawOrders(table, `afterbegin`, order, state.orders, state.managers)
         }
