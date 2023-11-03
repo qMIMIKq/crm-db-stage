@@ -179,6 +179,13 @@ const routeModal = `
                 </div>
                 
                 <div class="route__title">Комментарии и логи событий:</div>
+                
+                <div class="section-logs__filter logs-filter">
+                      <button class="logs-filter__button logs-filter__button--current" type="button">Комментарии</button>
+                      <button class="logs-filter__button" type="button">Логи</button>
+                      <button class="logs-filter__button" type="button">Все</button>
+                </div>
+                
                 <div class='section-logs'>
                     <input 
                     class='route__comments hidden__input' 
@@ -238,7 +245,7 @@ const issuedModal = `
    </div>
 `
 
-const drawLogs = data => {
+const drawLogs = (data) => {
   const logsList = document.querySelector('.section-logs__list')
   const logsItems = logsList.querySelectorAll('.section-logs__item')
   if (logsItems !== null) {
@@ -246,6 +253,8 @@ const drawLogs = data => {
       item.remove()
     })
   }
+
+  const filter = document.querySelector('.logs-filter__button--current').textContent
 
   data.value.split('---').reverse().forEach(log => {
     if (log.trim() !== '') {
@@ -257,24 +266,48 @@ const drawLogs = data => {
         }
       })
 
-      console.log(log.includes('REPORTMSG'))
-      if (log.includes('ОШИБКА')) {
-        logsList.insertAdjacentHTML(`beforeend`, `
+      if (filter === 'Все') {
+        if (log.includes('ОШИБКА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
           <li class='section-logs__item section-logs__item--error'>${log}</li>
         `)
-      } else if (log.includes('REPORTMSG')) {
-      } else if (log.includes('ПАУЗА')) {
-        logsList.insertAdjacentHTML(`beforeend`, `
+        } else if (log.includes('REPORTMSG')) {
+        } else if (log.includes('ПАУЗА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
           <li class='section-logs__item section-logs__item--pause'>${log}</li>
         `)
-      } else if (flag) {
-        logsList.insertAdjacentHTML(`beforeend`, `
+        } else if (flag) {
+          logsList.insertAdjacentHTML(`beforeend`, `
             <li class='section-logs__item'>${log}</li>
         `)
-      } else {
-        logsList.insertAdjacentHTML(`beforeend`, `
-          <li class='section-logs__item section-logs__item--system'>${log}</li>
+        } else {
+          logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item section-logs__item--system'>${log}</li>
+          `)
+        }
+      } else if (filter === 'Комментарии') {
+        if (log.includes('ОШИБКА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+          <li class='section-logs__item section-logs__item--error'>${log}</li>
         `)
+        } else if (log.includes('REPORTMSG')) {
+        } else if (log.includes('ПАУЗА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+          <li class='section-logs__item section-logs__item--pause'>${log}</li>
+        `)
+        } else if (flag) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item'>${log}</li>
+        `)
+        }
+      } else if (filter === 'Логи') {
+        if (flag) {
+
+        } else {
+          logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item section-logs__item--system'>${log}</li>
+          `)
+        }
       }
     }
   })
@@ -290,11 +323,11 @@ const saveData = (data, selector) => {
   return dataInput
 }
 
-export const addReportMsg = (report, selector) => {
+export const addReportMsg = (report, selector, filter) => {
   let logMsg = `REPORTMSG ${report}`
   const visible = saveData(logMsg, selector)
   saveData(logMsg, '#route__comments')
-  drawLogs(visible)
+  drawLogs(visible, filter)
 }
 
 export const addLog = (name, log, selector) => {
@@ -498,7 +531,7 @@ export const triggerRoutesModal = e => {
   const reportChanger = []
 
   issuedBtn.addEventListener('click', e => {
-    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser.value, reportChanger)
+    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser.value, reportChanger, document.querySelector('.logs-filter__button--current').value)
   })
 
   // const dynEndInp = document.querySelector('#route__dynend')
@@ -779,6 +812,7 @@ export const triggerRoutesModal = e => {
     disableBtn('section-finish__delete')
     disableBtn('route-plan__date')
     disableBtn('end-route__time')
+    // modalElem.querySelector('.logs-filter').classList.add('hidden__input')
   }
 
   if (manStatus) {
@@ -895,6 +929,17 @@ export const triggerRoutesModal = e => {
     }
 
     addLog(logName, 'Просмотрел отчет по сменам', '#visible__comments')
+  })
+
+  const logsFilters = document.querySelectorAll('.logs-filter__button')
+  logsFilters.forEach(filter => {
+    console.log(filter)
+
+    filter.addEventListener('click', e => {
+      logsFilters.forEach(btn => btn.classList.remove('logs-filter__button--current'))
+      filter.classList.add('logs-filter__button--current')
+      drawLogs(visibleLogs)
+    })
   })
 
   window.addEventListener('keydown', subCommentByEnter)
@@ -1080,8 +1125,6 @@ export const drawUsers = (plotName, userI) => {
         `)
       })
     }
-
-    console.log(check, userI)
 
     if (!check && userI) {
       usersSelect.insertAdjacentHTML('beforeend', `

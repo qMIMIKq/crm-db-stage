@@ -133,7 +133,7 @@
 .section-logs {
   width: 100%;
   background: white;
-  border-radius: 5px;
+  border-radius: 0 5px 5px 5px;
   padding: 5px;
   margin-bottom: 8px;
   box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.25);
@@ -468,6 +468,29 @@
 
     &--summary {
       width: 80px;
+    }
+  }
+}
+
+.logs-filter {
+  border-radius: 15px;
+  //padding-left: 5px;
+  display: flex;
+
+  &__button {
+    padding: 3px;
+    //border: 1px solid $btn_border_color;
+    background-color: $text_white;
+    transition: color .3s linear;
+    cursor: pointer;
+
+    &:hover {
+      color: $main_green;
+      transition: color .3s linear;
+    }
+
+    &--current {
+      color: $main_green;
     }
   }
 }

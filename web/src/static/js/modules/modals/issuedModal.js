@@ -66,7 +66,7 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   drawPlots(plotI, userI)
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value))
-    addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments')
+    addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments', filter)
 
     if (check) {
       console.log(issuedTodayInput.value)
