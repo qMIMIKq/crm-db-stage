@@ -146,8 +146,8 @@ input.tr {
   }
 
   &__number {
-    min-width: 80px;
-    max-width: 80px;
+    min-width: 111px;
+    max-width: 111px;
   }
 
   &__sample {
@@ -381,15 +381,25 @@ input.tr {
 }
 
 .route {
-  color: black;
+  color: rgb(107, 102, 102);;
   height: 24px;
   width: 48px;
+  border-radius: 15px;
+  border: 2px solid transparent;
 
   &--inplan {
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
-    border-right: 2px solid black;
-    border-left: 2px solid black !important;
+    //border-top: 2px solid $text_gray;
+    //border-bottom: 2px solid $text_gray;
+    //border-right: 2px solid $text_gray;
+    //border-left: 2px solid $text_gray !important;
+    //background: rgb(197 195 195);
+    background: rgb(181 173 173);
+    //background: rgb(213 220 213);
+
+    .route {
+      background: white;
+      border-radius: 15px;
+    }
   }
 
   &--planned {

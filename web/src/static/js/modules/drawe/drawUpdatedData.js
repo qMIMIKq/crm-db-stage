@@ -85,7 +85,9 @@ export const drawUpdatedData = (d, data, filtered) => {
     } else {
       issued.classList.remove('table__issued--done')
       issued.classList.remove('tr')
-      currentOrder.querySelector('.table__complete').remove()
+      try {
+        currentOrder.querySelector('.table__complete').remove()
+      } catch {}
     }
 
     currentOrder.querySelector('select[name="m"]').value = d.m

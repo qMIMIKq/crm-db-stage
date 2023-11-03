@@ -120,6 +120,8 @@ export const getPlans = (updateOnly) => {
               const nextDate = dates[i + maxDivider[trimmedDate]]
               const nextTrimmedDate = nextDate.textContent.trim()
 
+              console.log(trimmedDate, nextTrimmedDate)
+
               if (trimmedDate !== nextTrimmedDate) {
                 dates[i].insertAdjacentHTML('afterend', `
                   <li class="plan-dates__item plan-dates__item--busy plan-dates__item--small route__btn">
@@ -133,7 +135,7 @@ export const getPlans = (updateOnly) => {
           }
         })
 
-        const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
+        const sum = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
         dynamicDate.style.minWidth = `${(sum * 37) - 3}px`
         console.log(sum)
 
