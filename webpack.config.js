@@ -7,6 +7,8 @@ const path = require("path")
 const mode = process.env.NODE_ENV || "development"
 const devMode = mode === "development"
 
+console.log(process.argv)
+
 const target = devMode ? "web" : "browserslist"
 const devtool = devMode ? "source-map" : undefined
 

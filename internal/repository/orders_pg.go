@@ -441,7 +441,7 @@ func (o *OrdersPG) DeleteOrderByID(id int) error {
 }
 
 func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
-	log.Info().Msgf("Getting orders, %v", params.Old)
+	//log.Info().Msgf("Getting orders, %v", params.Old)
 
 	var query string
 	if params.Old {
@@ -591,11 +591,9 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 			//	log.Err(err).Caller().Msg("error is")
 			//}
 		}
-
-		log.Info().Interface("route", order.DbRoutes).Msgf("orders routes")
 	}
 
-	log.Info().Msg("RETURNING orders")
+	//log.Info().Msg("RETURNING orders")
 	return orders, err
 }
 

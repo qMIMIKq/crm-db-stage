@@ -429,10 +429,6 @@ export const triggerRoutesModal = e => {
   const operStatus = state['operCheck']
   const manStatus = state['manCheck']
 
-  console.log('Admin', adminStatus)
-  console.log('Operator', operStatus)
-  console.log('Manager', manStatus)
-
   let planned = false
   let info = false
   let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
@@ -600,8 +596,8 @@ export const triggerRoutesModal = e => {
   let addedDates = []
   let dbAddedDates = []
 
+  const routeUser = document.querySelector('.route__select--user')
   if (info) {
-    console.log(routeInfo)
     planDateInput.removeAttribute('disabled')
     let comments = routeInfo['comments']
     if (routeInfo['last_comment']) {
@@ -628,7 +624,6 @@ export const triggerRoutesModal = e => {
         dateInfo['date'] = dateInfo['date'].split('T')[0]
 
         if (today === dateInfo['date']) {
-          console.log('TODAY PLANNED')
           planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
         }
 
@@ -663,7 +658,6 @@ export const triggerRoutesModal = e => {
               const routeInfo = infoParent.querySelector(`.click-chose`)
               routeInfo.value = '-'
               routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
-              console.log(routeInput)
               modalElem.remove()
               getOrders('get-all', true)
             })
@@ -675,7 +669,14 @@ export const triggerRoutesModal = e => {
       disableBtn('route__select--plot')
     }
 
+    if (routeInfo.user) {
+      routeUser.insertAdjacentHTML('beforeend', `
+        <option selected value="${routeInfo['user']}">${routeInfo['user']}</option>
+      `)
+    }
+
     drawPlots(routeInfo['plot'], routeInfo['user'])
+
     activateNextStage('route__select--user')
     activateNextStage('pause-route__btn')
 
@@ -833,6 +834,7 @@ export const triggerRoutesModal = e => {
   routePlot.addEventListener('change', e => {
     const connector = document.querySelector('#plot-connection')
     let plotName = ''
+
     connector.querySelectorAll('option').forEach(conn => {
       if (e.target.value === conn.value) {
         plotName = conn.textContent
@@ -840,7 +842,7 @@ export const triggerRoutesModal = e => {
     })
 
     addLog(logName, `Выбрал этап ${routePlot.value}`, '#visible__comments')
-    drawUsers(plotName, null)
+    drawUsers(plotName, null, true)
     activateNextStage('route__select--user')
     activateNextStage('section-finish__sub')
     activateNextStage('pause-route__btn')
@@ -851,7 +853,6 @@ export const triggerRoutesModal = e => {
     controlCommentAccess(commentInput)
   })
 
-  const routeUser = document.querySelector('.route__select--user')
   routeUser.addEventListener('change', () => {
     addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
     activateNextStage('start-route__btn')
@@ -914,7 +915,6 @@ export const triggerRoutesModal = e => {
     for (const [date, info] of Object.entries(res)) {
       let operators = [...new Set(info.operators)].join('/')
       let plots = [...new Set(info.plots)].join('/')
-      console.log(date, operators, plots, info.summary)
 
       dataPlace.insertAdjacentHTML(`beforeend`, `
         <li style='text-align: center' class='comment__item'>
@@ -933,8 +933,6 @@ export const triggerRoutesModal = e => {
 
   const logsFilters = document.querySelectorAll('.logs-filter__button')
   logsFilters.forEach(filter => {
-    console.log(filter)
-
     filter.addEventListener('click', e => {
       logsFilters.forEach(btn => btn.classList.remove('logs-filter__button--current'))
       filter.classList.add('logs-filter__button--current')
@@ -980,7 +978,6 @@ export const triggerRoutesModal = e => {
       })
     }
 
-    console.log(resAddedDates)
 
     // console.log(resAddedDates)
     obj['added_dates'] = resAddedDates
@@ -1057,57 +1054,71 @@ const createReportObj = (data) => {
 }
 
 export const drawPlots = (plotI, user) => {
+  const plotsSelect = document.querySelector('#route__plot')
+  const plotsConnection = document.querySelector('#plot-connection')
+  if (plotI) {
+    plotsSelect.insertAdjacentHTML('beforeend', `
+      <option selected value='${plotI}'>${plotI}</option>
+  `)
+
+  }
+
   const plotsResp = getData('filters/get-all')
 
   plotsResp.then(plots => {
-    const plotsSelect = document.querySelector('#route__plot')
-    const plotsConnection = document.querySelector('#plot-connection')
-
     plots.data = plots.data.filter(d => !d.disable)
     let check
 
     plots.data.forEach(plot => {
-      if (!check) {
-        check = String(plotI) === String(plot.name)
-      }
+      check = String(plotI) === String(plot.name)
 
-      plotsSelect.insertAdjacentHTML('beforeend', `
-          <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.name}</option>
-      `)
+      if (!check) {
+        plotsSelect.insertAdjacentHTML('beforeend', `
+          <option value='${plot.name}'>${plot.name}</option>
+       `)
+      }
 
       plotsConnection.insertAdjacentHTML('beforeend', `
           <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.plot}</option>
       `)
     })
 
-    if (!check && plotI) {
-      plotsSelect.insertAdjacentHTML('beforeend', `
-          <option selected value='${plotI}'>${plotI}</option>
-      `)
-
-      plotsConnection.insertAdjacentHTML('beforeend', `
-          <option selected value='${plotI}'>${plotI}</option>
-      `)
-    }
+    // if (!check && plotI) {
+    //   plotsSelect.insertAdjacentHTML('beforeend', `
+    //       <option selected value='${plotI}'>${plotI}</option>
+    //   `)
+    //
+    //   plotsConnection.insertAdjacentHTML('beforeend', `
+    //       <option selected value='${plotI}'>${plotI}</option>
+    //   `)
+    // }
 
     if (plotI) {
-      drawUsers(plotsConnection.querySelector('option[selected]').textContent, user)
+      drawUsers(plotsConnection.querySelector('option[selected]').textContent, user, false)
     }
   })
 }
 
-export const drawUsers = (plotName, userI) => {
+export const drawUsers = (plotName, userI, change) => {
   const usersSelect = document.querySelector('#route__user')
-  usersSelect.querySelectorAll('option').forEach(elem => {
-    elem.remove()
-  })
 
-  usersSelect.insertAdjacentHTML(`beforeend`, `
-    <option selected disabled>Выберите оператора</option>
-  `)
+  if (change) {
+    usersSelect.querySelectorAll('option').forEach(elem => {
+      elem.remove()
+    })
+
+    usersSelect.insertAdjacentHTML(`beforeend`, `
+      <option selected disabled>Выберите оператора</option>
+    `)
+
+    if (userI) {
+      usersSelect.insertAdjacentHTML(`beforeend`, `
+        <option selected value="${userI}">${userI}</option>
+      `)
+    }
+  }
 
   let check = false
-
   const usersResp = getData('users/get-all-operators')
   usersResp.then(users => {
     if (users.data) {
@@ -1116,23 +1127,16 @@ export const drawUsers = (plotName, userI) => {
       }
 
       users.data.forEach(user => {
-        if (!check) {
-          check = String(userI) === String(user.nickname)
-        }
+        check = String(userI) === String(user.nickname)
 
-        usersSelect.insertAdjacentHTML('beforeend', `
-          <option ${String(userI) === String(user.nickname) ? 'selected' : ''} value='${user.nickname}'>${user.nickname}</option>
-        `)
+        if (!check) {
+          usersSelect.insertAdjacentHTML('beforeend', `
+            <option value='${user.nickname}'>${user.nickname}</option>
+          `)
+        }
       })
     }
-
-    if (!check && userI) {
-      usersSelect.insertAdjacentHTML('beforeend', `
-          <option selected value='${userI}'>${userI}</option>
-      `)
-    }
   })
-
 }
 
 const controlQuantityAccess = (routeQuantity) => {

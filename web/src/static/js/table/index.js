@@ -7,9 +7,17 @@ import {adminHandler} from "../modules/admin/adminHandler";
 
 export const user = JSON.parse(sessionStorage.getItem("user"))
 
+let arr = []
+console.log(arr[1])
+
+if (arr[1]) {
+  console.log('hello ')
+} else if (!arr[1]) {
+  console.log('hello 2')
+}
+
 if (window.location.href.endsWith('main/table')) {
-  state['startTime'] = state['startTime'] ? state['startTime'] : new Date().toISOString().split('.')[0]
-  // state['startTime'] = state['startTime'] ? state['startTime'] : getTime() + `:${new Date().getSeconds()}`
+  state['startTime'] = state['startTime'] || new Date().toISOString().split('.')[0]
 
   adminHandler()
   tableRoutesFiltersHandler()
