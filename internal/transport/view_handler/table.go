@@ -1,21 +1,21 @@
 package view_handler
 
 import (
-	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
-	ginSession "github.com/go-session/gin-session"
 	"net/http"
 )
 
 func (h *ViewHandler) indexView(c *gin.Context) {
-	store := ginSession.FromContext(c)
-
-	user, _ := store.Get("userInfo")
-	userInfo := user.(domain.UserInfo)
+	//store := ginSession.FromContext(c)
+	//
+	//_, ok := store.Get("userInfo")
+	//if !ok {
+	//	log.Info().Msg("BEDA BEDA((")
+	//	//c.Redirect(http.StatusFound, "/login")
+	//	return
+	//}
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"Title":   "Главная страница",
-		"User":    userInfo,
-		"GroupID": userInfo.GroupID,
+		"Title": "Главная страница",
 	})
 }

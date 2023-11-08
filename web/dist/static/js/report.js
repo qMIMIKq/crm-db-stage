@@ -2436,7 +2436,6 @@ const drawUpdatedData = (d, data, filtered) => {
     if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
       completedBlock.classList.add('tr');
       completedBlock.classList.remove('table__data--opened');
-      console.log(completedBlock);
       completedBlock.insertAdjacentHTML(`afterend`, `
         <li class="table-body_cell table-body__helper hidden__input table__complete">
             <input class="table__data table__issued--done main__button tr" tabindex="-1"
@@ -2456,6 +2455,7 @@ const drawUpdatedData = (d, data, filtered) => {
           parent.classList.add('table-form--upd');
           const endTimeIn = parent.querySelector('.table__endtime').querySelector('input');
           endTimeIn.value = today;
+          _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(order => String(order.id) !== String(d.id));
           (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_3__.submitData)();
           parent.remove();
         } else {
@@ -6195,16 +6195,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "state": () => (/* binding */ state),
 /* harmony export */   "userInf": () => (/* binding */ userInf)
 /* harmony export */ });
-//192.168.1.231
-//172.20.10.7
-//91.142.94.150
-
-// let addr = process.env.CHECK
-// export let appAddr = 'http://91.142.94.150:8182'
-// export let appAddr = 'http://192.168.1.231:8182'
-// export let appAddr = 'http://172.20.10.7:8182'
-// export let appAddr = 'http://192.168.0.104:8182'
-const userInf = JSON.parse(sessionStorage.getItem('user'));
+const userInf = JSON.parse(localStorage.getItem('user'));
 let state = {
   'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут', 'Нажал паузу'],
   'inPlanDate': '',
@@ -8360,14 +8351,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const user = JSON.parse(sessionStorage.getItem("user"));
-let arr = [];
-console.log(arr[1]);
-if (arr[1]) {
-  console.log('hello ');
-} else if (!arr[1]) {
-  console.log('hello 2');
+const user = JSON.parse(localStorage.getItem("user"));
+if (!user) {
+  window.location.href = '/login';
 }
+console.log(user);
 if (window.location.href.endsWith('main/table')) {
   _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime || new Date().toISOString().split('.')[0];
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__.adminHandler)();
@@ -23655,7 +23643,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const user = JSON.parse(sessionStorage.getItem("user"));
+const user = JSON.parse(localStorage.getItem("user"));
+if (!user) {
+  window.location.href = '/login';
+}
 if (window.location.href.endsWith('main/report')) {
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_4__.adminHandler)();
   (0,_filters_topReportFilter__WEBPACK_IMPORTED_MODULE_3__.topReportFilter)();

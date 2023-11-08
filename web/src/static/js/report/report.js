@@ -4,7 +4,10 @@ import {reportRoutesDatesFilter} from "./filters/reportRoutesDatesFilter"
 import {topReportFilter} from "./filters/topReportFilter"
 import {adminHandler} from "../modules/admin/adminHandler";
 
-export const user = JSON.parse(sessionStorage.getItem("user"))
+export const user = JSON.parse(localStorage.getItem("user"))
+if (!user) {
+  window.location.href = '/login'
+}
 
 if (window.location.href.endsWith('main/report')) {
   adminHandler()

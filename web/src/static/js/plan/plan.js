@@ -5,7 +5,10 @@ import {getPlans} from "./getPlans";
 import {reportPlanningDatesFilter} from "./filters/newPlanCheck";
 import {topPlansFilters} from "./filters/topPlansFilters";
 
-export const user = JSON.parse(sessionStorage.getItem("user"))
+export const user = JSON.parse(localStorage.getItem("user"))
+if (!user) {
+  window.location.href = '/login'
+}
 
 if (window.location.href.endsWith('main/plan')) {
   topPlansFilters()

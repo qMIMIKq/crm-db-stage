@@ -10,6 +10,8 @@ import {appAddr} from "../../../../../appAddr";
 // const appAddr = 'http://172.20.10.7:8182'
 // const appAddr = 'http://192.168.0.104:8182'
 
+console.log(JSON.parse(localStorage.getItem('user')))
+
 const loginForm = document.querySelector(".login-form")
 loginForm.addEventListener("submit", e => {
   e.preventDefault()
@@ -37,7 +39,7 @@ loginForm.addEventListener("submit", e => {
           "groupId": data["data"].group_id
         }
 
-        sessionStorage.setItem("user", JSON.stringify(state["userInfo"]))
+        localStorage.setItem("user", JSON.stringify(state["userInfo"]))
         window.location.replace(`${appAddr}/main/table`)
       })
 

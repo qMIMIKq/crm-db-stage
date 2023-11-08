@@ -1,7 +1,8 @@
 import {getTime} from "../../modules/getTime";
 import {state} from "../../modules/state";
-import {drawPlan, globalDatesObj} from "../drawPlan";
+import {drawPlan} from "../drawPlan";
 import {deleteOrders} from "../../modules/getOrders";
+import {newAllPlanFilter} from "./newAllPlanFilter";
 
 export const reportPlanningDatesFilter = () => {
   const filterBtn = document.querySelector('.header-routes__planned--report')
@@ -31,22 +32,24 @@ export const reportPlanningDatesFilter = () => {
     state.orders.forEach(plan => {
       drawPlan(plan)
     })
+    newAllPlanFilter()
+      .then(() => {
+        const datesList = document.querySelectorAll('.table__route--date__list')
+        setTimeout(() => {
+          let max = 0
 
-    const datesList = document.querySelectorAll('.table__route--date__list')
-    setTimeout(() => {
-      let max = 0
+          datesList.forEach(dateList => {
+            const dates = dateList.querySelectorAll('.plan-dates__item')
+            max = Math.max(dates.length)
+            console.log(max)
+          })
 
-      datesList.forEach(dateList => {
-        const dates = dateList.querySelectorAll('.plan-dates__item')
-        max = Math.max(dates.length)
-        console.log(max)
+
+          // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
+          dynamicDate.style.minWidth = `${(max * 37) - 3}px`
+
+        }, 60 * datesList.length)
       })
-
-
-      // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
-      dynamicDate.style.minWidth = `${(max * 37) - 3}px`
-
-    }, 60 * datesList.length)
   }
 
   filterDateFrom.addEventListener('change', () => {

@@ -141,6 +141,7 @@ export const drawUpdatedData = (d, data, filtered) => {
           parent.classList.add('table-form--upd')
           const endTimeIn = parent.querySelector('.table__endtime').querySelector('input')
           endTimeIn.value = today
+          state.orders = state.orders.filter(order => String(order.id) !== String(d.id))
           submitData()
           parent.remove()
         } else {

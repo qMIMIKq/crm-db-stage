@@ -67,16 +67,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "state": () => (/* binding */ state),
 /* harmony export */   "userInf": () => (/* binding */ userInf)
 /* harmony export */ });
-//192.168.1.231
-//172.20.10.7
-//91.142.94.150
-
-// let addr = process.env.CHECK
-// export let appAddr = 'http://91.142.94.150:8182'
-// export let appAddr = 'http://192.168.1.231:8182'
-// export let appAddr = 'http://172.20.10.7:8182'
-// export let appAddr = 'http://192.168.0.104:8182'
-const userInf = JSON.parse(sessionStorage.getItem('user'));
+const userInf = JSON.parse(localStorage.getItem('user'));
 let state = {
   'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут', 'Нажал паузу'],
   'inPlanDate': '',
@@ -10576,6 +10567,7 @@ __webpack_require__.r(__webpack_exports__);
 // const appAddr = 'http://172.20.10.7:8182'
 // const appAddr = 'http://192.168.0.104:8182'
 
+console.log(JSON.parse(localStorage.getItem('user')));
 const loginForm = document.querySelector(".login-form");
 loginForm.addEventListener("submit", e => {
   e.preventDefault();
@@ -10602,7 +10594,7 @@ loginForm.addEventListener("submit", e => {
           "plot": data["data"].plot,
           "groupId": data["data"].group_id
         };
-        sessionStorage.setItem("user", JSON.stringify(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo));
+        localStorage.setItem("user", JSON.stringify(_modules_state__WEBPACK_IMPORTED_MODULE_1__.state.userInfo));
         window.location.replace(`${_appAddr__WEBPACK_IMPORTED_MODULE_2__.appAddr}/main/table`);
       });
     } else if (errBlock === null) {

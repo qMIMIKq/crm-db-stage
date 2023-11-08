@@ -5,16 +5,12 @@ import {state} from "../modules/state";
 import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
 import {adminHandler} from "../modules/admin/adminHandler";
 
-export const user = JSON.parse(sessionStorage.getItem("user"))
-
-let arr = []
-console.log(arr[1])
-
-if (arr[1]) {
-  console.log('hello ')
-} else if (!arr[1]) {
-  console.log('hello 2')
+export const user = JSON.parse(localStorage.getItem("user"))
+if (!user) {
+  window.location.href = '/login'
 }
+
+console.log(user)
 
 if (window.location.href.endsWith('main/table')) {
   state['startTime'] = state['startTime'] || new Date().toISOString().split('.')[0]
