@@ -2335,6 +2335,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../addTriggers */ "./web/src/static/js/modules/addTriggers.js");
 /* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../showFull */ "./web/src/static/js/modules/showFull.js");
+/* harmony import */ var _helpersDraw__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./helpersDraw */ "./web/src/static/js/modules/drawe/helpersDraw.js");
+
 
 
 
@@ -2500,6 +2502,7 @@ const drawUpdatedData = (d, data, filtered) => {
       } else {
         (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, false, d.id);
       }
+      (0,_helpersDraw__WEBPACK_IMPORTED_MODULE_12__.drawHelpers)(currentOrder);
     }
   } else {
     console.log('WTF');
@@ -2525,78 +2528,71 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "drawHelpers": () => (/* binding */ drawHelpers)
 /* harmony export */ });
+const enterHelper = e => {
+  const elem = e.target;
+  const valElem = e.target.querySelector('.table__data');
+  const value = valElem.value;
+  if (value && (valElem.classList.contains('table-m-select') || valElem.scrollWidth > valElem.offsetWidth)) {
+    elem.insertAdjacentHTML('beforeend', `
+        <div class="check-helper">${value}</div>
+    `);
+    const helper = elem.querySelector('.check-helper');
+    if (helper) {
+      const helperHeight = helper.clientHeight;
+      if (helperHeight > 23) {
+        helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
+      } else {
+        helper.style.bottom = '-35px';
+      }
+    }
+  }
+};
+const leaveHelper = e => {
+  try {
+    e.target.querySelector('.check-helper').remove();
+  } catch {}
+};
+const enterHelperRoute = e => {
+  const cell = e.target;
+  let value = e.target.getAttribute('data-title');
+  if (value) {
+    const check = value.split('/');
+    cell.insertAdjacentHTML('beforeend', `
+      <div class="check-helper check-helper--long">
+      </div>
+    `);
+    if (check[0]) {
+      cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+        <div>${check[0]}</div>
+      `);
+    }
+    if (check[1]) {
+      cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+          <div style="color: red;" >${check[1].split('--').join(' ')}</div>
+      `);
+    }
+    const helper = cell.querySelector('.check-helper');
+    if (helper) {
+      const helperHeight = helper.clientHeight;
+      if (helperHeight > 23) {
+        helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
+      } else {
+        helper.style.bottom = '-35px';
+      }
+    }
+  }
+};
 const drawHelpers = currentOrder => {
   currentOrder.querySelectorAll('.table-body__helper').forEach(cell => {
     if (!cell.classList.contains('table__route')) {
-      const valElem = cell.querySelector('.table__data');
-      const value = valElem.value;
-      if (valElem.classList.contains('table-m-select') && value.length > 2 || valElem.scrollWidth > valElem.offsetWidth) {
-        const helperEnter = e => {
-          if (value) {
-            cell.insertAdjacentHTML('beforeend', `
-                <div class="check-helper">${value}</div>
-            `);
-            const helper = cell.querySelector('.check-helper');
-            if (helper) {
-              const helperHeight = helper.clientHeight;
-              if (helperHeight > 23) {
-                helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
-              } else {
-                helper.style.bottom = '-35px';
-              }
-            }
-          }
-        };
-        const helperLeave = e => {
-          try {
-            cell.querySelector('.check-helper').remove();
-          } catch {}
-        };
-        cell.removeEventListener('mouseenter', helperEnter);
-        cell.addEventListener('mouseenter', helperEnter);
-        cell.removeEventListener('mouseleave', helperLeave);
-        cell.addEventListener('mouseleave', helperLeave);
-      }
+      cell.removeEventListener('mouseenter', enterHelper);
+      cell.addEventListener('mouseenter', enterHelper);
     } else {
-      let value = cell.getAttribute('data-title');
-      const helperEnter = e => {
-        if (value) {
-          const check = value.split('/');
-          cell.insertAdjacentHTML('beforeend', `
-            <div class="check-helper check-helper--long">
-            </div>
-          `);
-          if (check[0]) {
-            cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
-                <div>${check[0]}</div>
-            `);
-          }
-          if (check[1]) {
-            cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
-                <div style="color: red;" >${check[1].split('--').join(' ')}</div> 
-            `);
-          }
-          const helper = cell.querySelector('.check-helper');
-          if (helper) {
-            const helperHeight = helper.clientHeight;
-            if (helperHeight > 23) {
-              helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px';
-            } else {
-              helper.style.bottom = '-35px';
-            }
-          }
-        }
-      };
-      const helperLeave = e => {
-        try {
-          cell.querySelector('.check-helper').remove();
-        } catch {}
-      };
-      cell.removeEventListener('mouseenter', helperEnter);
-      cell.addEventListener('mouseenter', () => helperEnter);
-      cell.removeEventListener('mouseleave', helperLeave);
-      cell.addEventListener('mouseleave', e => helperLeave);
+      cell.removeEventListener('mouseenter', enterHelperRoute);
+      cell.addEventListener('mouseenter', enterHelperRoute);
     }
+    cell.removeEventListener('mouseleave', leaveHelper);
+    cell.addEventListener('mouseleave', leaveHelper);
   });
 };
 

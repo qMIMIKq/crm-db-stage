@@ -10,6 +10,7 @@ import {colorRoutes} from "./routesDraw";
 import {cleanSelect} from "../getOrders";
 import {addTriggers} from "../addTriggers";
 import {showRoutesIssued} from "../showFull";
+import {drawHelpers} from "./helpersDraw";
 
 export const drawUpdatedData = (d, data, filtered) => {
   let uniqueFileNames = []
@@ -193,6 +194,7 @@ export const drawUpdatedData = (d, data, filtered) => {
       } else {
         deleteOrdersHandler(currentOrder, d.issued, false, d.id)
       }
+      drawHelpers(currentOrder)
     }
   } else {
     console.log('WTF')
