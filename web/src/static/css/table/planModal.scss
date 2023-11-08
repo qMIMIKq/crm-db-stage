@@ -144,6 +144,10 @@
       }
     }
 
+    //&--small  + .plan-dates__item--busy {
+    //  color: blue;
+    //}
+
     &:hover {
       cursor: pointer;
       transition: color .3s;
@@ -164,7 +168,7 @@
     }
 
     &--busy {
-      color: green;
+      color: blue;
       cursor: default !important;
 
       &:hover {

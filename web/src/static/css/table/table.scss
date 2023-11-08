@@ -135,8 +135,8 @@ input.tr {
   }
 
   &__timestamp {
-    min-width: 100px;
-    max-width: 100px;
+    min-width: 110px;
+    max-width: 110px;
   }
 
   &__files {
@@ -146,8 +146,8 @@ input.tr {
   }
 
   &__number {
-    min-width: 115px;
-    max-width: 115px;
+    min-width: 120px;
+    max-width: 120px;
   }
 
   &__sample {
@@ -408,27 +408,28 @@ input.tr {
   }
 
   &--paused {
-    background: rgba(224, 108, 0, 1);
-    color: white !important;
-    border-radius: 15px;
+    border: 2px solid #51a5e3;
+    background: white;
+    //color: white !important;
+    //border-radius: 15px;
   }
 
   &--error {
     color: white !important;
-    background: rgba(210, 66, 66, 1);
-    border-radius: 15px;
+    background: rgba(210, 66, 66, 1) !important;
+    //border-radius: 15px;
   }
 
   &--started {
     background: white !important;
-    border: 2px solid rgba(81, 165, 227, 1);
-    border-radius: 15px;
+    border: 2px solid #e06c00;
+    //border-radius: 15px;
   }
 
   &--completed {
     background: white !important;
     border: 2px solid rgba(0, 130, 29, 1);
-    border-radius: 15px;
+    //border-radius: 15px;
   }
 }
 

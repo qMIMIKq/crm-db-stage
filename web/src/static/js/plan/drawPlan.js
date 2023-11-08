@@ -505,34 +505,34 @@ const planningHandler = (currentOrder, d, addedDates) => {
         }
       })
 
-      if (!foundedPlots.includes(d.route_plot)) {
-        foundedPlots.push(d.route_plot)
-        let maxDivider = {}
-
-        datesList.querySelectorAll('.plan-dates__item').forEach(dateItem => {
-          const maxDiv = maxDivider[dateItem.textContent.trim()]
-
-          if (!maxDiv) {
-            maxDivider[dateItem.textContent.trim()] = 1
-          } else {
-            maxDivider[dateItem.textContent.trim()]++
-          }
-        })
-
-        for (const [date, divider] of Object.entries(maxDivider)) {
-          const globalDate = globalDatesObj[date]
-
-          if (!globalDate) {
-            globalDatesObj[date] = divider
-          } else {
-            globalDatesObj[date] = Math.max(globalDatesObj[date], divider)
-          }
-
-          // console.log(date, divider)
-        }
-
-        console.log('global dates', globalDatesObj)
-      }
+      // if (!foundedPlots.includes(d.route_plot)) {
+      //   foundedPlots.push(d.route_plot)
+      //   let maxDivider = {}
+      //
+      //   datesList.querySelectorAll('.plan-dates__item').forEach(dateItem => {
+      //     const maxDiv = maxDivider[dateItem.textContent.trim()]
+      //
+      //     if (!maxDiv) {
+      //       maxDivider[dateItem.textContent.trim()] = 1
+      //     } else {
+      //       maxDivider[dateItem.textContent.trim()]++
+      //     }
+      //   })
+      //
+      //   for (const [date, divider] of Object.entries(maxDivider)) {
+      //     const globalDate = globalDatesObj[date]
+      //
+      //     if (!globalDate) {
+      //       globalDatesObj[date] = divider
+      //     } else {
+      //       globalDatesObj[date] = Math.max(globalDatesObj[date], divider)
+      //     }
+      //
+      //     // console.log(date, divider)
+      //   }
+      //
+      //   console.log('global dates', globalDatesObj)
+      // }
 
 
       // console.log(globalDatesObj)

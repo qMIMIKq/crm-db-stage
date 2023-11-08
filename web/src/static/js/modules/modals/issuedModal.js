@@ -1,5 +1,5 @@
 import {showModal} from "./showModal";
-import {addLog, addReportMsg, drawPlots} from "./routesModal";
+import {activateOnInput, addLog, addReportMsg, drawPlots} from "./routesModal";
 import {user} from "../../table";
 import {state} from "../state";
 import {getTime} from "../getTime";
@@ -30,7 +30,7 @@ const changeIssuedModal = `
           id='error-route__msg'>
         
         <div class='confirm__section'>
-            <button class='main__button--click confirm__button confirm__button--ok'>ОК</button>
+            <button disabled class='main__button--click confirm__button confirm__button--ok issued-ok'>ОК</button>
             <button class='main__button--click confirm__button confirm__button--cncl'>Отмена</button>
         </div>
     </div>
@@ -48,11 +48,11 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   const check = state.adminCheck || state.techCheck
   let today = getTime()
   today = today.substring(0, today.length - 5).trim()
-  let yst = new Date(today)
-  yst.setDate(yst.getDate() - 1)
-  yst = yst.toISOString().split('T')[0]
+  date.value = today
+  date.setAttribute('max', today)
 
-  date.setAttribute('max', yst)
+
+  // console.log(userI)
 
   if (!check) {
     userData.classList.add('hidden__input')
@@ -62,15 +62,22 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   }
 
   const modalIssuedInput = modal.querySelector('.modal-issued__input')
+  modalIssuedInput.addEventListener('input', e => {
+    activateOnInput(e, 'issued-ok')
+  })
 
-  drawPlots(plotI, userI)
+  drawPlots(plotI, userI.value)
+  userData.insertAdjacentHTML('beforeend', `
+    <option selected value="${userI.value}">${userI.value}</option>
+  `)
+
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value))
     addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments')
 
     if (check) {
       console.log(issuedTodayInput.value)
-      addLog(user.nickname, `${plot.value} За смену ${date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
+      addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
 
       updateData.push({
         'operator_name': userData.value,

@@ -100,44 +100,60 @@ export const getPlans = (updateOnly) => {
 
       }
 
+      // const datesList = document.querySelectorAll('.table__route--date__list')
+      // setTimeout(() => {
+      //   datesList.forEach(dateList => {
+      //     const dates = dateList.querySelectorAll('.plan-dates__item')
+      //     let maxDivider = {}
+      //
+      //     for (let i = 0; i < dates.length; i++) {
+      //       const dateItem = dates[i]
+      //       const trimmedDate = dateItem.textContent.trim()
+      //
+      //       if (!maxDivider[trimmedDate]) {
+      //         maxDivider[trimmedDate] = 1
+      //       } else {
+      //         maxDivider[trimmedDate]++
+      //       }
+      //
+      //       while (maxDivider[trimmedDate] < globalDatesObj[trimmedDate]) {
+      //         const nextDate = dates[i + maxDivider[trimmedDate]]
+      //         const nextTrimmedDate = nextDate.textContent.trim()
+      //
+      //         console.log(trimmedDate, nextTrimmedDate)
+      //
+      //         if (trimmedDate !== nextTrimmedDate) {
+      //           dates[i].insertAdjacentHTML('afterend', `
+      //             <li class="plan-dates__item plan-dates__item--busy plan-dates__item--small route__btn">
+      //
+      //             </li>
+      //           `)
+      //         }
+      //
+      //         maxDivider[trimmedDate]++
+      //       }
+      //     }
+      //   })
+      //
+      //   const sum = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
+      //   dynamicDate.style.minWidth = `${(sum * 37) - 3}px`
+      //   console.log(sum)
+      //
+      // }, 60 * datesList.length)
+
       const datesList = document.querySelectorAll('.table__route--date__list')
       setTimeout(() => {
+        let max = 0
+
         datesList.forEach(dateList => {
           const dates = dateList.querySelectorAll('.plan-dates__item')
-          let maxDivider = {}
-
-          for (let i = 0; i < dates.length; i++) {
-            const dateItem = dates[i]
-            const trimmedDate = dateItem.textContent.trim()
-
-            if (!maxDivider[trimmedDate]) {
-              maxDivider[trimmedDate] = 1
-            } else {
-              maxDivider[trimmedDate]++
-            }
-
-            while (maxDivider[trimmedDate] < globalDatesObj[trimmedDate]) {
-              const nextDate = dates[i + maxDivider[trimmedDate]]
-              const nextTrimmedDate = nextDate.textContent.trim()
-
-              console.log(trimmedDate, nextTrimmedDate)
-
-              if (trimmedDate !== nextTrimmedDate) {
-                dates[i].insertAdjacentHTML('afterend', `
-                  <li class="plan-dates__item plan-dates__item--busy plan-dates__item--small route__btn">
-
-                  </li>
-                `)
-              }
-
-              maxDivider[trimmedDate]++
-            }
-          }
+          max = Math.max(dates.length)
+          console.log(max)
         })
 
-        const sum = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
-        dynamicDate.style.minWidth = `${(sum * 37) - 3}px`
-        console.log(sum)
+
+        // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
+        dynamicDate.style.minWidth = `${(max * 37) - 3}px`
 
       }, 60 * datesList.length)
 

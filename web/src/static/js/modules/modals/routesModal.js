@@ -216,7 +216,7 @@ const routeModal = `
                     <input id="route__delete" disabled class='section-finish__btn section-finish__delete' type='button' value="УДАЛИТЬ">
                     
                     <div class='section-finish__complete'>
-                        <button disabled class='section-finish__btn section-finish__sub main__button clickable' type='button'>Сохранить</button>
+                        <button disabled class='section-finish__btn section-finish__sub section-finish__sub--route main__button clickable' type='button'>Сохранить</button>
                     </div>
                 </div>
             
@@ -432,6 +432,7 @@ export const triggerRoutesModal = e => {
   let planned = false
   let info = false
   let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
+
   if (routeInfo !== '') {
     info = true
     routeInfo = JSON.parse(routeInfo)
@@ -466,9 +467,16 @@ export const triggerRoutesModal = e => {
   const shifts = document.querySelector('#shifts')
 
 
-  const doPause = () => {
-    if (!pauseBtn.classList.contains('route-type__paused')) {
+  const doPause = (reset) => {
+    if (reset) {
+      pauseBtn.classList.remove('route-type__paused')
+      pauseTimeInput.value = ''
+    } else {
       pauseBtn.classList.add('route-type__paused')
+    }
+
+
+    if (!pauseBtn.classList.contains('route-type__paused')) {
       setDateToInput('pause-route__time')
       disableBtn('route__select--user')
 
@@ -484,9 +492,7 @@ export const triggerRoutesModal = e => {
       disableBtn('end-route__btn')
       disableBtn('end-route__time')
     } else {
-      pauseBtn.classList.remove('route-type__paused')
       pauseBtn.textContent = 'Пауза'
-      pauseTimeInput.value = ''
 
       activateNextStage('route__select--user')
       if (routePlot.value !== 'Выберите участок') {
@@ -527,7 +533,7 @@ export const triggerRoutesModal = e => {
   const reportChanger = []
 
   issuedBtn.addEventListener('click', e => {
-    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser.value, reportChanger, document.querySelector('.logs-filter__button--current').value)
+    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, document.querySelector('.logs-filter__button--current').value)
   })
 
   // const dynEndInp = document.querySelector('#route__dynend')
@@ -597,6 +603,7 @@ export const triggerRoutesModal = e => {
   let dbAddedDates = []
 
   const routeUser = document.querySelector('.route__select--user')
+
   if (info) {
     planDateInput.removeAttribute('disabled')
     let comments = routeInfo['comments']
@@ -608,6 +615,7 @@ export const triggerRoutesModal = e => {
     }
 
     planned = routeInfo['planned']
+
     // if (planned) {
     //   planDateInput.value = 'В планировании'
     // }
@@ -641,9 +649,12 @@ export const triggerRoutesModal = e => {
       'faster': routeInfo['plan_faster']
     }
 
-    if (routeInfo['issued'] && !operStatus) {
+    if (routeInfo['issued']) {
       issued.value = routeInfo['issued']
-      activateNextStage('report-route__btn')
+
+      if (!operStatus) {
+        activateNextStage('report-route__btn')
+      }
     }
 
     if (logName !== '') {
@@ -857,6 +868,7 @@ export const triggerRoutesModal = e => {
     addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
     activateNextStage('start-route__btn')
     activateNextStage('error-route__btn')
+    controlCommentAccess(commentInput)
   })
 
   drawLogs(visibleLogs)
@@ -1148,5 +1160,6 @@ const controlQuantityAccess = (routeQuantity) => {
 
 const controlCommentAccess = (commentInput) => {
   commentInput.removeAttribute('readonly')
+  commentInput.removeAttribute('disabled')
   commentInput.style.cursor = 'text'
 }

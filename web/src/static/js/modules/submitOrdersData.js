@@ -34,7 +34,7 @@ const createRes = forms => {
       }
 
       if (key.includes('route') && !key.includes('issued') && !key.includes('json') && value !== '') {
-        console.log(JSON.parse(obj[key]))
+        // console.log(JSON.parse(obj[key]))
 
         if (value !== '-') {
           obj['routes_json'][key] = JSON.parse(String(value))
@@ -42,7 +42,7 @@ const createRes = forms => {
       }
     })
     res.push(obj)
-    console.log(res)
+    // console.log(res)
   })
 
   return res.reverse()
@@ -50,7 +50,7 @@ const createRes = forms => {
 
 export function submitSingleOrder(id) {
   const form = document.querySelectorAll(`#${id}`)
-  console.log(form)
+  // console.log(form)
 
   let success
   sendData(`${appAddr}/api/orders/update`, 'PUT', JSON.stringify(createRes(form))).then(res => {

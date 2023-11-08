@@ -118,6 +118,7 @@ export const drawUpdatedData = (d, data, filtered) => {
     const completedBlock = currentOrder.querySelector('.table__issued--done')
     if (completedBlock && !state['isArchive']) {
       completedBlock.classList.add('tr')
+      completedBlock.classList.remove('table__data--opened')
 
       completedBlock.insertAdjacentHTML(`afterend`, `
         <li class="table-body_cell table-body__helper hidden__input table__complete">
@@ -141,6 +142,7 @@ export const drawUpdatedData = (d, data, filtered) => {
           const endTimeIn = parent.querySelector('.table__endtime').querySelector('input')
           endTimeIn.value = today
           submitData()
+          parent.remove()
         } else {
           drawSubmit()
         }

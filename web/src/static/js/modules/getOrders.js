@@ -62,9 +62,9 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     routesBlock.classList.remove('hidden__input')
   }
 
-  console.time('get orders')
+  // console.time('get orders')
 
-  console.log('start time', state.maxTime)
+  // console.log('start time', state.maxTime)
   const params = {
     'order_old': state.isArchive,
     'archive_from': archiveFrom.value,
@@ -77,10 +77,10 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
-      console.timeEnd('get orders')
+      // console.timeEnd('get orders')
       const title = document.querySelector('.main-header__title')
 
-      console.time('draw orders')
+      // console.time('draw orders')
 
       if (!data.data) {
         if (!updateOnly) {

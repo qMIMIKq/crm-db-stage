@@ -34,7 +34,9 @@ const confirmDeleteHandler = (e, operation, titleText) => {
 }
 
 export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = true) => {
-  if (issued == 0 && state['adminCheck'] && !routes) {
+  const checkBtn = currentOrder.querySelector('#order__delete')
+
+  if (issued == 0 && state['adminCheck'] && !routes && !checkBtn) {
     // console.log('hi')
     if (hidden) {
       currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `

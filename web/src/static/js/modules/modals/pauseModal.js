@@ -6,7 +6,7 @@ import {state} from "../state";
 const changePauseModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
     <div class='modal_content modal-error' style='width: 350px'>
-         <div class='modal__header modal-header' style="background:rgb(224, 108, 0);">
+         <div class='modal__header modal-header' style="background:#51a5e3;;">
               <h2 class='comments__title'>Пауза</h2>                
           </div>
         
@@ -53,7 +53,8 @@ export const changePauseHandler = (e, errorText, errorTime, operator, doPause) =
       setDateToInput('pause-route__time')
       addLog(logName, `ПАУЗА ${errInput.value}`, '#visible__comments')
     }
-    doPause()
+
+    doPause(false)
     modal.click()
 
     console.log(errorText.value)
@@ -63,7 +64,7 @@ export const changePauseHandler = (e, errorText, errorTime, operator, doPause) =
     errorText.value = ''
     errorTime.value = ''
     addLog(user.nickname, `Сбросил паузу`, '#visible__comments')
-    doPause()
+    doPause(true)
     modal.click()
   })
 }

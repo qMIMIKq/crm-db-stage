@@ -19,7 +19,7 @@ export const reportPlanningDatesFilter = () => {
   filterDateFrom.value = today.trim()
   filterDateTo.value = today.trim()
   let check = new Date(filterDateTo.value)
-  check.setDate(check.getDate() + 30)
+  check.setDate(check.getDate() + 15)
   filterDateTo.value = `${check.getFullYear()}-${String(check.getMonth() + 1).padStart(2, '0')}-${String(check.getDate()).padStart(2, '0')}`
   filterDateTo.setAttribute('min', String(today.trim()))
   filterDateFrom.setAttribute('min', String(today.trim()))
@@ -34,40 +34,17 @@ export const reportPlanningDatesFilter = () => {
 
     const datesList = document.querySelectorAll('.table__route--date__list')
     setTimeout(() => {
+      let max = 0
+
       datesList.forEach(dateList => {
         const dates = dateList.querySelectorAll('.plan-dates__item')
-        let maxDivider = {}
-
-        for (let i = 0; i < dates.length; i++) {
-          const dateItem = dates[i]
-          const trimmedDate = dateItem.textContent.trim()
-
-          if (!maxDivider[trimmedDate]) {
-            maxDivider[trimmedDate] = 1
-          } else {
-            maxDivider[trimmedDate]++
-          }
-
-          while (maxDivider[trimmedDate] < globalDatesObj[trimmedDate]) {
-            const nextDate = dates[i + maxDivider[trimmedDate]]
-            const nextTrimmedDate = nextDate.textContent.trim()
-
-            if (trimmedDate !== nextTrimmedDate) {
-              dates[i].insertAdjacentHTML('afterend', `
-                <li class="plan-dates__item plan-dates__item--busy plan-dates__item--small route__btn">
-  
-                </li>
-              `)
-            }
-
-            maxDivider[trimmedDate]++
-          }
-        }
+        max = Math.max(dates.length)
+        console.log(max)
       })
 
 
-      const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
-      dynamicDate.style.minWidth = `${(sum * 37) - 3}px`
+      // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
+      dynamicDate.style.minWidth = `${(max * 37) - 3}px`
 
     }, 60 * datesList.length)
   }
