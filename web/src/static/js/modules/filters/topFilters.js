@@ -81,7 +81,6 @@ export const topFiltersHandler = () => {
         console.log(window.location.href)
         window.location.href = link.querySelector('.hidden__input').value
       }
-
     })
   })
 
@@ -167,9 +166,6 @@ export const topFiltersHandler = () => {
       state['currentTopPlots'].includes(filt.plot)
     )
 
-    console.log(state.topFilters)
-    console.log(state.topPlots)
-
     removeData(filterFilters)
     if (state['currentTopFilters'].length) {
       drawTopPanel(state['currentTopFilters'], filterFilters)
@@ -178,19 +174,6 @@ export const topFiltersHandler = () => {
     }
 
     filterListener(filterFilters)
-  }
-
-  const removePlotsByUser = (plot, plots) => {
-    const newPlots = []
-    plots.forEach(f => {
-      console.log(f)
-      if (f.name === plot) {
-        newPlots.push(f)
-      }
-    })
-
-    removeData(plotFilters)
-    drawTopPanel(newPlots, plotFilters)
   }
 
   const filterListener = block => {
@@ -264,19 +247,16 @@ export const topFiltersHandler = () => {
     }
   }
 
-  const drawUsers = users => {
-    users.forEach(u => {
-      document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
-            <option value='${u.id}'>
-                ${u.name}
-            </option>
-        `)
-    })
-  }
-
   const draw = async () => {
     let plots = []
     let filters = []
+
+    await getData('plots/get-all')
+      .then(data => {
+        drawTopPanel(data.data, plotFilters, true)
+        plots = data.data
+        state['topPlots'] = plots
+      }).then(_ => plotListener(plotFilters))
 
     await getData('filters/get-all')
       .then(data => {
@@ -287,22 +267,22 @@ export const topFiltersHandler = () => {
         state['topFilters'] = filters
       }).then(_ => filterListener(filterFilters))
 
-    await getData('plots/get-all')
-      .then(data => {
-        drawTopPanel(data.data, plotFilters, true)
-        plots = data.data
-        state['topPlots'] = plots
-      }).then(_ => plotListener(plotFilters))
+    if (userInf.groupId === "5") {
+      console.log(userInf.plot)
+      state.topPlots = state.topPlots.filter(pl => pl.name === userInf.plot)
+      state['topFilters'] = state['topFilters'].filter(filt => state.topPlots[0].name === filt.plot)
 
-    if (selectUser !== null) {
-      await getData('users/get-operators')
-        .then(data => {
-          drawUsers(data.data)
-          state['currentTopPlots'] = data.data[0].plot
-          removePlotsByUser(data.data[0].plot, state['topPlots'])
-          filterByPlots()
-          plotListener(plotFilters)
-        })
+      removeData(plotFilters)
+      removeData(filterFilters)
+
+      drawTopPanel(state['topPlots'], plotFilters, true)
+      drawTopPanel(state['topFilters'], filterFilters)
+
+      plotListener(plotFilters)
+      filterListener(filterFilters)
+
+      console.log(state.topPlots)
+      console.log(state.topFilters)
     }
   }
   draw()

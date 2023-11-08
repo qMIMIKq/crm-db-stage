@@ -3444,8 +3444,6 @@ const topFiltersHandler = () => {
   };
   const filterByPlots = () => {
     _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters.filter(filt => _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots.includes(filt.plot));
-    console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters);
-    console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots);
     removeData(filterFilters);
     if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length) {
       drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters, filterFilters);
@@ -3453,17 +3451,6 @@ const topFiltersHandler = () => {
       drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters, filterFilters);
     }
     filterListener(filterFilters);
-  };
-  const removePlotsByUser = (plot, plots) => {
-    const newPlots = [];
-    plots.forEach(f => {
-      console.log(f);
-      if (f.name === plot) {
-        newPlots.push(f);
-      }
-    });
-    removeData(plotFilters);
-    drawTopPanel(newPlots, plotFilters);
   };
   const filterListener = block => {
     block.querySelectorAll('button').forEach(btn => {
@@ -3530,37 +3517,32 @@ const topFiltersHandler = () => {
       document.querySelector('.nav-filters__reset').remove();
     }
   };
-  const drawUsers = users => {
-    users.forEach(u => {
-      document.querySelector('.select-user').insertAdjacentHTML('beforeend', `
-            <option value='${u.id}'>
-                ${u.name}
-            </option>
-        `);
-    });
-  };
   const draw = async () => {
     let plots = [];
     let filters = [];
+    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('plots/get-all').then(data => {
+      drawTopPanel(data.data, plotFilters, true);
+      plots = data.data;
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = plots;
+    }).then(_ => plotListener(plotFilters));
     await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('filters/get-all').then(data => {
       data.data = data.data.filter(d => !d.disable);
       drawTopPanel(data.data, filterFilters);
       filters = data.data;
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = filters;
     }).then(_ => filterListener(filterFilters));
-    await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('plots/get-all').then(data => {
-      drawTopPanel(data.data, plotFilters, true);
-      plots = data.data;
-      _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = plots;
-    }).then(_ => plotListener(plotFilters));
-    if (selectUser !== null) {
-      await (0,_getData__WEBPACK_IMPORTED_MODULE_0__.getData)('users/get-operators').then(data => {
-        drawUsers(data.data);
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopPlots = data.data[0].plot;
-        removePlotsByUser(data.data[0].plot, _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots);
-        filterByPlots();
-        plotListener(plotFilters);
-      });
+    if (_state__WEBPACK_IMPORTED_MODULE_1__.userInf.groupId === "5") {
+      console.log(_state__WEBPACK_IMPORTED_MODULE_1__.userInf.plot);
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots.filter(pl => pl.name === _state__WEBPACK_IMPORTED_MODULE_1__.userInf.plot);
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters.filter(filt => _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots[0].name === filt.plot);
+      removeData(plotFilters);
+      removeData(filterFilters);
+      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots, plotFilters, true);
+      drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters, filterFilters);
+      plotListener(plotFilters);
+      filterListener(filterFilters);
+      console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots);
+      console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters);
     }
   };
   draw();
@@ -7606,13 +7588,26 @@ const topPlansFilters = () => {
       plots = data.data;
       _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots = plots;
     }).then(_ => plotListener(plotFilters));
-    if (selectUser !== null) {
+    if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.groupId === "5") {
       await (0,_modules_getData__WEBPACK_IMPORTED_MODULE_3__.getData)('users/get-operators').then(data => {
         _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopPlots = data.data[0].plot;
         removePlotsByUser(data.data[0].plot, _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots);
         filterByPlots();
         plotListener(plotFilters);
       });
+    }
+    if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.groupId === "5") {
+      console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.plot);
+      _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots.filter(pl => pl.name === _modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.plot);
+      _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters.filter(filt => _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots[0].name === filt.plot);
+      removeData(plotFilters);
+      removeData(filterFilters);
+      drawTopPanel(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots, plotFilters, true);
+      drawTopPanel(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters, filterFilters);
+      plotListener(plotFilters);
+      filterListener(filterFilters);
+      console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots);
+      console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters);
     }
   };
   draw();

@@ -238,7 +238,7 @@ export const topPlansFilters = () => {
         state['topPlots'] = plots
       }).then(_ => plotListener(plotFilters))
 
-    if (selectUser !== null) {
+    if (userInf.groupId === "5") {
       await getData('users/get-operators')
         .then(data => {
           state['currentTopPlots'] = data.data[0].plot
@@ -246,6 +246,24 @@ export const topPlansFilters = () => {
           filterByPlots()
           plotListener(plotFilters)
         })
+    }
+
+    if (userInf.groupId === "5") {
+      console.log(userInf.plot)
+      state.topPlots = state.topPlots.filter(pl => pl.name === userInf.plot)
+      state['topFilters'] = state['topFilters'].filter(filt => state.topPlots[0].name === filt.plot)
+
+      removeData(plotFilters)
+      removeData(filterFilters)
+
+      drawTopPanel(state['topPlots'], plotFilters, true)
+      drawTopPanel(state['topFilters'], filterFilters)
+
+      plotListener(plotFilters)
+      filterListener(filterFilters)
+
+      console.log(state.topPlots)
+      console.log(state.topFilters)
     }
   }
   draw()
