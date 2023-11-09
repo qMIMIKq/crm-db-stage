@@ -51,7 +51,9 @@ func (r ReportsPG) RemoveForUpdateReports(id string) error {
 		DELETE FROM reports WHERE order_id = $1 AND report_date >= $2
 	`)
 
-	today := time.Now().Format("2006-01-02")
+	loc, _ := time.LoadLocation("Local")
+	today := time.Now().In(loc).Format("2006-01-02")
+	log.Info().Msgf("TODAY IS %v", today)
 
 	_, err := r.db.Exec(query, id, today)
 	return err

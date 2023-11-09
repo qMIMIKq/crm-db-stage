@@ -42,7 +42,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var files []string
 	layout := "2006-01-02"
-	today := time.Now().Format(layout)
+	loc, _ := time.LoadLocation("Local")
+	today := time.Now().In(loc).Format(layout)
 
 	var err error
 	for _, order := range orders {
@@ -147,16 +148,19 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							 VALUES ($1, $2, $3, $4, $5, $6)
 				`)
 
-				newToday := time.Now().Add(24 * time.Hour).Format(layout)
+				newToday := time.Now().Add(3 * time.Hour).Format(layout)
 
 				log.Info().Msgf("today %v", newToday)
 				for _, changer := range route.ReportChanger {
 					changerDate, _ := time.Parse(layout, changer.Date)
+
 					var reports []domain.Report
-					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date <= $2 ORDER BY report_date`, route.RouteID, newToday)
+					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date < $2 ORDER BY report_date`, route.RouteID, today)
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
 					}
+
+					log.Info().Msgf("reports length", len(reports))
 
 					for _, report := range reports {
 						reportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
@@ -193,36 +197,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							fmt.Println("")
 							fmt.Println("")
 						}
-
 					}
 				}
-
-				//var report domain.Report
-
-				//for _, changer := range route.ReportChanger {
-				//	queryReport := fmt.Sprintf(`
-				//		SELECT * FROM reports WHERE report_date = $1 AND route_id = $2
-				//	`)
-				//
-				//	err = o.db.Get(&report, queryReport, changer.Date, route.RouteID)
-				//	if err != nil {
-				//		log.Err(err).Caller().Msg("error")
-				//	} else {
-				//		log.Info().Interface("reports", report).Msg("REPORTS!!!")
-				//		log.Info().Interface("report changer", changer).Msg("REPORT CHANGER!!")
-				//		fmt.Println("")
-				//
-				//
-				//
-				//
-				//		intIssuedPlan += changer.Quantity
-				//		intIssued += changer.Quantity
-				//
-				//		fmt.Printf("issued plan new %v : issued totally %v \n", intIssuedPlan, intIssued)
-				//
-
-				//	}
-				//}
 
 				_, err = o.db.Exec("DELETE FROM plans WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, info := range route.AddedDates {
