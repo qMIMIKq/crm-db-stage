@@ -49,9 +49,9 @@ type Info struct {
 }
 
 type ReportChanger struct {
-	OperatorName string `json:"operator_name"`
-	ReportDate   string `json:"report_date"`
-	Quantity     string `json:"quantity"`
+	Operator string `json:"operator"`
+	Date     string `json:"date"`
+	Quantity int    `json:"quantity"`
 }
 
 type Comment struct {

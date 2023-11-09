@@ -159,7 +159,7 @@ export const tableRoutesFiltersHandler = () => {
 
 
   inPlanDate.value = today
-  inPlanDate.setAttribute('min', today)
+  // inPlanDate.setAttribute('min', today)
 
   state.inPlanDate = inPlanDate.value
   inPlanBtn.addEventListener('click', e => {

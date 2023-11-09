@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -146,6 +147,81 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							 VALUES ($1, $2, $3, $4, $5, $6)
 				`)
 
+				for _, changer := range route.ReportChanger {
+					changerDate, _ := time.Parse(layout, changer.Date)
+					log.Info().Interface("changer", changer).Msg("CHANGER IS!")
+
+					var reports []domain.Report
+					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date < $2`, route.RouteID, today)
+					if err != nil {
+						log.Err(err).Caller().Msg("ERROR")
+					}
+
+					for _, report := range reports {
+						reportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
+
+						intIssuedPlan, _ := strconv.Atoi(report.IssuedPlan)
+						intIssued, _ := strconv.Atoi(report.Issued)
+						intIssued += changer.Quantity
+
+						if reportDate.Unix() < changerDate.Unix() {
+							log.Info().Msgf("changer date %v report date %v SMALLER!", changer.Date, report.ReportDate)
+							fmt.Println("")
+							continue
+						}
+
+						if changerDate.Unix() == reportDate.Unix() {
+							log.Info().Msgf("changer date for update %v GOT THIS!!", changer.Date)
+							fmt.Println("")
+							intIssuedPlan += changer.Quantity
+							_, err = o.db.Exec(`UPDATE reports SET issued = $1, issued_plan = $2, operator = $3 WHERE report_id = $4`, intIssued, intIssuedPlan, changer.Operator, report.ReportID)
+							if err != nil {
+								log.Err(err).Caller().Msg("error")
+							}
+
+						} else {
+							log.Info().Msgf("changer date for update %v JUST UPDATE", changer.Date)
+							fmt.Println("")
+
+							_, err = o.db.Exec(`UPDATE reports SET issued = $1, issued_plan = $2 WHERE report_id = $3`, intIssued, intIssuedPlan, report.ReportID)
+							if err != nil {
+								log.Err(err).Caller().Msg("error")
+							}
+
+							fmt.Println("")
+							fmt.Println("")
+						}
+
+					}
+				}
+
+				//var report domain.Report
+
+				//for _, changer := range route.ReportChanger {
+				//	queryReport := fmt.Sprintf(`
+				//		SELECT * FROM reports WHERE report_date = $1 AND route_id = $2
+				//	`)
+				//
+				//	err = o.db.Get(&report, queryReport, changer.Date, route.RouteID)
+				//	if err != nil {
+				//		log.Err(err).Caller().Msg("error")
+				//	} else {
+				//		log.Info().Interface("reports", report).Msg("REPORTS!!!")
+				//		log.Info().Interface("report changer", changer).Msg("REPORT CHANGER!!")
+				//		fmt.Println("")
+				//
+				//
+				//
+				//
+				//		intIssuedPlan += changer.Quantity
+				//		intIssued += changer.Quantity
+				//
+				//		fmt.Printf("issued plan new %v : issued totally %v \n", intIssuedPlan, intIssued)
+				//
+
+				//	}
+				//}
+
 				_, err = o.db.Exec("DELETE FROM plans WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, info := range route.AddedDates {
 					checkPlanDate, _ := time.Parse(layout, strings.Split(info.Date, "T")[0])
@@ -173,13 +249,14 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					`)
 
 					if checkPlanDate.Unix() >= checkToday.Unix() {
+						issued, _ := strconv.Atoi(route.Issued)
+
 						var reportID int
 						err = o.db.QueryRow(
 							reportQuery, info.Date, order.ID, order.Number, order.Client,
-							order.Name, route.Quantity, route.Issued, route.DayQuantity,
+							order.Name, route.Quantity, issued, route.DayQuantity,
 							route.User, issuedToday, order.Material, route.Plot, today, routePos, routeID, order.TimeStamp,
 						).Scan(&reportID)
-						log.Info().Msgf("ADD REPORT %v", reportID)
 						if err != nil {
 							log.Err(err).Caller().Msg("ERROR")
 						}
@@ -464,8 +541,8 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 		query = fmt.Sprintf(`
 			SELECT * 
 			  FROM orders 
-			 WHERE completed = false
-			 	 AND time_of_modify > $1
+-- 			 WHERE completed = false
+			 	 WHERE time_of_modify > $1
 			   AND time_of_modify >= $2
 		   ORDER BY order_id ASC;
 		`)

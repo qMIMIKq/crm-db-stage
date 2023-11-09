@@ -533,7 +533,7 @@ export const triggerRoutesModal = e => {
   const reportChanger = []
 
   issuedBtn.addEventListener('click', e => {
-    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, document.querySelector('.logs-filter__button--current').value)
+    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger)
   })
 
   // const dynEndInp = document.querySelector('#route__dynend')
@@ -964,24 +964,6 @@ export const triggerRoutesModal = e => {
       obj[key] = value
     })
 
-    obj['plot'] = routeForm.querySelector('#route__plot').value
-    obj['comments'] = createReportObj(obj['comments'])
-    obj['error_msg'] = errInput.value
-    obj['plan_date'] = planObj.planEnd
-    obj['plan_start'] = planObj.planStart
-    obj['plan_faster'] = planObj.faster
-    obj['exclude_days'] = planObj.exclude
-    obj['route_id'] = routeInfo.route_id
-
-    obj['planned'] = plannedObj['planned']
-
-    let today = getTime()
-    today = today.substring(0, today.length - 5)
-    obj['issued_today'] = issuedTodayStart.value
-
-    // obj['planned'] = !!(dbID && planned)
-    obj['report_changer'] = reportChanger
-
     let resAddedDates = []
     for (const [addedDate, entry] of Object.entries(addedDates)) {
       resAddedDates.push({
@@ -990,19 +972,30 @@ export const triggerRoutesModal = e => {
       })
     }
 
-
-    // console.log(resAddedDates)
+    obj['plot'] = routeForm.querySelector('#route__plot').value
+    obj['comments'] = createReportObj(obj['comments'])
+    obj['error_msg'] = errInput.value
+    obj['plan_date'] = planObj.planEnd
+    obj['plan_start'] = planObj.planStart
+    obj['plan_faster'] = planObj.faster
+    obj['exclude_days'] = planObj.exclude
+    obj['route_id'] = routeInfo.route_id
+    obj['report_changer'] = reportChanger
+    obj['planned'] = plannedObj['planned']
+    obj['issued_today'] = issuedTodayStart.value
     obj['added_dates'] = resAddedDates
-    console.log(obj)
+    obj['report_changer'] = reportChanger.sort((a, b) => a.date > b.date ? 1 : -1)
+    // obj['planned'] = !!(dbID && planned)
+
 
     routeInput.value = JSON.stringify(obj)
     const parent = routeInput.closest('.table-form--old')
 
-    if (!(parent === null)) {
-      parent.classList.remove('table-form--old')
-      parent.classList.add('table-form--upd')
-      sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
-    }
+    // if (!(parent === null)) {
+    parent.classList.remove('table-form--old')
+    parent.classList.add('table-form--upd')
+    //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
+    // }
     submitData()
 
     document.querySelector('.modal--route').remove()

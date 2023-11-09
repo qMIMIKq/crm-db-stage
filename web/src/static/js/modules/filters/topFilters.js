@@ -281,8 +281,6 @@ export const topFiltersHandler = () => {
       plotListener(plotFilters)
       filterListener(filterFilters)
 
-      console.log(state.topPlots)
-      console.log(state.topFilters)
     }
   }
   draw()

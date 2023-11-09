@@ -51,7 +51,6 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   date.value = today
   date.setAttribute('max', today)
 
-
   // console.log(userI)
 
   if (!check) {
@@ -66,6 +65,7 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
     activateOnInput(e, 'issued-ok')
   })
 
+  console.log(updateData)
   drawPlots(plotI, userI.value)
   userData.insertAdjacentHTML('beforeend', `
     <option selected value="${userI.value}">${userI.value}</option>
@@ -76,19 +76,31 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
     addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments')
 
     if (check) {
-      console.log(issuedTodayInput.value)
       addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
 
-      updateData.push({
-        'operator_name': userData.value,
-        'report_date': date.value ? date.value : today,
-        'quantity': modalIssuedInput.value
-      })
+      console.log(date.value)
+      let alreadyInDateCheck = false
+      console.log(updateData.length)
 
-      if (date.value) {
-        console.log('CHECK')
+      if (date.value !== today) {
+        for (let i = 0; i < updateData.length; i++) {
+          if (updateData[i].date === date.value) {
+            updateData[i].operator = userData.value
+            updateData[i].quantity += Number(modalIssuedInput.value)
+          }
+
+          console.log(updateData[i])
+        }
+
+        if (!alreadyInDateCheck) {
+          updateData.push({
+            'operator': userData.value,
+            'date': date.value,
+            'quantity': Number(modalIssuedInput.value)
+          })
+        }
       } else {
-        console.log('NOT CHECK')
+        console.log('TODAY')
         issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value)
       }
 

@@ -8,12 +8,24 @@ import {drawDeadlineP} from "./drawDeadlineP";
 import {drawManagers} from "./drawManagers";
 import {colorRoutes} from "./routesDraw";
 import {cleanSelect} from "../getOrders";
-import {addTriggers} from "../addTriggers";
-import {showRoutesIssued} from "../showFull";
 import {drawHelpers} from "./helpersDraw";
 
 export const drawUpdatedData = (d, data, filtered) => {
   let uniqueFileNames = []
+
+  const currentOrder = document.querySelector(`#form-${d.id}`)
+  const orders = state.orders
+
+  console.log(d)
+  if (d.completed) {
+    state.orders = state.orders.filter(order => String(order.id) !== String(d.id))
+
+    try {
+      currentOrder.remove()
+    } catch {
+    }
+    return
+  }
 
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
@@ -55,9 +67,6 @@ export const drawUpdatedData = (d, data, filtered) => {
     }
   }
 
-  const currentOrder = document.querySelector(`#form-${d.id}`)
-  const orders = state.orders
-
   if (currentOrder) {
     for (let i = 0; i < orders.length; i++) {
       if (orders[i].id === d.id) {
@@ -88,7 +97,8 @@ export const drawUpdatedData = (d, data, filtered) => {
       issued.classList.remove('tr')
       try {
         currentOrder.querySelector('.table__complete').remove()
-      } catch {}
+      } catch {
+      }
     }
 
     currentOrder.querySelector('select[name="m"]').value = d.m

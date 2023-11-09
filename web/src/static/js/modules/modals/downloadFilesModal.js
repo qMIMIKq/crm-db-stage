@@ -175,10 +175,10 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${appAddr}/${file}'>
-                        <img class='file__preview' src='${appAddr}/${file}' alt=>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
+                        <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' alt=>
                     </a>
-                    <a class='file__download' href='http://${file}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>
@@ -195,10 +195,10 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
         default:
           data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${appAddr}/${file}'>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
                         <img class='file__preview' src='${appAddr}/${file}' alt=>
                     </a>
-                    <a class='file__download' href='http://${file}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>
