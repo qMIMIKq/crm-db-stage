@@ -147,18 +147,20 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							 VALUES ($1, $2, $3, $4, $5, $6)
 				`)
 
+				log.Info().Msgf("today", today)
 				for _, changer := range route.ReportChanger {
 					changerDate, _ := time.Parse(layout, changer.Date)
 					log.Info().Interface("changer", changer).Msg("CHANGER IS!")
 
 					var reports []domain.Report
-					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date < $2`, route.RouteID, today)
+					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date <= $2`, route.RouteID, today)
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
 					}
 
 					for _, report := range reports {
 						reportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
+						log.Info().Interface("report", report).Msg("REPORT")
 
 						intIssuedPlan, _ := strconv.Atoi(report.IssuedPlan)
 						intIssued, _ := strconv.Atoi(report.Issued)
