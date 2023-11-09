@@ -2583,7 +2583,7 @@ const enterHelperRoute = e => {
   const cell = e.target;
   let value = e.target.getAttribute('data-title');
   if (value) {
-    const check = value.split('/');
+    const check = value.split('/-_/');
     cell.insertAdjacentHTML('beforeend', `
       <div class="check-helper check-helper--long">
       </div>
@@ -2669,7 +2669,7 @@ const colorRoutes = (routes, parent) => {
       }
       if (route.last_comment) {
         routeInfo.classList.add('route');
-        infoParent.setAttribute('data-title', `${route.last_comment} /`);
+        infoParent.setAttribute('data-title', `${route.last_comment}/-_/`);
         infoParent.classList.add('table-body__trattr');
       }
       if (route.start_time) {
@@ -2686,7 +2686,7 @@ const colorRoutes = (routes, parent) => {
         routeInfo.classList.add('route--error');
         routeInfo.classList.remove('route--started');
         routeInfo.classList.remove('route--completed');
-        infoParent.setAttribute('data-title', `${route.last_comment}/${route.error_msg}`);
+        infoParent.setAttribute('data-title', `${route.last_comment}/-_/${route.error_msg}`);
       }
       if (route.pause_time) {
         routeInfo.classList.add('route');

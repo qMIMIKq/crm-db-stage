@@ -33,7 +33,7 @@ const enterHelperRoute = e => {
   let value = e.target.getAttribute('data-title')
 
   if (value) {
-    const check = value.split('/')
+    const check = value.split('/-_/')
     cell.insertAdjacentHTML('beforeend', `
       <div class="check-helper check-helper--long">
       </div>

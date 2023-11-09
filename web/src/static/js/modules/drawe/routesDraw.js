@@ -36,7 +36,7 @@ export const colorRoutes = (routes, parent) => {
 
       if (route.last_comment) {
         routeInfo.classList.add('route')
-        infoParent.setAttribute('data-title', `${route.last_comment} /`)
+        infoParent.setAttribute('data-title', `${route.last_comment}/-_/`)
         infoParent.classList.add('table-body__trattr')
       }
 
@@ -56,7 +56,7 @@ export const colorRoutes = (routes, parent) => {
         routeInfo.classList.add('route--error')
         routeInfo.classList.remove('route--started')
         routeInfo.classList.remove('route--completed')
-        infoParent.setAttribute('data-title', `${route.last_comment}/${route.error_msg}`)
+        infoParent.setAttribute('data-title', `${route.last_comment}/-_/${route.error_msg}`)
       }
 
 
