@@ -152,10 +152,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				log.Info().Msgf("today %v", newToday)
 				for _, changer := range route.ReportChanger {
 					changerDate, _ := time.Parse(layout, changer.Date)
-					log.Info().Interface("changer", changer).Msg("CHANGER IS!")
-
 					var reports []domain.Report
-					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date < $2`, route.RouteID, newToday)
+					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date <= $2 ORDER BY report_date`, route.RouteID, newToday)
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
 					}
@@ -174,7 +172,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							continue
 						}
 
-						if changerDate.Unix() == reportDate.Unix() {
+						if changer.Date == strings.Split(report.ReportDate, "T")[0] {
 							log.Info().Msgf("changer date for update %v GOT THIS!!", changer.Date)
 							fmt.Println("")
 							intIssuedPlan += changer.Quantity
