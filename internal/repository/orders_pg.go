@@ -42,7 +42,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var files []string
 	layout := "2006-01-02"
-	loc, _ := time.LoadLocation("Local")
+	loc, _ := time.LoadLocation("Europe/Moscow")
 	today := time.Now().In(loc).Format(layout)
 
 	var err error
