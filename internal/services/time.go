@@ -2,6 +2,7 @@ package services
 
 import (
 	"crm/internal/domain"
+	"github.com/rs/zerolog/log"
 	"strconv"
 	"strings"
 	"time"
@@ -60,9 +61,11 @@ func (c *EndTimeCalculator) findNeededTime() float64 {
 }
 
 func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) string {
+	log.Info().Interface("time info", timeInfo).Msg("time info is")
+
 	calc := EndTimeCalculator{
 		Layout:                 "2006-01-02 15:04",
-		WorkerStringStartTime:  timeInfo.Start,
+		WorkerStringStartTime:  strings.ReplaceAll(timeInfo.Start, ".", "-"),
 		MachineStringStartTime: timeInfo.MachineStart,
 		MachineStringEndTime:   timeInfo.MachineEnd,
 		FullQuantity:           float64(timeInfo.Quantity),
