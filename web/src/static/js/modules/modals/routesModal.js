@@ -991,11 +991,11 @@ export const triggerRoutesModal = e => {
     routeInput.value = JSON.stringify(obj)
     const parent = routeInput.closest('.table-form--old')
 
-    // if (!(parent === null)) {
-    parent.classList.remove('table-form--old')
-    parent.classList.add('table-form--upd')
-    //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
-    // }
+    if (!(parent === null)) {
+      parent.classList.remove('table-form--old')
+      parent.classList.add('table-form--upd')
+      //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
+    }
     submitData()
 
     document.querySelector('.modal--route').remove()

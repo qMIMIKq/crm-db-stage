@@ -5839,12 +5839,12 @@ const triggerRoutesModal = e => {
 
     routeInput.value = JSON.stringify(obj);
     const parent = routeInput.closest('.table-form--old');
+    if (!(parent === null)) {
+      parent.classList.remove('table-form--old');
+      parent.classList.add('table-form--upd');
+      //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
+    }
 
-    // if (!(parent === null)) {
-    parent.classList.remove('table-form--old');
-    parent.classList.add('table-form--upd');
-    //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
-    // }
     (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_13__.submitData)();
     document.querySelector('.modal--route').remove();
     window.removeEventListener('keydown', subCommentByEnter);

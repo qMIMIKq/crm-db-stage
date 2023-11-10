@@ -148,9 +148,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							 VALUES ($1, $2, $3, $4, $5, $6)
 				`)
 
-				newToday := time.Now().Add(3 * time.Hour).Format(layout)
-
-				log.Info().Msgf("today %v", newToday)
 				for _, changer := range route.ReportChanger {
 					changerDate, _ := time.Parse(layout, changer.Date)
 
@@ -159,8 +156,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					if err != nil {
 						log.Err(err).Caller().Msg("ERROR")
 					}
-
-					log.Info().Msgf("reports length", len(reports))
 
 					for _, report := range reports {
 						reportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
