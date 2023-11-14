@@ -198,8 +198,12 @@ export const drawUpdatedData = (d, data, filtered) => {
       const routeDataHolder = route.parentNode.querySelector('.hidden__input')
       const namePos = routeDataHolder.getAttribute('name')
       const issuedHolder = currentOrder.querySelector(`[name="${namePos}-issued"]`)
-      routeDataHolder.value = ''
-      issuedHolder.value = ''
+     try {
+       routeDataHolder.value = ''
+       issuedHolder.value = ''
+     } catch (e) {
+
+     }
 
       console.log(issuedHolder)
       console.log(namePos)

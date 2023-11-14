@@ -202,7 +202,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-9-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__route--issued">
-                        <input readonly class="table__data table__data--ro tr click-chose" name="route-10--issued" type="text" value="" tabindex="-1" autocomplete="off">
+                        <input readonly class="table__data table__data--ro tr click-chose" name="route-10-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
                 </ul>
             </li>
