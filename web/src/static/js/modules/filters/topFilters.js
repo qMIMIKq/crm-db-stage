@@ -186,7 +186,19 @@ export const topFiltersHandler = () => {
           if (!document.querySelector('.chosen__plot')) {
             state['currentTopFilters'].push({'name': filter})
           } else {
-            state['currentTopFilters'] = [{'name': filter}]
+            let check = false
+            for (let i = 0; i < state.currentTopFilters.length; i++) {
+              if (state.currentTopFilters[i].id) {
+                check = true
+                break
+              }
+            }
+
+            if (check) {
+              state.currentTopFilters = [{'name': filter}]
+            } else {
+              state['currentTopFilters'].push({'name': filter})
+            }
           }
 
         } else {
@@ -201,7 +213,6 @@ export const topFiltersHandler = () => {
           filtered = true
           controlFilterReset()
         } else {
-          // getOrders('get-all', true)
           newAllFilter()
           filtered = false
           controlFilterReset()
@@ -243,7 +254,10 @@ export const topFiltersHandler = () => {
         })
       }
     } else {
-      document.querySelector('.nav-filters__reset').remove()
+      try {
+        document.querySelector('.nav-filters__reset').remove()
+      } catch (e) {
+      }
     }
   }
 
@@ -268,7 +282,6 @@ export const topFiltersHandler = () => {
       }).then(_ => filterListener(filterFilters))
 
     if (userInf.groupId === "5") {
-      console.log(userInf.plot)
       state.topPlots = state.topPlots.filter(pl => pl.name === userInf.plot)
       state['topFilters'] = state['topFilters'].filter(filt => state.topPlots[0].name === filt.plot)
 
@@ -280,7 +293,6 @@ export const topFiltersHandler = () => {
 
       plotListener(plotFilters)
       filterListener(filterFilters)
-
     }
   }
   draw()

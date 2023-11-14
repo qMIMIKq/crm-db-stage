@@ -15,7 +15,7 @@ type PlanningPG struct {
 
 func (p *PlanningPG) GetAllPlanning() ([]*domain.Planning, error) {
 	planningQuery := fmt.Sprintf(`
-		SELECT * FROM planning
+		SELECT * FROM planning ORDER BY order_id
  `)
 
 	var planning []*domain.Planning

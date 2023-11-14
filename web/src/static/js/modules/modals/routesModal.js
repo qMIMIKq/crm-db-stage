@@ -873,11 +873,16 @@ export const triggerRoutesModal = e => {
     controlCommentAccess(commentInput)
   })
 
+  const prevUserVal = routeUser.value
   routeUser.addEventListener('change', () => {
+    console.log(prevUserVal)
     addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
-    activateNextStage('start-route__btn')
-    activateNextStage('error-route__btn')
-    controlCommentAccess(commentInput)
+
+    if (prevUserVal === 'Выберите оператора') {
+      activateNextStage('start-route__btn')
+      activateNextStage('error-route__btn')
+      controlCommentAccess(commentInput)
+    }
   })
 
   drawLogs(visibleLogs)

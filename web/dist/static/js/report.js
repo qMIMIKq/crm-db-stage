@@ -3478,9 +3478,22 @@ const topFiltersHandler = () => {
               'name': filter
             });
           } else {
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = [{
-              'name': filter
-            }];
+            let check = false;
+            for (let i = 0; i < _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length; i++) {
+              if (_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters[i].id) {
+                check = true;
+                break;
+              }
+            }
+            if (check) {
+              _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = [{
+                'name': filter
+              }];
+            } else {
+              _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.push({
+                'name': filter
+              });
+            }
           }
         } else {
           _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.filter(cF => cF.name !== filter);
@@ -3492,7 +3505,6 @@ const topFiltersHandler = () => {
           filtered = true;
           controlFilterReset();
         } else {
-          // getOrders('get-all', true)
           (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
           filtered = false;
           controlFilterReset();
@@ -3529,7 +3541,9 @@ const topFiltersHandler = () => {
         });
       }
     } else {
-      document.querySelector('.nav-filters__reset').remove();
+      try {
+        document.querySelector('.nav-filters__reset').remove();
+      } catch (e) {}
     }
   };
   const draw = async () => {
@@ -3547,7 +3561,6 @@ const topFiltersHandler = () => {
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = filters;
     }).then(_ => filterListener(filterFilters));
     if (_state__WEBPACK_IMPORTED_MODULE_1__.userInf.groupId === "5") {
-      console.log(_state__WEBPACK_IMPORTED_MODULE_1__.userInf.plot);
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots.filter(pl => pl.name === _state__WEBPACK_IMPORTED_MODULE_1__.userInf.plot);
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters.filter(filt => _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots[0].name === filt.plot);
       removeData(plotFilters);
@@ -5733,11 +5746,15 @@ const triggerRoutesModal = e => {
     controlQuantityAccess(routeQuantity);
     controlCommentAccess(commentInput);
   });
+  const prevUserVal = routeUser.value;
   routeUser.addEventListener('change', () => {
+    console.log(prevUserVal);
     addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments');
-    activateNextStage('start-route__btn');
-    activateNextStage('error-route__btn');
-    controlCommentAccess(commentInput);
+    if (prevUserVal === 'Выберите оператора') {
+      activateNextStage('start-route__btn');
+      activateNextStage('error-route__btn');
+      controlCommentAccess(commentInput);
+    }
   });
   drawLogs(visibleLogs);
   startBtn.addEventListener('click', () => {
@@ -8215,9 +8232,22 @@ const topReportFilter = () => {
               'name': filter
             });
           } else {
-            _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = [{
-              'name': filter
-            }];
+            let check = false;
+            for (let i = 0; i < _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.length; i++) {
+              if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters[i].id) {
+                check = true;
+                break;
+              }
+            }
+            if (check) {
+              _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = [{
+                'name': filter
+              }];
+            } else {
+              _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.push({
+                'name': filter
+              });
+            }
           }
         } else {
           _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.filter(cF => cF.name !== filter);

@@ -169,7 +169,19 @@ export const topReportFilter = () => {
           if (!document.querySelector('.chosen__plot')) {
             state['currentTopFilters'].push({'name': filter})
           } else {
-            state['currentTopFilters'] = [{'name': filter}]
+            let check = false
+            for (let i = 0; i < state.currentTopFilters.length; i++) {
+              if (state.currentTopFilters[i].id) {
+                check = true
+                break
+              }
+            }
+
+            if (check) {
+              state.currentTopFilters = [{'name': filter}]
+            } else {
+              state['currentTopFilters'].push({'name': filter})
+            }
           }
 
         } else {
