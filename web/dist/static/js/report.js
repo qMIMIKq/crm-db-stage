@@ -2494,6 +2494,18 @@ const drawUpdatedData = (d, data, filtered) => {
         }
       });
     }
+    currentOrder.querySelectorAll('.route').forEach(route => {
+      console.log(route);
+      route.value = '-';
+      route.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned', 'route--inplan');
+      const routeDataHolder = route.parentNode.querySelector('.hidden__input');
+      const namePos = routeDataHolder.getAttribute('name');
+      const issuedHolder = currentOrder.querySelector(`[name="${namePos}-issued"]`);
+      routeDataHolder.value = '';
+      issuedHolder.value = '';
+      console.log(issuedHolder);
+      console.log(namePos);
+    });
 
     // bindOrdersListeners(currentOrder)
     if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
@@ -4018,6 +4030,7 @@ const sendFiles = (files, filesInput, old, id, parent) => {
 function triggerFilesModal(e) {
   const parent = e.target.closest('ul');
   const old = parent.parentNode.classList.contains('table-form--old');
+  const plan = parent.parentNode.classList.contains('table-form--plan');
   const db = parent.querySelector('#db_id').value;
   const enter = parent.querySelector('#timestamp').value;
   const number = parent.querySelector('#number').value;
@@ -4037,7 +4050,7 @@ function triggerFilesModal(e) {
   });
   console.log(modalElem);
   const downloadTrigger = document.querySelector('.modal__trigger');
-  if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck && !_state__WEBPACK_IMPORTED_MODULE_0__.state.isArchive) {
+  if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck && !_state__WEBPACK_IMPORTED_MODULE_0__.state.isArchive && !plan) {
     downloadTrigger.addEventListener('click', e => {
       const filesInput = document.querySelector('.modal__files');
       filesInput.addEventListener('change', e => {
@@ -4069,6 +4082,8 @@ function triggerFilesModal(e) {
 }
 const drawFiles = (modal, files, id, filesInput, parent) => {
   const data = modal.querySelector('.data');
+  const plan = parent.classList.contains('table-form--plan');
+  console.log(plan);
   if (files.length) {
     const fileNames = [];
     files.split(', ').map(file => {
@@ -4148,28 +4163,32 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
     });
     let newData = filesInput.value.split(', ');
     document.querySelectorAll(".file__remove").forEach(btn => {
-      btn.addEventListener('click', e => {
-        const file = e.target.parentNode;
-        const fileName = file.querySelector('.file__name').textContent;
-        const drop = modal.querySelector('.modal__trigger');
-        newData = newData.filter(data => data === fileName);
-        filesInput.value = newData.join(', ');
-        (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null).then(res => {
-          if (res.ok) {
-            file.remove();
-            drop.textContent = 'Файл успешно удалён';
-            drop.classList.add('success');
-            if (parent.classList.contains('table-form--old')) {
-              parent.classList.remove('table-form--old');
-              parent.classList.add('table-form--upd');
+      if (!plan && !_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck) {
+        btn.addEventListener('click', e => {
+          const file = e.target.parentNode;
+          const fileName = file.querySelector('.file__name').textContent;
+          const drop = modal.querySelector('.modal__trigger');
+          newData = newData.filter(data => data === fileName);
+          filesInput.value = newData.join(', ');
+          (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null).then(res => {
+            if (res.ok) {
+              file.remove();
+              drop.textContent = 'Файл успешно удалён';
+              drop.classList.add('success');
+              if (parent.classList.contains('table-form--old')) {
+                parent.classList.remove('table-form--old');
+                parent.classList.add('table-form--upd');
+              }
+              setTimeout(() => {
+                drop.classList.remove('success');
+                drop.textContent = 'Укажите файлы для загрузки';
+              }, 1000);
             }
-            setTimeout(() => {
-              drop.classList.remove('success');
-              drop.textContent = 'Укажите файлы для загрузки';
-            }, 1000);
-          }
+          });
         });
-      });
+      } else {
+        btn.remove();
+      }
 
       // submitData()
     });
@@ -5384,7 +5403,9 @@ const triggerRoutesModal = e => {
       pauseBtn.classList.add('route-type__paused');
     }
     if (!pauseBtn.classList.contains('route-type__paused')) {
-      setDateToInput('pause-route__time');
+      if (!reset) {
+        setDateToInput('pause-route__time');
+      }
       disableBtn('route__select--user');
       if (!planObj.planStart) {
         disableBtn('route-plan__date');
@@ -5545,7 +5566,14 @@ const triggerRoutesModal = e => {
             routeInfo.value = '-';
             routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned');
             modalElem.remove();
-            (0,_getOrders__WEBPACK_IMPORTED_MODULE_6__.getOrders)('get-all', true);
+            const parent = routeInput.closest('.table-form--old');
+            if (!(parent === null)) {
+              parent.classList.remove('table-form--old');
+              parent.classList.add('table-form--upd');
+              (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_13__.submitData)();
+            }
+
+            // getOrders('get-all', true)
           });
         }, 'Удалить маршрут?');
       });
@@ -6501,6 +6529,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_getTime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/getTime */ "./web/src/static/js/modules/getTime.js");
 /* harmony import */ var _modules_modals_showModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/modals/showModal */ "./web/src/static/js/modules/modals/showModal.js");
 /* harmony import */ var _getPlans__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getPlans */ "./web/src/static/js/plan/getPlans.js");
+/* harmony import */ var _modules_addTriggers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/addTriggers */ "./web/src/static/js/modules/addTriggers.js");
+/* harmony import */ var _modules_modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
+
+
 
 
 
@@ -6556,15 +6588,41 @@ function getWeekDay(date) {
 let globalDatesObj = {};
 let foundedPlots = [];
 const drawPlan = (d, data) => {
+  let uniqueFileNames = [];
+  if (d.files !== null && d.files !== undefined) {
+    d.files.forEach(file => {
+      const arrDotFile = file.split('.');
+      const fileType = arrDotFile[arrDotFile.length - 1];
+      const arrSlashFile = file.split('/');
+      arrSlashFile.splice(0, 3);
+      const fileName = arrSlashFile.join('');
+      let fileNameWithoutType = fileName.split('.');
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
+      switch (fileType) {
+        case 'png':
+        case 'PNG':
+          if (!uniqueFileNames.includes(fileNameWithoutType)) uniqueFileNames.push(fileNameWithoutType);
+          break;
+        default:
+          uniqueFileNames.push(fileNameWithoutType);
+      }
+    });
+  }
   table.insertAdjacentHTML(`afterbegin`, `
-    <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
+    <form id="form-${d.id}" class='table-form table-form--plan table-form--old' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
               <input id='db_id' class='table__data main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input id="timestamp" class='table__data table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
+          <li class='table-body_cell hidden-input'>
+              <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li class='table-body_cell table__files'>
+              <input id="total_files" class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+          </li>   
           <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
               <input 
               readonly
@@ -6624,6 +6682,7 @@ const drawPlan = (d, data) => {
   }
   const currentOrder = document.querySelector(`#form-${d.id}`);
   planningHandler(currentOrder, d, addedDates);
+  (0,_modules_addTriggers__WEBPACK_IMPORTED_MODULE_5__.addTriggers)(currentOrder, '.table__files', _modules_modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_6__.triggerFilesModal);
 
   // addTriggers("#db_id", showRoutesIssued)
   // addTriggers(".table__files", triggerFilesModal)
@@ -7354,7 +7413,6 @@ const getPlans = updateOnly => {
       datesList.forEach(dateList => {
         const dates = dateList.querySelectorAll('.plan-dates__item');
         max = Math.max(dates.length);
-        console.log(max);
       });
 
       // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)

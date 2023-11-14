@@ -191,6 +191,20 @@ export const drawUpdatedData = (d, data, filtered) => {
       })
     }
 
+    currentOrder.querySelectorAll('.route').forEach(route => {
+      console.log(route)
+      route.value = '-'
+      route.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned', 'route--inplan')
+      const routeDataHolder = route.parentNode.querySelector('.hidden__input')
+      const namePos = routeDataHolder.getAttribute('name')
+      const issuedHolder = currentOrder.querySelector(`[name="${namePos}-issued"]`)
+      routeDataHolder.value = ''
+      issuedHolder.value = ''
+
+      console.log(issuedHolder)
+      console.log(namePos)
+    })
+
     // bindOrdersListeners(currentOrder)
     if (!state['isArchive']) {
       cleanSelect(currentOrder, ".table-p-select")

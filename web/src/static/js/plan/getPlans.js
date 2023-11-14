@@ -148,9 +148,7 @@ export const getPlans = (updateOnly) => {
         datesList.forEach(dateList => {
           const dates = dateList.querySelectorAll('.plan-dates__item')
           max = Math.max(dates.length)
-          console.log(max)
         })
-
 
         // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
         dynamicDate.style.minWidth = `${(max * 37) - 3}px`

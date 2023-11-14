@@ -28,8 +28,17 @@ func (p *PlanningPG) GetAllPlanning() ([]*domain.Planning, error) {
 		 ORDER BY plan_date
 	`)
 
+	queryFiles := fmt.Sprintf(`
+		SELECT file_name FROM files WHERE order_id = $1
+	`)
+
 	for _, plan := range planning {
 		err = p.db.Select(&plan.DBPlanDates, queryRoutePlan, plan.RouteID)
+		if err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
+
+		err = p.db.Select(&plan.Files, queryFiles, plan.OrderID)
 		if err != nil {
 			log.Err(err).Caller().Msg("error is")
 		}

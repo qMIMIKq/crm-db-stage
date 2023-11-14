@@ -3,6 +3,8 @@ import {appAddr} from "../../../../../appAddr";
 import {getTime} from "../modules/getTime";
 import {showModal} from "../modules/modals/showModal";
 import {getPlans} from "./getPlans";
+import {addTriggers} from "../modules/addTriggers";
+import {triggerFilesModal} from "../modules/modals/downloadFilesModal";
 
 export const table = document.querySelector('.main-table')
 
@@ -61,15 +63,46 @@ export let globalDatesObj = {}
 let foundedPlots = []
 
 export const drawPlan = (d, data) => {
+  let uniqueFileNames = []
+
+  if (d.files !== null && d.files !== undefined) {
+    d.files.forEach(file => {
+      const arrDotFile = file.split('.')
+      const fileType = arrDotFile[arrDotFile.length - 1]
+
+      const arrSlashFile = file.split('/')
+      arrSlashFile.splice(0, 3)
+      const fileName = arrSlashFile.join('')
+      let fileNameWithoutType = fileName.split('.')
+      fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
+
+      switch (fileType) {
+        case 'png':
+        case 'PNG':
+          if (!uniqueFileNames.includes(fileNameWithoutType))
+            uniqueFileNames.push(fileNameWithoutType)
+          break
+        default:
+          uniqueFileNames.push(fileNameWithoutType)
+      }
+    })
+  }
+
   table.insertAdjacentHTML(`afterbegin`, `
-    <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
+    <form id="form-${d.id}" class='table-form table-form--plan table-form--old' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
               <input id='db_id' class='table__data main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input id="timestamp" class='table__data table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
+          <li class='table-body_cell hidden-input'>
+              <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li class='table-body_cell table__files'>
+              <input id="total_files" class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+          </li>   
           <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
               <input 
               readonly
@@ -134,6 +167,7 @@ export const drawPlan = (d, data) => {
 
   const currentOrder = document.querySelector(`#form-${d.id}`)
   planningHandler(currentOrder, d, addedDates)
+  addTriggers(currentOrder, '.table__files', triggerFilesModal)
 
   // addTriggers("#db_id", showRoutesIssued)
   // addTriggers(".table__files", triggerFilesModal)

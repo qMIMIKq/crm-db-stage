@@ -477,7 +477,9 @@ export const triggerRoutesModal = e => {
 
 
     if (!pauseBtn.classList.contains('route-type__paused')) {
-      setDateToInput('pause-route__time')
+      if (!reset) {
+        setDateToInput('pause-route__time')
+      }
       disableBtn('route__select--user')
 
       if (!planObj.planStart) {
@@ -670,7 +672,14 @@ export const triggerRoutesModal = e => {
               routeInfo.value = '-'
               routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
               modalElem.remove()
-              getOrders('get-all', true)
+              const parent = routeInput.closest('.table-form--old')
+              if (!(parent === null)) {
+                parent.classList.remove('table-form--old')
+                parent.classList.add('table-form--upd')
+                submitData()
+              }
+
+              // getOrders('get-all', true)
             })
         }, 'Удалить маршрут?')
       })

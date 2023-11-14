@@ -2517,6 +2517,18 @@ const drawUpdatedData = (d, data, filtered) => {
         }
       });
     }
+    currentOrder.querySelectorAll('.route').forEach(route => {
+      console.log(route);
+      route.value = '-';
+      route.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned', 'route--inplan');
+      const routeDataHolder = route.parentNode.querySelector('.hidden__input');
+      const namePos = routeDataHolder.getAttribute('name');
+      const issuedHolder = currentOrder.querySelector(`[name="${namePos}-issued"]`);
+      routeDataHolder.value = '';
+      issuedHolder.value = '';
+      console.log(issuedHolder);
+      console.log(namePos);
+    });
 
     // bindOrdersListeners(currentOrder)
     if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
@@ -4041,6 +4053,7 @@ const sendFiles = (files, filesInput, old, id, parent) => {
 function triggerFilesModal(e) {
   const parent = e.target.closest('ul');
   const old = parent.parentNode.classList.contains('table-form--old');
+  const plan = parent.parentNode.classList.contains('table-form--plan');
   const db = parent.querySelector('#db_id').value;
   const enter = parent.querySelector('#timestamp').value;
   const number = parent.querySelector('#number').value;
@@ -4060,7 +4073,7 @@ function triggerFilesModal(e) {
   });
   console.log(modalElem);
   const downloadTrigger = document.querySelector('.modal__trigger');
-  if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck && !_state__WEBPACK_IMPORTED_MODULE_0__.state.isArchive) {
+  if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck && !_state__WEBPACK_IMPORTED_MODULE_0__.state.isArchive && !plan) {
     downloadTrigger.addEventListener('click', e => {
       const filesInput = document.querySelector('.modal__files');
       filesInput.addEventListener('change', e => {
@@ -4092,6 +4105,8 @@ function triggerFilesModal(e) {
 }
 const drawFiles = (modal, files, id, filesInput, parent) => {
   const data = modal.querySelector('.data');
+  const plan = parent.classList.contains('table-form--plan');
+  console.log(plan);
   if (files.length) {
     const fileNames = [];
     files.split(', ').map(file => {
@@ -4171,28 +4186,32 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
     });
     let newData = filesInput.value.split(', ');
     document.querySelectorAll(".file__remove").forEach(btn => {
-      btn.addEventListener('click', e => {
-        const file = e.target.parentNode;
-        const fileName = file.querySelector('.file__name').textContent;
-        const drop = modal.querySelector('.modal__trigger');
-        newData = newData.filter(data => data === fileName);
-        filesInput.value = newData.join(', ');
-        (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null).then(res => {
-          if (res.ok) {
-            file.remove();
-            drop.textContent = 'Файл успешно удалён';
-            drop.classList.add('success');
-            if (parent.classList.contains('table-form--old')) {
-              parent.classList.remove('table-form--old');
-              parent.classList.add('table-form--upd');
+      if (!plan && !_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck) {
+        btn.addEventListener('click', e => {
+          const file = e.target.parentNode;
+          const fileName = file.querySelector('.file__name').textContent;
+          const drop = modal.querySelector('.modal__trigger');
+          newData = newData.filter(data => data === fileName);
+          filesInput.value = newData.join(', ');
+          (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null).then(res => {
+            if (res.ok) {
+              file.remove();
+              drop.textContent = 'Файл успешно удалён';
+              drop.classList.add('success');
+              if (parent.classList.contains('table-form--old')) {
+                parent.classList.remove('table-form--old');
+                parent.classList.add('table-form--upd');
+              }
+              setTimeout(() => {
+                drop.classList.remove('success');
+                drop.textContent = 'Укажите файлы для загрузки';
+              }, 1000);
             }
-            setTimeout(() => {
-              drop.classList.remove('success');
-              drop.textContent = 'Укажите файлы для загрузки';
-            }, 1000);
-          }
+          });
         });
-      });
+      } else {
+        btn.remove();
+      }
 
       // submitData()
     });
@@ -5407,7 +5426,9 @@ const triggerRoutesModal = e => {
       pauseBtn.classList.add('route-type__paused');
     }
     if (!pauseBtn.classList.contains('route-type__paused')) {
-      setDateToInput('pause-route__time');
+      if (!reset) {
+        setDateToInput('pause-route__time');
+      }
       disableBtn('route__select--user');
       if (!planObj.planStart) {
         disableBtn('route-plan__date');
@@ -5568,7 +5589,14 @@ const triggerRoutesModal = e => {
             routeInfo.value = '-';
             routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned');
             modalElem.remove();
-            (0,_getOrders__WEBPACK_IMPORTED_MODULE_6__.getOrders)('get-all', true);
+            const parent = routeInput.closest('.table-form--old');
+            if (!(parent === null)) {
+              parent.classList.remove('table-form--old');
+              parent.classList.add('table-form--upd');
+              (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_13__.submitData)();
+            }
+
+            // getOrders('get-all', true)
           });
         }, 'Удалить маршрут?');
       });

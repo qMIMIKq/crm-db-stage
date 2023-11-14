@@ -73,6 +73,7 @@ const sendFiles = (files, filesInput, old, id, parent) => {
 export function triggerFilesModal(e) {
   const parent = e.target.closest('ul')
   const old = parent.parentNode.classList.contains('table-form--old')
+  const plan = parent.parentNode.classList.contains('table-form--plan')
   const db = parent.querySelector('#db_id').value
   const enter = parent.querySelector('#timestamp').value
   const number = parent.querySelector('#number').value
@@ -97,7 +98,7 @@ export function triggerFilesModal(e) {
 
   const downloadTrigger = document.querySelector('.modal__trigger')
 
-  if (!state['operCheck'] && !state['isArchive']) {
+  if (!state['operCheck'] && !state['isArchive'] && !plan) {
     downloadTrigger.addEventListener('click', e => {
       const filesInput = document.querySelector('.modal__files')
       filesInput.addEventListener('change', e => {
@@ -133,6 +134,8 @@ export function triggerFilesModal(e) {
 
 export const drawFiles = (modal, files, id, filesInput, parent) => {
   const data = modal.querySelector('.data')
+  const plan = parent.classList.contains('table-form--plan')
+  console.log(plan)
 
   if (files.length) {
     const fileNames = []
@@ -216,33 +219,37 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
     let newData = filesInput.value.split(', ')
 
     document.querySelectorAll(".file__remove").forEach(btn => {
-      btn.addEventListener('click', e => {
-        const file = e.target.parentNode
-        const fileName = file.querySelector('.file__name').textContent
-        const drop = modal.querySelector('.modal__trigger')
+      if (!plan && !state.operCheck) {
+        btn.addEventListener('click', e => {
+          const file = e.target.parentNode
+          const fileName = file.querySelector('.file__name').textContent
+          const drop = modal.querySelector('.modal__trigger')
 
-        newData = newData.filter(data => data === fileName)
-        filesInput.value = newData.join(', ')
+          newData = newData.filter(data => data === fileName)
+          filesInput.value = newData.join(', ')
 
-        sendData(`${appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null)
-          .then(res => {
-            if (res.ok) {
-              file.remove()
-              drop.textContent = 'Файл успешно удалён'
-              drop.classList.add('success')
+          sendData(`${appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null)
+            .then(res => {
+              if (res.ok) {
+                file.remove()
+                drop.textContent = 'Файл успешно удалён'
+                drop.classList.add('success')
 
-              if (parent.classList.contains('table-form--old')) {
-                parent.classList.remove('table-form--old')
-                parent.classList.add('table-form--upd')
+                if (parent.classList.contains('table-form--old')) {
+                  parent.classList.remove('table-form--old')
+                  parent.classList.add('table-form--upd')
+                }
+
+                setTimeout(() => {
+                  drop.classList.remove('success')
+                  drop.textContent = 'Укажите файлы для загрузки'
+                }, 1000)
               }
-
-              setTimeout(() => {
-                drop.classList.remove('success')
-                drop.textContent = 'Укажите файлы для загрузки'
-              }, 1000)
-            }
-          })
-      })
+            })
+        })
+      } else {
+        btn.remove()
+      }
 
       // submitData()
     })
