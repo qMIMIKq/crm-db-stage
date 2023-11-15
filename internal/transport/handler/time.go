@@ -13,11 +13,12 @@ func (h *Handler) theoreticTime(c *gin.Context) {
 		return
 	}
 
-	result := h.services.Time.CalcTheoreticTime(timeInfo)
+	date, days := h.services.Time.CalcTheoreticTime(timeInfo)
 
 	//log.Info().Interface("info is", timeInfo).Msg("Time info")
-	c.JSON(http.StatusOK, map[string]string{
-		"result": result,
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"date": date,
+		"days": days,
 	})
 }
 

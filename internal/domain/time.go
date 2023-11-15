@@ -7,6 +7,9 @@ type TimeInfo struct {
 	Quantity     int    `json:"quantity"`
 	DayQuantity  int    `json:"day_quantity"`
 	Issued       int    `json:"issued"`
+	Up           int    `json:"up" db:"up"`
+	Time         int    `json:"time" db:"time"`
+	Adjustment   int    `json:"adjustment" db:"adjustment"`
 }
 
 type TimeResult struct {

@@ -124,7 +124,10 @@ CREATE TABLE routes
     plan_exclude_days text         default '',
     plan_faster       boolean      default false,
     last_comment      text         default '',
-    plan_dates        text         default ''
+    plan_dates        text         default '',
+    time              int          default 0,
+    up                int          default 0,
+    adjustment        int          default 0
 );
 
 create table route_comments

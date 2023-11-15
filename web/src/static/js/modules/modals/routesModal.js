@@ -4,7 +4,6 @@ import {state} from '../state';
 import {user} from '../../table';
 import {sendData} from "../sendData";
 import {showResult} from "../submitControl";
-import {getOrders} from "../getOrders";
 import {getTime} from "../getTime";
 import {changeErrorHandler} from "./errorModal";
 import {issuedHandler} from "./issuedModal";
@@ -12,6 +11,7 @@ import {changePauseHandler} from "./pauseModal";
 import {appAddr} from "../../../../../../appAddr";
 import {planDateHandler} from "./planModal";
 import {submitData} from "../submitOrdersData";
+import {calcWorkingShifts} from "./calcWorkingShifts";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -78,7 +78,7 @@ const routeModal = `
                         </div>
                         
                         <div class="quantity-block">
-                          <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В смену">
+                          <input readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В смену">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
                         </div>
                     </div>
@@ -156,6 +156,7 @@ const routeModal = `
                 <div class="route__title">Выдача:</div>
                 <div class='route__section route__section--report section-report'>
                     <button disabled type='button' class='route__btn main__button issued-modal_trigger'>За смену</button>
+                    <input class="hidden__input" readonly type="text" name="shift" id="shift">
                     <button style="align-self: flex-start" type='button' disabled class='clickable main__button route__btn report-route__btn'>Отчет</button>
                     
                     <div class='section-report__issued'>
@@ -447,13 +448,13 @@ export const triggerRoutesModal = e => {
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
-    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
   })
 
   routeDayQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
-    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
   })
 
   const routeForm = modalElem.querySelector('.route__config')
@@ -465,7 +466,7 @@ export const triggerRoutesModal = e => {
   const deleteBtn = document.querySelector('#route__delete')
   const theorEndInp = document.querySelector('#route__teorend')
   const shifts = document.querySelector('#shifts')
-
+  const shift = document.querySelector('#shift')
 
   const doPause = (reset) => {
     if (reset) {
@@ -474,7 +475,6 @@ export const triggerRoutesModal = e => {
     } else {
       pauseBtn.classList.add('route-type__paused')
     }
-
 
     if (!pauseBtn.classList.contains('route-type__paused')) {
       if (!reset) {
@@ -533,11 +533,6 @@ export const triggerRoutesModal = e => {
   const endBTn = routeForm.querySelector('.end-route__btn')
   const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
   const reportChanger = []
-
-  issuedBtn.addEventListener('click', e => {
-    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger)
-  })
-
   // const dynEndInp = document.querySelector('#route__dynend')
 
   const planDateInputStart = document.querySelector('#plan_start')
@@ -603,6 +598,11 @@ export const triggerRoutesModal = e => {
 
   let addedDates = []
   let dbAddedDates = []
+  let dayQuantityInfo = {
+    'up': 0,
+    'adjustment': 0,
+    'time': 0,
+  }
 
   const routeUser = document.querySelector('.route__select--user')
 
@@ -615,6 +615,14 @@ export const triggerRoutesModal = e => {
     if (routeInfo.issued_today) {
       issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
     }
+
+    dayQuantityInfo = {
+      'up': routeInfo.up,
+      'adjustment': routeInfo.adjustment,
+      'time': routeInfo.time,
+    }
+
+    console.log(dayQuantityInfo)
 
     planned = routeInfo['planned']
 
@@ -763,9 +771,7 @@ export const triggerRoutesModal = e => {
       routeDayQuantity.value = routeInfo['day_quantity']
     }
 
-    if (routeInfo['quantity'] && routeInfo['day_quantity']) {
-      shifts.value = Math.ceil(routeQuantity.value / routeDayQuantity.value)
-    }
+    shifts.value = routeInfo.need_shifts
 
     if (routeInfo['end_time']) {
       disableBtn('end-route__btn')
@@ -812,9 +818,23 @@ export const triggerRoutesModal = e => {
     drawPlots()
   }
 
+  const dayQuantity = document.querySelector('#day_quantity')
+  dayQuantity.addEventListener('click', e => {
+    calcWorkingShifts(e.target, dayQuantityInfo, () => {
+      getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
+    })
+  })
+
+
   let plannedObj = {
     'planned': planned
   }
+
+  console.log(startTime)
+  issuedBtn.addEventListener('click', e => {
+    issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime)
+  })
+
 
   planDateInput.addEventListener('click', e => {
     // planned = true
@@ -875,7 +895,6 @@ export const triggerRoutesModal = e => {
 
   const prevUserVal = routeUser.value
   routeUser.addEventListener('change', () => {
-    console.log(prevUserVal)
     addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
 
     if (prevUserVal === 'Выберите оператора') {
@@ -902,7 +921,7 @@ export const triggerRoutesModal = e => {
     issuedToday.removeAttribute('disabled')
     startBtn.classList.add('route-type__start')
 
-    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts)
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
   })
 
   // END
@@ -999,6 +1018,11 @@ export const triggerRoutesModal = e => {
     obj['issued_today'] = issuedTodayStart.value
     obj['added_dates'] = resAddedDates
     obj['report_changer'] = reportChanger.sort((a, b) => a.date > b.date ? 1 : -1)
+    obj['up'] = dayQuantityInfo.up
+    obj['time'] = dayQuantityInfo.time
+    obj['adjustment'] = dayQuantityInfo.adjustment
+    obj['need_shifts'] = Number(shifts.value)
+    console.log(shift.value)
     // obj['planned'] = !!(dbID && planned)
 
 
@@ -1026,10 +1050,10 @@ export const triggerRoutesModal = e => {
   }
 }
 
-const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts) => {
-  if (routeQuantity && routeDayQuantity) {
-    shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
-  }
+const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo) => {
+  // if (routeQuantity && routeDayQuantity) {
+  //   shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
+  // }
 
   if (routeQuantity && routeDayQuantity && startTime) {
     const timeInfo = {
@@ -1038,7 +1062,9 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
       'issued': Number(issued),
       'start_time': startTime,
       'machine_start': '08:00',
-      'machine_end': '20:00'
+      'machine_end': '20:00',
+      'up': Number(quantityInfo.up),
+      'adjustment': Number(quantityInfo.adjustment)
     }
 
     sendData(`${appAddr}/api/time/theoretic`, 'POST', JSON.stringify(timeInfo))
@@ -1046,7 +1072,8 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
         return res.json()
       })
       .then(data => {
-        theorEndInp.value = data.result
+        theorEndInp.value = data.date
+        shifts.value = Math.ceil(data.days)
         // dynEndInp.value = data.result
       })
   }

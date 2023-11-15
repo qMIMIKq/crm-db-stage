@@ -16,4 +16,5 @@ type Planning struct {
 	RoutePlot    string       `json:"route_plot" db:"route_plot"`
 	DBPlanDates  []DbPlanInfo `json:"db_plan"`
 	AddedDates   []DateInfo   `json:"added_dates"`
+	NeedShifts   int          `json:"need_shifts" db:"need_shifts"`
 }

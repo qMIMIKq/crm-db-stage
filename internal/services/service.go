@@ -56,7 +56,7 @@ type Routes interface {
 }
 
 type Time interface {
-	CalcTheoreticTime(time domain.TimeInfo) string
+	CalcTheoreticTime(time domain.TimeInfo) (string, float64)
 	CalcDynamicTime(time domain.TimeInfo) string
 }
 

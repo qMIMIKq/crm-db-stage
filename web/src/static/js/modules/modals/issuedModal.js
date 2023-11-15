@@ -20,6 +20,13 @@ const changeIssuedModal = `
         <select class='route__select main__button main__select route__select--user' name='user' id='route__user'>
         </select>
         
+        <label class='route__label' for='route__user'>Смена</label>
+        <select class='route__select main__button main__select route__select--user' name='shift' id='route__shift'>
+            <option value="" selected></option>
+            <option value="Первая">Первая</option>
+            <option value="Последняя">Последняя</option>
+        </select>
+        
         <label class='route__label'>Дата</label>
         <input type="date" class="main__button modal-issued__date route__input">
       
@@ -37,13 +44,14 @@ const changeIssuedModal = `
    </div>
 `
 
-export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateData) => {
+export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateData, shift, startTime) => {
   const modal = showModal(changeIssuedModal)
   const okBtn = modal.querySelector('.confirm__button--ok')
   const cnclBtn = modal.querySelector('.confirm__button--cncl')
   const userData = modal.querySelector('.route__select--user')
   const plot = modal.querySelector('.route__select--plot')
   const date = modal.querySelector('.modal-issued__date')
+  const modalShift = modal.querySelector('#route__shift')
 
   const check = state.adminCheck || state.techCheck
   let today = getTime()
@@ -65,7 +73,14 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
     activateOnInput(e, 'issued-ok')
   })
 
-  console.log(updateData)
+  if (startTime.value.replaceAll('.', '-').split(' ')[0] === today) {
+    modalShift.querySelectorAll('option').forEach(option => {
+      if (option.value === 'Первая') {
+        option.setAttribute('selected', true)
+      }
+    })
+  }
+
   drawPlots(plotI, userI.value)
   userData.insertAdjacentHTML('beforeend', `
     <option selected value="${userI.value}">${userI.value}</option>
@@ -74,10 +89,10 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value))
     addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments')
+    shift.value = modalShift.value
 
     if (check) {
       addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
-
       console.log(date.value)
       let alreadyInDateCheck = false
       console.log(updateData.length)

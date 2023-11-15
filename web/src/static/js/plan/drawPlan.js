@@ -65,6 +65,8 @@ let foundedPlots = []
 export const drawPlan = (d, data) => {
   let uniqueFileNames = []
 
+  console.log(d)
+
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
       const arrDotFile = file.split('.')
@@ -129,6 +131,9 @@ export const drawPlan = (d, data) => {
           </li>
           <li class="table-body_cell table__route--report">
               <input readonly type="text" class="table__data table__data--ro" value="${d.route_plot}">
+          </li>
+          <li  class='table-body_cell table-body__helper table__plan--report'>
+              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li class="table-body_cell hidden__input table__route--report">
               <input readonly type="text" class="table__data" value="${d.route_id}">

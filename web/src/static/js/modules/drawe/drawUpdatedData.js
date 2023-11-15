@@ -16,7 +16,6 @@ export const drawUpdatedData = (d, data, filtered) => {
   const currentOrder = document.querySelector(`#form-${d.id}`)
   const orders = state.orders
 
-  console.log(d)
   if (d.completed) {
     state.orders = state.orders.filter(order => String(order.id) !== String(d.id))
 
@@ -192,7 +191,6 @@ export const drawUpdatedData = (d, data, filtered) => {
     }
 
     currentOrder.querySelectorAll('.route').forEach(route => {
-      console.log(route)
       route.value = '-'
       route.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned', 'route--inplan')
       const routeDataHolder = route.parentNode.querySelector('.hidden__input')
@@ -204,9 +202,6 @@ export const drawUpdatedData = (d, data, filtered) => {
      } catch (e) {
 
      }
-
-      console.log(issuedHolder)
-      console.log(namePos)
     })
 
     // bindOrdersListeners(currentOrder)

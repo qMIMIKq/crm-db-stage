@@ -4,47 +4,67 @@ const shiftsModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
     <div class='modal_content' style='width: 390px'>
          <div class='modal__header modal-header'>
-              <h2 class='comments__title'>Норма за смену</h2>                
-          </div>
+              <h2 class='comments__title'>Норма за смену (в минутах)</h2>                
+         </div>
           
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">УП</label>
           <input 
-            placeholder="Клиент"
-            type='text'
+            placeholder="УП"
+            type='number'
             class='route__input search-orders__input main__input'
-            name='client' 
-            id='search-orders__client'>
+            name='up' 
+            id='up'>
         </div>
         
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">Наладка</label>
           <input 
-            placeholder="Наименование"
-            type='text'
+            placeholder="Наладка"
+            type='number'
             class='route__input search-orders__input main__input'
-            name='name' 
-            id='search-orders__name'>
+            name='adjustment' 
+            id='adjustment'>
         </div>
         
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">На одну деталь</label>
           <input 
-            placeholder="Материал"
-            type='text'
+            placeholder="На одну деталь"
+            type='number'
             class='route__input search-orders__input main__input'
-            name='material' 
-            id='search-orders__material'>
+            name='time' 
+            id='time'>
         </div>
         
         <div class='confirm__section'>
             <button class='main__button route__btn confirm__button confirm__button--search'>ОК</button>
-            <button class='main__button route__btn confirm__button confirm__button--search'>Отмена</button>
         </div>
     </div>
    </div>
 `
 
-export const calcWorkingShifts = () => {
+export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
   const modal = showModal(shiftsModal)
+  const up = modal.querySelector('#up')
+  const adjustment = modal.querySelector('#adjustment')
+  const time = modal.querySelector('#time')
+  const okBtn = modal.querySelector('.confirm__button--search')
+
+  up.value = dayQuantityInfo.up
+  adjustment.value = dayQuantityInfo.adjustment
+  time.value = dayQuantityInfo.time
+
+  const defaultWorkTime = 720
+
+  okBtn.addEventListener('click', () => {
+    dayQuantityInput.value = Math.floor(defaultWorkTime / Number(time.value))
+
+    dayQuantityInfo.up = Number(up.value)
+    dayQuantityInfo.adjustment = Number(adjustment.value)
+    dayQuantityInfo.time = Number(time.value)
+
+    getTheor()
+    modal.click()
+  })
 }

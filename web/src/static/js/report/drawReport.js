@@ -54,6 +54,12 @@ export const drawReport = async (d, data) => {
           <li class="table-body_cell table__operator--report">
             <input readonly type="text" class="table__data" value="${d.operator}">
           </li>
+          <li  class='table-body_cell table-body__helper ${d.shift ? "table-body__attr" : ""} table__plan--report'>
+              <input readonly class='table__data table__data--ro' type='text' name='shift' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
+          </li>
+          <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--report'>
+              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
+          </li>
            <li class="table-body_cell table__use table__plan--report">
              <input readonly class="table__data" tabindex="-1"
               type="number" 

@@ -5,6 +5,7 @@ export const getTime = () => {
   let mm = String(today.getMonth() + 1).padStart(2, '0')
   let yyyy = today.getFullYear()
   let hh = today.getHours()
+  hh = String(hh).length === 1 ? '0' + hh : hh
   let mmm = today.getMinutes()
   mmm = String(mmm).length === 1 ? '0' + mmm : mmm
 

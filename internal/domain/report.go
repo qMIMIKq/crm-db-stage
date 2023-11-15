@@ -19,6 +19,8 @@ type Report struct {
 	AddingDate    string      `json:"adding_date" db:"adding_date"`
 	RoutePosition string      `json:"route_position" db:"route_position"`
 	RouteID       string      `json:"route_id" db:"route_id"`
+	Shift         string      `json:"shift" db:"shift"`
+	NeedShifts    int         `json:"need_shifts" db:"need_shifts"`
 }
 
 type ReportTime struct {

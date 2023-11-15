@@ -82,22 +82,22 @@ func (p *PlanningPG) CreatePlanningObject(route *domain.Route, order *domain.Ord
 		planningQuery := fmt.Sprintf(`
 			INSERT INTO planning
 						 (order_id, order_number, order_timestamp, order_client, order_name,
-						 order_material, order_quantity, order_issued, time_of_modify, route_id, route_plot)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+						 order_material, order_quantity, order_issued, time_of_modify, route_id, route_plot, need_shifts)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 			RETURNING planning_id
 	`)
 
-		err = p.db.QueryRow(planningQuery, id, order.Number, timestamp, order.Client, order.Name, order.Material, route.Quantity, route.Issued, order.TimeOfModify, routeID, route.Plot).Scan(&planningID)
+		err = p.db.QueryRow(planningQuery, id, order.Number, timestamp, order.Client, order.Name, order.Material, route.Quantity, route.Issued, order.TimeOfModify, routeID, route.Plot, route.NeedShifts).Scan(&planningID)
 	} else {
 		planningQuery := fmt.Sprintf(`
 			UPDATE planning
 				 SET order_id = $1, order_number = $2,order_client =$3,order_name = $4,
-						 order_material = $5, order_quantity = $6, order_issued = $7, time_of_modify = $8, route_id = $9, route_plot = $10
-		  WHERE planning_id = $11
+						 order_material = $5, order_quantity = $6, order_issued = $7, time_of_modify = $8, route_id = $9, route_plot = $10, need_shifts = $11
+		  WHERE planning_id = $12
 			RETURNING planning_id
 	`)
 
-		err = p.db.QueryRow(planningQuery, id, order.Number, order.Client, order.Name, order.Material, order.Quantity, order.Issued, order.TimeOfModify, routeID, route.Plot, planningID).Scan(&planningID)
+		err = p.db.QueryRow(planningQuery, id, order.Number, order.Client, order.Name, order.Material, order.Quantity, order.Issued, order.TimeOfModify, routeID, route.Plot, route.NeedShifts, planningID).Scan(&planningID)
 	}
 
 	return planningID, err

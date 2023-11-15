@@ -36,8 +36,29 @@ type EndTimeCalculator struct {
 }
 
 func (c *EndTimeCalculator) createCalcTime(stringTime string) time.Time {
-	timeH, _ := strconv.Atoi(stringTime[:2])
-	timeM, _ := strconv.Atoi(stringTime[3:])
+	var check bool
+	checkH := stringTime[:2]
+	if strings.Contains(checkH, ":") {
+		checkH = "0" + checkH[:1]
+		check = true
+	}
+
+	timeH, err := strconv.Atoi(checkH)
+	if err != nil {
+		log.Warn().Err(err).Caller().Msg("error")
+	}
+
+	var convMin string
+	if check {
+		convMin = stringTime[2:]
+	} else {
+		convMin = stringTime[3:]
+	}
+
+	timeM, err := strconv.Atoi(convMin)
+	if err != nil {
+		log.Warn().Err(err).Caller().Msg("error")
+	}
 
 	return time.Date(2000, 10, 23, timeH, timeM, 0, 0, time.Local)
 }
@@ -48,7 +69,7 @@ func (c *EndTimeCalculator) createFullTime(stringTime string) time.Time {
 }
 
 func (c *EndTimeCalculator) findWorkingMinutes(endTime time.Time, start time.Time) float64 {
-	return float64((endTime.Unix()-start.Unix())/60) * 10 / 12
+	return float64((endTime.Unix() - start.Unix()) / 60)
 }
 
 func (c *EndTimeCalculator) setQuantityAtMinute() {
@@ -60,7 +81,7 @@ func (c *EndTimeCalculator) findNeededTime() float64 {
 	return c.NeededTime
 }
 
-func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) string {
+func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float64) {
 	log.Info().Interface("time info", timeInfo).Msg("time info is")
 
 	calc := EndTimeCalculator{
@@ -83,15 +104,32 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) string {
 	calc.setQuantityAtMinute()
 	calc.findNeededTime()
 
-	calc.RestTime = time.Duration(-calc.findWorkingMinutes(calc.MachineStartTime, calc.MachineEndTime)/10*12) * time.Minute
+	calc.RestTime = time.Duration(-calc.findWorkingMinutes(calc.MachineStartTime, calc.MachineEndTime)) * time.Minute
 
-	canWorkToday := calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+	var canWorkToday float64
+	canWorkToday = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+	if calc.WorkerCalcStartTime.Unix() > calc.MachineStartTime.Unix() && calc.WorkerCalcStartTime.Unix() < calc.MachineEndTime.Unix() {
+		canWorkToday = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+	} else {
+		canWorkToday = 0
+	}
 
 	counter := 0
 	for calc.NeededTime >= calc.MachineWorkingMinutes {
 		if counter == 0 {
 			calc.NeededTime -= canWorkToday
-			calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkToday/10*12) * time.Minute)
+			if canWorkToday > 0 {
+				calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkToday) * time.Minute)
+			} else {
+				calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkToday) * time.Minute)
+
+				var err error
+				calc.TheorEndTime, err = time.Parse(calc.Layout, strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[0]+" "+calc.MachineStringStartTime)
+				if err != nil {
+					log.Warn().Err(err).Caller().Msgf("error")
+				}
+			}
+
 			endHours := strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1]
 
 			if endHours == calc.MachineStringEndTime {
@@ -100,23 +138,28 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) string {
 
 		} else {
 			calc.NeededTime -= calc.MachineWorkingMinutes
-			calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.MachineWorkingMinutes/10*12) * time.Minute)
+			calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.MachineWorkingMinutes) * time.Minute)
 			endHours := strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1]
+			endTimeHours := calc.createCalcTime(endHours)
 
-			if endHours == calc.MachineStringEndTime {
+			log.Info().Msgf("end hours %v || machine end %v", endTimeHours, calc.MachineEndTime)
+			if endTimeHours.Unix() >= calc.MachineEndTime.Unix() {
 				calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
 			}
 		}
 
+		log.Info().Msgf("Theor need on end one cycle %v", calc.TheorEndTime.Format(calc.Layout))
 		counter++
 	}
 
 	if calc.NeededTime != 0 {
-		calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.NeededTime/10*12) * time.Minute)
+		calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.NeededTime) * time.Minute)
 		calc.NeededTime -= calc.NeededTime
 	}
 
-	return calc.TheorEndTime.Format(calc.Layout)
+	log.Info().Msgf("Theor end %v", calc.TheorEndTime.Format(calc.Layout))
+	calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(timeInfo.Up+timeInfo.Adjustment) * time.Minute)
+	return calc.TheorEndTime.Format(calc.Layout), calc.TheorEndTime.Sub(calc.WorkerFullStartTime).Hours() / 24
 }
 
 func (t TimeService) CalcDynamicTime(timeInfo domain.TimeInfo) string {
