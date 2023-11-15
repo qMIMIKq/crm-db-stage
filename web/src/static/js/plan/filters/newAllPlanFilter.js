@@ -6,10 +6,13 @@ import {planShowCurrentLine} from "../planShowCurrentLine";
 
 export const newAllPlanFilter = async (init) => {
   hideOrders()
+  const startTime = document.querySelector('.header-routes__planned-date--report__from').value
 
   let flag = true
 
   const searched = state.searched
+  const hideNotIncluded = state.hideNotIncluded
+  console.log(hideNotIncluded)
 
   const topRouteFilters = state.currentTopFilters.map(filter => filter.name)
   const tableFilters = state.tableFilters
@@ -17,9 +20,32 @@ export const newAllPlanFilter = async (init) => {
   const isTopRoutesFiltered = !!topRouteFilters.length
   controlPlanFiltersReset()
 
-  if (searched) {
-    console.log('??')
+  if (hideNotIncluded && !searched && !isTopRoutesFiltered) {
+    state.orders.forEach(order => {
+      if (!order.db_plan) {
+        flag = false
+      } else {
+        const endDate = new Date(startTime)
+        const eldestDate = new Date(order.db_plan[order.db_plan.length - 1].date.split('T')[0])
+        if (endDate.getTime() > eldestDate.getTime()) {
+          flag = false
+        }
+      }
 
+      if (flag) {
+        const hiddenOrder = document.querySelector(`#form-${order.id}`)
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input')
+        } else {
+          drawPlan(order)
+        }
+      }
+
+      flag = true
+    })
+  }
+
+  if (searched) {
     state.orders.forEach(order => {
       for (let type in state['tableFilters']) {
         const filter = tableFilters[type]
@@ -61,6 +87,18 @@ export const newAllPlanFilter = async (init) => {
             flag = false
           }
         }
+
+        if (hideNotIncluded) {
+          if (!order.db_plan) {
+            flag = false
+          } else {
+            const endDate = new Date(startTime)
+            const eldestDate = new Date(order.db_plan[order.db_plan.length - 1].date.split('T')[0])
+            if (endDate.getTime() > eldestDate.getTime()) {
+              flag = false
+            }
+          }
+        }
       } else {
         flag = false
       }
@@ -81,18 +119,29 @@ export const newAllPlanFilter = async (init) => {
   if (!searched) {
     if (isTopRoutesFiltered) {
       state.orders.forEach(order => {
-        console.log(order.route_plot)
         if (topRouteFilters.includes(order.route_plot)) {
 
         } else {
           flag = false
         }
 
+        if (hideNotIncluded) {
+          if (!order.db_plan) {
+            flag = false
+          } else {
+            const endDate = new Date(startTime)
+            const eldestDate = new Date(order.db_plan[order.db_plan.length - 1].date.split('T')[0])
+            if (endDate.getTime() > eldestDate.getTime()) {
+              flag = false
+            }
+          }
+        }
+
         if (flag) {
           const hiddenOrder = document.querySelector(`#form-${order.id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
-          }else {
+          } else {
             drawPlan(order)
           }
         }
@@ -102,7 +151,7 @@ export const newAllPlanFilter = async (init) => {
     }
   }
 
-  if (!searched && !isTopRoutesFiltered) {
+  if (!searched && !isTopRoutesFiltered && !hideNotIncluded) {
     if (init) {
       deleteOrders()
 
@@ -119,7 +168,7 @@ export const newAllPlanFilter = async (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
-        }else {
+        } else {
           drawPlan(order)
         }
         // order.classList.remove('hidden__input')

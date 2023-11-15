@@ -9,6 +9,13 @@ export const reportPlanningDatesFilter = () => {
   const filterDateFrom = document.querySelector('.header-routes__planned-date--report__from')
   const filterDateTo = document.querySelector('.header-routes__planned-date--report__to')
   const planDivider = document.querySelector('.plan-divider')
+  const planHider = document.querySelector('.plan-hider')
+
+  planHider.addEventListener('click', () => {
+    planHider.classList.toggle('plan-hider--chosen')
+    state.hideNotIncluded = planHider.classList.contains('plan-hider--chosen')
+    newAllPlanFilter()
+  })
 
   planDivider.addEventListener('click', () => {
     planDivider.classList.toggle('route__filter--chosen')

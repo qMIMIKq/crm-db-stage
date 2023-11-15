@@ -8,6 +8,7 @@ let state = {
   'searched': false,
   'inWork': false,
   'newOrders': false,
+  'hideNotIncluded': false,
   'orders': [],
   'filteredOrders': [],
   'plots': [],

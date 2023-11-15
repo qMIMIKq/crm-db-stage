@@ -377,6 +377,16 @@ input:disabled {
   }
 }
 
+.plan-hider {
+  margin-right: 15px;
+
+  &--chosen {
+    border: 1px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    background: rgb(137, 175, 137);
+  }
+}
+
 .spinner-loader {
   //animation: rotate 2s linear infinite;
   z-index: 2;
