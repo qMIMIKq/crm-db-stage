@@ -47,7 +47,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	var err error
 	for _, order := range orders {
-		timeOfModify := time.Now().Format("2006-01-02 15:04:05")
+		timeOfModify := time.Now().In(loc).Format("2006-01-02 15:04:05")
 
 		if order.EndTime != "" {
 			_, err = o.db.Exec(query, order.Number, order.Sample,

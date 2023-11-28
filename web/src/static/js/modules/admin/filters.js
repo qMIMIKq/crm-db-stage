@@ -191,6 +191,8 @@ export const drawAdminFilters = (modal, datas) => {
                     editForm.style.height = '446px'
                     subBtn.style.marginTop = '20px'
                   }, 1000)
+
+                  // getOrders('get-all', true)
                 }
 
                 return res.json()

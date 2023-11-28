@@ -53,6 +53,7 @@ func (r ReportsPG) RemoveForUpdateReports(id string) error {
 
 	loc, _ := time.LoadLocation("Europe/Moscow")
 	today := time.Now().In(loc).Format("2006-01-02")
+	log.Info().Msgf("Today is %v", today)
 
 	_, err := r.db.Exec(query, id, today)
 	return err

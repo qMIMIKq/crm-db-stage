@@ -1,14 +1,6 @@
 export const getTime = () => {
-  let today = new Date()
+  let today = new Date().toLocaleDateString('ru-RU', {timeZone: 'Europe/Moscow'})
+  let todayTime = new Date().toLocaleTimeString('ru-RU', {timeZone: 'Europe/Moscow'})
 
-  let dd = String(today.getDate()).padStart(2, '0')
-  let mm = String(today.getMonth() + 1).padStart(2, '0')
-  let yyyy = today.getFullYear()
-  let hh = today.getHours()
-  hh = String(hh).length === 1 ? '0' + hh : hh
-  let mmm = today.getMinutes()
-  mmm = String(mmm).length === 1 ? '0' + mmm : mmm
-
-  today = `${yyyy}-${mm}-${dd} ${hh}:${mmm}`
-  return today
+  return `${today.split('.').reverse().join('-')} ${todayTime.substring(0, 5)}`
 }

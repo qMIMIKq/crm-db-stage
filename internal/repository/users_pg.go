@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
+	"time"
 )
 
 type UsersPG struct {
 	db *sqlx.DB
 }
 
-func (u UsersPG) GetUserByID(id string) (domain.UserInfo, error) {
+func (u *UsersPG) GetUserByID(id string) (domain.UserInfo, error) {
 	query := fmt.Sprintf(`
 		SELECT u.user_id, u.login, 
 		       u.user_name, u.nickname, 
@@ -33,7 +34,7 @@ func (u UsersPG) GetUserByID(id string) (domain.UserInfo, error) {
 	return user, err
 }
 
-func (u UsersPG) GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo, error) {
+func (u *UsersPG) GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo, error) {
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
@@ -55,7 +56,7 @@ func (u UsersPG) GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo
 	return users, err
 }
 
-func (u UsersPG) GetOperators() ([]domain.UserInfo, error) {
+func (u *UsersPG) GetOperators() ([]domain.UserInfo, error) {
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
@@ -92,7 +93,7 @@ func (u *UsersPG) GetAllUsers() (domain.Users, error) {
 	return users, err
 }
 
-func (u UsersPG) GetUsers() ([]domain.UserInfo, error) {
+func (u *UsersPG) GetUsers() ([]domain.UserInfo, error) {
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
@@ -109,7 +110,7 @@ func (u UsersPG) GetUsers() ([]domain.UserInfo, error) {
 	return users, err
 }
 
-func (u UsersPG) GetUsersByGroup(group string) ([]domain.UserInfo, error) {
+func (u *UsersPG) GetUsersByGroup(group string) ([]domain.UserInfo, error) {
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
@@ -175,6 +176,53 @@ func (u *UsersPG) EditUser(user domain.UserInfo) error {
 	userQuery := fmt.Sprintf(`UPDATE users %s`, setter)
 	args = append(args, user.ID)
 
+	var oldNickname string
+	oldQuery := fmt.Sprintf(`
+		SELECT nickname from users WHERE user_id = $1
+	`)
+
+	err = u.db.Get(&oldNickname, oldQuery, user.ID)
+	if err != nil {
+		log.Err(err).Caller().Msg("error is")
+		return err
+	}
+
+	checkQuery := fmt.Sprintf(`
+		SELECT order_id FROM routes WHERE worker = $1 
+	`)
+
+	var ordersID []int
+	err = u.db.Select(&ordersID, checkQuery, oldNickname)
+	if err != nil {
+		log.Err(err).Caller().Msg("error is")
+		return err
+	}
+
+	loc, _ := time.LoadLocation("Europe/Moscow")
+	timeOfModify := time.Now().In(loc).Format("2006-01-02 15:04:05")
+	for _, orderID := range ordersID {
+		updateOrderQuery := fmt.Sprintf(`
+			UPDATE orders SET time_of_modify = $1 WHERE order_id = $2 AND completed = false
+		`)
+
+		_, err := u.db.Exec(updateOrderQuery, timeOfModify, orderID)
+		if err != nil {
+			log.Err(err).Caller().Msg("error is")
+			return err
+		}
+	}
+
+	routesQuery := fmt.Sprintf(`
+		UPDATE routes SET worker = $1 WHERE worker = $2
+	`)
+
+	log.Info().Interface("oldNickname", oldNickname).Msg("oldNickname!!")
+	_, err = u.db.Exec(routesQuery, user.Nickname, oldNickname)
+	if err != nil {
+		log.Err(err).Caller().Msg("error is")
+		return err
+	}
+
 	_, err = tx.Exec(userQuery, args...)
 	if err != nil {
 		tx.Rollback()
@@ -201,7 +249,7 @@ func (u *UsersPG) EditUser(user domain.UserInfo) error {
 
 	return nil
 }
-func (u UsersPG) CreateUser(user domain.UserInfo) (int, error) {
+func (u *UsersPG) CreateUser(user domain.UserInfo) (int, error) {
 	tx, err := u.db.Begin()
 	if err != nil {
 		return 0, err
