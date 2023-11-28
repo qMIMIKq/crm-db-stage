@@ -10,8 +10,6 @@ if (!user) {
   window.location.href = '/login'
 }
 
-console.log(user)
-
 if (window.location.href.endsWith('main/table')) {
   state['startTime'] = state['startTime'] || new Date().toISOString().split('.')[0]
 

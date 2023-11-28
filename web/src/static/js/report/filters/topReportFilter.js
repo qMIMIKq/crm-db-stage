@@ -196,9 +196,14 @@ export const topReportFilter = () => {
           newAllReportFilter()
           controlFilterReset()
         } else {
-          filtered = false
-          newAllReportFilter()
-          controlFilterReset()
+          if (state.currentTopPlots.length) {
+            filterByPlots()
+            newAllReportFilter()
+          } else {
+            filtered = false
+            newAllReportFilter()
+            controlFilterReset()
+          }
         }
       })
     })

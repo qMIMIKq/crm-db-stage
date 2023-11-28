@@ -55,8 +55,35 @@ func (f *FiltersPG) EditFilter(filter domain.FilterInfo) error {
 		UPDATE routes SET plot_id = $1 WHERE plot_id = $2
 	`)
 
+	reportsQuery := fmt.Sprintf(`
+		UPDATE reports SET order_plot = $1 WHERE order_plot = $2
+	`)
+
+	plansQuery := fmt.Sprintf(`
+		UPDATE plans SET route_plot = $1 WHERE route_plot = $2
+	`)
+
+	planningQuery := fmt.Sprintf(`
+		UPDATE planning SET route_plot = $1 WHERE route_plot = $2
+	`)
+
 	log.Info().Interface("oldFilter", oldFilter).Msg("oldFilter!!")
 	_, err = f.db.Exec(routesQuery, filter.Name, oldFilter)
+	if err != nil {
+		log.Err(err).Caller().Msg("error is")
+		return err
+	}
+	_, err = f.db.Exec(reportsQuery, filter.Name, oldFilter)
+	if err != nil {
+		log.Err(err).Caller().Msg("error is")
+		return err
+	}
+	_, err = f.db.Exec(plansQuery, filter.Name, oldFilter)
+	if err != nil {
+		log.Err(err).Caller().Msg("error is")
+		return err
+	}
+	_, err = f.db.Exec(planningQuery, filter.Name, oldFilter)
 	if err != nil {
 		log.Err(err).Caller().Msg("error is")
 		return err

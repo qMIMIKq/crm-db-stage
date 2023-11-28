@@ -154,6 +154,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 				for _, changer := range route.ReportChanger {
 					changerDate, _ := time.Parse(layout, changer.Date)
+					log.Info().Interface("report changer", changer).Msg("changer is")
 
 					var reports []domain.Report
 					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date < $2 ORDER BY report_date`, route.RouteID, today)

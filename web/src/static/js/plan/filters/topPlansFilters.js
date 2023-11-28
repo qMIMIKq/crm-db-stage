@@ -194,9 +194,14 @@ export const topPlansFilters = () => {
           filterRouteReports()
           controlFilterReset()
         } else {
-          filtered = false
-          getPlans()
-          controlFilterReset()
+          if (state.currentTopPlots.length) {
+            filterByPlots()
+            getPlans()
+          } else {
+            filtered = false
+            getPlans()
+            controlFilterReset()
+          }
         }
       })
     })

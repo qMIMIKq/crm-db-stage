@@ -59,7 +59,6 @@ export const topFiltersHandler = () => {
   const links = navControl.querySelectorAll('.nav-control__route-link')
   links.forEach(link => {
     link.addEventListener('click', () => {
-      console.log(window.location.href)
       navControl.classList.toggle('nav-control--opened')
       navRoutes.classList.toggle('hidden__input')
 
@@ -78,7 +77,6 @@ export const topFiltersHandler = () => {
         window.location.href = link.querySelector('.hidden__input').value
         newAllFilter()
       } else {
-        console.log(window.location.href)
         window.location.href = link.querySelector('.hidden__input').value
       }
     })
@@ -134,9 +132,6 @@ export const topFiltersHandler = () => {
         } else {
           state['currentTopPlots'] = state['currentTopPlots'].filter(cP => cP !== plot)
         }
-
-        console.log(state.currentTopPlots)
-        console.log(state.currentTopFilters)
 
         target.classList.toggle('chosen__plot')
         target.classList.toggle('nav-filters__button--chosen')
@@ -213,9 +208,14 @@ export const topFiltersHandler = () => {
           filtered = true
           controlFilterReset()
         } else {
-          newAllFilter()
-          filtered = false
-          controlFilterReset()
+          if (state.currentTopPlots.length) {
+            filterByPlots()
+            newAllFilter()
+          } else {
+            newAllFilter()
+            filtered = false
+            controlFilterReset()
+          }
         }
       })
     })
@@ -246,7 +246,6 @@ export const topFiltersHandler = () => {
           }
 
           nav.querySelectorAll('.nav-filters__button').forEach(btn => {
-            console.log(btn)
             btn.classList.remove('nav-filters__button--chosen')
             btn.classList.remove('chosen__plot')
             btn.classList.remove('chosen__filter')
