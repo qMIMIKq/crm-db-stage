@@ -21,6 +21,7 @@ type Report struct {
 	RouteID       string      `json:"route_id" db:"route_id"`
 	Shift         string      `json:"shift" db:"shift"`
 	NeedShifts    int         `json:"need_shifts" db:"need_shifts"`
+	NotPlanned    bool        `json:"not_planned" db:"not_planned"`
 }
 
 type ReportTime struct {

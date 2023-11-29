@@ -93,27 +93,27 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
 
     if (check) {
       addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
-      console.log(date.value)
       let alreadyInDateCheck = false
-      console.log(updateData.length)
+
+      for (let i = 0; i < updateData.length; i++) {
+        if (updateData[i].date === date.value) {
+          updateData[i].operator = userData.value
+          updateData[i].quantity += Number(modalIssuedInput.value)
+        }
+
+        console.log(updateData[i])
+      }
+
+      if (!alreadyInDateCheck) {
+        updateData.push({
+          'operator': userData.value,
+          'date': date.value,
+          'quantity': Number(modalIssuedInput.value)
+        })
+      }
 
       if (date.value !== today) {
-        for (let i = 0; i < updateData.length; i++) {
-          if (updateData[i].date === date.value) {
-            updateData[i].operator = userData.value
-            updateData[i].quantity += Number(modalIssuedInput.value)
-          }
 
-          console.log(updateData[i])
-        }
-
-        if (!alreadyInDateCheck) {
-          updateData.push({
-            'operator': userData.value,
-            'date': date.value,
-            'quantity': Number(modalIssuedInput.value)
-          })
-        }
       } else {
         console.log('TODAY')
         issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value)

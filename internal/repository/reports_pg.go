@@ -48,7 +48,7 @@ func (r ReportsPG) UpdateReports(route domain.Route) error {
 
 func (r ReportsPG) RemoveForUpdateReports(id string) error {
 	query := fmt.Sprintf(`
-		DELETE FROM reports WHERE order_id = $1 AND report_date >= $2
+		DELETE FROM reports WHERE order_id = $1 AND report_date > $2
 	`)
 
 	loc, _ := time.LoadLocation("Europe/Moscow")

@@ -4504,25 +4504,22 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
     shift.value = modalShift.value;
     if (check) {
       (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments');
-      console.log(date.value);
       let alreadyInDateCheck = false;
-      console.log(updateData.length);
-      if (date.value !== today) {
-        for (let i = 0; i < updateData.length; i++) {
-          if (updateData[i].date === date.value) {
-            updateData[i].operator = userData.value;
-            updateData[i].quantity += Number(modalIssuedInput.value);
-          }
-          console.log(updateData[i]);
+      for (let i = 0; i < updateData.length; i++) {
+        if (updateData[i].date === date.value) {
+          updateData[i].operator = userData.value;
+          updateData[i].quantity += Number(modalIssuedInput.value);
         }
-        if (!alreadyInDateCheck) {
-          updateData.push({
-            'operator': userData.value,
-            'date': date.value,
-            'quantity': Number(modalIssuedInput.value)
-          });
-        }
-      } else {
+        console.log(updateData[i]);
+      }
+      if (!alreadyInDateCheck) {
+        updateData.push({
+          'operator': userData.value,
+          'date': date.value,
+          'quantity': Number(modalIssuedInput.value)
+        });
+      }
+      if (date.value !== today) {} else {
         console.log('TODAY');
         issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value);
       }
@@ -6701,7 +6698,7 @@ const drawReport = async (d, data) => {
               <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp ? d.timestamp.split('T')[0].replaceAll("-", ".") : ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input class='table__data table__data--ro ${d.not_planned ? 'route--error' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table-body__helper ${d.order_number ? "table-body__attr" : ""}  table__number'>
               <input 

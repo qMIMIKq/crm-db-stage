@@ -85,6 +85,8 @@ func (p *PlansPG) UpdatePlan(data *domain.PlanData) error {
 
 	log.Info().Interface("report info", info).Msg("REPORT INFO")
 
+	//intId, _ := strconv.Atoi(data.RouteID)
+
 	p.reportsPG.RemoveForUpdateReports(data.OrderID)
 	for _, dateInfo := range data.AddedDates {
 		checkPlanDate, _ := time.Parse(layout, dateInfo.Date)
