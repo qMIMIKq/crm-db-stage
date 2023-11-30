@@ -2,9 +2,20 @@ import {state} from '../modules/state';
 import {controlReportsFiltersReset} from "./filters/reportFilters";
 
 export const table = document.querySelector('.main-table')
-
-export const drawReport = async (d, data) => {
+export const shiftCounter = {}
+export const drawReport = async (d, i) => {
   controlReportsFiltersReset()
+
+  let shiftString = d.shift
+  if (shiftString) {
+    if (d.current_shift) {
+      shiftString += `(${d.current_shift})`
+    }
+  } else if (d.current_shift) {
+    shiftString = d.current_shift
+  } else {
+    shiftString = ''
+  }
 
   let percents = 0
   if (d.plan && d.issued_plan) {
@@ -18,10 +29,10 @@ export const drawReport = async (d, data) => {
               <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp ? d.timestamp.split('T')[0].replaceAll("-", ".") : ""}' tabindex='-1' autocomplete='off'>
+              <input class='table__data table__data--ro ${d.not_planned ? 'route--error' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro ${d.not_planned ? 'route--error' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp ? d.timestamp.split('T')[0].replaceAll("-", ".") : ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table-body__helper ${d.order_number ? "table-body__attr" : ""}  table__number'>
               <input 
@@ -50,11 +61,14 @@ export const drawReport = async (d, data) => {
           <li class="table-body_cell table__route--report">
               <input readonly type="text" class="table__data" value="${d.order_plot}">
           </li>
+           <li class="table-body_cell table__route--report">
+              <input readonly type="text" class="table__data" value="${d.route_position}">
+          </li>
           <li class="table-body_cell table__operator--report">
             <input readonly type="text" class="table__data" value="${d.operator}">
           </li>
           <li  class='table-body_cell table-body__helper ${d.shift ? "table-body__attr" : ""} table__plan--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='shift' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
+              <input readonly class='table__data table__data--ro' type='text' name='shift' value='${shiftString}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--report'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>

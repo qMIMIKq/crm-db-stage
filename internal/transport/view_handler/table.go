@@ -16,6 +16,6 @@ func (h *ViewHandler) indexView(c *gin.Context) {
 	//}
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"Title": "Главная страница",
+		"Title": "Заказы",
 	})
 }

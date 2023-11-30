@@ -1,7 +1,7 @@
 import {state} from "../../modules/state";
 import {drawReport} from "../drawReport";
 
-export const globalFilterReports = (report) => {
+export const globalFilterReports = (report, i) => {
   let flag = true
   for (let type in state['tableFilters']) {
     const filter = state['tableFilters'][type]
@@ -15,7 +15,7 @@ export const globalFilterReports = (report) => {
   }
 
   if (flag) {
-    drawReport(report, state['filteredOrders'])
+    drawReport(report, i)
   }
 
   return flag

@@ -18,7 +18,7 @@ export const newAllReportFilter = (init) => {
   controlReportsFiltersReset()
 
   if (searched) {
-    state.orders.forEach(order => {
+    state.orders.forEach((order, i) => {
       for (let type in state['tableFilters']) {
         const filter = String(tableFilters[type])
         const orderData = String(order[type])
@@ -66,7 +66,7 @@ export const newAllReportFilter = (init) => {
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
         } else {
-          drawReport(order)
+          drawReport(order, i)
         }
       }
 
@@ -119,7 +119,7 @@ export const newAllReportFilter = (init) => {
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
         } else {
-          drawReport(order)
+          drawReport(order, i)
         }
       }
 
@@ -129,7 +129,7 @@ export const newAllReportFilter = (init) => {
 
   if (!searched) {
     if (isTopRoutesFiltered) {
-      state.orders.forEach(order => {
+      state.orders.forEach((order, i) => {
         if (topRouteFilters.includes(order.order_plot)) {
 
         } else {
@@ -141,7 +141,7 @@ export const newAllReportFilter = (init) => {
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
           } else {
-            drawReport(order)
+            drawReport(order, i)
           }
         }
 
@@ -154,16 +154,16 @@ export const newAllReportFilter = (init) => {
     if (init) {
       deleteOrders()
 
-      state.orders.forEach(order => {
-        drawReport(order, state.orders)
+      state.orders.forEach((order, i) => {
+        drawReport(order, i)
       })
     } else {
-      state.orders.forEach(order => {
+      state.orders.forEach((order, i) => {
         const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
         } else {
-          drawReport(order)
+          drawReport(order, i)
         }
       })
     }

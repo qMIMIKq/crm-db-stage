@@ -22,6 +22,7 @@ type Report struct {
 	Shift         string      `json:"shift" db:"shift"`
 	NeedShifts    int         `json:"need_shifts" db:"need_shifts"`
 	NotPlanned    bool        `json:"not_planned" db:"not_planned"`
+	CurrentShift  int         `json:"current_shift" db:"current_shift"`
 }
 
 type ReportTime struct {

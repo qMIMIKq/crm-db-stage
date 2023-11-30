@@ -12,6 +12,6 @@ func (h *ViewHandler) reportView(c *gin.Context) {
 	//userInfo := user.(domain.UserInfo)
 
 	c.HTML(http.StatusOK, "report.html", gin.H{
-		"Title": "Отчёт План/Факт",
+		"Title": "План/Факт",
 	})
 }

@@ -288,8 +288,8 @@ export const filterRouteReports = () => {
   console.log(state.filteredOrders)
 
   hideOrders()
-  state['filteredOrders'].forEach(order => {
-    globalFilterReports(order)
+  state['filteredOrders'].forEach((order, i) => {
+    globalFilterReports(order, i)
   })
   // bindOrdersListeners()
 }
