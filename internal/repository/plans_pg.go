@@ -18,7 +18,7 @@ func NewPlansPG(db *sqlx.DB, reportsPG *ReportsPG) *PlansPG {
 	return &PlansPG{db: db, reportsPG: reportsPG}
 }
 
-func (p *PlansPG) GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error) {
+func (p PlansPG) GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error) {
 	layout := "2006-01-02"
 	today := time.Now().Format(layout)
 
@@ -47,7 +47,7 @@ type reportInfo struct {
 	IssuedToday   string `db:"issued_today"`
 }
 
-func (p *PlansPG) UpdatePlan(data *domain.PlanData) error {
+func (p PlansPG) UpdatePlan(data *domain.PlanData) error {
 	_, err := p.db.Exec("DELETE FROM plans WHERE route_id = $1", data.RouteID)
 	if err != nil {
 		log.Err(err).Caller().Msg("ERROR")

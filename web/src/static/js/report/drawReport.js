@@ -5,7 +5,6 @@ export const table = document.querySelector('.main-table')
 
 export const drawReport = async (d, data) => {
   controlReportsFiltersReset()
-  console.log(d)
 
   let percents = 0
   if (d.plan && d.issued_plan) {

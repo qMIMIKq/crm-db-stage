@@ -15,7 +15,7 @@ type ReportsPG struct {
 
 func (r ReportsPG) GetAll(from, to string) ([]domain.Report, error) {
 	query := fmt.Sprintf(`
-		SELECT * FROM reports WHERE report_date >= $1 AND report_date <= $2 ORDER BY order_id, report_date 
+		SELECT * FROM reports WHERE report_date >= $1 AND report_date <= $2 ORDER BY order_id, report_date
 	`)
 
 	var reports []domain.Report
@@ -48,12 +48,11 @@ func (r ReportsPG) UpdateReports(route domain.Route) error {
 
 func (r ReportsPG) RemoveForUpdateReports(id string) error {
 	query := fmt.Sprintf(`
-		DELETE FROM reports WHERE order_id = $1 AND report_date > $2
+		DELETE FROM reports WHERE order_id = $1 AND report_date >= $2
 	`)
 
 	loc, _ := time.LoadLocation("Europe/Moscow")
 	today := time.Now().In(loc).Format("2006-01-02")
-	log.Info().Msgf("Today is %v", today)
 
 	_, err := r.db.Exec(query, id, today)
 	return err

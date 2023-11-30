@@ -36,11 +36,13 @@ func (p *PlanningPG) GetAllPlanning() ([]*domain.Planning, error) {
 		err = p.db.Select(&plan.DBPlanDates, queryRoutePlan, plan.RouteID)
 		if err != nil {
 			log.Err(err).Caller().Msg("error is")
+			err = nil
 		}
 
 		err = p.db.Select(&plan.Files, queryFiles, plan.OrderID)
 		if err != nil {
 			log.Err(err).Caller().Msg("error is")
+			err = nil
 		}
 
 		for _, dateInfo := range plan.DBPlanDates {

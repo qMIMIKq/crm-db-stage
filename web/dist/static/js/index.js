@@ -5652,8 +5652,8 @@ const triggerRoutesModal = e => {
       'adjustment': routeInfo.adjustment,
       'time': routeInfo.time
     };
-    console.log(dayQuantityInfo);
     planned = routeInfo['planned'];
+    console.log(routeInfo.issued_today);
 
     // if (planned) {
     //   planDateInput.value = 'В планировании'
@@ -5818,7 +5818,6 @@ const triggerRoutesModal = e => {
   let plannedObj = {
     'planned': planned
   };
-  console.log(startTime);
   issuedBtn.addEventListener('click', e => {
     (0,_issuedModal__WEBPACK_IMPORTED_MODULE_8__.issuedHandler)(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime);
   });
@@ -6683,7 +6682,6 @@ __webpack_require__.r(__webpack_exports__);
 const table = document.querySelector('.main-table');
 const drawReport = async (d, data) => {
   (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_1__.controlReportsFiltersReset)();
-  console.log(d);
   let percents = 0;
   if (d.plan && d.issued_plan) {
     percents = d.issued_plan / d.plan * 100;

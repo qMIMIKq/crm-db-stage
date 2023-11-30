@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -153,129 +154,128 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							 VALUES ($1, $2, $3, $4, $5, $6)
 				`)
 
-				var checkTodayRep int
-				err = o.db.Get(&checkTodayRep, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, today, route.RouteID)
-
-				for _, changer := range route.ReportChanger {
-					changerDate, _ := time.Parse(layout, changer.Date)
-					log.Info().Interface("report changer", changer).Msg("changer is")
-					reportQuery := fmt.Sprintf(`
-						INSERT INTO reports
-									 (report_date, order_id, order_number, order_client,
-									  order_name, quantity, issued, plan,
-									  operator, issued_plan, order_material, order_plot,
-									  adding_date, route_position, route_id, order_timestamp,
-									  shift, need_shifts, not_planned)
-						VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-						RETURNING report_id
-					`)
-
-					var checkID int
-					err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID)
-
-					if checkID == 0 {
-						var prevIssued int
-						err = o.db.Get(&prevIssued, `SELECT issued FROM reports WHERE report_date < $1 AND route_id = $2 ORDER BY report_date DESC LIMIT 1`, changerDate, route.RouteID)
-						log.Info().Msgf("prev issued is %v", prevIssued)
-						if err != nil {
-							log.Err(err).Caller().Msg("error is")
-						}
-
-						res, err := time.Parse(layout, today)
-						var issuedInShift int
-						if res.Unix() == changerDate.Unix() {
-							if checkTodayRep == 0 {
-								log.Info().Msgf("not in plan for today")
-								intIssuedToday, _ := strconv.Atoi(route.IssuedToday)
-								issuedInShift = intIssuedToday
-								intIssued, _ := strconv.Atoi(route.Issued)
-								prevIssued = intIssued
-							}
-						} else {
-							issuedInShift = 0
-						}
-
-						var reportID int
-						err = o.db.QueryRow(
-							reportQuery, changerDate, order.ID, order.Number, order.Client,
-							order.Name, route.Quantity, prevIssued, route.DayQuantity,
-							changer.Operator, issuedInShift, order.Material, route.Plot, today,
-							routePos, routeID, order.TimeStamp, route.Shift, route.NeedShifts, true,
-						).Scan(&reportID)
-						if err != nil {
-							log.Err(err).Caller().Msg("error is")
-						}
-
-						log.Info().Msgf("new report is %v", reportID)
-					} else {
-						res, _ := time.Parse(layout, today)
-						if res.Unix() == changerDate.Unix() {
-							log.Info().Msgf("is today")
-
-							_, err = o.db.Exec(`UPDATE reports SET issued = $1, 
-                   issued_plan = $2, operator = $3, quantity = $4, 
-                   order_number = $5, order_client = $6, order_material = $7,
-                   shift = $8, need_shifts = $9, plan = $10, order_name = $11
-									 WHERE report_id = $12`,
-								route.Issued, route.IssuedToday, route.User, route.Quantity,
-								order.Number, order.Client, order.Material,
-								route.Shift, route.NeedShifts, route.DayQuantity, order.Name, checkID)
-							if err != nil {
-								log.Err(err).Caller().Msg("error")
-							}
-						}
-					}
-
-					var reports []domain.Report
-					err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date < $2 AND report_date >= $3 ORDER BY report_date`, route.RouteID, today, changerDate)
-					if err != nil {
-						log.Err(err).Caller().Msg("error is")
-					}
-
-					//if len(reports) > 0 {
-					//
-					//}
-
-					//var chek bool
-					//log.Info().Msgf("report id is %v", checkID)
-					for _, report := range reports {
-						reportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
-						log.Info().Interface("report", report).Msg("REPORT")
-
-						intIssuedPlan, _ := strconv.Atoi(report.IssuedPlan)
-						intIssued, _ := strconv.Atoi(report.Issued)
-						intIssued += changer.Quantity
-
-						if reportDate.Unix() < changerDate.Unix() {
-							log.Info().Msgf("changer date %v report date %v SMALLER!", changer.Date, report.ReportDate)
-							fmt.Println("")
-							continue
-						}
-
-						if changer.Date == strings.Split(report.ReportDate, "T")[0] {
-							log.Info().Msgf("changer date for update %v GOT THIS!!", changer.Date)
-							fmt.Println("")
-							intIssuedPlan += changer.Quantity
-							_, err = o.db.Exec(`UPDATE reports SET issued = $1, issued_plan = $2, operator = $3 WHERE report_id = $4`, intIssued, intIssuedPlan, changer.Operator, report.ReportID)
-							if err != nil {
-								log.Err(err).Caller().Msg("error")
-							}
-
-						} else {
-							log.Info().Msgf("changer date for update %v JUST UPDATE", changer.Date)
-							fmt.Println("")
-
-							_, err = o.db.Exec(`UPDATE reports SET issued = $1, issued_plan = $2 WHERE report_id = $3`, intIssued, intIssuedPlan, report.ReportID)
-							if err != nil {
-								log.Err(err).Caller().Msg("error")
-							}
-
-							fmt.Println("")
-							fmt.Println("")
-						}
-					}
-				}
-
+				//var checkTodayRep int
+				//err = o.db.Get(&checkTodayRep, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, today, route.RouteID)
+				//
+				//for _, changer := range route.ReportChanger {
+				//	changerDate, _ := time.Parse(layout, changer.Date)
+				//	log.Info().Interface("report changer", changer).Msg("changer is")
+				//	reportQuery := fmt.Sprintf(`
+				//		INSERT INTO reports
+				//					 (report_date, order_id, order_number, order_client,
+				//					  order_name, quantity, issued, plan,
+				//					  operator, issued_plan, order_material, order_plot,
+				//					  adding_date, route_position, route_id, order_timestamp,
+				//					  shift, need_shifts, not_planned)
+				//		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+				//		RETURNING report_id
+				//	`)
+				//
+				//	var checkID int
+				//	err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID)
+				//
+				//	if checkID == 0 {
+				//		var prevIssued int
+				//		err = o.db.Get(&prevIssued, `SELECT issued FROM reports WHERE report_date < $1 AND route_id = $2 ORDER BY report_date DESC LIMIT 1`, changerDate, route.RouteID)
+				//		log.Info().Msgf("prev issued is %v", prevIssued)
+				//		if err != nil {
+				//			log.Err(err).Caller().Msg("error is")
+				//		}
+				//
+				//		res, err := time.Parse(layout, today)
+				//		var issuedInShift int
+				//		if res.Unix() == changerDate.Unix() {
+				//			if checkTodayRep == 0 {
+				//				log.Info().Msgf("not in plan for today")
+				//				intIssuedToday, _ := strconv.Atoi(route.IssuedToday)
+				//				issuedInShift = intIssuedToday
+				//				intIssued, _ := strconv.Atoi(route.Issued)
+				//				prevIssued = intIssued
+				//			}
+				//		} else {
+				//			issuedInShift = 0
+				//		}
+				//
+				//		var reportID int
+				//		err = o.db.QueryRow(
+				//			reportQuery, changerDate, order.ID, order.Number, order.Client,
+				//			order.Name, route.Quantity, prevIssued, route.DayQuantity,
+				//			changer.Operator, issuedInShift, order.Material, route.Plot, today,
+				//			routePos, routeID, order.TimeStamp, route.Shift, route.NeedShifts, true,
+				//		).Scan(&reportID)
+				//		if err != nil {
+				//			log.Err(err).Caller().Msg("error is")
+				//		}
+				//
+				//		log.Info().Msgf("new report is %v", reportID)
+				//	} else {
+				//		res, _ := time.Parse(layout, today)
+				//		if res.Unix() == changerDate.Unix() {
+				//			log.Info().Msgf("is today")
+				//
+				//			_, err = o.db.Exec(`UPDATE reports SET issued = $1,
+				//           issued_plan = $2, operator = $3, quantity = $4,
+				//           order_number = $5, order_client = $6, order_material = $7,
+				//           shift = $8, need_shifts = $9, plan = $10, order_name = $11
+				//					 WHERE report_id = $12`,
+				//				route.Issued, route.IssuedToday, route.User, route.Quantity,
+				//				order.Number, order.Client, order.Material,
+				//				route.Shift, route.NeedShifts, route.DayQuantity, order.Name, checkID)
+				//			if err != nil {
+				//				log.Err(err).Caller().Msg("error")
+				//			}
+				//		}
+				//	}
+				//
+				//	var reports []domain.Report
+				//	err = o.db.Select(&reports, `SELECT * FROM reports WHERE route_id = $1 AND report_date < $2 ORDER BY report_date`, route.RouteID, today)
+				//	if err != nil {
+				//		log.Err(err).Caller().Msg("error is")
+				//	}
+				//
+				//	//if len(reports) > 0 {
+				//	//
+				//	//}
+				//
+				//	//var chek bool
+				//	//log.Info().Msgf("report id is %v", checkID)
+				//	for _, report := range reports {
+				//		reportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
+				//		log.Info().Interface("report", report).Msg("REPORT")
+				//
+				//		intIssuedPlan, _ := strconv.Atoi(report.IssuedPlan)
+				//		intIssued, _ := strconv.Atoi(report.Issued)
+				//		intIssued += changer.Quantity
+				//
+				//		if reportDate.Unix() < changerDate.Unix() {
+				//			log.Info().Msgf("changer date %v report date %v SMALLER!", changer.Date, report.ReportDate)
+				//			fmt.Println("")
+				//			continue
+				//		}
+				//
+				//		if changer.Date == strings.Split(report.ReportDate, "T")[0] {
+				//			log.Info().Msgf("changer date for update %v GOT THIS!!", changer.Date)
+				//			fmt.Println("")
+				//			intIssuedPlan += changer.Quantity
+				//			_, err = o.db.Exec(`UPDATE reports SET issued = $1, issued_plan = $2, operator = $3 WHERE report_id = $4`, intIssued, intIssuedPlan, changer.Operator, report.ReportID)
+				//			if err != nil {
+				//				log.Err(err).Caller().Msg("error")
+				//			}
+				//
+				//		} else {
+				//			log.Info().Msgf("changer date for update %v JUST UPDATE", changer.Date)
+				//			fmt.Println("")
+				//
+				//			_, err = o.db.Exec(`UPDATE reports SET issued = $1, issued_plan = $2 WHERE report_id = $3`, intIssued, intIssuedPlan, report.ReportID)
+				//			if err != nil {
+				//				log.Err(err).Caller().Msg("error")
+				//			}
+				//
+				//			fmt.Println("")
+				//			fmt.Println("")
+				//		}
+				//	}
+				//}
 				_, err = o.db.Exec("DELETE FROM plans WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, info := range route.AddedDates {
 					checkPlanDate, _ := time.Parse(layout, strings.Split(info.Date, "T")[0])
@@ -309,29 +309,46 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					if checkPlanDate.Unix() >= checkToday.Unix() {
 						issued, _ := strconv.Atoi(route.Issued)
 
-						if checkToday.Unix() == checkPlanDate.Unix() {
-							var checkReportID int
-							err = o.db.Get(&checkReportID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, today, route.RouteID)
-							if err != nil {
-								log.Err(err).Msgf("error is")
-							}
-
-							if checkReportID != 0 {
-								log.Info().Msgf("check id is %v", checkReportID)
-								_, err = o.db.Exec(`UPDATE reports SET issued = $1, 
-                   issued_plan = $2, operator = $3, quantity = $4, 
-                   order_number = $5, order_client = $6, order_material = $7,
-                   shift = $8, need_shifts = $9, plan = $10, order_name = $11
-									 WHERE report_id = $12`,
-									issued, issuedToday, route.User, route.Quantity,
-									order.Number, order.Client, order.Material,
-									route.Shift, route.NeedShifts, route.DayQuantity, order.Name, checkReportID)
-								if err != nil {
-									log.Err(err).Caller().Msg("error")
-								}
-								continue
-							}
-						}
+						//if checkToday.Unix() == checkPlanDate.Unix() {
+						//	var checkReport domain.Report
+						//	err = o.db.Get(&checkReport, `SELECT * FROM reports WHERE report_date = $1 AND route_id = $2`, today, route.RouteID)
+						//	if err != nil {
+						//		log.Err(err).Caller().Msgf("error is")
+						//	}
+						//
+						//	if checkReport.ReportID != 0 {
+						//		log.Info().Interface("check report", checkReport).Msgf("check report with id : %v", checkReport.ReportID)
+						//		if !checkReport.NotPlanned {
+						//			_, err = o.db.Exec(`UPDATE reports SET issued = $1,
+						//       issued_plan = $2, operator = $3, quantity = $4,
+						//       order_number = $5, order_client = $6, order_material = $7,
+						//       shift = $8, need_shifts = $9, plan = $10, order_name = $11
+						//			 WHERE report_id = $12`,
+						//				issued, issuedToday, route.User, route.Quantity,
+						//				order.Number, order.Client, order.Material,
+						//				route.Shift, route.NeedShifts, route.DayQuantity, order.Name, checkReport.ReportID)
+						//			if err != nil {
+						//				log.Err(err).Caller().Msg("error")
+						//			}
+						//		}
+						//
+						//		//else {
+						//		//	_, err = o.db.Exec(`UPDATE reports SET issued = $1,
+						//		//   issued_plan = $2, operator = $3, quantity = $4,
+						//		//   order_number = $5, order_client = $6, order_material = $7,
+						//		//   shift = $8, need_shifts = $9, plan = $10, order_name = $11
+						//		//	 WHERE report_id = $12`,
+						//		//		issued, issuedToday, route.User, route.Quantity,
+						//		//		order.Number, order.Client, order.Material,
+						//		//		route.Shift, route.NeedShifts, route.DayQuantity, order.Name, checkReport.ReportID)
+						//		//	if err != nil {
+						//		//		log.Err(err).Caller().Msg("error")
+						//		//	}
+						//		//}
+						//
+						//		continue
+						//	}
+						//}
 
 						var reportID int
 						err = o.db.QueryRow(
@@ -346,6 +363,78 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
+				reportQuery := fmt.Sprintf(`
+						INSERT INTO reports
+									 (report_date, order_id, order_number, order_client,
+									  order_name, quantity, issued, plan,
+									  operator, issued_plan, order_material, order_plot,
+									  adding_date, route_position, route_id, order_timestamp,
+									  shift, need_shifts, not_planned)
+						VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+						RETURNING report_id
+					`)
+
+				routeReports := getIssuedReports(route)
+
+				var keys []string
+				for reportDate := range routeReports.ReportsData {
+					keys = append(keys, reportDate)
+				}
+				sort.Strings(keys)
+				log.Info().Interface("sorted dates", keys).Msgf("KEYS!!!")
+
+				//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
+				log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
+
+				var issuedThisTurn int
+				for _, reportDate := range keys {
+					reportIssued := routeReports.ReportsData[reportDate]
+					changerDate, _ := time.Parse(layout, reportDate)
+					issuedThisTurn += reportIssued.Issued
+
+					//log.Info().Interface("report", routeReports.ReportsData[reportDate]).Msg("sorted report!")
+					log.Info().Msgf("report date %v / report issued %v", changerDate, reportIssued.Issued)
+
+					var checkID int
+					if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
+					if checkID == 0 {
+						var reportID int
+						if err = o.db.QueryRow(
+							reportQuery, changerDate, order.ID, order.Number, order.Client,
+							order.Name, route.Quantity, issuedThisTurn, route.DayQuantity,
+							reportIssued.Operator, reportIssued.Issued, order.Material, route.Plot, today,
+							routePos, routeID, order.TimeStamp, route.Shift, route.NeedShifts, true,
+						).Scan(&reportID); err != nil {
+							log.Err(err).Caller().Msg("error is")
+						}
+						log.Info().Caller().Msgf("new report for date %v with id %v", changerDate, route.RouteID)
+					}
+
+					var reports []domain.Report
+					err := o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
+					if err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
+					//var totalIssued int
+					for _, report := range reports {
+						oldReportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
+						if changerDate.Unix() == oldReportDate.Unix() {
+							log.Info().Msgf("GOT THIS old report date %v", oldReportDate)
+
+							log.Info().Msgf("total issued %v / int issued %v", issuedThisTurn, reportIssued.Issued)
+							if _, err := o.db.Exec(`
+								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3 WHERE report_id = $4
+							`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, report.ReportID); err != nil {
+								log.Err(err).Msg("error is")
+							}
+						}
+					}
+				}
+
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
@@ -353,7 +442,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
-				//err = o.reportsPG.AddReports(route, order, order.ID, routePos, routeID, false)
 			} else {
 				var planDates []string
 				for _, info := range route.AddedDates {
@@ -424,10 +512,76 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
-				//err = o.reportsPG.AddReports(route, order, order.ID, routePos, routeID, false)
-				//if err != nil {
-				//	log.Err(err).Caller().Msg("ERROR")
-				//}
+				reportQuery := fmt.Sprintf(`
+						INSERT INTO reports
+									 (report_date, order_id, order_number, order_client, 
+									  order_name, quantity, issued, plan, 
+									  operator, issued_plan, order_material, order_plot, 
+									  adding_date, route_position, route_id, order_timestamp,
+									  shift, need_shifts)
+						VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+						RETURNING report_id
+					`)
+
+				routeReports := getIssuedReports(route)
+
+				var keys []string
+				for reportDate := range routeReports.ReportsData {
+					keys = append(keys, reportDate)
+				}
+				sort.Strings(keys)
+
+				//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
+				log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
+
+				var issuedThisTurn int
+				for _, reportDate := range keys {
+					reportIssued := routeReports.ReportsData[reportDate]
+					changerDate, _ := time.Parse(layout, reportDate)
+					issuedThisTurn += reportIssued.Issued
+
+					//log.Info().Interface("report", routeReports.ReportsData[reportDate]).Msg("sorted report!")
+					log.Info().Msgf("report date %v / report issued %v", changerDate, reportIssued.Issued)
+
+					var checkID int
+					if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
+					if checkID == 0 {
+						var reportID int
+						if err = o.db.QueryRow(
+							reportQuery, changerDate, order.ID, order.Number, order.Client,
+							order.Name, route.Quantity, issuedThisTurn, route.DayQuantity,
+							reportIssued.Operator, reportIssued.Issued, order.Material, route.Plot, today,
+							routePos, routeID, order.TimeStamp, route.Shift, route.NeedShifts, true,
+						).Scan(&reportID); err != nil {
+							log.Err(err).Caller().Msg("error is")
+						}
+						log.Info().Caller().Msgf("new report for date %v with id %v", changerDate, route.RouteID)
+					}
+
+					var reports []domain.Report
+					err := o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
+					if err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
+					//var totalIssued int
+					for _, report := range reports {
+						oldReportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
+						if changerDate.Unix() == oldReportDate.Unix() {
+							log.Info().Msgf("GOT THIS old report date %v", oldReportDate)
+
+							log.Info().Msgf("total issued %v / int issued %v", issuedThisTurn, reportIssued.Issued)
+							if _, err := o.db.Exec(`
+								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3 WHERE report_id = $4
+							`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, report.ReportID); err != nil {
+								log.Err(err).Msg("error is")
+							}
+						}
+					}
+				}
 
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
@@ -662,8 +816,8 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 
 	queryRouteIssuedToday := fmt.Sprintf(`
 		SELECT issued_plan
-      FROM reports
-     WHERE route_id = $1 AND report_date = $2
+	   FROM reports
+	  WHERE route_id = $1 AND report_date = $2
 	`)
 
 	queryRoutePlan := fmt.Sprintf(`
@@ -761,6 +915,68 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 
 	//log.Info().Msg("RETURNING orders")
 	return orders, err
+}
+
+type ReportsIssued struct {
+	RouteID     string
+	RoutePlot   string
+	ReportsData map[string]ReportIssuedInfo
+}
+
+type ReportIssuedInfo struct {
+	Issued   int
+	Plot     string
+	Operator string
+}
+
+func getIssuedReports(route *domain.Route) ReportsIssued {
+	reportsIssued := ReportsIssued{
+		RouteID:     "",
+		RoutePlot:   "",
+		ReportsData: map[string]ReportIssuedInfo{},
+	}
+
+	for _, comment := range route.Comments {
+		if strings.Contains(comment.Date, "REPORTMSG") {
+			fixedReport := strings.TrimSpace(strings.ReplaceAll(comment.Date, "REPORTMSG", ""))
+			splittedReport := strings.Split(fixedReport, "__")
+			splittedReport[0] = strings.ReplaceAll(splittedReport[0], ".", "-")
+			//log.Info().Interface("report", splittedReport).Msgf("splitted report is")
+
+			intIssued, _ := strconv.Atoi(splittedReport[len(splittedReport)-1])
+			reportsIssued.ReportsData[splittedReport[0]] = ReportIssuedInfo{
+				Issued:   reportsIssued.ReportsData[splittedReport[0]].Issued + intIssued,
+				Plot:     splittedReport[2],
+				Operator: splittedReport[1],
+			}
+
+			reportsIssued.RouteID = route.RouteID
+			reportsIssued.RoutePlot = route.Plot
+		}
+	}
+
+	return reportsIssued
+}
+
+func getIssuedForDay(day string, route domain.Route) ([]string, int) {
+	var issuedLog []string
+	var sumForToday int
+	for _, comment := range route.Comments {
+		if strings.Contains(comment.Date, "REPORTMSG") {
+			fixedReport := strings.TrimSpace(strings.ReplaceAll(comment.Date, "REPORTMSG", ""))
+			//log.Info().Interface("report", fixedReport).Msgf("report is")
+			splittedReport := strings.Split(fixedReport, "__")
+
+			if strings.ReplaceAll(splittedReport[0], ".", "-") == day {
+				intIssued, _ := strconv.Atoi(splittedReport[len(splittedReport)-1])
+				sumForToday += intIssued
+				issuedLog = append(issuedLog, splittedReport[len(splittedReport)-1])
+				log.Info().Interface("report for today", splittedReport).Msgf("report for today")
+			}
+		}
+	}
+
+	return issuedLog, sumForToday
 }
 
 func (o *OrdersPG) getOrderSubInfo(order *domain.Order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued string, outErr *error, check chan bool) {

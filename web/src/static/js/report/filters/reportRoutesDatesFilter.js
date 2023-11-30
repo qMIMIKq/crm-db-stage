@@ -1,8 +1,5 @@
 import {getTime} from "../../modules/getTime";
 import {getReports} from "../getReports";
-import {deleteOrders} from "../../modules/getOrders";
-import {drawPlan, getDays} from "../../plan/drawPlan";
-import {state} from "../../modules/state";
 
 export const reportRoutesDatesFilter = () => {
   const filterBtn = document.querySelector('.header-routes__planned--report')
@@ -11,6 +8,10 @@ export const reportRoutesDatesFilter = () => {
 
   let today = getTime()
   today = today.substring(0, today.length - 5).trim()
+  let yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  yesterday = yesterday.toLocaleDateString('ru-RU', {timeZone: 'Europe/Moscow'}).split('.')
+  yesterday = yesterday.reverse().join('-')
 
   // const recreatePlansTable = () => {
   //   deleteOrders()
@@ -28,14 +29,14 @@ export const reportRoutesDatesFilter = () => {
   //   document.querySelector('.table__route--date').style.minWidth = `${res * 95}px`
   // }
 
-  filterDateFrom.value = today.trim()
-  filterDateTo.value = today.trim()
-  filterDateTo.setAttribute('min', String(today.trim()))
+  filterDateFrom.value = yesterday
+  filterDateTo.value = yesterday
+  filterDateTo.setAttribute('min', String(yesterday))
 
   filterDateFrom.addEventListener('change', () => {
     filterDateTo.setAttribute('min', String(filterDateFrom.value))
 
-    if  (new Date(filterDateFrom.value).getTime() >= new Date(filterDateTo.value).getTime()) {
+    if (new Date(filterDateFrom.value).getTime() >= new Date(filterDateTo.value).getTime()) {
       filterDateTo.value = filterDateFrom.value
     }
     getReports()

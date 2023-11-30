@@ -622,9 +622,8 @@ export const triggerRoutesModal = e => {
       'time': routeInfo.time,
     }
 
-    console.log(dayQuantityInfo)
-
     planned = routeInfo['planned']
+    console.log(routeInfo.issued_today)
 
     // if (planned) {
     //   planDateInput.value = 'В планировании'
@@ -830,11 +829,9 @@ export const triggerRoutesModal = e => {
     'planned': planned
   }
 
-  console.log(startTime)
   issuedBtn.addEventListener('click', e => {
     issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime)
   })
-
 
   planDateInput.addEventListener('click', e => {
     // planned = true
