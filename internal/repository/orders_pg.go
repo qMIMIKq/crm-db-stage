@@ -89,7 +89,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 													issued, start_time, end_time, pause_time, error_time, 
 													error_value, day_quantity, theor_end, dyn_end, plan_date, 
  												  plan_start, plan_faster, plan_exclude_days, last_comment, 
-			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shfit)
+			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shift)
 						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
 			RETURNING route_id
 		`)
