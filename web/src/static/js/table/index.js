@@ -4,6 +4,7 @@ import {topFiltersHandler} from "../modules/filters/topFilters";
 import {state} from "../modules/state";
 import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
 import {adminHandler} from "../modules/admin/adminHandler";
+import {getTime} from "../modules/getTime";
 
 export const user = JSON.parse(localStorage.getItem("user"))
 if (!user) {
@@ -11,7 +12,11 @@ if (!user) {
 }
 
 if (window.location.href.endsWith('main/table')) {
+  let today = getTime()
+  console.log(today)
+
   state['startTime'] = state['startTime'] || new Date().toISOString().split('.')[0]
+  console.log(state['startTime'])
 
   adminHandler()
   tableRoutesFiltersHandler()

@@ -479,12 +479,13 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 	var files []string
 
 	layout := "2006-01-02"
-	today := time.Now().Format(layout)
+	loc, _ := time.LoadLocation("Europe/Moscow")
+	today := time.Now().In(loc).Format(layout)
 
 	var err error
 	var id string
 	for _, order := range orders {
-		timeOfModify := time.Now().Format("2006-01-02 15:04:05")
+		timeOfModify := time.Now().In(loc).Format("2006-01-02 15:04:05")
 
 		if order.EndTime != "" {
 			err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
@@ -580,7 +581,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			sort.Strings(keys)
 
 			//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
-			log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
+			log.Info().Msgf("order id %v / report route id %v / report route plot %v", id, routeID, routeReports.RoutePlot)
 
 			var issuedThisTurn int
 			for _, reportDate := range keys {
