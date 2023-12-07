@@ -21,11 +21,17 @@ const changeIssuedModal = `
         </select>
         
         <label class='route__label' for='route__user'>Смена</label>
-        <select class='route__select main__button main__select route__select--user' name='shift' id='route__shift'>
-            <option value="" selected></option>
-            <option value="Первая">Первая</option>
-            <option value="Последняя">Последняя</option>
-        </select>
+        <div class="modal__shift-block">
+            <label style="margin-bottom: 0;" for="last" class="route__label">
+                Последняя
+            </label>
+            <input type="checkbox" name="last" id="last">
+        </div>
+<!--        <select class='route__select main__button main__select route__select&#45;&#45;user' name='shift' id='route__shift'>-->
+<!--            <option value="" selected></option>-->
+<!--            <option value="Первая">Первая</option>-->
+<!--            <option value="Последняя">Последняя</option>-->
+<!--        </select>-->
         
         <label class='route__label'>Дата</label>
         <input type="date" class="main__button modal-issued__date route__input">
@@ -51,7 +57,11 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   const userData = modal.querySelector('.route__select--user')
   const plot = modal.querySelector('.route__select--plot')
   const date = modal.querySelector('.modal-issued__date')
-  const modalShift = modal.querySelector('#route__shift')
+  const modalShift = modal.querySelector('#last')
+
+  if (shift.value) {
+    modalShift.setAttribute('checked', 'true')
+  }
 
   const check = state.adminCheck || state.techCheck
   let today = getTime()
@@ -73,14 +83,6 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
     activateOnInput(e, 'issued-ok')
   })
 
-  if (startTime.value.replaceAll('.', '-').split(' ')[0] === today) {
-    modalShift.querySelectorAll('option').forEach(option => {
-      if (option.value === 'Первая') {
-        option.setAttribute('selected', true)
-      }
-    })
-  }
-
   drawPlots(plotI, userI.value)
   userData.insertAdjacentHTML('beforeend', `
     <option selected value="${userI.value}">${userI.value}</option>
@@ -89,7 +91,12 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value))
     addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments')
-    shift.value = modalShift.value
+
+    if (modalShift.checked) {
+      shift.value = 'Последняя'
+    } else {
+      shift.value = ''
+    }
 
     if (check) {
       addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')

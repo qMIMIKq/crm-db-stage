@@ -27,6 +27,11 @@
 
 input.table__data {
   padding: 0 10px;
+
+  &--compl {
+    background: green;
+    color: white;
+  }
 }
 
 input.tr {

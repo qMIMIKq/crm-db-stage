@@ -448,13 +448,13 @@ export const triggerRoutesModal = e => {
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
-    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
   })
 
   routeDayQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
-    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
   })
 
   const routeForm = modalElem.querySelector('.route__config')
@@ -615,6 +615,8 @@ export const triggerRoutesModal = e => {
     if (routeInfo.issued_today) {
       issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
     }
+
+    shift.value = routeInfo.shift
 
     dayQuantityInfo = {
       'up': routeInfo.up,
@@ -820,7 +822,7 @@ export const triggerRoutesModal = e => {
   const dayQuantity = document.querySelector('#day_quantity')
   dayQuantity.addEventListener('click', e => {
     calcWorkingShifts(e.target, dayQuantityInfo, () => {
-      getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
+      getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
     })
   })
 
@@ -918,7 +920,7 @@ export const triggerRoutesModal = e => {
     issuedToday.removeAttribute('disabled')
     startBtn.classList.add('route-type__start')
 
-    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo)
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
   })
 
   // END
@@ -1047,12 +1049,17 @@ export const triggerRoutesModal = e => {
   }
 }
 
-const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo) => {
+const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo, dayInput) => {
   // if (routeQuantity && routeDayQuantity) {
   //   shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
   // }
 
   if (routeQuantity && routeDayQuantity && startTime) {
+    if (Number(routeDayQuantity) > Number(routeQuantity)) {
+      routeDayQuantity = routeQuantity
+      dayInput.value = routeDayQuantity
+    }
+
     const timeInfo = {
       'quantity': Number(routeQuantity),
       'day_quantity': Number(routeDayQuantity),

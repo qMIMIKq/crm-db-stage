@@ -33,7 +33,7 @@ type Route struct {
 	Up              int             `json:"up" db:"up"`
 	Time            int             `json:"time" db:"time"`
 	Adjustment      int             `json:"adjustment" db:"adjustment"`
-	Shift           string          `json:"shift"`
+	Shift           string          `json:"shift" db:"shift"`
 	NeedShifts      int             `json:"need_shifts" db:"need_shifts"`
 }
 

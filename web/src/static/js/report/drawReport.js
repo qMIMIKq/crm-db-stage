@@ -5,22 +5,25 @@ export const table = document.querySelector('.main-table')
 export const shiftCounter = {}
 export const drawReport = async (d, i) => {
   controlReportsFiltersReset()
-
-  let shiftString = d.shift
-  if (shiftString) {
-    if (d.current_shift) {
-      shiftString += `(${d.current_shift})`
-    }
-  } else if (d.current_shift) {
-    shiftString = d.current_shift
-  } else {
-    shiftString = ''
-  }
+  
+  let last = d.shift && d.current_shift && d.shift === 'Последняя'
 
   let percents = 0
   if (d.plan && d.issued_plan) {
     percents = (d.issued_plan / d.plan) * 100
   }
+
+  let timestamp
+  if (d.timestamp) {
+    if (d.timestamp.includes('T')) {
+      timestamp = d.timestamp.split('T')[0].replaceAll("-", ".")
+    } else {
+      timestamp = d.timestamp.split(' ')[0].replaceAll("-", ".")
+    }
+  } else {
+    timestamp = ''
+  }
+
 
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.report_id}" class='table-form table-form--old' method='POST'>
@@ -32,7 +35,7 @@ export const drawReport = async (d, i) => {
               <input class='table__data table__data--ro ${d.not_planned ? 'route--error' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro' name='id' type='text' readonly value='${d.timestamp ? d.timestamp.split('T')[0].replaceAll("-", ".") : ""}' tabindex='-1' autocomplete='off'>
+              <input class='table__data table__data--ro' name='id' type='text' readonly value='${timestamp}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table-body__helper ${d.order_number ? "table-body__attr" : ""}  table__number'>
               <input 
@@ -68,7 +71,7 @@ export const drawReport = async (d, i) => {
             <input readonly type="text" class="table__data" value="${d.operator}">
           </li>
           <li  class='table-body_cell table-body__helper ${d.shift ? "table-body__attr" : ""} table__plan--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='shift' value='${shiftString}' tabindex='-1' autocomplete='off'>
+              <input readonly class='table__data table__data--ro ${last ? 'table__data--compl' : ''}' type='text' name='shift' value='${d.current_shift || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--report'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
@@ -81,7 +84,7 @@ export const drawReport = async (d, i) => {
               value="${d.plan}">
           </li>
           <li class="table-body_cell table__issued-plan--report">
-            <input readonly type="number" class="table__data ${d.issued_plan && d.issued_plan != '0' ? '' : 'route--error'}" value=${d.issued_plan || 0}>
+            <input readonly type="number" class="table__data ${d.issued_plan || d.issued_plan == '0' ? '' : 'route--error'}" value=${d.issued_plan || ""}>
           </li>
           <li class="table-body_cell table__issued-plan--report">
             <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>
