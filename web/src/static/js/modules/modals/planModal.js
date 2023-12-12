@@ -27,6 +27,7 @@ const planDateModal = `
          </ul>
          
          <button class="main__button--click plan-divider--modal">Делитель смены</button>
+         <button disabled class="main__button--click plan-auto--modal">Авто</button>
         
         <div class='confirm__section'>
             <button class='main__button route__btn confirm__button confirm__button--ok'>ОК</button>
@@ -37,7 +38,7 @@ const planDateModal = `
 `
 
 const planDateModalAdd = `
-    <div id='modal' style='z-index: 10001' class='modal modal-plan__date bounceIn'>
+    <div id='modal' style='z-index: 1000' class='modal modal-plan__date bounceIn'>
       <div class='modal_content modal-plan modal_content--confirm' style='width: 450px;height: 175px'>
         <h2 class='confirm__title confirm__title--plan'>Добавить</h2>
         
@@ -75,13 +76,31 @@ const planDateModalAdd = `
    </div>
 `
 
+const changeShiftModal = `
+  <div id='modal' style='z-index: 100123' class='modal modal--confirm bounceIn'>
+    <div class='modal_content modal-issued' style='width: 350px'>
+        <h2 class='confirm__title modal-issued__title'>Автопростановка плана</h2>
+        <input 
+          type='number'
+          class='route__input modal-issued__input text-input main__input main__input'
+          name='error_msg' 
+          id='error-route__msg'>
+        
+        <div class='confirm__section'>
+            <button class='main__button route__btn confirm__button confirm__button--ok'>ОК</button>
+            <button class='main__button route__btn confirm__button confirm__button--cncl'>Отмена</button>
+        </div>
+    </div>
+   </div>
+`
+
 function getWeekDay(date) {
   let days = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 
   return days[date.getDay()];
 }
 
-export const planDateHandler = (addedDates, plot, routeID, planned, planDateInput) => {
+export const planDateHandler = (addedDates, plot, routeID, planned, planDateInput, needShifts) => {
   const modal = showModal(planDateModal)
   const planToday = modal.querySelector('.plan-period__today')
   const planWeek = modal.querySelector('.plan-period__week')
@@ -90,6 +109,47 @@ export const planDateHandler = (addedDates, plot, routeID, planned, planDateInpu
   const planDivider = modal.querySelector('.plan-divider--modal')
   planDivider.addEventListener('click', () => {
     planDivider.classList.toggle('route__filter--chosen')
+  })
+  console.log(needShifts)
+
+  const autoBtn = modal.querySelector('.plan-auto--modal')
+  autoBtn.removeAttribute('disabled')
+  autoBtn.addEventListener('click', () => {
+    const shiftsModal = showModal(changeShiftModal)
+    const drawPlanBtn = shiftsModal.querySelector('.confirm__button--ok')
+    let shifts = shiftsModal.querySelector('#error-route__msg')
+    shifts.value = needShifts || 0
+    drawPlanBtn.addEventListener('click', () => {
+      modal.querySelectorAll('.plan-dates__item--inplan').forEach(planItem => {
+        planItem.click()
+      })
+
+      shifts = shiftsModal.querySelector('#error-route__msg').value
+      const planItems = modal.querySelectorAll('.plan-dates__item')
+      let inPlan = 0
+      for (let i = 0; i < planItems.length; i++) {
+        const item = planItems[i]
+        if (inPlan < shifts) {
+          if (!item.classList.contains('plan-dates__item--busy')) {
+            inPlan++
+            item.click()
+          }
+        } else {
+          break
+        }
+      }
+
+      shiftsModal.click()
+    })
+
+    const cnclBtn = shiftsModal.querySelector('.confirm__button--cncl')
+    cnclBtn.addEventListener('click', () => {
+      modal.querySelectorAll('.plan-dates__item--inplan').forEach(planItem => {
+        planItem.click()
+      })
+
+      shiftsModal.click()
+    })
   })
 
   let newBusy = []
@@ -141,7 +201,6 @@ export const planDateHandler = (addedDates, plot, routeID, planned, planDateInpu
     let today = getTime()
     let todayStr = today.substring(0, today.length - 5).trim()
     let modalAddedDates = addedDates ? addedDates : []
-    console.log(modalAddedDates, addedDates)
     let resObj = {}
     let flag = !!Object.keys(modalAddedDates).length
 
@@ -276,8 +335,6 @@ export const planDateHandler = (addedDates, plot, routeID, planned, planDateInpu
       for (let i = res + 1; i > 1; i--) {
         endDate.setDate(endDate.getDate() - 1)
         let weekDay = getWeekDay(endDate)
-        console.log(weekDay)
-
         let date = endDate.toISOString().split('T')[0]
         let showDate = date.substring(5).split('-')
         ;[showDate[0], showDate[1]] = [showDate[1], showDate[0]]

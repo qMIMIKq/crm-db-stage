@@ -625,7 +625,6 @@ export const triggerRoutesModal = e => {
     }
 
     planned = routeInfo['planned']
-    console.log(routeInfo.issued_today)
 
     // if (planned) {
     //   planDateInput.value = 'В планировании'
@@ -840,9 +839,9 @@ export const triggerRoutesModal = e => {
     // planDateInput.value = 'В планировании'
 
     if (info) {
-      planDateHandler(addedDates, routePlot.value, routeInfo['route_id'], plannedObj, planDateInput)
+      planDateHandler(addedDates, routePlot.value, routeInfo['route_id'], plannedObj, planDateInput, shifts.value)
     } else {
-      planDateHandler(addedDates, routePlot.value, '0', plannedObj, planDateInput)
+      planDateHandler(addedDates, routePlot.value, '0', plannedObj, planDateInput, shifts.value)
     }
   })
 
