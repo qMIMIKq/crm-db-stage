@@ -38,7 +38,7 @@ const planDateModal = `
 `
 
 const planDateModalAdd = `
-    <div id='modal' style='z-index: 1000' class='modal modal-plan__date bounceIn'>
+    <div id='modal' style='z-index: 100001' class='modal modal-plan__date bounceIn'>
       <div class='modal_content modal-plan modal_content--confirm' style='width: 450px;height: 175px'>
         <h2 class='confirm__title confirm__title--plan'>Добавить</h2>
         

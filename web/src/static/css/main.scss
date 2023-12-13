@@ -434,3 +434,14 @@ input:disabled {
     stroke-dashoffset: -124;
   }
 }
+
+.bg-red {
+  background: rgb(210, 66, 66) !important;
+  color: white !important;
+}
+
+.report-complete {
+  color: #0be50b !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
