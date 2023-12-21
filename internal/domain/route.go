@@ -38,9 +38,12 @@ type Route struct {
 }
 
 type DbPlanInfo struct {
-	PlanDate string `json:"date" db:"plan_date"`
-	Divider  string `json:"divider" db:"divider"`
-	Queues   string `json:"queues" db:"queues"`
+	PlanDate  string `json:"date" db:"plan_date"`
+	Divider   string `json:"divider" db:"divider"`
+	Queues    string `json:"queues" db:"queues"`
+	RouteID   string `json:"route_id" db:"route_id"`
+	RoutePlot string `json:"route_plot" db:"route_plot"`
+	OrderID   string `json:"order_id" db:"order_id"`
 }
 
 type DateInfo struct {

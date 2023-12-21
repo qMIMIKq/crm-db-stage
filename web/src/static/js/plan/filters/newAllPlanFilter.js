@@ -12,7 +12,6 @@ export const newAllPlanFilter = async (init) => {
 
   const searched = state.searched
   const hideNotIncluded = state.hideNotIncluded
-  console.log(hideNotIncluded)
 
   const topRouteFilters = state.currentTopFilters.map(filter => filter.name)
   const tableFilters = state.tableFilters

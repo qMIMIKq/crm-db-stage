@@ -336,6 +336,10 @@ input.tr {
     &--opened {
       height: 56px;
     }
+
+    &--flex {
+      display: flex;
+    }
   }
 }
 
@@ -479,6 +483,11 @@ input.tr {
   &__plan--report {
     min-width: 105px;
     max-width: 105px;
+  }
+
+  &__plan--shift {
+    min-width: 65px;
+    max-width: 65px;
   }
 
   &__route--report {

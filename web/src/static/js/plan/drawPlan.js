@@ -5,6 +5,8 @@ import {showModal} from "../modules/modals/showModal";
 import {getPlans} from "./getPlans";
 import {addTriggers} from "../modules/addTriggers";
 import {triggerFilesModal} from "../modules/modals/downloadFilesModal";
+import {activateNextStage} from "../modules/modals/routesModal";
+import {shiftHandler} from "./shiftHandler";
 
 export const table = document.querySelector('.main-table')
 
@@ -133,6 +135,10 @@ export const drawPlan = (d, data) => {
           <li  class='table-body_cell table-body__helper table__plan--report'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
+          <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
+<!--              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
+              <input readonly class='table__data shift__forw main__button click-chose table__data--ro' type='text' name='material' value='>' tabindex='-1' autocomplete='off'>
+          </li>
           <li class="table-body_cell hidden__input table__route--report">
               <input readonly type="text" class="table__data" value="${d.route_id}">
           </li>
@@ -197,7 +203,6 @@ const planningHandler = (currentOrder, d, addedDates) => {
           } else {
             newBusy[dateInfo['date']].queues.push(dateInfo['queues'])
           }
-
         })
       }
     }).then(() => {
@@ -212,6 +217,8 @@ const planningHandler = (currentOrder, d, addedDates) => {
     let modalAddedDates = addedDates ? addedDates : []
     let resObj = {}
     let flag = !!Object.keys(modalAddedDates).length
+
+    // console.log(shiftPrev, shiftForw)
 
     const deleteData = () => {
       datesList.querySelectorAll('.plan-dates__item').forEach(date => {
@@ -239,7 +246,6 @@ const planningHandler = (currentOrder, d, addedDates) => {
         })
       }
 
-      console.log(d.material, d.client, d.timestamp)
       return {
         'route_id': d.route_id,
         'order_id': d.order_id,
@@ -374,12 +380,6 @@ const planningHandler = (currentOrder, d, addedDates) => {
         })
       })
     }
-
-    // if (flag) {
-    //   drawAddedData()
-    //   addHandlers()
-    // }
-
 
     const drawData = (startDate, endDate) => {
       const from = document.querySelector('.header-routes__planned-date--report__from').value
@@ -541,45 +541,33 @@ const planningHandler = (currentOrder, d, addedDates) => {
           }
         }
       })
-
-      // if (!foundedPlots.includes(d.route_plot)) {
-      //   foundedPlots.push(d.route_plot)
-      //   let maxDivider = {}
-      //
-      //   datesList.querySelectorAll('.plan-dates__item').forEach(dateItem => {
-      //     const maxDiv = maxDivider[dateItem.textContent.trim()]
-      //
-      //     if (!maxDiv) {
-      //       maxDivider[dateItem.textContent.trim()] = 1
-      //     } else {
-      //       maxDivider[dateItem.textContent.trim()]++
-      //     }
-      //   })
-      //
-      //   for (const [date, divider] of Object.entries(maxDivider)) {
-      //     const globalDate = globalDatesObj[date]
-      //
-      //     if (!globalDate) {
-      //       globalDatesObj[date] = divider
-      //     } else {
-      //       globalDatesObj[date] = Math.max(globalDatesObj[date], divider)
-      //     }
-      //
-      //     // console.log(date, divider)
-      //   }
-      //
-      //   console.log('global dates', globalDatesObj)
-      // }
-
-
-      // console.log(globalDatesObj)
-
-
-      // console.log()
       addHandlers()
     }
-
     drawData()
+
+    // activateNextStage('shift__prev')
+    // activateNextStage('shift__forw')
+
+    let shifter = {
+      'order_id': d.order_id,
+      'route_plot': d.route_plot,
+      'route_id': d.route_id,
+      'move_to': '',
+      'shifts': 0,
+    }
+
+    // const shiftPrev = currentOrder.querySelector('.shift__prev')
+    // shiftPrev.addEventListener('click', () => {
+    //   // console.log(modalAddedDates)
+    //   shiftHandler(shifter, 'prev', modalAddedDates)
+    // })
+
+    const shiftForw = currentOrder.querySelector('.shift__forw')
+    shiftForw.addEventListener('click', () => {
+      // console.log(modalAddedDates)
+      shiftHandler(shifter, 'forw', modalAddedDates)
+    })
+
 
     const planToday = document.querySelector('.plan-period__today')
     const planWeek = document.querySelector('.plan-period__week')

@@ -68,6 +68,7 @@ type Reports interface {
 type Plans interface {
 	GetBusy(plot, routeId string) ([]domain.DbPlanInfo, error)
 	UpdatePlan(data *domain.PlanData) error
+	ShiftPlan(shift *domain.PlanShift) error
 }
 
 type Groups interface {

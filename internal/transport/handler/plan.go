@@ -39,3 +39,18 @@ func (h *Handler) updatePlan(c *gin.Context) {
 
 	newOkResponse(c, http.StatusOK)
 }
+
+func (h *Handler) shiftPlan(c *gin.Context) {
+	var shift *domain.PlanShift
+	if err := c.Bind(&shift); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := h.services.Plans.ShiftPlan(shift); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	newOkResponse(c, 200)
+}

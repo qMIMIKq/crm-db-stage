@@ -13,8 +13,6 @@ export const getPlans = (updateOnly) => {
   const dynamicDate = document.querySelector('.table__route--date')
   loader.classList.remove('hidden__input')
 
-  console.log('get plans')
-
   const links = document.querySelectorAll('.nav-control__route-link')
   const planLink = document.querySelector('.link__plan')
   document.title = 'Планирование'
@@ -157,7 +155,6 @@ export const getPlans = (updateOnly) => {
 
       console.timeEnd('draw orders')
 
-      console.time('add filters and listeners')
       // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
       // drawTableFilter([...new Set(state['clients'])].sort(), clientsFilter)
       // drawTableFilter([...new Set(state['materials'])].sort(), materialsFilter)
@@ -168,8 +165,6 @@ export const getPlans = (updateOnly) => {
       // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
       // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
       // bindTableFilters()
-
-      console.timeEnd('add filters and listeners')
 
       // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
       // if (state['isArchive']) {

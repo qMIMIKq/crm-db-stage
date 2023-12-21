@@ -9,6 +9,10 @@ type PlansService struct {
 	repo repository.Plans
 }
 
+func (p PlansService) ShiftPlan(shift *domain.PlanShift) error {
+	return p.repo.ShiftPlan(shift)
+}
+
 func (p PlansService) UpdatePlan(data *domain.PlanData) error {
 	return p.repo.UpdatePlan(data)
 }
