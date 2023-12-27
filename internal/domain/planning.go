@@ -6,6 +6,7 @@ type Planning struct {
 	TimeStamp    interface{}  `json:"timestamp" db:"order_timestamp"`
 	Number       string       `json:"number" db:"order_number"`
 	Client       string       `json:"client" db:"order_client"`
+	Position     string       `json:"position" db:"position"`
 	Files        []string     `json:"files"`
 	Name         string       `json:"name" db:"order_name"`
 	Material     string       `json:"material" db:"order_material"`

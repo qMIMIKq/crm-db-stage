@@ -67,6 +67,8 @@ let foundedPlots = []
 export const drawPlan = (d, data) => {
   let uniqueFileNames = []
 
+  console.log(d.position)
+
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
       const arrDotFile = file.split('.')
