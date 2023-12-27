@@ -8,12 +8,12 @@ import (
 	ginSession "github.com/go-session/gin-session"
 )
 
-type mainHandler struct {
+type MainHandler struct {
 	handler     *handler.Handler
 	viewHandler *view_handler.ViewHandler
 }
 
-func (h *mainHandler) InitAllRoutes() *gin.Engine {
+func (h *MainHandler) InitAllRoutes() *gin.Engine {
 	router := gin.New()
 
 	gin.SetMode("release")
@@ -28,8 +28,8 @@ func (h *mainHandler) InitAllRoutes() *gin.Engine {
 	return router
 }
 
-func NewMainHandler(services *services.Services) *mainHandler {
-	return &mainHandler{
+func NewMainHandler(services *services.Services) *MainHandler {
+	return &MainHandler{
 		handler:     handler.NewHandler(services),
 		viewHandler: view_handler.NewViewHandler(services),
 	}

@@ -23,7 +23,7 @@ func NewPostgresDB(cfg PGConfig) (*sqlx.DB, error) {
 		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.SSLMode, cfg.Password,
 	)
 
-	log.Info().Msgf("Connect, %s", connect)
+	log.Info().Msgf("connecting to db with creds..., %s", connect)
 
 	db, err := sqlx.Open(
 		"postgres",

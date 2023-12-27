@@ -12,11 +12,11 @@ if (!user) {
 }
 
 if (window.location.href.endsWith('main/table')) {
-  let today = getTime()
-  console.log(today)
+  // let today = getTime()
+  // console.log(today)
 
   state['startTime'] = state['startTime'] || new Date().toISOString().split('.')[0]
-  console.log(state['startTime'])
+  // console.log(state['startTime'])
 
   adminHandler()
   tableRoutesFiltersHandler()

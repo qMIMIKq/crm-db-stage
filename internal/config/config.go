@@ -20,9 +20,11 @@ func GetConfig() *Config {
 	config := &Config{}
 
 	once.Do(func() {
-		log.Info().Caller().Msg("reading app config")
+		log.Info().Caller().Msg("reading app config...")
 
 		if err := cleanenv.ReadConfig("./settings/dev-config.yml", config); err != nil {
+			log.Info().Caller().Msg("no config file, searching env...")
+
 			if err := cleanenv.ReadEnv(config); err != nil {
 				help, _ := cleanenv.GetDescription(config, nil)
 				if help != "" {

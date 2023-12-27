@@ -74,7 +74,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "appAddr": () => (/* binding */ appAddr)
 /* harmony export */ });
-const appAddr = 'http://172.20.10.7:8182';
+const appAddr = 'http://192.168.0.103:8182';
 
 /***/ }),
 
@@ -2674,8 +2674,9 @@ const colorRoutes = (routes, parent) => {
       dataInput.value = JSON.stringify(route);
       routeInfo.value = route.plot;
       routeInfo.classList.add('route');
-      console.log(parent);
-      console.log(route.plan_dates);
+
+      // console.log(parent)
+      // console.log(route.plan_dates)
       if (route.plan_dates) {
         if (route.plan_dates.includes(date)) {
           routeInfo.classList.add('route--planned');
@@ -3872,6 +3873,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "calcWorkingShifts": () => (/* binding */ calcWorkingShifts)
 /* harmony export */ });
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
+/* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+/* harmony import */ var _table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../table */ "./web/src/static/js/table/index.js");
+
+
 
 const shiftsModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
@@ -3925,13 +3930,20 @@ const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
   up.value = dayQuantityInfo.up;
   adjustment.value = dayQuantityInfo.adjustment;
   time.value = dayQuantityInfo.time;
+  let check = false;
+  [up, adjustment, time].forEach(input => input.addEventListener('change', () => {
+    check = true;
+  }));
   const defaultWorkTime = 720;
   okBtn.addEventListener('click', () => {
     dayQuantityInput.value = Math.floor(defaultWorkTime / Number(time.value));
     dayQuantityInfo.up = Number(up.value);
     dayQuantityInfo.adjustment = Number(adjustment.value);
     dayQuantityInfo.time = Number(time.value);
-    getTheor();
+    if (dayQuantityInfo.time && check) {
+      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${dayQuantityInfo.time}`, '#visible__comments');
+      getTheor();
+    }
     modal.click();
   });
 };
@@ -7236,10 +7248,12 @@ if (!user) {
   window.location.href = '/login';
 }
 if (window.location.href.endsWith('main/table')) {
-  let today = (0,_modules_getTime__WEBPACK_IMPORTED_MODULE_6__.getTime)();
-  console.log(today);
+  // let today = getTime()
+  // console.log(today)
+
   _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime = _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime || new Date().toISOString().split('.')[0];
-  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.startTime);
+  // console.log(state['startTime'])
+
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__.adminHandler)();
   (0,_modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__.tableRoutesFiltersHandler)();
   (0,_modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_2__.topFiltersHandler)();

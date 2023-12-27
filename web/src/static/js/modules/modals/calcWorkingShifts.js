@@ -1,4 +1,6 @@
 import {showModal} from "./showModal";
+import {addLog} from "./routesModal";
+import {user} from "../../table";
 
 const shiftsModal = `
   <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
@@ -55,6 +57,12 @@ export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) =
   adjustment.value = dayQuantityInfo.adjustment
   time.value = dayQuantityInfo.time
 
+  let check = false
+
+  ;[up, adjustment, time].forEach(input => input.addEventListener('change', () => {
+    check = true
+  }))
+
   const defaultWorkTime = 720
 
   okBtn.addEventListener('click', () => {
@@ -64,7 +72,11 @@ export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) =
     dayQuantityInfo.adjustment = Number(adjustment.value)
     dayQuantityInfo.time = Number(time.value)
 
-    getTheor()
+    if (dayQuantityInfo.time && check) {
+      addLog(user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${dayQuantityInfo.time}`, '#visible__comments')
+      getTheor()
+    }
+
     modal.click()
   })
 }

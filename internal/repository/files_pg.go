@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -42,8 +43,10 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 		}
 
 		newFiles = append(newFiles, filePath)
-		switch fileType[len(fileType)-1] {
-		case "pdf", "PDF":
+
+		checkType := strings.ToLower(fileType[len(fileType)-1])
+		switch checkType {
+		case "pdf", "dxf":
 			name := filePath[:len(filePath)-3] + "png"
 			newFiles = append(newFiles, name)
 
@@ -51,36 +54,27 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 			if err != nil {
 				log.Fatal().Caller().Err(err).Msg("error")
 			}
-			_, err = io.Copy(fw, file)
-			writer.Close()
 
-			req, err := http.NewRequest(http.MethodPost, "http://app-converter:5000/pdf-convert", bytes.NewReader(body.Bytes()))
-			//req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/pdf-convert", bytes.NewReader(body.Bytes()))
-			req.Header.Set("Content-Type", writer.FormDataContentType())
-			rsp, _ := client.Do(req)
-			if rsp.StatusCode != http.StatusOK {
-				log.Warn().Msgf("FUCK")
-			}
-
-		case "DXF", "dxf":
-			name := filePath[:len(filePath)-3] + "png"
-			newFiles = append(newFiles, name)
-
-			file, err := os.Open(filePath)
-			if err != nil {
+			if _, err = io.Copy(fw, file); err != nil {
 				log.Fatal().Caller().Err(err).Msg("error")
 			}
-			_, err = io.Copy(fw, file)
 			writer.Close()
 
-			req, err := http.NewRequest(http.MethodPost, "http://app-converter:5000/dxf-convert", bytes.NewReader(body.Bytes()))
-			//req, err := http.NewRequest(http.MethodPost, "http://172.20.10.7:5001/dxf-convert", bytes.NewReader(body.Bytes()))
-			req.Header.Set("Content-Type", writer.FormDataContentType())
-			rsp, _ := client.Do(req)
-			if rsp.StatusCode != http.StatusOK {
-				log.Warn().Msgf("FUCK")
+			var url string
+			if checkType == "pdf" {
+				//url = "http://172.20.10.7:5001/pdf-convert"
+				url = "http://app-converter:5000/pdf-convert"
+			} else {
+				//url = http://172.20.10.7:5001/dxf-convert
+				url = "http://app-converter:5000/dxf-convert"
 			}
 
+			req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body.Bytes()))
+			req.Header.Set("Content-Type", writer.FormDataContentType())
+			if rsp, _ := client.Do(req); rsp.StatusCode != http.StatusOK {
+				log.Warn().Msgf("FUCK")
+				return nil, errors.New("can't convert file")
+			}
 		}
 	}
 

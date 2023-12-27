@@ -26,8 +26,8 @@ export const colorRoutes = (routes, parent) => {
       routeInfo.value = route.plot
       routeInfo.classList.add('route')
 
-      console.log(parent)
-      console.log(route.plan_dates)
+      // console.log(parent)
+      // console.log(route.plan_dates)
       if (route.plan_dates) {
 
         if (route.plan_dates.includes(date)) {
