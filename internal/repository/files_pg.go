@@ -2,7 +2,6 @@ package repository
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -73,7 +72,7 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 			req.Header.Set("Content-Type", writer.FormDataContentType())
 			if rsp, _ := client.Do(req); rsp.StatusCode != http.StatusOK {
 				log.Warn().Msgf("FUCK")
-				return nil, errors.New("can't convert file")
+				//return nil, errors.New("can't convert file")
 			}
 		}
 	}
