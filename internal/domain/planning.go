@@ -9,7 +9,6 @@ type Planning struct {
 	Position     string       `json:"position" db:"position"`
 	Files        []string     `json:"files"`
 	Name         string       `json:"name" db:"order_name"`
-	Material     string       `json:"material" db:"order_material"`
 	Quantity     string       `json:"quantity" db:"order_quantity"`
 	Issued       string       `json:"issued" db:"order_issued"`
 	TimeOfModify interface{}  `json:"time_of_modify" db:"time_of_modify"`

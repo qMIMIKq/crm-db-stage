@@ -232,8 +232,13 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					changerDate, _ := time.Parse(layout, reportDate)
 					issuedThisTurn += reportIssued.Issued
 
+					var shift string
+					if reportIssued.Last {
+						shift = "Последняя"
+					}
+
 					//log.Info().Interface("report", routeReports.ReportsData[reportDate]).Msg("sorted report!")
-					log.Info().Msgf("report date %v / report issued %v", changerDate, reportIssued.Issued)
+					log.Info().Caller().Msgf("report date %v / report issued %v / report last %v", changerDate, reportIssued.Issued, shift)
 
 					var checkID int
 					if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID); err != nil {
@@ -246,7 +251,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							reportQuery, changerDate, order.ID, order.Number, order.Client,
 							order.Name, route.Quantity, issuedThisTurn, route.DayQuantity,
 							reportIssued.Operator, reportIssued.Issued, order.Material, route.Plot, today,
-							routePos, routeID, route.TheorEnd, route.Shift, route.NeedShifts, true,
+							routePos, routeID, route.TheorEnd, shift, route.NeedShifts, true,
 						).Scan(&reportID); err != nil {
 							log.Err(err).Caller().Msg("error is")
 						}
@@ -267,8 +272,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 							log.Info().Msgf("shift %v / total issued %v / int issued %v", i+1, issuedThisTurn, reportIssued.Issued)
 							if _, err := o.db.Exec(`
-								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4 WHERE report_id = $5
-								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, report.ReportID); err != nil {
+								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5 WHERE report_id = $6
+								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, report.ReportID); err != nil {
 								log.Err(err).Msg("error is")
 							}
 						}
@@ -380,8 +385,13 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					changerDate, _ := time.Parse(layout, reportDate)
 					issuedThisTurn += reportIssued.Issued
 
+					var shift string
+					if reportIssued.Last {
+						shift = "Последняя"
+					}
+
 					//log.Info().Interface("report", routeReports.ReportsData[reportDate]).Msg("sorted report!")
-					log.Info().Msgf("report date %v / report issued %v", changerDate, reportIssued.Issued)
+					log.Info().Caller().Msgf("report date %v / report issued %v / report last %v", changerDate, reportIssued.Issued, shift)
 
 					var checkID int
 					if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID); err != nil {
@@ -394,7 +404,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							reportQuery, changerDate, order.ID, order.Number, order.Client,
 							order.Name, route.Quantity, issuedThisTurn, route.DayQuantity,
 							reportIssued.Operator, reportIssued.Issued, order.Material, route.Plot, today,
-							routePos, routeID, order.TimeStamp, route.Shift, route.NeedShifts, true,
+							routePos, routeID, order.TimeStamp, shift, route.NeedShifts, true,
 						).Scan(&reportID); err != nil {
 							log.Err(err).Caller().Msg("error is")
 						}
@@ -415,8 +425,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 							log.Info().Msgf("shift %v / total issued %v / int issued %v", i+1, issuedThisTurn, reportIssued.Issued)
 							if _, err := o.db.Exec(`
-									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4 WHERE report_id = $5
-									`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, report.ReportID); err != nil {
+									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5 WHERE report_id = $5
+									`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, report.ReportID); err != nil {
 								log.Err(err).Msg("error is")
 							}
 						}
@@ -589,8 +599,13 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				changerDate, _ := time.Parse(layout, reportDate)
 				issuedThisTurn += reportIssued.Issued
 
+				var shift string
+				if reportIssued.Last {
+					shift = "Последняя"
+				}
+
 				//log.Info().Interface("report", routeReports.ReportsData[reportDate]).Msg("sorted report!")
-				log.Info().Msgf("report date %v / report issued %v", changerDate, reportIssued.Issued)
+				log.Info().Caller().Msgf("report date %v / report issued %v / report last %v", changerDate, reportIssued.Issued, shift)
 
 				var checkID int
 				if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID); err != nil {
@@ -603,7 +618,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 						reportQuery, changerDate, order.ID, order.Number, order.Client,
 						order.Name, route.Quantity, issuedThisTurn, route.DayQuantity,
 						reportIssued.Operator, reportIssued.Issued, order.Material, route.Plot, today,
-						routePos, routeID, route.TheorEnd, route.Shift, route.NeedShifts, true,
+						routePos, routeID, route.TheorEnd, shift, route.NeedShifts, true,
 					).Scan(&reportID); err != nil {
 						log.Err(err).Caller().Msg("error is")
 					}
@@ -624,8 +639,8 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 						log.Info().Msgf("shift %v / total issued %v / int issued %v", i+1, issuedThisTurn, reportIssued.Issued)
 
 						if _, err := o.db.Exec(`
-									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4 WHERE report_id = $5
-									`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, report.ReportID); err != nil {
+									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5 WHERE report_id = $6
+									`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, report.ReportID); err != nil {
 							log.Err(err).Msg("error is")
 						}
 					}
@@ -824,6 +839,7 @@ type ReportIssuedInfo struct {
 	Issued   int
 	Plot     string
 	Operator string
+	Last     bool
 }
 
 func getIssuedReports(route *domain.Route) ReportsIssued {
@@ -838,13 +854,25 @@ func getIssuedReports(route *domain.Route) ReportsIssued {
 			fixedReport := strings.TrimSpace(strings.ReplaceAll(comment.Date, "REPORTMSG", ""))
 			splittedReport := strings.Split(fixedReport, "__")
 			splittedReport[0] = strings.ReplaceAll(splittedReport[0], ".", "-")
-			//log.Info().Interface("report", splittedReport).Msgf("splitted report is")
 
-			intIssued, _ := strconv.Atoi(splittedReport[len(splittedReport)-1])
+			//log.Info().Interface("report", splittedReport).Msgf("splitted report is")
+			//log.Info().Msgf("len of splitted report %v", len(splittedReport))
+
+			var last bool
+			if len(splittedReport) == 5 {
+				if splittedReport[4] == "last" {
+					last = true
+				} else {
+					last = false
+				}
+			}
+
+			intIssued, _ := strconv.Atoi(splittedReport[3])
 			reportsIssued.ReportsData[splittedReport[0]] = ReportIssuedInfo{
 				Issued:   reportsIssued.ReportsData[splittedReport[0]].Issued + intIssued,
 				Plot:     splittedReport[2],
 				Operator: splittedReport[1],
+				Last:     last,
 			}
 
 			reportsIssued.RouteID = route.RouteID

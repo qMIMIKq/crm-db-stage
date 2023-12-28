@@ -90,7 +90,7 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
 
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value))
-    addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments')
+    addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}__${modalShift.checked ? "last" : "nlast"}`, '#visible__comments')
 
     if (modalShift.checked) {
       shift.value = 'Последняя'
@@ -99,16 +99,15 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
     }
 
     if (check) {
-      addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments')
+      addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments')
       let alreadyInDateCheck = false
+
 
       for (let i = 0; i < updateData.length; i++) {
         if (updateData[i].date === date.value) {
           updateData[i].operator = userData.value
           updateData[i].quantity += Number(modalIssuedInput.value)
         }
-
-        console.log(updateData[i])
       }
 
       if (!alreadyInDateCheck) {
@@ -128,7 +127,7 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
 
     } else {
       issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value)
-      addLog(userData.value, `${plot.value} За смену ${modalIssuedInput.value}`, '#visible__comments')
+      addLog(userData.value, `${plot.value} За смену ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments')
     }
 
     modal.click()

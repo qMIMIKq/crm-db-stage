@@ -4493,21 +4493,20 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
   `);
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value));
-    (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addReportMsg)(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments');
+    (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addReportMsg)(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}__${modalShift.checked ? "last" : "nlast"}`, '#visible__comments');
     if (modalShift.checked) {
       shift.value = 'Последняя';
     } else {
       shift.value = '';
     }
     if (check) {
-      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments');
+      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments');
       let alreadyInDateCheck = false;
       for (let i = 0; i < updateData.length; i++) {
         if (updateData[i].date === date.value) {
           updateData[i].operator = userData.value;
           updateData[i].quantity += Number(modalIssuedInput.value);
         }
-        console.log(updateData[i]);
       }
       if (!alreadyInDateCheck) {
         updateData.push({
@@ -4522,7 +4521,7 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
       }
     } else {
       issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value);
-      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(userData.value, `${plot.value} За смену ${modalIssuedInput.value}`, '#visible__comments');
+      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(userData.value, `${plot.value} За смену ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments');
     }
     modal.click();
   });
@@ -6737,9 +6736,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _getPlans__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getPlans */ "./web/src/static/js/plan/getPlans.js");
 /* harmony import */ var _modules_addTriggers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/addTriggers */ "./web/src/static/js/modules/addTriggers.js");
 /* harmony import */ var _modules_modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
-/* harmony import */ var _modules_modals_routesModal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../modules/modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
-/* harmony import */ var _shiftHandler__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./shiftHandler */ "./web/src/static/js/plan/shiftHandler.js");
-
+/* harmony import */ var _shiftHandler__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./shiftHandler */ "./web/src/static/js/plan/shiftHandler.js");
 
 
 
@@ -6799,7 +6796,7 @@ let globalDatesObj = {};
 let foundedPlots = [];
 const drawPlan = (d, data) => {
   let uniqueFileNames = [];
-  console.log(d.position);
+  console.log(d.order_id, d.route_plot, d.position);
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
       const arrDotFile = file.split('.');
@@ -6845,9 +6842,6 @@ const drawPlan = (d, data) => {
           <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
               <input readonly class='table__data table__data--ro' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
           </li>
-          <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
-              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
-          </li>
           <li class='table-body_cell table__quantity'>
               <input readonly class='table__data table__data--ro' type='number' name='quantity' required value='${d.quantity}' autocomplete='off'>
           </li>
@@ -6857,6 +6851,9 @@ const drawPlan = (d, data) => {
               name="issued" 
               required  autocomplete="off"
               value="${d.issued}">
+          </li>
+           <li class="table-body_cell table__route--report">
+              <input readonly type="text" class="table__data table__data--ro" value="${d.position}">
           </li>
           <li class="table-body_cell table__route--report">
               <input readonly type="text" class="table__data table__data--ro" value="${d.route_plot}">
@@ -7252,7 +7249,7 @@ const planningHandler = (currentOrder, d, addedDates) => {
     const shiftForw = currentOrder.querySelector('.shift__forw');
     shiftForw.addEventListener('click', () => {
       // console.log(modalAddedDates)
-      (0,_shiftHandler__WEBPACK_IMPORTED_MODULE_8__.shiftHandler)(shifter, 'forw', modalAddedDates);
+      (0,_shiftHandler__WEBPACK_IMPORTED_MODULE_7__.shiftHandler)(shifter, 'forw', modalAddedDates);
     });
     const planToday = document.querySelector('.plan-period__today');
     const planWeek = document.querySelector('.plan-period__week');

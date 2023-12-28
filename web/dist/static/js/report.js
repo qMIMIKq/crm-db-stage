@@ -4493,21 +4493,20 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
   `);
   okBtn.addEventListener('click', () => {
     issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value));
-    (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addReportMsg)(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}`, '#visible__comments');
+    (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addReportMsg)(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}__${modalShift.checked ? "last" : "nlast"}`, '#visible__comments');
     if (modalShift.checked) {
       shift.value = 'Последняя';
     } else {
       shift.value = '';
     }
     if (check) {
-      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value}`, '#visible__comments');
+      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments');
       let alreadyInDateCheck = false;
       for (let i = 0; i < updateData.length; i++) {
         if (updateData[i].date === date.value) {
           updateData[i].operator = userData.value;
           updateData[i].quantity += Number(modalIssuedInput.value);
         }
-        console.log(updateData[i]);
       }
       if (!alreadyInDateCheck) {
         updateData.push({
@@ -4522,7 +4521,7 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
       }
     } else {
       issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value);
-      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(userData.value, `${plot.value} За смену ${modalIssuedInput.value}`, '#visible__comments');
+      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(userData.value, `${plot.value} За смену ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments');
     }
     modal.click();
   });

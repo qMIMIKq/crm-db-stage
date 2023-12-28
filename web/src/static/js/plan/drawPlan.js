@@ -5,7 +5,6 @@ import {showModal} from "../modules/modals/showModal";
 import {getPlans} from "./getPlans";
 import {addTriggers} from "../modules/addTriggers";
 import {triggerFilesModal} from "../modules/modals/downloadFilesModal";
-import {activateNextStage} from "../modules/modals/routesModal";
 import {shiftHandler} from "./shiftHandler";
 
 export const table = document.querySelector('.main-table')
@@ -67,7 +66,7 @@ let foundedPlots = []
 export const drawPlan = (d, data) => {
   let uniqueFileNames = []
 
-  console.log(d.position)
+  console.log(d.order_id, d.route_plot, d.position)
 
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
@@ -118,9 +117,6 @@ export const drawPlan = (d, data) => {
           <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
               <input readonly class='table__data table__data--ro' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
           </li>
-          <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
-              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
-          </li>
           <li class='table-body_cell table__quantity'>
               <input readonly class='table__data table__data--ro' type='number' name='quantity' required value='${d.quantity}' autocomplete='off'>
           </li>
@@ -130,6 +126,9 @@ export const drawPlan = (d, data) => {
               name="issued" 
               required  autocomplete="off"
               value="${d.issued}">
+          </li>
+           <li class="table-body_cell table__route--report">
+              <input readonly type="text" class="table__data table__data--ro" value="${d.position}">
           </li>
           <li class="table-body_cell table__route--report">
               <input readonly type="text" class="table__data table__data--ro" value="${d.route_plot}">
