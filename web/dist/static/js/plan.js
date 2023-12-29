@@ -3562,7 +3562,7 @@ const topFiltersHandler = () => {
       filters = data.data;
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = filters;
     }).then(_ => filterListener(filterFilters));
-    if (_state__WEBPACK_IMPORTED_MODULE_1__.userInf.groupId === "5") {
+    if (_state__WEBPACK_IMPORTED_MODULE_1__.userInf.plot !== 'все') {
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots = _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots.filter(pl => pl.name === _state__WEBPACK_IMPORTED_MODULE_1__.userInf.plot);
       _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters = _state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters.filter(filt => _state__WEBPACK_IMPORTED_MODULE_1__.state.topPlots[0].name === filt.plot);
       removeData(plotFilters);
@@ -7946,8 +7946,8 @@ const topPlansFilters = () => {
         plotListener(plotFilters);
       });
     }
+    console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.plot);
     if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.groupId === "5") {
-      console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.plot);
       _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots.filter(pl => pl.name === _modules_state__WEBPACK_IMPORTED_MODULE_0__.userInf.plot);
       _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topFilters.filter(filt => _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.topPlots[0].name === filt.plot);
       removeData(plotFilters);

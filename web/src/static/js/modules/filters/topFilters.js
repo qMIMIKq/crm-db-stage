@@ -280,7 +280,7 @@ export const topFiltersHandler = () => {
         state['topFilters'] = filters
       }).then(_ => filterListener(filterFilters))
 
-    if (userInf.groupId === "5") {
+    if (userInf.plot !== 'все') {
       state.topPlots = state.topPlots.filter(pl => pl.name === userInf.plot)
       state['topFilters'] = state['topFilters'].filter(filt => state.topPlots[0].name === filt.plot)
 

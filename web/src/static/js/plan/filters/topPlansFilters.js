@@ -265,8 +265,8 @@ export const topPlansFilters = () => {
         })
     }
 
+    console.log(userInf.plot)
     if (userInf.groupId === "5") {
-      console.log(userInf.plot)
       state.topPlots = state.topPlots.filter(pl => pl.name === userInf.plot)
       state['topFilters'] = state['topFilters'].filter(filt => state.topPlots[0].name === filt.plot)
 
