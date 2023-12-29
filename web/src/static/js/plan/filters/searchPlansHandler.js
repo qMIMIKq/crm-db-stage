@@ -10,6 +10,16 @@ const searchOrdersModal = `
           </div>
           
         <div class="modal_content-block">
+          <label class="search-orders__label" for="search-orders__client">Везде</label>
+          <input 
+            placeholder="Полный поиск"
+            type='text'
+            class='route__input search-orders__input main__input'
+            name='every' 
+            id='search-orders__every'>
+        </div>
+          
+        <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">Клиент</label>
           <input 
             placeholder="Клиент"
@@ -27,16 +37,6 @@ const searchOrdersModal = `
             class='route__input search-orders__input main__input'
             name='name' 
             id='search-orders__name'>
-        </div>
-        
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Материал</label>
-          <input 
-            placeholder="Материал"
-            type='text'
-            class='route__input search-orders__input main__input'
-            name='material' 
-            id='search-orders__material'>
         </div>
         
         <div class="modal_content-block">
@@ -60,8 +60,23 @@ const searchOrdersModal = `
 export const searchPlansHandler = () => {
   const searchModal = showModal(searchOrdersModal)
   const inputs = searchModal.querySelectorAll('input')
-  const searchBtn = searchModal.querySelector('.confirm__button--search')
 
+  const everySearch = searchModal.querySelector('#search-orders__every')
+  everySearch.addEventListener('input', e => {
+    inputs.forEach(input => {
+      if (e.target.value !== '' && input !== e.target) {
+        state['tableFilters'][input.name] = ''
+        input.value = ''
+        input.setAttribute('disabled', true)
+        input.setAttribute('readonly', true)
+      } else {
+        input.removeAttribute('disabled')
+        input.removeAttribute('readonly')
+      }
+    })
+  })
+
+  const searchBtn = searchModal.querySelector('.confirm__button--search')
   searchBtn.addEventListener('click', () => {
     inputs.forEach(input => {
       if (input.value) {

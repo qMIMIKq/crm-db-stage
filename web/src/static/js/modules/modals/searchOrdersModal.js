@@ -1,11 +1,5 @@
 import {showModal} from "./showModal";
 import {state} from "../state";
-import {hideOrders} from "../getOrders";
-import {filterData} from "../filters/topFilters";
-import {bindOrdersListeners} from "../bindListeners";
-import {drawOrders} from "../drawe/drawOrders";
-import {filterRoutesState} from "../filters/filterRoutesState";
-import {logPlugin} from "@babel/preset-env/lib/debug";
 import {newAllFilter} from "../filters/newAllFilter";
 
 const searchOrdersModal = `
@@ -14,6 +8,17 @@ const searchOrdersModal = `
          <div class='modal__header modal-header'>
               <h2 class='comments__title'>Поиск заказов</h2>                
           </div>
+          
+          
+        <div class="modal_content-block">
+          <label class="search-orders__label" for="search-orders__client">Везде</label>
+          <input 
+            placeholder="Полный поиск"
+            type='text'
+            class='route__input search-orders__input main__input'
+            name='every' 
+            id='search-orders__every'>
+        </div>
           
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">Клиент</label>
@@ -66,8 +71,23 @@ const searchOrdersModal = `
 export const searchOrdersHandler = () => {
   const searchModal = showModal(searchOrdersModal)
   const inputs = searchModal.querySelectorAll('input')
-  const searchBtn = searchModal.querySelector('.confirm__button--search')
 
+  const everySearch = searchModal.querySelector('#search-orders__every')
+  everySearch.addEventListener('input', e => {
+    inputs.forEach(input => {
+      if (e.target.value !== '' && input !== e.target) {
+        state['tableFilters'][input.name] = ''
+        input.value = ''
+        input.setAttribute('disabled', true)
+        input.setAttribute('readonly', true)
+      } else {
+        input.removeAttribute('disabled')
+        input.removeAttribute('readonly')
+      }
+    })
+  })
+
+  const searchBtn = searchModal.querySelector('.confirm__button--search')
   searchBtn.addEventListener('click', () => {
     inputs.forEach(input => {
       if (input.value) {
