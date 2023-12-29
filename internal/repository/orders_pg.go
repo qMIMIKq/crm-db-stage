@@ -195,7 +195,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						RETURNING report_id
 					`)
 
-					log.Info().Msgf("INFO DATE / %v", info.Date)
 					if checkPlanDate.Unix() >= checkToday.Unix() {
 						issued, _ := strconv.Atoi(route.Issued)
 
@@ -233,7 +232,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				//log.Info().Interface("sorted dates", keys).Msgf("KEYS!!!")
 
 				//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
-				log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
+				//log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
 
 				var issuedThisTurn int
 				for _, reportDate := range keys {
@@ -382,8 +381,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 									order_name, quantity, issued, plan, 
 									operator, issued_plan, order_material, order_plot, 
 									adding_date, route_position, route_id, order_timestamp,
-									shift, need_shifts, not_planned)
-					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+									shift, need_shifts, not_planned, adjustment)
+					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
 					RETURNING report_id
 				`)
 
@@ -396,7 +395,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				sort.Strings(keys)
 
 				//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
-				log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
+				//log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
 
 				var issuedThisTurn int
 				for _, reportDate := range keys {
@@ -426,7 +425,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							reportQuery, changerDate, order.ID, order.Number, order.Client,
 							order.Name, route.Quantity, issuedThisTurn, route.DayQuantity,
 							reportIssued.Operator, reportIssued.Issued, order.Material, route.Plot, today,
-							routePos, routeID, order.TimeStamp, shift, route.NeedShifts, true,
+							routePos, routeID, order.TimeStamp, shift, route.NeedShifts, true, reportIssued.Adjustment,
 						).Scan(&reportID); err != nil {
 							log.Err(err).Caller().Msg("error is")
 						}
@@ -616,7 +615,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			sort.Strings(keys)
 
 			//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
-			log.Info().Msgf("order id %v / report route id %v / report route plot %v", id, routeID, routeReports.RoutePlot)
+			//log.Info().Msgf("order id %v / report route id %v / report route plot %v", id, routeID, routeReports.RoutePlot)
 
 			var issuedThisTurn int
 			for _, reportDate := range keys {
