@@ -3,10 +3,15 @@ import {activateOnInput} from "../modules/modals/routesModal"
 import {sendData} from "../modules/sendData";
 import {appAddr} from "../../../../../appAddr";
 import {getPlans} from "./getPlans";
+// style="background:rgb(210, 66, 66);
 
 const shiftModal = `
   <div id='modal' style='z-index: 100123' class='modal modal--confirm bounceIn'>
     <div class='modal_content modal-issued' style='width: 350px'>
+<!--         <div class='modal__header modal-header'>-->
+<!--              <h2 class='comments__title'>Сдвинуть план</h2>                -->
+<!--         </div>-->
+         
         <h2 class='confirm__title modal-issued__title'>Сдвинуть план</h2>
         <input 
           type='number'

@@ -80,6 +80,13 @@ export const drawReport = async (d, i) => {
           <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--report'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
+          <li class="table-body_cell table__use table__plan--report">
+             <input readonly class="table__data" tabindex="-1"
+              type="number" 
+              name="issued" 
+              required  autocomplete="off"
+              value="${d.adjustment && d.adjustment != '-1' ? d.adjustment : ''}">
+          </li>
            <li class="table-body_cell table__use table__plan--report">
              <input readonly class="table__data" tabindex="-1"
               type="number" 
@@ -88,7 +95,7 @@ export const drawReport = async (d, i) => {
               value="${d.plan}">
           </li>
           <li class="table-body_cell table__issued-plan--report">
-            <input readonly type="number" class="table__data" value=${d.issued_plan || ""}>
+            <input readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
           </li>
           <li class="table-body_cell table__issued-plan--report">
             <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>

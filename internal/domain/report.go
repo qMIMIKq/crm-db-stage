@@ -13,6 +13,7 @@ type Report struct {
 	IssuedPlan    string      `json:"issued_plan" db:"issued_plan"`
 	ReportEnd     string      `json:"report_end" db:"report_end"`
 	Issued        string      `json:"issued" db:"issued"`
+	Adjustment    string      `json:"adjustment" db:"adjustment"`
 	Plan          string      `json:"plan" db:"plan"`
 	Operator      string      `json:"operator" db:"operator"`
 	Plot          string      `json:"order_plot" db:"order_plot"`

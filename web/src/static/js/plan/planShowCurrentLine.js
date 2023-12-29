@@ -9,5 +9,12 @@ export const planShowCurrentLine = () => {
       })
       form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
     })
+
+    form.querySelector('.shift__forw').addEventListener('click', () => {
+      form.querySelectorAll('.table__data').forEach(data => {
+        data.classList.toggle('table__data--chosen')
+      })
+      form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
+    })
   })
 }

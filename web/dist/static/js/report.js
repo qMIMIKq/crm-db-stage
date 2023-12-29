@@ -4338,7 +4338,7 @@ const changeErrorModal = `
     <div class='modal_content modal-error' style='width: 350px'>
          <div class='modal__header modal-header' style="background:rgb(210, 66, 66);;">
               <h2 class='comments__title'>Ошибка</h2>                
-          </div>
+         </div>
         
         <input 
           placeholder="Текст ошибки"
@@ -4428,14 +4428,6 @@ const changeIssuedModal = `
         <label class='route__label' for='route__user'>Оператор</label>
         <select class='route__select main__button main__select route__select--user' name='user' id='route__user'>
         </select>
-        
-        <label class='route__label' for='route__user'>Смена</label>
-        <div class="modal__shift-block">
-            <label style="margin-bottom: 0;" for="last" class="route__label">
-                Последняя
-            </label>
-            <input type="checkbox" name="last" id="last">
-        </div>
 <!--        <select class='route__select main__button main__select route__select&#45;&#45;user' name='shift' id='route__shift'>-->
 <!--            <option value="" selected></option>-->
 <!--            <option value="Первая">Первая</option>-->
@@ -4444,12 +4436,27 @@ const changeIssuedModal = `
         
         <label class='route__label'>Дата</label>
         <input type="date" class="main__button modal-issued__date route__input">
-      
-        <input 
+        
+         <label class='route__label' for='route__user'>Наладка (мин)</label>
+         <input 
           type='number'
-          class='route__input modal-issued__input text-input main__input main__input'
+          class='route__input modal-issued__input modal-issued__input--adj text-input main__input main__input'
           name='error_msg' 
           id='error-route__msg'>
+      
+        <label class='route__label' for='route__user'>Выдано (шт)</label>
+        <input 
+          type='number'
+          class='route__input modal-issued__input modal-issued__input--done text-input main__input main__input'
+          name='error_msg' 
+          id='error-route__msg'>
+          
+        <div class="modal__shift-block">
+            <label style="margin-bottom: 0;" for="last" class="route__label">
+                Последняя
+            </label>
+            <input type="checkbox" name="last" id="last">
+        </div>
         
         <div class='confirm__section'>
             <button disabled class='main__button--click confirm__button confirm__button--ok issued-ok'>ОК</button>
@@ -4483,8 +4490,12 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
     date.classList.add('hidden__input');
     modal.querySelectorAll('.route__label').forEach(label => label.classList.add('hidden__input'));
   }
-  const modalIssuedInput = modal.querySelector('.modal-issued__input');
+  const modalIssuedInput = modal.querySelector('.modal-issued__input--done');
   modalIssuedInput.addEventListener('input', e => {
+    (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.activateOnInput)(e, 'issued-ok');
+  });
+  const modalAdjustmentInput = modal.querySelector('.modal-issued__input--adj');
+  modalAdjustmentInput.addEventListener('input', e => {
     (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.activateOnInput)(e, 'issued-ok');
   });
   (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.drawPlots)(plotI, userI.value);
@@ -4492,15 +4503,17 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
     <option selected value="${userI.value}">${userI.value}</option>
   `);
   okBtn.addEventListener('click', () => {
-    issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value));
-    (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addReportMsg)(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}__${modalShift.checked ? "last" : "nlast"}`, '#visible__comments');
+    if (modalIssuedInput.value) {
+      issuedInput.value = String(Number(issuedInput.value) + Number(modalIssuedInput.value));
+    }
+    (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addReportMsg)(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}__${modalShift.checked ? "last" : "nlast"}__${modalAdjustmentInput.value}`, '#visible__comments');
     if (modalShift.checked) {
       shift.value = 'Последняя';
     } else {
       shift.value = '';
     }
     if (check) {
-      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments');
+      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} Наладка ${modalAdjustmentInput.value} Выдал ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments');
       let alreadyInDateCheck = false;
       for (let i = 0; i < updateData.length; i++) {
         if (updateData[i].date === date.value) {
@@ -4517,7 +4530,9 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
       }
       if (date.value !== today) {} else {
         console.log('TODAY');
-        issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value);
+        if (modalIssuedInput.value) {
+          issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value);
+        }
       }
     } else {
       issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value);
@@ -6805,6 +6820,13 @@ const drawReport = async (d, i) => {
           <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--report'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
+          <li class="table-body_cell table__use table__plan--report">
+             <input readonly class="table__data" tabindex="-1"
+              type="number" 
+              name="issued" 
+              required  autocomplete="off"
+              value="${d.adjustment && d.adjustment != '-1' ? d.adjustment : ''}">
+          </li>
            <li class="table-body_cell table__use table__plan--report">
              <input readonly class="table__data" tabindex="-1"
               type="number" 
@@ -6813,7 +6835,7 @@ const drawReport = async (d, i) => {
               value="${d.plan}">
           </li>
           <li class="table-body_cell table__issued-plan--report">
-            <input readonly type="number" class="table__data" value=${d.issued_plan || ""}>
+            <input readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
           </li>
           <li class="table-body_cell table__issued-plan--report">
             <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>
