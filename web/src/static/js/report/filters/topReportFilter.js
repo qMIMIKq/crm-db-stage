@@ -259,7 +259,7 @@ export const topReportFilter = () => {
         state['topPlots'] = plots
       }).then(_ => plotListener(plotFilters))
 
-    if (userInf.groupId === "5") {
+    if (userInf.plot !== 'все') {
       console.log(userInf.plot)
       state.topPlots = state.topPlots.filter(pl => pl.name === userInf.plot)
       state['topFilters'] = state['topFilters'].filter(filt => state.topPlots[0].name === filt.plot)
