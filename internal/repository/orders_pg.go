@@ -307,6 +307,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart,
 					route.PlanFaster, route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "),
 					route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift).Scan(&routeID)
+				route.RouteID = strconv.Itoa(routeID)
 				if err != nil {
 					log.Err(err).Caller().Msg("ERROR")
 				}
@@ -441,8 +442,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					//var totalIssued int
 					for i, report := range reports {
 						oldReportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
-						if changerDate.Unix() == oldReportDate.Unix() {
 
+						if changerDate.Unix() == oldReportDate.Unix() {
 							if _, err := o.db.Exec(`
 									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6 WHERE report_id = $7
 								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, reportIssued.Adjustment, report.ReportID); err != nil {
