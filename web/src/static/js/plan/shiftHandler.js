@@ -27,7 +27,7 @@ const shiftModal = `
    </div>
 `
 
-export const shiftHandler = (shifter, moveTo, addedDates) => {
+export const shiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
   const modal = showModal(shiftModal)
   const startTime = document.querySelector('.header-routes__planned-date--report__from').value
 
@@ -75,6 +75,14 @@ export const shiftHandler = (shifter, moveTo, addedDates) => {
     activateOnInput(e, 'confirm__button--ok')
   })
 
+  const handleClose = () => {
+    currentOrder.querySelectorAll('.table__data').forEach(data => {
+      data.classList.remove('table__data--chosen')
+    })
+    currentOrder.querySelector('.table__route--date__list').classList.remove('table__data--chosen')
+    modal.click()
+  }
+
   okBtn.addEventListener('click', () => {
     shifter['move_to'] = moveTo
     shifter['shifts'] = Number(shifts.value)
@@ -86,14 +94,23 @@ export const shiftHandler = (shifter, moveTo, addedDates) => {
       })
       .then(res => {
         console.log(res)
+        handleClose()
         getPlans()
       })
-
     console.log(shifter)
   })
 
   cnclBtn.addEventListener('click', () => {
-    modal.click()
+    handleClose()
+  })
+
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      currentOrder.querySelectorAll('.table__data').forEach(data => {
+        data.classList.remove('table__data--chosen')
+      })
+      currentOrder.querySelector('.table__route--date__list').classList.remove('table__data--chosen')
+    }
   })
 
   console.log(modal)

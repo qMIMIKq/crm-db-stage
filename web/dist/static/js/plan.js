@@ -7295,7 +7295,7 @@ const planningHandler = (currentOrder, d, addedDates) => {
     const shiftForw = currentOrder.querySelector('.shift__forw');
     shiftForw.addEventListener('click', () => {
       // console.log(modalAddedDates)
-      (0,_shiftHandler__WEBPACK_IMPORTED_MODULE_7__.shiftHandler)(shifter, 'forw', modalAddedDates);
+      (0,_shiftHandler__WEBPACK_IMPORTED_MODULE_7__.shiftHandler)(shifter, 'forw', modalAddedDates, currentOrder);
     });
     const planToday = document.querySelector('.plan-period__today');
     const planWeek = document.querySelector('.plan-period__week');
@@ -8332,7 +8332,7 @@ const shiftModal = `
     </div>
    </div>
 `;
-const shiftHandler = (shifter, moveTo, addedDates) => {
+const shiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
   const modal = (0,_modules_modals_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(shiftModal);
   const startTime = document.querySelector('.header-routes__planned-date--report__from').value;
   const title = modal.querySelector('.modal-issued__title');
@@ -8373,6 +8373,13 @@ const shiftHandler = (shifter, moveTo, addedDates) => {
   shifts.addEventListener('input', e => {
     (0,_modules_modals_routesModal__WEBPACK_IMPORTED_MODULE_1__.activateOnInput)(e, 'confirm__button--ok');
   });
+  const handleClose = () => {
+    currentOrder.querySelectorAll('.table__data').forEach(data => {
+      data.classList.remove('table__data--chosen');
+    });
+    currentOrder.querySelector('.table__route--date__list').classList.remove('table__data--chosen');
+    modal.click();
+  };
   okBtn.addEventListener('click', () => {
     shifter['move_to'] = moveTo;
     shifter['shifts'] = Number(shifts.value);
@@ -8381,12 +8388,21 @@ const shiftHandler = (shifter, moveTo, addedDates) => {
       return resp.json();
     }).then(res => {
       console.log(res);
+      handleClose();
       (0,_getPlans__WEBPACK_IMPORTED_MODULE_4__.getPlans)();
     });
     console.log(shifter);
   });
   cnclBtn.addEventListener('click', () => {
-    modal.click();
+    handleClose();
+  });
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      currentOrder.querySelectorAll('.table__data').forEach(data => {
+        data.classList.remove('table__data--chosen');
+      });
+      currentOrder.querySelector('.table__route--date__list').classList.remove('table__data--chosen');
+    }
   });
   console.log(modal);
 };

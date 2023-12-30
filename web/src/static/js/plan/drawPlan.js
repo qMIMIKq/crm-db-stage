@@ -566,7 +566,7 @@ const planningHandler = (currentOrder, d, addedDates) => {
     const shiftForw = currentOrder.querySelector('.shift__forw')
     shiftForw.addEventListener('click', () => {
       // console.log(modalAddedDates)
-      shiftHandler(shifter, 'forw', modalAddedDates)
+      shiftHandler(shifter, 'forw', modalAddedDates, currentOrder)
     })
 
 
