@@ -64,10 +64,29 @@ export let globalDatesObj = {}
 let foundedPlots = []
 
 export const drawPlan = (d, data) => {
+  let dbAddedDates = []
+  let addedDates = []
+
+  if (d['db_plan']) {
+    dbAddedDates = d['db_plan']
+
+    dbAddedDates.forEach(dateInfo => {
+      addedDates[dateInfo['date'].split('T')[0]] = {
+        'divider': dateInfo.divider,
+        'queues': dateInfo['queues'].split(', ')
+      }
+    })
+  }
+
+  let today = getTime().split(' ')[0]
+  let yst = new Date()
+  yst.setDate(yst.getDate() - 1)
+  yst = `${yst.getFullYear()}-${yst.getMonth() + 1}-${yst.getDate()}`
+
+  let datesList = Object.keys(addedDates)
+  let checkForPlanning = datesList.includes(yst) && !datesList.includes(today)
+
   let uniqueFileNames = []
-
-  console.log(d.order_id, d.route_plot, d.position)
-
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
       const arrDotFile = file.split('.')
@@ -95,7 +114,7 @@ export const drawPlan = (d, data) => {
     <form id="form-${d.id}" class='table-form table-form--plan table-form--old' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
-              <input id='db_id' class='table__data main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
+              <input id='db_id' class='table__data ${checkForPlanning ? 'not-planned' : ''} main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
               <input id="timestamp" class='table__data table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
@@ -159,21 +178,6 @@ export const drawPlan = (d, data) => {
         </ul>
     </form>
   `)
-
-
-  let dbAddedDates = []
-  let addedDates = []
-
-  if (d['db_plan']) {
-    dbAddedDates = d['db_plan']
-
-    dbAddedDates.forEach(dateInfo => {
-      addedDates[dateInfo['date'].split('T')[0]] = {
-        'divider': dateInfo.divider,
-        'queues': dateInfo['queues'].split(', ')
-      }
-    })
-  }
 
   const currentOrder = document.querySelector(`#form-${d.id}`)
   planningHandler(currentOrder, d, addedDates)

@@ -72,9 +72,9 @@ ul {
   //border-right: 1px solid black;
 
   &--reports {
-    @media screen and (min-width: 1872px) {
+    @media screen and (min-width: 1912px) {
       margin: 0 auto 15px;
-      width: 1872px;
+      width: 1912px;
     }
   }
 
@@ -444,4 +444,8 @@ input:disabled {
   color: #0be50b !important;
   font-size: 16px !important;
   font-weight: 600 !important;
+}
+
+.not-planned {
+  color: #d4d421 !important;
 }

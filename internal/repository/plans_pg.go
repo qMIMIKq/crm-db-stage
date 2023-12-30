@@ -222,14 +222,15 @@ type reportInfo struct {
 }
 
 func (p PlansPG) UpdatePlan(data *domain.PlanData) error {
-	_, err := p.db.Exec("DELETE FROM plans WHERE route_id = $1", data.RouteID)
+	layout := "2006-01-02"
+	loc, _ := time.LoadLocation("Europe/Moscow")
+	today := time.Now().In(loc).Format(layout)
+
+	_, err := p.db.Exec("DELETE FROM plans WHERE route_id = $1 AND plan_date >= $2", data.RouteID)
 	if err != nil {
 		log.Err(err).Caller().Msg("ERROR")
 		return err
 	}
-
-	layout := "2006-01-02"
-	today := time.Now().Format(layout)
 
 	planQuery := fmt.Sprintf(`
 		INSERT INTO plans (route_id, order_id, route_plot, plan_date, divider, queues)
