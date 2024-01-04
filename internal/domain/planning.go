@@ -18,3 +18,8 @@ type Planning struct {
 	AddedDates   []DateInfo   `json:"added_dates"`
 	NeedShifts   int          `json:"need_shifts" db:"need_shifts"`
 }
+
+type PlanningRange struct {
+	From string `json:"from"`
+	To   string `json:"to"`
+}

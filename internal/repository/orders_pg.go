@@ -145,7 +145,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					log.Err(err).Caller().Msg("Error")
 				}
 
-				if route.Planned {
+				if len(route.AddedDates) > 0 {
 					o.planningPG.CreatePlanningObject(route, order, order.ID, routePos, routeID, false)
 				}
 

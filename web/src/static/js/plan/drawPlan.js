@@ -67,6 +67,10 @@ export const drawPlan = (d, data) => {
   let dbAddedDates = []
   let addedDates = []
 
+  if (!d.id) {
+    return
+  }
+
   if (d['db_plan']) {
     dbAddedDates = d['db_plan']
 
@@ -78,10 +82,17 @@ export const drawPlan = (d, data) => {
     })
   }
 
-  let today = getTime().split(' ')[0]
-  let yst = new Date()
+  let today = document.querySelector(".header-routes__planned-date--report__from").value
+  let yst = new Date(today)
   yst.setDate(yst.getDate() - 1)
-  yst = `${yst.getFullYear()}-${yst.getMonth() + 1}-${yst.getDate()}`
+
+  let month = String(yst.getMonth() + 1)
+  month = month.length === 1 ? `0${month}` : month
+  let day = String(yst.getDate())
+  day = day.length === 1 ? `0${day}` : day
+  yst = `${yst.getFullYear()}-${month}-${day}`
+
+  console.log(today, yst)
 
   let datesList = Object.keys(addedDates)
   let checkForPlanning = datesList.includes(yst) && !datesList.includes(today)

@@ -13,7 +13,13 @@ type PlanningPG struct {
 	db *sqlx.DB
 }
 
-func (p *PlanningPG) GetAllPlanning() ([]*domain.Planning, error) {
+func (p *PlanningPG) GetAllPlanning(planningRange *domain.PlanningRange) ([]*domain.Planning, error) {
+	layout := "2006-01-02"
+	from, _ := time.Parse(layout, planningRange.From)
+	minDate := from.Add(-24 * time.Hour).Format(layout)
+
+	log.Info().Msgf("Yesterday %v", minDate)
+
 	planningQuery := fmt.Sprintf(`
 		SELECT * FROM planning ORDER BY order_id
  `)
@@ -25,6 +31,8 @@ func (p *PlanningPG) GetAllPlanning() ([]*domain.Planning, error) {
 		SELECT plan_date, divider, queues
 		  FROM plans
      WHERE route_id = $1
+       AND plan_date >= $2
+       AND plan_date <= $3
 		 ORDER BY plan_date
 	`)
 
@@ -32,8 +40,8 @@ func (p *PlanningPG) GetAllPlanning() ([]*domain.Planning, error) {
 		SELECT file_name FROM files WHERE order_id = $1
 	`)
 
-	for _, plan := range planning {
-		err = p.db.Select(&plan.DBPlanDates, queryRoutePlan, plan.RouteID)
+	for i, plan := range planning {
+		err = p.db.Select(&plan.DBPlanDates, queryRoutePlan, plan.RouteID, minDate, planningRange.To)
 		if err != nil {
 			log.Err(err).Caller().Msg("error is")
 			err = nil
@@ -45,14 +53,18 @@ func (p *PlanningPG) GetAllPlanning() ([]*domain.Planning, error) {
 			err = nil
 		}
 
-		for _, dateInfo := range plan.DBPlanDates {
-			var newAdded domain.DateInfo
+		if len(plan.DBPlanDates) > 0 {
+			for _, dateInfo := range plan.DBPlanDates {
+				var newAdded domain.DateInfo
 
-			newAdded.Date = dateInfo.PlanDate
-			newAdded.DateInfo.Divider = dateInfo.Divider
-			newAdded.DateInfo.Queues = strings.Split(dateInfo.Queues, ", ")
+				newAdded.Date = dateInfo.PlanDate
+				newAdded.DateInfo.Divider = dateInfo.Divider
+				newAdded.DateInfo.Queues = strings.Split(dateInfo.Queues, ", ")
 
-			plan.AddedDates = append(plan.AddedDates, newAdded)
+				plan.AddedDates = append(plan.AddedDates, newAdded)
+			}
+		} else {
+			planning[i] = &domain.Planning{}
 		}
 	}
 
@@ -71,7 +83,8 @@ func (p *PlanningPG) CreatePlanningObject(route *domain.Route, order *domain.Ord
 	}
 
 	layout := "2006-01-02"
-	today := time.Now().Format(layout)
+	loc, _ := time.LoadLocation("Europe/Moscow")
+	today := time.Now().In(loc).Format(layout)
 
 	var timestamp string
 	if len(order.TimeStamp) < 3 {

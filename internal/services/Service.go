@@ -78,7 +78,7 @@ type Groups interface {
 	EditGroup(group domain.Group) error
 }
 type Planning interface {
-	GetAllPlanning() ([]*domain.Planning, error)
+	GetAllPlanning(planningRange *domain.PlanningRange) ([]*domain.Planning, error)
 }
 
 type Services struct {

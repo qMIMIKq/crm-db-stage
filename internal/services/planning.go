@@ -9,8 +9,8 @@ type PlanningService struct {
 	repo repository.Planning
 }
 
-func (p *PlanningService) GetAllPlanning() ([]*domain.Planning, error) {
-	return p.repo.GetAllPlanning()
+func (p *PlanningService) GetAllPlanning(planningRange *domain.PlanningRange) ([]*domain.Planning, error) {
+	return p.repo.GetAllPlanning(planningRange)
 }
 
 func NewPlanningService(repo repository.Planning) *PlanningService {

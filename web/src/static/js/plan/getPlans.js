@@ -3,7 +3,6 @@ import {sendData} from "../modules/sendData";
 import {appAddr} from "../../../../../appAddr";
 import {deleteOrders, hideOrders} from "../modules/getOrders";
 import {newAllPlanFilter} from "./filters/newAllPlanFilter";
-import {globalDatesObj} from "./drawPlan";
 
 export const getPlans = (updateOnly) => {
   deleteOrders()
@@ -25,14 +24,11 @@ export const getPlans = (updateOnly) => {
 
   // console.log('start time', state.maxTime)
   const params = {
-    'order_old': false,
-    'planning': true,
-    'plan_from': from,
-    'plan_to': to,
-    'update_only': updateOnly,
+    'from': from,
+    'to': to
   }
 
-  sendData(`${appAddr}/api/planning/get-all`, 'GET')
+  sendData(`${appAddr}/api/planning/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
       console.timeEnd('get orders')

@@ -98,7 +98,7 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 
 		planning := api.Group("/planning")
 		{
-			planning.GET("/get-all", h.getAllPlanning)
+			planning.POST("/get-all", h.getAllPlanning)
 		}
 	}
 }

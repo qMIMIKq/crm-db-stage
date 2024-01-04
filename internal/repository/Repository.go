@@ -80,7 +80,7 @@ type Groups interface {
 
 type Planning interface {
 	CreatePlanningObject(route *domain.Route, order *domain.Order, id, routePos string, routeID int, new bool) (int, error)
-	GetAllPlanning() ([]*domain.Planning, error)
+	GetAllPlanning(planningRange *domain.PlanningRange) ([]*domain.Planning, error)
 }
 
 type Repository struct {

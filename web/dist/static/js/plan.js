@@ -51,7 +51,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "appAddr": () => (/* binding */ appAddr)
 /* harmony export */ });
-const appAddr = 'http://192.168.0.103:8182';
+const appAddr = 'http://192.168.0.101:8182';
 
 /***/ }),
 
@@ -6843,6 +6843,9 @@ let foundedPlots = [];
 const drawPlan = (d, data) => {
   let dbAddedDates = [];
   let addedDates = [];
+  if (!d.id) {
+    return;
+  }
   if (d['db_plan']) {
     dbAddedDates = d['db_plan'];
     dbAddedDates.forEach(dateInfo => {
@@ -6852,10 +6855,15 @@ const drawPlan = (d, data) => {
       };
     });
   }
-  let today = (0,_modules_getTime__WEBPACK_IMPORTED_MODULE_2__.getTime)().split(' ')[0];
-  let yst = new Date();
+  let today = document.querySelector(".header-routes__planned-date--report__from").value;
+  let yst = new Date(today);
   yst.setDate(yst.getDate() - 1);
-  yst = `${yst.getFullYear()}-${yst.getMonth() + 1}-${yst.getDate()}`;
+  let month = String(yst.getMonth() + 1);
+  month = month.length === 1 ? `0${month}` : month;
+  let day = String(yst.getDate());
+  day = day.length === 1 ? `0${day}` : day;
+  yst = `${yst.getFullYear()}-${month}-${day}`;
+  console.log(today, yst);
   let datesList = Object.keys(addedDates);
   let checkForPlanning = datesList.includes(yst) && !datesList.includes(today);
   let uniqueFileNames = [];
@@ -7622,6 +7630,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _drawPlan__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../drawPlan */ "./web/src/static/js/plan/drawPlan.js");
 /* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _newAllPlanFilter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./newAllPlanFilter */ "./web/src/static/js/plan/filters/newAllPlanFilter.js");
+/* harmony import */ var _getPlans__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../getPlans */ "./web/src/static/js/plan/getPlans.js");
+
 
 
 
@@ -7653,24 +7663,31 @@ const reportPlanningDatesFilter = () => {
   const dynamicDate = document.querySelector('.table__route--date');
   const recreatePlansTable = () => {
     (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_3__.deleteOrders)();
-    _modules_state__WEBPACK_IMPORTED_MODULE_1__.state.orders.forEach(plan => {
-      (0,_drawPlan__WEBPACK_IMPORTED_MODULE_2__.drawPlan)(plan);
-    });
-    (0,_newAllPlanFilter__WEBPACK_IMPORTED_MODULE_4__.newAllPlanFilter)().then(() => {
-      const datesList = document.querySelectorAll('.table__route--date__list');
-      setTimeout(() => {
-        let max = 0;
-        datesList.forEach(dateList => {
-          const dates = dateList.querySelectorAll('.plan-dates__item');
-          max = Math.max(dates.length);
-          console.log(max);
-        });
+    (0,_getPlans__WEBPACK_IMPORTED_MODULE_5__.getPlans)();
 
-        // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
-        dynamicDate.style.minWidth = `${max * 37 - 3}px`;
-      }, 60 * datesList.length);
-    });
+    // state.orders.forEach(plan => {
+    //   drawPlan(plan)
+    // })
+    // newAllPlanFilter()
+    //   .then(() => {
+    //     const datesList = document.querySelectorAll('.table__route--date__list')
+    //     setTimeout(() => {
+    //       let max = 0
+    //
+    //       datesList.forEach(dateList => {
+    //         const dates = dateList.querySelectorAll('.plan-dates__item')
+    //         max = Math.max(dates.length)
+    //         console.log(max)
+    //       })
+    //
+    //
+    //       // const sum  = Object.values(globalDatesObj).reduce((a, b) => a + b, 0)
+    //       dynamicDate.style.minWidth = `${(max * 37) - 3}px`
+    //
+    //     }, 60 * datesList.length)
+    //   })
   };
+
   filterDateFrom.addEventListener('change', () => {
     filterDateTo.setAttribute('min', String(filterDateFrom.value));
     if (new Date(filterDateFrom.value).getTime() >= new Date(filterDateTo.value).getTime()) {
@@ -8086,8 +8103,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
 /* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
 /* harmony import */ var _filters_newAllPlanFilter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filters/newAllPlanFilter */ "./web/src/static/js/plan/filters/newAllPlanFilter.js");
-/* harmony import */ var _drawPlan__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./drawPlan */ "./web/src/static/js/plan/drawPlan.js");
-
 
 
 
@@ -8111,13 +8126,10 @@ const getPlans = updateOnly => {
 
   // console.log('start time', state.maxTime)
   const params = {
-    'order_old': false,
-    'planning': true,
-    'plan_from': from,
-    'plan_to': to,
-    'update_only': updateOnly
+    'from': from,
+    'to': to
   };
-  (0,_modules_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/planning/get-all`, 'GET').then(res => res.json()).then(data => {
+  (0,_modules_sendData__WEBPACK_IMPORTED_MODULE_1__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_2__.appAddr}/api/planning/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
     console.timeEnd('get orders');
     const title = document.querySelector('.main-header__title');
     console.time('draw orders');
