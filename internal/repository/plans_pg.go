@@ -226,7 +226,7 @@ func (p PlansPG) UpdatePlan(data *domain.PlanData) error {
 	loc, _ := time.LoadLocation("Europe/Moscow")
 	today := time.Now().In(loc).Format(layout)
 
-	_, err := p.db.Exec("DELETE FROM plans WHERE route_id = $1 AND plan_date >= $2", data.RouteID)
+	_, err := p.db.Exec("DELETE FROM plans WHERE route_id = $1 AND plan_date >= $2", data.RouteID, today)
 	if err != nil {
 		log.Err(err).Caller().Msg("ERROR")
 		return err

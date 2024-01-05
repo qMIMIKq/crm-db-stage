@@ -249,7 +249,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 
 					//log.Info().Interface("report", routeReports.ReportsData[reportDate]).Msg("sorted report!")
-					log.Info().Caller().Msgf("report date %v / report issued %v / report adjustment %v / report last %v", changerDate, reportIssued.Issued, reportIssued.Adjustment, shift)
+					//log.Info().Caller().Msgf("report date %v / report issued %v / report adjustment %v / report last %v", changerDate, reportIssued.Issued, reportIssued.Adjustment, shift)
 
 					var checkID int
 					if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID); err != nil {
@@ -312,8 +312,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					log.Err(err).Caller().Msg("ERROR")
 				}
 
-				if route.Planned {
-					log.Info().Msgf("route %v planned %v", route.Plot, route.Planned)
+				if len(route.AddedDates) > 0 {
 					o.planningPG.CreatePlanningObject(route, order, order.ID, routePos, routeID, false)
 					//log.Info().Msgf("ID IS %v ; ERROR IS %v", planningId, err)
 				}
@@ -907,8 +906,6 @@ func getIssuedReports(route *domain.Route) ReportsIssued {
 					intAdjustment = -1
 				}
 			}
-
-			log.Info().Interface("report issued", reportsIssued.ReportsData[splittedReport[0]]).Msg("try to get old report")
 
 			var intIssued int
 			if splittedReport[3] != "" {
