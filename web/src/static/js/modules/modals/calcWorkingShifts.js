@@ -84,18 +84,19 @@ export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) =
     let check = time.value.split('.')
     let seconds = 0
     if (check.length > 1) {
-      let rightSide = check[1].split('')
-      if (rightSide.length === 1) {
-        rightSide = rightSide[0] * 10
+      let rightSplit = check[1].split('')
+      if (rightSplit.length === 1) {
+        rightSplit = rightSplit[0] * 10
       } else {
-        rightSide = check[1]
+        rightSplit = check[1]
       }
 
-      seconds += check[0] * 60 + rightSide
+      seconds += check[0] * 60 + rightSplit
     } else {
       seconds += check[0] * 60
     }
 
+    console.log(seconds)
     dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
 
     dayQuantityInfo.up = Number(up.value)

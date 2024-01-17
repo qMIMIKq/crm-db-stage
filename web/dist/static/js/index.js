@@ -3971,16 +3971,17 @@ const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
     let check = time.value.split('.');
     let seconds = 0;
     if (check.length > 1) {
-      let rightSide = check[1].split('');
-      if (rightSide.length === 1) {
-        rightSide = rightSide[0] * 10;
+      let rightSplit = check[1].split('');
+      if (rightSplit.length === 1) {
+        rightSplit = rightSplit[0] * 10;
       } else {
-        rightSide = check[1];
+        rightSplit = check[1];
       }
-      seconds += check[0] * 60 + rightSide;
+      seconds += check[0] * 60 + rightSplit;
     } else {
       seconds += check[0] * 60;
     }
+    console.log(seconds);
     dayQuantityInput.value = Math.floor(defaultWorkTime / seconds);
     dayQuantityInfo.up = Number(up.value);
     dayQuantityInfo.adjustment = Number(adjustment.value);
@@ -5295,7 +5296,7 @@ const routeModal = `
                         </div>
                         
                         <div class="quantity-block">
-                          <input readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В смену">
+                          <input readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='text' id='day_quantity' placeholder="В смену">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
                         </div>
                     </div>
@@ -6161,13 +6162,16 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
       'machine_start': '08:00',
       'machine_end': '20:00',
       'up': Number(quantityInfo.up),
-      'adjustment': Number(quantityInfo.adjustment)
+      'adjustment': Number(quantityInfo.adjustment),
+      'time': String(quantityInfo.time)
     };
     (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_10__.appAddr}/api/time/theoretic`, 'POST', JSON.stringify(timeInfo)).then(res => {
       return res.json();
     }).then(data => {
       theorEndInp.value = data.date;
       shifts.value = Math.ceil(data.days);
+      dayInput.value = `${data.can_do[0]}/${dayInput.value}/${data.can_do[1]}`;
+      console.log(data.can_do);
       // dynEndInp.value = data.result
     });
   }

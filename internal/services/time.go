@@ -3,6 +3,7 @@ package services
 import (
 	"crm/internal/domain"
 	"github.com/rs/zerolog/log"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -81,7 +82,15 @@ func (c *EndTimeCalculator) findNeededTime() float64 {
 	return c.NeededTime
 }
 
-func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float64) {
+func round(x float64) float64 {
+	t := math.Trunc(x)
+	if math.Abs(x-t) >= 0.5 {
+		return t + math.Copysign(1, x)
+	}
+	return t
+}
+
+func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float64, [2]float64) {
 	log.Info().Interface("time info", timeInfo).Msg("time info is")
 
 	calc := EndTimeCalculator{
@@ -113,6 +122,30 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 	} else {
 		canWorkToday = 0
 	}
+
+	canWorkTodaySeconds := canWorkToday * 60
+	var inSecForDetail float64 = 0
+	splitedTime := strings.Split(timeInfo.Time, ".")
+	if len(splitedTime) > 1 {
+		var right int
+		left, _ := strconv.Atoi(splitedTime[0])
+		right, _ = strconv.Atoi(splitedTime[1])
+
+		if len(splitedTime[1]) == 1 {
+			right *= 10
+		}
+
+		inSecForDetail += float64(left*60 + right)
+	} else {
+		left, _ := strconv.Atoi(splitedTime[0])
+		inSecForDetail += float64(left * 60)
+	}
+
+	log.Info().Caller().Msgf("can work %v, time for 1 detail %v", canWorkTodaySeconds, timeInfo.Time)
+	log.Info().Caller().Msgf("in second for detail %v", inSecForDetail)
+
+	canDoForFirstDay := round(canWorkTodaySeconds / inSecForDetail)
+	log.Info().Caller().Msgf("can do for today %v", canDoForFirstDay)
 
 	counter := 0
 	for calc.NeededTime >= calc.MachineWorkingMinutes {
@@ -157,9 +190,15 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 		calc.NeededTime -= calc.NeededTime
 	}
 
-	log.Info().Msgf("Theor end %v", calc.TheorEndTime.Format(calc.Layout))
+	//log.Info().Msgf("Theor end %v", calc.TheorEndTime.Format(calc.Layout))
 	calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(timeInfo.Up+timeInfo.Adjustment) * time.Minute)
-	return calc.TheorEndTime.Format(calc.Layout), calc.TheorEndTime.Sub(calc.WorkerFullStartTime).Hours() / 24
+	calcedEnd := calc.createCalcTime(strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1])
+	check := float64(calcedEnd.Unix() - calc.MachineStartTime.Unix())
+	canDoLastDay := round(check / inSecForDetail)
+	log.Info().Msgf("CHECK TIME! %v", canDoLastDay)
+
+	log.Info().Caller().Msgf("end time %v", calc.TheorEndTime.Format(calc.Layout))
+	return calc.TheorEndTime.Format(calc.Layout), calc.TheorEndTime.Sub(calc.WorkerFullStartTime).Hours() / 24, [2]float64{canDoForFirstDay, canDoLastDay}
 }
 
 func (t TimeService) CalcDynamicTime(timeInfo domain.TimeInfo) string {

@@ -78,7 +78,7 @@ const routeModal = `
                         </div>
                         
                         <div class="quantity-block">
-                          <input readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='number' id='day_quantity' placeholder="В смену">
+                          <input readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='text' id='day_quantity' placeholder="В смену">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
                         </div>
                     </div>
@@ -1067,7 +1067,8 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
       'machine_start': '08:00',
       'machine_end': '20:00',
       'up': Number(quantityInfo.up),
-      'adjustment': Number(quantityInfo.adjustment)
+      'adjustment': Number(quantityInfo.adjustment),
+      'time': String(quantityInfo.time)
     }
 
     sendData(`${appAddr}/api/time/theoretic`, 'POST', JSON.stringify(timeInfo))
@@ -1077,6 +1078,8 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
       .then(data => {
         theorEndInp.value = data.date
         shifts.value = Math.ceil(data.days)
+        dayInput.value = `${data.can_do[0]}/${dayInput.value}/${data.can_do[1]}`
+        console.log(data.can_do)
         // dynEndInp.value = data.result
       })
   }
