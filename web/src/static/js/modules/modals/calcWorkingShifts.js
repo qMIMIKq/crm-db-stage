@@ -63,10 +63,40 @@ export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) =
     check = true
   }))
 
-  const defaultWorkTime = 720
+  const defaultWorkTime = 43200
+
+  time.addEventListener('input', e => {
+    let check = e.target.value.replaceAll(',', '.')
+    let data = check.split('.')
+    if (data.length > 1) {
+      let newData = data[1].split('')
+      check = Number(newData[0]) >= 6
+      if (check) {
+        e.target.value = data[0]
+        alert('Вы вводите неверные данные')
+        console.log('error')
+      }
+    }
+  })
 
   okBtn.addEventListener('click', () => {
-    dayQuantityInput.value = Math.floor(defaultWorkTime / Number(time.value))
+    time.value = time.value.replaceAll(',', '.')
+    let check = time.value.split('.')
+    let seconds = 0
+    if (check.length > 1) {
+      let rightSide = check[1].split('')
+      if (rightSide.length === 1) {
+        rightSide = rightSide[0] * 10
+      } else {
+        rightSide = check[1]
+      }
+
+      seconds += check[0] * 60 + rightSide
+    } else {
+      seconds += check[0] * 60
+    }
+
+    dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
 
     dayQuantityInfo.up = Number(up.value)
     dayQuantityInfo.adjustment = Number(adjustment.value)
