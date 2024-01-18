@@ -3618,8 +3618,14 @@ const topFiltersHandler = () => {
       drawTopPanel(_state__WEBPACK_IMPORTED_MODULE_1__.state.topFilters, filterFilters);
       plotListener(plotFilters);
       filterListener(filterFilters);
+
+      // const topPlots = document.querySelector('.nav-filters__plots')
+      // const lastPlot = topPlots.querySelector('.nav-filters__button')
+      // lastPlot.classList.add('hidden-input')
+      // lastPlot.click()
     }
   };
+
   draw();
 };
 const filterData = () => {
@@ -3975,8 +3981,8 @@ const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
     }
   });
   okBtn.addEventListener('click', () => {
-    time.value = time.value.replaceAll(',', '.');
-    let check = time.value.split('.');
+    const timeValue = time.value.replaceAll(',', '.');
+    let check = timeValue.split('.');
     let seconds = 0;
     if (check.length > 1) {
       let rightSplit = check[1].split('');
@@ -3990,12 +3996,14 @@ const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
       seconds += check[0] * 60;
     }
     console.log(seconds);
+    console.log(dayQuantityInfo.quantity);
     dayQuantityInput.value = Math.floor(defaultWorkTime / seconds);
     dayQuantityInfo.up = Number(up.value);
     dayQuantityInfo.adjustment = Number(adjustment.value);
-    dayQuantityInfo.time = Number(time.value);
+    dayQuantityInfo.time = Number(timeValue);
+    console.log(time.value);
     if (dayQuantityInfo.time && check) {
-      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${dayQuantityInfo.time}`, '#visible__comments');
+      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
       getTheor();
     }
     modal.click();
@@ -5646,6 +5654,7 @@ const triggerRoutesModal = e => {
     activateOnInput(e, 'section-finish__sub');
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments');
     getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity);
+    dayQuantityInfo['quantity'] = e.target.value;
   });
   routeDayQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub');
@@ -5775,7 +5784,8 @@ const triggerRoutesModal = e => {
   let dayQuantityInfo = {
     'up': 0,
     'adjustment': 0,
-    'time': 0
+    'time': 0,
+    'quantity': 0
   };
   const routeUser = document.querySelector('.route__select--user');
   if (info) {
@@ -5791,7 +5801,8 @@ const triggerRoutesModal = e => {
     dayQuantityInfo = {
       'up': routeInfo.up,
       'adjustment': routeInfo.adjustment,
-      'time': routeInfo.time
+      'time': routeInfo.time,
+      'quantity': routeInfo.quantity
     };
     planned = routeInfo['planned'];
 

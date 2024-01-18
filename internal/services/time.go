@@ -141,11 +141,9 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 		inSecForDetail += float64(left * 60)
 	}
 
-	log.Info().Caller().Msgf("can work %v, time for 1 detail %v", canWorkTodaySeconds, timeInfo.Time)
-	log.Info().Caller().Msgf("in second for detail %v", inSecForDetail)
-
 	canDoForFirstDay := round(canWorkTodaySeconds / inSecForDetail)
-	log.Info().Caller().Msgf("can do for today %v", canDoForFirstDay)
+
+	log.Info().Msgf("quantity %v, day quantity %v", timeInfo.Quantity, timeInfo.DayQuantity)
 
 	counter := 0
 	for calc.NeededTime >= calc.MachineWorkingMinutes {
@@ -188,6 +186,7 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 	if calc.NeededTime != 0 {
 		calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.NeededTime) * time.Minute)
 		calc.NeededTime -= calc.NeededTime
+		counter++
 	}
 
 	//log.Info().Msgf("Theor end %v", calc.TheorEndTime.Format(calc.Layout))
@@ -195,10 +194,11 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 	calcedEnd := calc.createCalcTime(strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1])
 	check := float64(calcedEnd.Unix() - calc.MachineStartTime.Unix())
 	canDoLastDay := round(check / inSecForDetail)
-	log.Info().Msgf("CHECK TIME! %v", canDoLastDay)
+	log.Info().Msgf("CHECK TIME! %v", counter)
 
 	log.Info().Caller().Msgf("end time %v", calc.TheorEndTime.Format(calc.Layout))
 	return calc.TheorEndTime.Format(calc.Layout), calc.TheorEndTime.Sub(calc.WorkerFullStartTime).Hours() / 24, [2]float64{canDoForFirstDay, canDoLastDay}
+	//return calc.TheorEndTime.Format(calc.Layout), float64(counter), [2]float64{canDoForFirstDay, canDoLastDay}
 }
 
 func (t TimeService) CalcDynamicTime(timeInfo domain.TimeInfo) string {

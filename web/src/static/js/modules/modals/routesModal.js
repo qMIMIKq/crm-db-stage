@@ -449,6 +449,7 @@ export const triggerRoutesModal = e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
     getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
+    dayQuantityInfo['quantity'] = e.target.value
   })
 
   routeDayQuantity.addEventListener('change', e => {
@@ -602,6 +603,7 @@ export const triggerRoutesModal = e => {
     'up': 0,
     'adjustment': 0,
     'time': 0,
+    'quantity': 0,
   }
 
   const routeUser = document.querySelector('.route__select--user')
@@ -622,6 +624,7 @@ export const triggerRoutesModal = e => {
       'up': routeInfo.up,
       'adjustment': routeInfo.adjustment,
       'time': routeInfo.time,
+      'quantity': routeInfo.quantity,
     }
 
     planned = routeInfo['planned']

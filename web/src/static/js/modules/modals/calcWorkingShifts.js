@@ -80,8 +80,8 @@ export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) =
   })
 
   okBtn.addEventListener('click', () => {
-    time.value = time.value.replaceAll(',', '.')
-    let check = time.value.split('.')
+    const timeValue = time.value.replaceAll(',', '.')
+    let check = timeValue.split('.')
     let seconds = 0
     if (check.length > 1) {
       let rightSplit = check[1].split('')
@@ -97,14 +97,28 @@ export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) =
     }
 
     console.log(seconds)
+    console.log(dayQuantityInfo.quantity)
+
+    // if (dayQuantityInfo.quantity && dayQuantityInfo.quantity != 0) {
+    //   if (dayQuantity > dayQuantityInfo.quantity) {
+    //     dayQuantityInput.value = dayQuantity.quantity
+    //   } else {
+    //     dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
+    //   }
+    //
+    // } else {
+    //   dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
+    // }
+
     dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
 
     dayQuantityInfo.up = Number(up.value)
     dayQuantityInfo.adjustment = Number(adjustment.value)
-    dayQuantityInfo.time = Number(time.value)
+    dayQuantityInfo.time = Number(timeValue)
 
+    console.log(time.value)
     if (dayQuantityInfo.time && check) {
-      addLog(user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${dayQuantityInfo.time}`, '#visible__comments')
+      addLog(user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments')
       getTheor()
     }
 

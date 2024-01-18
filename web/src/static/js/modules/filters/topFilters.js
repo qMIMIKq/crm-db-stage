@@ -292,8 +292,14 @@ export const topFiltersHandler = () => {
 
       plotListener(plotFilters)
       filterListener(filterFilters)
+
+      // const topPlots = document.querySelector('.nav-filters__plots')
+      // const lastPlot = topPlots.querySelector('.nav-filters__button')
+      // lastPlot.classList.add('hidden-input')
+      // lastPlot.click()
     }
   }
+
   draw()
 }
 
