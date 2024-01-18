@@ -4,6 +4,7 @@ import {controlPlanFiltersReset} from "./controlPlanFilterReset";
 import {drawPlan} from "../drawPlan";
 import {planShowCurrentLine} from "../planShowCurrentLine";
 import {drawReport} from "../../report/drawReport";
+import {table} from "../../modules/drawe/drawOrders";
 
 export const newAllPlanFilter = async (init) => {
   hideOrders()
@@ -36,6 +37,7 @@ export const newAllPlanFilter = async (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          hiddenOrder.classList.add('showed-order')
         } else {
           drawPlan(order)
         }
@@ -95,6 +97,7 @@ export const newAllPlanFilter = async (init) => {
           const hiddenOrder = document.querySelector(`#form-${order.id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
+            hiddenOrder.classList.add('showed-order')
           } else {
             drawPlan(order)
           }
@@ -162,6 +165,7 @@ export const newAllPlanFilter = async (init) => {
           const hiddenOrder = document.querySelector(`#form-${order.id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
+            hiddenOrder.classList.add('showed-order')
           } else {
             drawPlan(order)
           }
@@ -197,6 +201,7 @@ export const newAllPlanFilter = async (init) => {
           const hiddenOrder = document.querySelector(`#form-${order.id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
+            hiddenOrder.classList.add('showed-order')
           } else {
             drawPlan(order)
           }
@@ -224,6 +229,7 @@ export const newAllPlanFilter = async (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          hiddenOrder.classList.add('showed-order')
         } else {
           drawPlan(order)
         }
@@ -231,6 +237,9 @@ export const newAllPlanFilter = async (init) => {
       })
     }
   }
+
+  const dataLength = table.querySelectorAll('.showed-order').length
+  document.querySelector('.main-header__title').textContent = `Планирование (${dataLength})`
 
   planShowCurrentLine()
 }

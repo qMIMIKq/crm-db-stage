@@ -66,7 +66,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
   }
 
   insertPlace.insertAdjacentHTML(position, `
-      <form id="form-${d.id}" class='table-form table-form--old' method='POST'>
+      <form id="form-${d.id}" class='table-form table-form--old showed-order' method='POST'>
         <ul class='main-table__item'>
             <li class='table-body_cell table__db'>
                 <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>

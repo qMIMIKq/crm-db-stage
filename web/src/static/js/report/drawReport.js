@@ -33,7 +33,7 @@ export const drawReport = async (d, i) => {
 
 
   table.insertAdjacentHTML(`afterbegin`, `
-    <form id="form-${d.report_id}" class='table-form table-form--old' method='POST'>
+    <form id="form-${d.report_id}" class='table-form table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
               <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
@@ -89,7 +89,7 @@ export const drawReport = async (d, i) => {
           </li>
            <li class="table-body_cell table__use table__plan--report">
              <input readonly class="table__data" tabindex="-1"
-              type="number" 
+              type="text" 
               name="issued" 
               required  autocomplete="off"
               value="${d.plan}">

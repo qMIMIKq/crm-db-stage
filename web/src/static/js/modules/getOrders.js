@@ -89,7 +89,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
           return
         }
-        title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
 
         // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
       }
@@ -142,9 +142,9 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
                 bindOrdersListeners()
               }
 
-              title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+              // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
             } else {
-              title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+              // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
               state['orders'] = data.data
               state['filteredOrders'] = state['orders'].filter(o => o)
               newAllFilter(true)
@@ -167,7 +167,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
 
           // console.timeEnd('add filters and listeners')
 
-          title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+          // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
           loader.classList.add('hidden__input')
           if (state['isArchive']) {
             document.querySelectorAll('.table__data').forEach(field => {
@@ -212,5 +212,6 @@ export const hideOrders = () => {
 
   orders.forEach(order => {
     order.classList.add('hidden__input')
+    order.classList.remove('showed-order')
   })
 }

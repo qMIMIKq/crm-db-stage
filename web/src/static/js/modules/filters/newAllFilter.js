@@ -81,7 +81,9 @@ export const newAllFilter = (init) => {
           const hiddenOrder = document.querySelector(`#form-${order.id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
-            if (order.db_routes && order.db_routes.length) {
+            hiddenOrder.classList.add('showed-order')
+            if (order.db_routes && order.db_routeslength) {
+
               colorRoutes(order.db_routes, hiddenOrder)
             }
           } else {
@@ -193,7 +195,9 @@ export const newAllFilter = (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
-          if (order.db_routes && order.db_routes.length) {
+          hiddenOrder.classList.add('showed-order')
+          if (order.db_routes && order.db_routeslength) {
+
             colorRoutes(order.db_routes, hiddenOrder)
           }
 
@@ -233,7 +237,9 @@ export const newAllFilter = (init) => {
               const hiddenOrder = document.querySelector(`#form-${order.id}`)
               if (hiddenOrder !== null) {
                 hiddenOrder.classList.remove('hidden__input')
-                if (order.db_routes && order.db_routes.length) {
+                hiddenOrder.classList.add('showed-order')
+                if (order.db_routes && order.db_routeslength) {
+
                   colorRoutes(order.db_routes, hiddenOrder)
                 }
               } else {
@@ -264,6 +270,8 @@ export const newAllFilter = (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          hiddenOrder.classList.add('showed-order')
+
           if (order.db_routes && order.db_routes.length) {
             colorRoutes(order.db_routes, hiddenOrder)
           }
@@ -274,6 +282,8 @@ export const newAllFilter = (init) => {
       })
     }
   }
-
+  // ?  : `Журнал заказов (${state.orders.length})
+  const dataLength = table.querySelectorAll('.showed-order').length
+  document.querySelector('.main-header__title').textContent = state.isArchive ? `Архив заказов (${dataLength})` : `Журнал заказов (${dataLength})`
   bindOrdersListeners()
 }

@@ -57,6 +57,8 @@ export const newAllReportFilter = (init) => {
           const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
+            hiddenOrder.classList.add('showed-order')
+
           } else {
             drawReport(order, i)
           }
@@ -110,6 +112,7 @@ export const newAllReportFilter = (init) => {
           const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
+            hiddenOrder.classList.add('showed-order')
           } else {
             drawReport(order, i)
           }
@@ -164,6 +167,7 @@ export const newAllReportFilter = (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          hiddenOrder.classList.add('showed-order')
         } else {
           drawReport(order, i)
         }
@@ -186,6 +190,7 @@ export const newAllReportFilter = (init) => {
           const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input')
+            hiddenOrder.classList.add('showed-order')
           } else {
             drawReport(order, i)
           }
@@ -208,10 +213,14 @@ export const newAllReportFilter = (init) => {
         const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
         if (hiddenOrder !== null) {
           hiddenOrder.classList.remove('hidden__input')
+          hiddenOrder.classList.add('showed-order')
         } else {
           drawReport(order, i)
         }
       })
     }
   }
+
+  const dataLength = table.querySelectorAll('.showed-order').length
+  document.querySelector('.main-header__title').textContent = `План/факт (${dataLength})`
 }

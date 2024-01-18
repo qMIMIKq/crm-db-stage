@@ -122,7 +122,7 @@ export const drawPlan = (d, data) => {
   }
 
   table.insertAdjacentHTML(`afterbegin`, `
-    <form id="form-${d.id}" class='table-form table-form--plan table-form--old' method='POST'>
+    <form id="form-${d.id}" class='table-form table-form--plan table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
               <input id='db_id' class='table__data ${checkForPlanning ? 'not-planned' : ''} main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
