@@ -10,8 +10,21 @@ export const drawReport = async (d, i) => {
   console.log(d.shift)
 
   let percents = 0
+
+  let center
+  if (d.plan) {
+    console.log(d.plan)
+
+    if (d.plan.includes('/')) {
+      center = d.plan.split('/')[1]
+    } else {
+      center = d.plan
+    }
+  }
+
+  console.log(center)
   if (d.plan && d.issued_plan) {
-    percents = (d.issued_plan / d.plan) * 100
+    percents = (d.issued_plan / center) * 100
   }
 
   let timestamp
@@ -92,7 +105,7 @@ export const drawReport = async (d, i) => {
               type="text" 
               name="issued" 
               required  autocomplete="off"
-              value="${d.plan}">
+              value="${center}">
           </li>
           <li class="table-body_cell table__issued-plan--report">
             <input readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>

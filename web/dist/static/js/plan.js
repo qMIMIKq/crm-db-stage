@@ -3974,6 +3974,18 @@ const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
     }
     console.log(seconds);
     console.log(dayQuantityInfo.quantity);
+
+    // if (dayQuantityInfo.quantity && dayQuantityInfo.quantity != 0) {
+    //   if (dayQuantity > dayQuantityInfo.quantity) {
+    //     dayQuantityInput.value = dayQuantity.quantity
+    //   } else {
+    //     dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
+    //   }
+    //
+    // } else {
+    //   dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
+    // }
+
     dayQuantityInput.value = Math.floor(defaultWorkTime / seconds);
     dayQuantityInfo.up = Number(up.value);
     dayQuantityInfo.adjustment = Number(adjustment.value);
@@ -8509,8 +8521,18 @@ const drawReport = async (d, i) => {
   let last = d.shift && d.current_shift && d.shift === 'Последняя';
   console.log(d.shift);
   let percents = 0;
+  let center;
+  if (d.plan) {
+    console.log(d.plan);
+    if (d.plan.includes('/')) {
+      center = d.plan.split('/')[1];
+    } else {
+      center = d.plan;
+    }
+  }
+  console.log(center);
   if (d.plan && d.issued_plan) {
-    percents = d.issued_plan / d.plan * 100;
+    percents = d.issued_plan / center * 100;
   }
   let timestamp;
   if (d.timestamp) {
@@ -8587,7 +8609,7 @@ const drawReport = async (d, i) => {
               type="text" 
               name="issued" 
               required  autocomplete="off"
-              value="${d.plan}">
+              value="${center}">
           </li>
           <li class="table-body_cell table__issued-plan--report">
             <input readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
