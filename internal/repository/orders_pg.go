@@ -289,6 +289,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						}
 
 						if changerDate.Unix() == oldReportDate.Unix() {
+							log.Info().Msgf("last? %v", shift)
+
 							if _, err := o.db.Exec(`
 								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6 WHERE report_id = $7
 								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, reportIssued.Adjustment, report.ReportID); err != nil {
@@ -915,7 +917,7 @@ func getIssuedReports(route *domain.Route) ReportsIssued {
 			//log.Info().Msgf("len of splitted report %v", len(splittedReport))
 
 			var last bool
-			if len(splittedReport) == 5 {
+			if len(splittedReport) >= 5 {
 				if splittedReport[4] == "last" {
 					last = true
 				} else {

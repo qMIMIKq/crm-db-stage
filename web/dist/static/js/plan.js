@@ -8523,14 +8523,12 @@ const drawReport = async (d, i) => {
   let percents = 0;
   let center;
   if (d.plan) {
-    console.log(d.plan);
     if (d.plan.includes('/')) {
       center = d.plan.split('/')[1];
     } else {
       center = d.plan;
     }
   }
-  console.log(center);
   if (d.plan && d.issued_plan) {
     percents = d.issued_plan / center * 100;
   }
