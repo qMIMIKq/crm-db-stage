@@ -21,6 +21,11 @@ services:
       DB_USER: "${DB}"
       DB_NAME: "${DB}"
       DB_SSLMODE: disable
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
   app-converter:
     restart: always
     image: m1m1kq/oxcs-converter
