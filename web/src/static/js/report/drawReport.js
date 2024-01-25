@@ -6,8 +6,19 @@ export const shiftCounter = {}
 export const drawReport = async (d, i) => {
   controlReportsFiltersReset()
 
-  let last = d.shift && d.current_shift && d.shift === 'Последняя'
-  console.log(d.shift)
+  // let last = d.shift && d.current_shift && d.shift === 'Последняя'
+
+  // if  (d.shift && (d.current_shift ))
+
+  console.log(d.shift, d.current_shift)
+  let last = false
+  if (d.current_shift) {
+    if (d.shift && d.shift === 'Последняя') {
+      last = true
+    } else if (Number(d.issued) >= Number(d.quantity)) {
+      last = true
+    }
+  }
 
   let percents = 0
 
@@ -38,7 +49,6 @@ export const drawReport = async (d, i) => {
   let burning = false
   if (d.current_shift && d.need_shifts) {
     burning = Number(d.current_shift) > Number(d.need_shifts)
-    console.log(d.current_shift, d.need_shifts, burning)
   }
 
 
