@@ -4,51 +4,56 @@ import {controlReportsFiltersReset} from "./filters/reportFilters";
 export const table = document.querySelector('.main-table')
 export const shiftCounter = {}
 export const drawReport = async (d, i) => {
-  controlReportsFiltersReset()
+    controlReportsFiltersReset()
 
-  console.log(d.shift, d.current_shift)
-  let last = false
-  if (d.current_shift) {
-    if (d.shift && d.shift === 'Последняя') {
-      last = true
-    } else if (Number(d.issued) >= Number(d.quantity)) {
-      last = true
+    console.log(d.shift, d.current_shift)
+
+    let last = false
+    if (d.current_shift) {
+        if (d.shift && d.shift === 'Последняя') {
+            last = true
+        } else if (Number(d.issued) >= Number(d.quantity)) {
+            last = true
+        }
     }
-  }
 
-  let percents = 0
+    let percents = 0
 
-  let center = ''
-  if (d.plan) {
-    if (d.plan.includes('/')) {
-      center = d.plan.split('/')[1]
+    let center = ''
+    if (d.plan) {
+        if (d.plan.includes('/')) {
+            if (d.current_shift == 1) {
+                center = d.plan.split('/')[0]
+            } else {
+                center = d.plan.split('/')[1]
+            }
+        } else {
+            center = d.plan
+        }
+    }
+
+    if (d.plan && d.issued_plan) {
+        percents = (d.issued_plan / center) * 100
+    }
+
+    let timestamp
+    if (d.timestamp) {
+        if (d.timestamp.includes('T')) {
+            timestamp = d.timestamp.split('T')[0].replaceAll("-", ".")
+        } else {
+            timestamp = d.timestamp.split(' ')[0].replaceAll("-", ".")
+        }
     } else {
-      center = d.plan
+        timestamp = ''
     }
-  }
 
-  if (d.plan && d.issued_plan) {
-    percents = (d.issued_plan / center) * 100
-  }
-
-  let timestamp
-  if (d.timestamp) {
-    if (d.timestamp.includes('T')) {
-      timestamp = d.timestamp.split('T')[0].replaceAll("-", ".")
-    } else {
-      timestamp = d.timestamp.split(' ')[0].replaceAll("-", ".")
+    let burning = false
+    if (d.current_shift && d.need_shifts) {
+        burning = Number(d.current_shift) > Number(d.need_shifts)
     }
-  } else {
-    timestamp = ''
-  }
-
-  let burning = false
-  if (d.current_shift && d.need_shifts) {
-    burning = Number(d.current_shift) > Number(d.need_shifts)
-  }
 
 
-  table.insertAdjacentHTML(`afterbegin`, `
+    table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.report_id}" class='table-form table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
@@ -120,18 +125,18 @@ export const drawReport = async (d, i) => {
     </form>
   `)
 
-  const currentOrder = document.getElementById(`form-${d.id}`)
+    const currentOrder = document.getElementById(`form-${d.id}`)
 
-  if (String(d.id) === state['currentOrder']) {
-    currentOrder.querySelectorAll('.table__data').forEach(item => {
-      if (!item.classList.contains('table__data--opened')) {
-        item.classList.add('table__data--chosen')
-      }
-    })
-  }
+    if (String(d.id) === state['currentOrder']) {
+        currentOrder.querySelectorAll('.table__data').forEach(item => {
+            if (!item.classList.contains('table__data--opened')) {
+                item.classList.add('table__data--chosen')
+            }
+        })
+    }
 
-  // addTriggers("#db_id", showRoutesIssued)
-  // addTriggers(".table__files", triggerFilesModal)
-  // addTriggers(".table__route", triggerRoutesModal)
-  // addTriggers(".table__comment", triggerCommentsModal)
+    // addTriggers("#db_id", showRoutesIssued)
+    // addTriggers(".table__files", triggerFilesModal)
+    // addTriggers(".table__route", triggerRoutesModal)
+    // addTriggers(".table__comment", triggerCommentsModal)
 }

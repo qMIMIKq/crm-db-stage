@@ -4010,8 +4010,6 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     } else {
       seconds += check[0] * 60;
     }
-    console.log(seconds);
-    console.log(dayQuantityInfo.quantity);
 
     // if (dayQuantityInfo.quantity && dayQuantityInfo.quantity != 0) {
     //   if (dayQuantity > dayQuantityInfo.quantity) {
@@ -4024,11 +4022,12 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     //   dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
     // }
 
-    dayQuantityInput.value = Math.floor(defaultWorkTime / seconds);
+    if (seconds) {
+      dayQuantityInput.value = Math.floor(defaultWorkTime / seconds);
+    }
     dayQuantityInfo.up = Number(up.value);
     dayQuantityInfo.adjustment = Number(adjustment.value);
     dayQuantityInfo.time = Number(timeValue);
-    console.log(time.value);
     if (dayQuantityInfo.time && check) {
       (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
       getTheor();
@@ -6197,10 +6196,9 @@ const triggerRoutesModal = e => {
   }
 };
 const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo, dayInput) => {
-  // if (routeQuantity && routeDayQuantity) {
-  //   shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
-  // }
-
+  if (routeQuantity && routeDayQuantity) {
+    shifts.value = Math.ceil(routeQuantity / routeDayQuantity);
+  }
   if (routeQuantity && routeDayQuantity && startTime) {
     if (Number(routeDayQuantity) > Number(routeQuantity)) {
       routeDayQuantity = routeQuantity;
@@ -6917,7 +6915,11 @@ const drawReport = async (d, i) => {
   let center = '';
   if (d.plan) {
     if (d.plan.includes('/')) {
-      center = d.plan.split('/')[1];
+      if (d.current_shift == 1) {
+        center = d.plan.split('/')[0];
+      } else {
+        center = d.plan.split('/')[1];
+      }
     } else {
       center = d.plan;
     }

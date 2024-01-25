@@ -1056,9 +1056,9 @@ export const triggerRoutesModal = e => {
 }
 
 const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo, dayInput) => {
-    // if (routeQuantity && routeDayQuantity) {
-    //   shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
-    // }
+    if (routeQuantity && routeDayQuantity) {
+        shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
+    }
 
     if (routeQuantity && routeDayQuantity && startTime) {
         if (Number(routeDayQuantity) > Number(routeQuantity)) {
