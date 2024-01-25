@@ -111,7 +111,7 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 	calc.MachineStartTime = calc.createCalcTime(calc.MachineStringStartTime)
 	calc.MachineWorkingMinutes = calc.findWorkingMinutes(calc.MachineEndTime, calc.MachineStartTime)
 	calc.setQuantityAtMinute()
-	//calc.findNeededTime()
+	calc.findNeededTime()
 
 	calc.RestTime = time.Duration(-calc.findWorkingMinutes(calc.MachineStartTime, calc.MachineEndTime)) * time.Minute
 
