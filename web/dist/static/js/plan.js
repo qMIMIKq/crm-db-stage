@@ -2811,11 +2811,9 @@ const newAllFilter = init => {
                 const route = routes[i];
                 if (isRouteStatusFiltered) {
                   statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
-                  console.log('status routes filter', statusFlag);
                 }
                 if (isTopRoutesFiltered) {
                   plotFlag = topRouteFilters.includes(route.plot);
-                  console.log('top routes filter', plotFlag);
                 }
                 flag = statusFlag && plotFlag;
                 if (flag) break;
@@ -2829,6 +2827,7 @@ const newAllFilter = init => {
           flag = false;
         }
         if (flag) {
+          // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
           const hiddenOrder = document.querySelector(`#form-${order.id}`);
           if (hiddenOrder !== null) {
             hiddenOrder.classList.remove('hidden__input');
@@ -2870,7 +2869,44 @@ const newAllFilter = init => {
           }
         }
       }
-      console.log(flag);
+      if (flag) {
+        if (isRouteStatusFiltered || isTopRoutesFiltered) {
+          if (order.db_routes) {
+            const routes = order.db_routes;
+            for (let i = 0; i < routes.length; i++) {
+              let statusFlag = true;
+              let plotFlag = true;
+              const route = routes[i];
+              if (isRouteStatusFiltered) {
+                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
+              }
+              if (isTopRoutesFiltered) {
+                plotFlag = topRouteFilters.includes(route.plot);
+              }
+              flag = statusFlag && plotFlag;
+              if (flag) break;
+            }
+          } else {
+            flag = false;
+          }
+        }
+      } else {
+        flag = false;
+      }
+      if (flag) {
+        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+        const hiddenOrder = document.querySelector(`#form-${order.id}`);
+        if (hiddenOrder !== null) {
+          hiddenOrder.classList.remove('hidden__input');
+          hiddenOrder.classList.add('showed-order');
+          if (order.db_routes && order.db_routeslength) {
+            (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(order.db_routes, hiddenOrder);
+          }
+        } else {
+          (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+        }
+      }
+      flag = true;
     });
   } else if (filtered) {
     console.log('filtered', filtered);
@@ -3870,16 +3906,16 @@ const getTime = () => {
 
 /***/ }),
 
-/***/ "./web/src/static/js/modules/modals/calcWorkingShifts.js":
-/*!***************************************************************!*\
-  !*** ./web/src/static/js/modules/modals/calcWorkingShifts.js ***!
-  \***************************************************************/
+/***/ "./web/src/static/js/modules/modals/calcWorkingShiftsModal.js":
+/*!********************************************************************!*\
+  !*** ./web/src/static/js/modules/modals/calcWorkingShiftsModal.js ***!
+  \********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "calcWorkingShifts": () => (/* binding */ calcWorkingShifts)
+/* harmony export */   "calcWorkingShiftsModal": () => (/* binding */ calcWorkingShiftsModal)
 /* harmony export */ });
 /* harmony import */ var _showModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./showModal */ "./web/src/static/js/modules/modals/showModal.js");
 /* harmony import */ var _routesModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
@@ -3897,6 +3933,7 @@ const shiftsModal = `
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">УП</label>
           <input 
+            autofocus
             placeholder="УП"
             type='number'
             class='route__input search-orders__input main__input'
@@ -3930,12 +3967,13 @@ const shiftsModal = `
     </div>
    </div>
 `;
-const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
+const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => {
   const modal = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(shiftsModal);
   const up = modal.querySelector('#up');
   const adjustment = modal.querySelector('#adjustment');
   const time = modal.querySelector('#time');
   const okBtn = modal.querySelector('.confirm__button--search');
+  up.focus();
   up.value = dayQuantityInfo.up;
   adjustment.value = dayQuantityInfo.adjustment;
   time.value = dayQuantityInfo.time;
@@ -4520,6 +4558,7 @@ const changeIssuedModal = `
       
         <label class='route__label' for='route__user'>Выдано (шт)</label>
         <input 
+          autofocus
           type='number'
           class='route__input modal-issued__input modal-issued__input--done text-input main__input main__input'
           name='error_msg' 
@@ -4565,6 +4604,7 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
     modal.querySelectorAll('.route__label').forEach(label => label.classList.add('hidden__input'));
   }
   const modalIssuedInput = modal.querySelector('.modal-issued__input--done');
+  modalIssuedInput.focus();
   modalIssuedInput.addEventListener('input', e => {
     (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.activateOnInput)(e, 'issued-ok');
   });
@@ -5221,7 +5261,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../../../appAddr */ "./appAddr.js");
 /* harmony import */ var _planModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./planModal */ "./web/src/static/js/modules/modals/planModal.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _calcWorkingShifts__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./calcWorkingShifts */ "./web/src/static/js/modules/modals/calcWorkingShifts.js");
+/* harmony import */ var _calcWorkingShiftsModal__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./calcWorkingShiftsModal */ "./web/src/static/js/modules/modals/calcWorkingShiftsModal.js");
 
 
 
@@ -5638,7 +5678,8 @@ const triggerRoutesModal = e => {
   const routeQuantity = modalElem.querySelector('#quantity');
   const routeDayQuantity = modalElem.querySelector('#day_quantity');
   controlQuantityAccess(routeQuantity);
-  controlQuantityAccess(routeDayQuantity);
+  // controlQuantityAccess(routeDayQuantity)
+
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub');
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments');
@@ -5906,12 +5947,12 @@ const triggerRoutesModal = e => {
     activateNextStage('section-finish__sub');
     if (routeInfo['quantity']) {
       routeQuantity.value = routeInfo['quantity'];
-      controlQuantityAccess(routeDayQuantity);
+      // controlQuantityAccess(routeDayQuantity)
     } else {
       routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value;
     }
     if (routeInfo['day_quantity']) {
-      controlQuantityAccess(routeDayQuantity);
+      // controlQuantityAccess(routeDayQuantity)
       routeDayQuantity.value = routeInfo['day_quantity'];
     }
     shifts.value = routeInfo.need_shifts;
@@ -5951,7 +5992,7 @@ const triggerRoutesModal = e => {
   }
   const dayQuantity = document.querySelector('#day_quantity');
   dayQuantity.addEventListener('click', e => {
-    (0,_calcWorkingShifts__WEBPACK_IMPORTED_MODULE_13__.calcWorkingShifts)(e.target, dayQuantityInfo, () => {
+    (0,_calcWorkingShiftsModal__WEBPACK_IMPORTED_MODULE_13__.calcWorkingShiftsModal)(e.target, dayQuantityInfo, () => {
       getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity);
     });
   });
@@ -6333,24 +6374,34 @@ const searchOrdersModal = `
             id='search-orders__client'>
         </div>
         
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Наименование</label>
+<!--        <div class="modal_content-block">-->
+<!--        <label class="search-orders__label" for="search-orders__client">Наименование</label>-->
           <input 
             placeholder="Наименование"
             type='text'
-            class='route__input search-orders__input main__input'
+            class='route__input hidden-input search-orders__input main__input'
             name='name' 
             id='search-orders__name'>
-        </div>
+<!--        </div>-->
         
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Материал</label>
+<!--        <div class="modal_content-block">-->
+<!--        <label class="search-orders__label" for="search-orders__client">Материал</label>-->
           <input 
             placeholder="Материал"
             type='text'
-            class='route__input search-orders__input main__input'
+            class='route__input hidden-input search-orders__input main__input'
             name='material' 
             id='search-orders__material'>
+<!--        </div>-->
+        
+        <div class="modal_content-block">
+        <label class="search-orders__label" for="search-orders__client">Строка</label>
+          <input 
+            placeholder="Строка"
+            type='number'
+            class='route__input search-orders__input main__input'
+            name='id' 
+            id='search-orders__number'>
         </div>
         
         <div class="modal_content-block">
@@ -7821,15 +7872,22 @@ const searchOrdersModal = `
             id='search-orders__client'>
         </div>
         
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Наименование</label>
+<!--        <div class="modal_content-block">-->
+<!--        <label class="search-orders__label" for="search-orders__client">Наименование</label>-->
           <input 
             placeholder="Наименование"
             type='text'
-            class='route__input search-orders__input main__input'
+            class='route__input hidden-input search-orders__input main__input'
             name='name' 
             id='search-orders__name'>
-        </div>
+<!--        </div>-->
+
+<!--          <input -->
+<!--            placeholder="Материал"-->
+<!--            type='text'-->
+<!--            class='route__input hidden-input search-orders__input main__input'-->
+<!--            name='material' -->
+<!--            id='search-orders__material'>-->
         
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">№ Заказа</label>
@@ -7838,6 +7896,16 @@ const searchOrdersModal = `
             type='text'
             class='route__input search-orders__input main__input'
             name='number' 
+            id='search-orders__number'>
+        </div>
+        
+        <div class="modal_content-block">
+        <label class="search-orders__label" for="search-orders__client">Строка</label>
+          <input 
+            placeholder="Строка"
+            type='number'
+            class='route__input search-orders__input main__input'
+            name='order_id' 
             id='search-orders__number'>
         </div>
         
@@ -8521,7 +8589,7 @@ const drawReport = async (d, i) => {
   let last = d.shift && d.current_shift && d.shift === 'Последняя';
   console.log(d.shift);
   let percents = 0;
-  let center;
+  let center = '';
   if (d.plan) {
     if (d.plan.includes('/')) {
       center = d.plan.split('/')[1];
@@ -8678,7 +8746,7 @@ const newAllReportFilter = init => {
             continue;
           }
           let filter = tableFilters['every'];
-          const orderData = order[type];
+          const orderData = String(order[type]);
           console.log(order.id, type, orderData, filter);
           if (orderData.trim().toLowerCase().includes(filter.trim().toLowerCase())) {
             console.log('find this');

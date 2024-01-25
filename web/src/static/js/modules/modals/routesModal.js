@@ -11,7 +11,7 @@ import {changePauseHandler} from "./pauseModal";
 import {appAddr} from "../../../../../../appAddr";
 import {planDateHandler} from "./planModal";
 import {submitData} from "../submitOrdersData";
-import {calcWorkingShifts} from "./calcWorkingShifts";
+import {calcWorkingShiftsModal} from "./calcWorkingShiftsModal";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -443,7 +443,7 @@ export const triggerRoutesModal = e => {
   const routeQuantity = modalElem.querySelector('#quantity')
   const routeDayQuantity = modalElem.querySelector('#day_quantity')
   controlQuantityAccess(routeQuantity)
-  controlQuantityAccess(routeDayQuantity)
+  // controlQuantityAccess(routeDayQuantity)
 
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
@@ -764,13 +764,13 @@ export const triggerRoutesModal = e => {
 
     if (routeInfo['quantity']) {
       routeQuantity.value = routeInfo['quantity']
-      controlQuantityAccess(routeDayQuantity)
+      // controlQuantityAccess(routeDayQuantity)
     } else {
       routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
     }
 
     if (routeInfo['day_quantity']) {
-      controlQuantityAccess(routeDayQuantity)
+      // controlQuantityAccess(routeDayQuantity)
       routeDayQuantity.value = routeInfo['day_quantity']
     }
 
@@ -823,7 +823,7 @@ export const triggerRoutesModal = e => {
 
   const dayQuantity = document.querySelector('#day_quantity')
   dayQuantity.addEventListener('click', e => {
-    calcWorkingShifts(e.target, dayQuantityInfo, () => {
+    calcWorkingShiftsModal(e.target, dayQuantityInfo, () => {
       getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
     })
   })

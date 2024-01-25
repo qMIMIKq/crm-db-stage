@@ -244,7 +244,6 @@ func (i InitPG) InitDB() error {
 			order_number    VARCHAR(255),
 			order_client    VARCHAR(255),
 			order_name      VARCHAR(255),
-			order_material  VARCHAR(255),
 			order_quantity  VARCHAR(255),
 			order_issued    VARCHAR(255) DEFAULT '',
 			need_shifts     integer      DEFAULT 0,

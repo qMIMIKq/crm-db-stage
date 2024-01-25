@@ -31,7 +31,7 @@ export const newAllReportFilter = (init) => {
           }
 
           let filter = tableFilters['every']
-          const orderData = order[type]
+          const orderData = String(order[type])
 
           console.log(order.id, type, orderData, filter)
           if ((orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {

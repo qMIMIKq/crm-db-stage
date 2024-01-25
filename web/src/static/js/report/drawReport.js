@@ -11,7 +11,7 @@ export const drawReport = async (d, i) => {
 
   let percents = 0
 
-  let center
+  let center = ''
   if (d.plan) {
     if (d.plan.includes('/')) {
       center = d.plan.split('/')[1]

@@ -12,6 +12,7 @@ const shiftsModal = `
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">УП</label>
           <input 
+            autofocus
             placeholder="УП"
             type='number'
             class='route__input search-orders__input main__input'
@@ -46,12 +47,14 @@ const shiftsModal = `
    </div>
 `
 
-export const calcWorkingShifts = (dayQuantityInput, dayQuantityInfo, getTheor) => {
+export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => {
   const modal = showModal(shiftsModal)
   const up = modal.querySelector('#up')
   const adjustment = modal.querySelector('#adjustment')
   const time = modal.querySelector('#time')
   const okBtn = modal.querySelector('.confirm__button--search')
+
+  up.focus()
 
   up.value = dayQuantityInfo.up
   adjustment.value = dayQuantityInfo.adjustment

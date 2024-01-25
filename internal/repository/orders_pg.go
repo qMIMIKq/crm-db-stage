@@ -197,6 +197,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					if checkPlanDate.Unix() >= checkToday.Unix() {
 						issued, _ := strconv.Atoi(route.Issued)
+						log.Info().Caller().Msgf("date is %v today is %v theor end %v", info.Date, today, route.TheorEnd)
 
 						var reportID int
 						err = o.db.QueryRow(

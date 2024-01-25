@@ -37,6 +37,7 @@ const changeIssuedModal = `
       
         <label class='route__label' for='route__user'>Выдано (шт)</label>
         <input 
+          autofocus
           type='number'
           class='route__input modal-issued__input modal-issued__input--done text-input main__input main__input'
           name='error_msg' 
@@ -86,6 +87,7 @@ export const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, up
   }
 
   const modalIssuedInput = modal.querySelector('.modal-issued__input--done')
+  modalIssuedInput.focus()
   modalIssuedInput.addEventListener('input', e => {
     activateOnInput(e, 'issued-ok')
   })

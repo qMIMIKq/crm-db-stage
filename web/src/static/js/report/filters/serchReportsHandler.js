@@ -29,26 +29,26 @@ const searchOrdersModal = `
             id='search-orders__client'>
         </div>
         
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Наименование</label>
+<!--        <div class="modal_content-block">-->
+<!--        <label class="search-orders__label" for="search-orders__client">Наименование</label>-->
           <input 
             placeholder="Наименование"
             type='text'
-            class='route__input search-orders__input main__input'
+            class='route__input hidden-input search-orders__input main__input'
             name='order_name' 
             id='search-orders__name'>
-        </div>
+<!--        </div>-->
         
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Материал</label>
-          <input 
-            placeholder="Материал"
-            type='text'
-            class='route__input search-orders__input main__input'
-            name='order_material' 
-            id='search-orders__material'>
-        </div>
-        
+<!--        <div class="modal_content-block">-->
+<!--        <label class="search-orders__label" for="search-orders__client">Материал</label>-->
+<!--          <input -->
+<!--            placeholder="Материал"-->
+<!--            type='text'-->
+<!--            class='route__input search-orders__input main__input'-->
+<!--            name='order_material' -->
+<!--            id='search-orders__material'>-->
+<!--        </div>-->
+<!--        -->
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">№ Заказа</label>
           <input 
@@ -59,6 +59,15 @@ const searchOrdersModal = `
             id='search-orders__number'>
         </div>
         
+        <div class="modal_content-block">
+        <label class="search-orders__label" for="search-orders__client">Строка</label>
+          <input 
+            placeholder="Строка"
+            type='number'
+            class='route__input search-orders__input main__input'
+            name='order_id' 
+            id='search-orders__number'>
+        </div>
         
         <div class='confirm__section'>
             <button class='main__button route__btn confirm__button confirm__button--search'>Найти</button>

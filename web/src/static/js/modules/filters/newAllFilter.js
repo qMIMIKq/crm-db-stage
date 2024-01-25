@@ -7,283 +7,330 @@ import {controlFiltersReset} from "./tableFilters";
 import {colorRoutes} from "../drawe/routesDraw";
 
 export const newAllFilter = (init) => {
-  hideOrders()
+    hideOrders()
 
-  let flag = true
+    let flag = true
 
-  const searched = state.searched
-  const filtered = state.filtered
+    const searched = state.searched
+    const filtered = state.filtered
 
-  const topRouteFilters = state.currentTopFilters.map(filter => filter.name)
-  const tableRouteStatusFilters = state.routesFilters
-  const tableFilters = state.tableFilters
+    const topRouteFilters = state.currentTopFilters.map(filter => filter.name)
+    const tableRouteStatusFilters = state.routesFilters
+    const tableFilters = state.tableFilters
 
-  const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted
-  const isTopRoutesFiltered = !!topRouteFilters.length
+    const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted
+    const isTopRoutesFiltered = !!topRouteFilters.length
 
-  controlFiltersReset()
+    controlFiltersReset()
 
-  if (searched) {
-    state.orders.forEach(order => {
-      if (tableFilters['every']) {
-        flag = false
+    if (searched) {
+        state.orders.forEach(order => {
+            if (tableFilters['every']) {
+                flag = false
 
-        for (let type in tableFilters) {
-          if (type === 'every') {
-            continue
-          }
+                for (let type in tableFilters) {
+                    if (type === 'every') {
+                        continue
+                    }
 
-          let filter = tableFilters['every']
-          const orderData = order[type]
+                    let filter = tableFilters['every']
+                    const orderData = order[type]
 
-          console.log(order.id, type, orderData, filter)
-          if ((orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
-            console.log('find this')
-            flag = true
-            break
-          }
-        }
-
-        if (flag) {
-          if (isRouteStatusFiltered || isTopRoutesFiltered) {
-            if (order.db_routes) {
-              const routes = order.db_routes
-
-              for (let i = 0; i < routes.length; i++) {
-                let statusFlag = true
-                let plotFlag = true
-
-                const route = routes[i]
-                if (isRouteStatusFiltered) {
-                  statusFlag = filterRoutesState(route)
-                  console.log('status routes filter', statusFlag)
+                    console.log(order.id, type, orderData, filter)
+                    if ((orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
+                        console.log('find this')
+                        flag = true
+                        break
+                    }
                 }
 
-                if (isTopRoutesFiltered) {
-                  plotFlag = topRouteFilters.includes(route.plot)
-                  console.log('top routes filter', plotFlag)
+                if (flag) {
+                    if (isRouteStatusFiltered || isTopRoutesFiltered) {
+                        if (order.db_routes) {
+                            const routes = order.db_routes
+
+                            for (let i = 0; i < routes.length; i++) {
+                                let statusFlag = true
+                                let plotFlag = true
+
+                                const route = routes[i]
+                                if (isRouteStatusFiltered) {
+                                    statusFlag = filterRoutesState(route)
+                                }
+
+                                if (isTopRoutesFiltered) {
+                                    plotFlag = topRouteFilters.includes(route.plot)
+                                }
+
+                                flag = statusFlag && plotFlag
+                                if (flag) break
+                            }
+
+                        } else {
+                            console.log('no routes')
+                            flag = false
+                        }
+                    }
+                } else {
+                    flag = false
                 }
 
-                flag = statusFlag && plotFlag
-                if (flag) break
-              }
+                if (flag) {
+                    // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                    const hiddenOrder = document.querySelector(`#form-${order.id}`)
+                    if (hiddenOrder !== null) {
+                        hiddenOrder.classList.remove('hidden__input')
+                        hiddenOrder.classList.add('showed-order')
+                        if (order.db_routes && order.db_routeslength) {
 
+                            colorRoutes(order.db_routes, hiddenOrder)
+                        }
+
+                    } else {
+                        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                    }
+                }
+
+
+                flag = false
             } else {
-              console.log('no routes')
-              flag = false
-            }
-          }
-        } else {
-          flag = false
-        }
+                for (let type in tableFilters) {
+                    let filter = tableFilters[type]
+                    const orderData = order[type]
 
-        if (flag) {
-          const hiddenOrder = document.querySelector(`#form-${order.id}`)
-          if (hiddenOrder !== null) {
-            hiddenOrder.classList.remove('hidden__input')
-            hiddenOrder.classList.add('showed-order')
-            if (order.db_routes && order.db_routeslength) {
+                    if (filter === 'все') {
+                    } else if (filter === 'Не заполнено') {
+                        if (orderData) {
+                            flag = false
+                            break
+                        }
+                    } else if (filter) {
+                        if (type === 'end_time') {
+                            if (!(orderData && orderData.split('T')[0] === filter)) {
+                                console.log('??')
+                                flag = false
+                                break
+                            }
+                        } else if (type === 'timestamp') {
+                            const deadline = orderData.split('T')[0]
+                            if (!(deadline === state['tableFilters'][type])) {
+                                flag = false
+                                break
+                            }
 
-              colorRoutes(order.db_routes, hiddenOrder)
-            }
-          } else {
-            drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-          }
-        }
-
-        flag = false
-      } else {
-        for (let type in tableFilters) {
-          let filter = tableFilters[type]
-          const orderData = order[type]
-
-          if (filter === 'все') {
-          } else if (filter === 'Не заполнено') {
-            if (orderData) {
-              flag = false
-              break
-            }
-          } else if (filter) {
-            if (type === 'end_time') {
-              if (!(orderData && orderData.split('T')[0] === filter)) {
-                console.log('??')
-                flag = false
-                break
-              }
-            } else if (type === 'timestamp') {
-              const deadline = orderData.split('T')[0]
-              if (!(deadline === state['tableFilters'][type])) {
-                flag = false
-                break
-              }
-
-            } else if (!(orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
-              flag = false
-              break
-            }
-          }
-        }
-      }
-
-      console.log(flag)
-    })
-
-  } else if (filtered) {
-    console.log('filtered', filtered)
-
-    state.orders.forEach(order => {
-      for (let type in tableFilters) {
-        const filter = tableFilters[type]
-        const orderData = order[type]
-
-        if (filter === 'все') {
-        } else if (filter === 'Не заполнено') {
-          if (orderData) {
-            flag = false
-            break
-          }
-        } else if (filter) {
-          if (type === 'end_time') {
-            if (!(orderData && orderData.split('T')[0] === filter)) {
-              flag = false
-              break
-            }
-          } else if (type === 'timestamp') {
-            if (!(orderData.split('T')[0] === filter)) {
-              flag = false
-              break
-            }
-          } else if (!(orderData.trim() === filter.trim())) {
-            flag = false
-            break
-          }
-        }
-      }
-
-      if (flag) {
-        if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          if (order.db_routes) {
-            const routes = order.db_routes
-
-            for (let i = 0; i < routes.length; i++) {
-              let statusFlag = true
-              let plotFlag = true
-
-              const route = routes[i]
-              if (isRouteStatusFiltered) {
-                statusFlag = filterRoutesState(route)
-              }
-
-              if (isTopRoutesFiltered) {
-                plotFlag = topRouteFilters.includes(route.plot)
-              }
-
-              flag = statusFlag && plotFlag
-              if (flag) break
-            }
-
-          } else {
-            flag = false
-          }
-        }
-      } else {
-        flag = false
-      }
-
-      if (flag) {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`)
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input')
-          hiddenOrder.classList.add('showed-order')
-          if (order.db_routes && order.db_routeslength) {
-
-            colorRoutes(order.db_routes, hiddenOrder)
-          }
-
-        } else {
-          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        }
-      }
-
-      flag = true
-    })
-  }
-
-  if (!searched && !filtered) {
-    if (isRouteStatusFiltered || isTopRoutesFiltered) {
-      state.orders.forEach(order => {
-        if (!order.db_routes) {
-          flag = false
-        } else {
-          const routes = order.db_routes
-
-          for (let i = 0; i < routes.length; i++) {
-            let statusFlag = true
-            let plotFlag = true
-
-            const route = routes[i]
-            if (isRouteStatusFiltered) {
-              statusFlag = filterRoutesState(route)
-            }
-
-            if (isTopRoutesFiltered) {
-              plotFlag = topRouteFilters.includes(route.plot)
-            }
-
-            flag = statusFlag && plotFlag
-            if (flag) {
-              // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-              const hiddenOrder = document.querySelector(`#form-${order.id}`)
-              if (hiddenOrder !== null) {
-                hiddenOrder.classList.remove('hidden__input')
-                hiddenOrder.classList.add('showed-order')
-                if (order.db_routes && order.db_routeslength) {
-
-                  colorRoutes(order.db_routes, hiddenOrder)
+                        } else if (!(orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
+                            flag = false
+                            break
+                        }
+                    }
                 }
-              } else {
-                drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-              }
-              break
             }
-          }
-        }
-      })
+
+            if (flag) {
+                if (isRouteStatusFiltered || isTopRoutesFiltered) {
+                    if (order.db_routes) {
+                        const routes = order.db_routes
+
+                        for (let i = 0; i < routes.length; i++) {
+                            let statusFlag = true
+                            let plotFlag = true
+
+                            const route = routes[i]
+                            if (isRouteStatusFiltered) {
+                                statusFlag = filterRoutesState(route)
+                            }
+
+                            if (isTopRoutesFiltered) {
+                                plotFlag = topRouteFilters.includes(route.plot)
+                            }
+
+                            flag = statusFlag && plotFlag
+                            if (flag) break
+                        }
+
+                    } else {
+                        flag = false
+                    }
+                }
+            } else {
+                flag = false
+            }
+
+            if (flag) {
+                // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                const hiddenOrder = document.querySelector(`#form-${order.id}`)
+                if (hiddenOrder !== null) {
+                    hiddenOrder.classList.remove('hidden__input')
+                    hiddenOrder.classList.add('showed-order')
+                    if (order.db_routes && order.db_routeslength) {
+
+                        colorRoutes(order.db_routes, hiddenOrder)
+                    }
+
+                } else {
+                    drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                }
+            }
+
+            flag = true
+        })
+
+    } else if (filtered) {
+        console.log('filtered', filtered)
+
+        state.orders.forEach(order => {
+            for (let type in tableFilters) {
+                const filter = tableFilters[type]
+                const orderData = order[type]
+
+                if (filter === 'все') {
+                } else if (filter === 'Не заполнено') {
+                    if (orderData) {
+                        flag = false
+                        break
+                    }
+                } else if (filter) {
+                    if (type === 'end_time') {
+                        if (!(orderData && orderData.split('T')[0] === filter)) {
+                            flag = false
+                            break
+                        }
+                    } else if (type === 'timestamp') {
+                        if (!(orderData.split('T')[0] === filter)) {
+                            flag = false
+                            break
+                        }
+                    } else if (!(orderData.trim() === filter.trim())) {
+                        flag = false
+                        break
+                    }
+                }
+            }
+
+            if (flag) {
+                if (isRouteStatusFiltered || isTopRoutesFiltered) {
+                    if (order.db_routes) {
+                        const routes = order.db_routes
+
+                        for (let i = 0; i < routes.length; i++) {
+                            let statusFlag = true
+                            let plotFlag = true
+
+                            const route = routes[i]
+                            if (isRouteStatusFiltered) {
+                                statusFlag = filterRoutesState(route)
+                            }
+
+                            if (isTopRoutesFiltered) {
+                                plotFlag = topRouteFilters.includes(route.plot)
+                            }
+
+                            flag = statusFlag && plotFlag
+                            if (flag) break
+                        }
+
+                    } else {
+                        flag = false
+                    }
+                }
+            } else {
+                flag = false
+            }
+
+            if (flag) {
+                // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                const hiddenOrder = document.querySelector(`#form-${order.id}`)
+                if (hiddenOrder !== null) {
+                    hiddenOrder.classList.remove('hidden__input')
+                    hiddenOrder.classList.add('showed-order')
+                    if (order.db_routes && order.db_routeslength) {
+
+                        colorRoutes(order.db_routes, hiddenOrder)
+                    }
+
+                } else {
+                    drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                }
+            }
+
+            flag = true
+        })
     }
-  }
 
-  if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
-    if (init) {
-      deleteOrders()
+    if (!searched && !filtered) {
+        if (isRouteStatusFiltered || isTopRoutesFiltered) {
+            state.orders.forEach(order => {
+                if (!order.db_routes) {
+                    flag = false
+                } else {
+                    const routes = order.db_routes
 
-      state.orders.forEach(order => {
-        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        // console.log(order.id)
-        // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
-        // order.classList.remove('hidden__input')
-      })
-    } else {
-      state.orders.forEach(order => {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        // console.log(order.id)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`)
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input')
-          hiddenOrder.classList.add('showed-order')
+                    for (let i = 0; i < routes.length; i++) {
+                        let statusFlag = true
+                        let plotFlag = true
 
-          if (order.db_routes && order.db_routes.length) {
-            colorRoutes(order.db_routes, hiddenOrder)
-          }
+                        const route = routes[i]
+                        if (isRouteStatusFiltered) {
+                            statusFlag = filterRoutesState(route)
+                        }
+
+                        if (isTopRoutesFiltered) {
+                            plotFlag = topRouteFilters.includes(route.plot)
+                        }
+
+                        flag = statusFlag && plotFlag
+                        if (flag) {
+                            // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                            const hiddenOrder = document.querySelector(`#form-${order.id}`)
+                            if (hiddenOrder !== null) {
+                                hiddenOrder.classList.remove('hidden__input')
+                                hiddenOrder.classList.add('showed-order')
+                                if (order.db_routes && order.db_routeslength) {
+
+                                    colorRoutes(order.db_routes, hiddenOrder)
+                                }
+                            } else {
+                                drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                            }
+                            break
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
+        if (init) {
+            deleteOrders()
+
+            state.orders.forEach(order => {
+                drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                // console.log(order.id)
+                // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
+                // order.classList.remove('hidden__input')
+            })
         } else {
-          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+            state.orders.forEach(order => {
+                // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                // console.log(order.id)
+                const hiddenOrder = document.querySelector(`#form-${order.id}`)
+                if (hiddenOrder !== null) {
+                    hiddenOrder.classList.remove('hidden__input')
+                    hiddenOrder.classList.add('showed-order')
+
+                    if (order.db_routes && order.db_routes.length) {
+                        colorRoutes(order.db_routes, hiddenOrder)
+                    }
+                } else {
+                    drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+                }
+                // order.classList.remove('hidden__input')
+            })
         }
-        // order.classList.remove('hidden__input')
-      })
     }
-  }
-  // ?  : `Журнал заказов (${state.orders.length})
-  const dataLength = table.querySelectorAll('.showed-order').length
-  document.querySelector('.main-header__title').textContent = state.isArchive ? `Архив заказов (${dataLength})` : `Журнал заказов (${dataLength})`
-  bindOrdersListeners()
+    // ?  : `Журнал заказов (${state.orders.length})
+    const dataLength = table.querySelectorAll('.showed-order').length
+    document.querySelector('.main-header__title').textContent = state.isArchive ? `Архив заказов (${dataLength})` : `Журнал заказов (${dataLength})`
+    bindOrdersListeners()
 }
