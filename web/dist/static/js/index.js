@@ -3985,7 +3985,7 @@ const shiftsModal = `
         </div>
         
         <div class='confirm__section'>
-            <button class='main__button route__btn confirm__button confirm__button--search'>ОК</button>
+            <button class='main__button route__btn confirm__button confirm__button--search confirm__button--search__theor'>ОК</button>
         </div>
     </div>
    </div>
@@ -5706,8 +5706,11 @@ const triggerRoutesModal = e => {
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub');
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments');
-    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity);
+    // getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
     dayQuantityInfo['quantity'] = e.target.value;
+    modalElem.querySelector('#day_quantity').click();
+    document.querySelector('.confirm__button--search__theor').click();
+    console.log(dayQuantityInfo);
   });
   routeDayQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub');
@@ -6242,7 +6245,13 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
     }).then(data => {
       theorEndInp.value = data.date;
       shifts.value = Math.ceil(data.days);
-      dayInput.value = `${data.can_do[0]}/${dayInput.value}/${data.can_do[1]}`;
+      let checkDayInput = dayInput.value.split('/');
+      if (checkDayInput.length > 1) {
+        checkDayInput = checkDayInput[1];
+      } else {
+        checkDayInput = checkDayInput[0];
+      }
+      dayInput.value = `${data.can_do[0]}/${checkDayInput}/0`;
       console.log(data.can_do);
       // dynEndInp.value = data.result
     });
@@ -6918,11 +6927,6 @@ const table = document.querySelector('.main-table');
 const shiftCounter = {};
 const drawReport = async (d, i) => {
   (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_1__.controlReportsFiltersReset)();
-
-  // let last = d.shift && d.current_shift && d.shift === 'Последняя'
-
-  // if  (d.shift && (d.current_shift ))
-
   console.log(d.shift, d.current_shift);
   let last = false;
   if (d.current_shift) {

@@ -6,10 +6,6 @@ export const shiftCounter = {}
 export const drawReport = async (d, i) => {
   controlReportsFiltersReset()
 
-  // let last = d.shift && d.current_shift && d.shift === 'Последняя'
-
-  // if  (d.shift && (d.current_shift ))
-
   console.log(d.shift, d.current_shift)
   let last = false
   if (d.current_shift) {

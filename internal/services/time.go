@@ -25,6 +25,7 @@ type EndTimeCalculator struct {
 	MachineStringEndTime   string
 	MachineEndTime         time.Time
 	MachineWorkingMinutes  float64
+	MachineWorkingSeconds  float64
 
 	RestTime time.Duration
 
@@ -110,8 +111,9 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 	calc.MachineEndTime = calc.createCalcTime(calc.MachineStringEndTime)
 	calc.MachineStartTime = calc.createCalcTime(calc.MachineStringStartTime)
 	calc.MachineWorkingMinutes = calc.findWorkingMinutes(calc.MachineEndTime, calc.MachineStartTime)
+	calc.MachineWorkingSeconds = calc.MachineWorkingMinutes * 60
 	calc.setQuantityAtMinute()
-	calc.findNeededTime()
+	//calc.findNeededTime()
 
 	calc.RestTime = time.Duration(-calc.findWorkingMinutes(calc.MachineStartTime, calc.MachineEndTime)) * time.Minute
 
@@ -134,76 +136,172 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 	}
 
 	log.Info().Msgf("in sec for detail %v", inSecForDetail)
-	//calc.NeededTime = float64(timeInfo.Quantity) * inSecForDetail // Time for all job in seconds
-	log.Info().Msgf("time for all working %v", calc.NeededTime)
+	calc.NeededTime = (float64(timeInfo.Quantity) * inSecForDetail) + (float64(timeInfo.Up+timeInfo.Adjustment) * 60) // Time for all job in seconds
+	log.Info().Msgf("time for all working %v, machine working minutes %v", calc.NeededTime, calc.MachineWorkingSeconds)
 
-	var canWorkToday float64
-	canWorkToday = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+	var canWorkTodayWithDetails float64
+	var canWorkTodayTotal float64
+	canWorkTodayWithDetails = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
 	if calc.WorkerCalcStartTime.Unix() > calc.MachineStartTime.Unix() && calc.WorkerCalcStartTime.Unix() < calc.MachineEndTime.Unix() {
-		canWorkToday = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+		canWorkTodayWithDetails = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+		canWorkTodayTotal = canWorkTodayWithDetails
+		canWorkTodayWithDetails -= float64(timeInfo.Up + timeInfo.Adjustment)
 	} else {
-		canWorkToday = 0
+		canWorkTodayWithDetails = 0
+		canWorkTodayTotal = canWorkTodayWithDetails
 	}
 
-	canWorkTodaySeconds := canWorkToday * 60
+	canWorkTodaySeconds := canWorkTodayWithDetails * 60
+	canWorkTodayTotal *= 60
+	canDoForFirstDay := math.Ceil(canWorkTodaySeconds / inSecForDetail)
 
-	canDoForFirstDay := round(canWorkTodaySeconds / inSecForDetail)
-
-	log.Info().Caller().Msgf("quantity %v, day quantity %v", timeInfo.Quantity, timeInfo.DayQuantity)
+	log.Info().Caller().Msgf("can work today in seconds %v / in sec for details %v, can do today in details %v", canWorkTodaySeconds, inSecForDetail, canDoForFirstDay)
+	log.Info().Caller().Msgf("can work today total in seconds %v", canWorkTodayTotal)
 
 	counter := 0
-	for calc.NeededTime >= calc.MachineWorkingMinutes {
-		if counter == 0 {
-			calc.NeededTime -= canWorkToday
-			if canWorkToday > 0 {
-				calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkToday) * time.Minute)
-			} else {
-				calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkToday) * time.Minute)
+	if calc.NeededTime >= calc.MachineWorkingSeconds && calc.NeededTime >= canWorkTodayTotal {
+		for calc.NeededTime >= calc.MachineWorkingSeconds {
+			if counter == 0 {
+				calc.NeededTime -= canWorkTodayTotal
+				calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkTodayTotal) * time.Second)
+				calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
+				log.Info().Caller().Msgf("theor end %v", calc.TheorEndTime)
 
-				var err error
-				calc.TheorEndTime, err = time.Parse(calc.Layout, strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[0]+" "+calc.MachineStringStartTime)
-				if err != nil {
-					log.Warn().Err(err).Caller().Msgf("error")
+				if canWorkTodaySeconds > 0 {
+
+				} else {
+
 				}
-			}
 
-			endHours := strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1]
-
-			if endHours == calc.MachineStringEndTime {
+			} else {
+				calc.NeededTime -= calc.MachineWorkingSeconds
+				calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.MachineWorkingSeconds) * time.Second)
 				calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
-			}
 
-		} else {
-			calc.NeededTime -= calc.MachineWorkingMinutes
-			calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.MachineWorkingMinutes) * time.Minute)
-			endHours := strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1]
-			endTimeHours := calc.createCalcTime(endHours)
-
-			log.Info().Msgf("end hours %v || machine end %v", endTimeHours, calc.MachineEndTime)
-			if endTimeHours.Unix() >= calc.MachineEndTime.Unix() {
-				calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
+				log.Info().Caller().Msgf("theor end %v", calc.TheorEndTime)
 			}
+			counter++
 		}
 
-		log.Info().Msgf("Theor need on end one cycle %v", calc.TheorEndTime.Format(calc.Layout))
-		counter++
+		if calc.NeededTime != 0 {
+			calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.NeededTime) * time.Second)
+			calc.NeededTime -= calc.NeededTime
+			counter++
+		}
+
+		log.Info().Caller().Msgf("end counter %v, end time %v", counter, calc.TheorEndTime)
+
+		if canDoForFirstDay > float64(timeInfo.Quantity) {
+			canDoForFirstDay = float64(timeInfo.Quantity)
+		}
+
+		return calc.TheorEndTime.Format(calc.Layout), float64(counter), [2]float64{canDoForFirstDay, 0}
+	} else {
+		log.Info().Caller().Msgf("needed time smaller them working time")
+		//counter++
+		//calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(calc.NeededTime) * time.Second)
+		//log.Info().Caller().Msgf("end time %v", calc.TheorEndTime)
+
+		var needToDoFirst float64
+		if calc.NeededTime > canWorkTodayTotal {
+			needToDoFirst = canWorkTodayTotal
+		} else {
+			needToDoFirst = calc.NeededTime
+		}
+
+		for calc.NeededTime > 0 {
+			if counter == 0 {
+				calc.NeededTime -= needToDoFirst
+				calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(needToDoFirst) * time.Second)
+
+				if calc.NeededTime > 0 {
+					calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
+				}
+
+			} else {
+				calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.NeededTime) * time.Second)
+				calc.NeededTime -= calc.NeededTime
+			}
+
+			counter++
+		}
+
+		if canDoForFirstDay > float64(timeInfo.Quantity) {
+			canDoForFirstDay = float64(timeInfo.Quantity)
+		}
+
+		return calc.TheorEndTime.Format(calc.Layout), float64(counter), [2]float64{canDoForFirstDay, 0}
 	}
 
-	if calc.NeededTime != 0 {
-		calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.NeededTime) * time.Minute)
-		calc.NeededTime -= calc.NeededTime
-		counter++
-	}
+	//canDoForFirstDay := round(canWorkTodaySeconds / inSecForDetail)
 
-	//log.Info().Msgf("Theor end %v", calc.TheorEndTime.Format(calc.Layout))
-	calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(timeInfo.Up+timeInfo.Adjustment) * time.Minute)
-	calcedEnd := calc.createCalcTime(strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1])
-	check := float64(calcedEnd.Unix() - calc.MachineStartTime.Unix())
-	canDoLastDay := round(check / inSecForDetail)
-	log.Info().Msgf("CHECK TIME! %v", counter)
+	//var canWorkTodayWithDetails float64
+	//canWorkTodayWithDetails = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+	//if calc.WorkerCalcStartTime.Unix() > calc.MachineStartTime.Unix() && calc.WorkerCalcStartTime.Unix() < calc.MachineEndTime.Unix() {
+	//	canWorkTodayWithDetails = calc.findWorkingMinutes(calc.MachineEndTime, calc.WorkerCalcStartTime)
+	//} else {
+	//	canWorkTodayWithDetails = 0
+	//}
+	//
+	//canWorkTodaySeconds := canWorkTodayWithDetails * 60
+	//
+	//
+	//
+	//log.Info().Caller().Msgf("quantity %v, day quantity %v, can do first day %v", timeInfo.Quantity, timeInfo.DayQuantity, canDoForFirstDay)
 
-	log.Info().Caller().Msgf("end time %v", calc.TheorEndTime.Format(calc.Layout))
-	return calc.TheorEndTime.Format(calc.Layout), calc.TheorEndTime.Sub(calc.WorkerFullStartTime).Hours() / 24, [2]float64{canDoForFirstDay, canDoLastDay}
+	//counter := 0
+	//for calc.NeededTime >= calc.MachineWorkingMinutes {
+	//	if counter == 0 {
+	//		calc.NeededTime -= canWorkTodayWithDetails
+	//		if canWorkTodayWithDetails > 0 {
+	//			calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkTodayWithDetails) * time.Minute)
+	//		} else {
+	//			calc.TheorEndTime = calc.WorkerFullStartTime.Add(time.Duration(canWorkTodayWithDetails) * time.Minute)
+	//
+	//			var err error
+	//			calc.TheorEndTime, err = time.Parse(calc.Layout, strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[0]+" "+calc.MachineStringStartTime)
+	//			if err != nil {
+	//				log.Warn().Err(err).Caller().Msgf("error")
+	//			}
+	//		}
+	//
+	//		endHours := strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1]
+	//
+	//		if endHours == calc.MachineStringEndTime {
+	//			calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
+	//		}
+	//
+	//	} else {
+	//		calc.NeededTime -= calc.MachineWorkingMinutes
+	//		calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.MachineWorkingMinutes) * time.Minute)
+	//		endHours := strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1]
+	//		endTimeHours := calc.createCalcTime(endHours)
+	//
+	//		log.Info().Msgf("end hours %v || machine end %v", endTimeHours, calc.MachineEndTime)
+	//		if endTimeHours.Unix() >= calc.MachineEndTime.Unix() {
+	//			calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
+	//		}
+	//	}
+	//
+	//	log.Info().Msgf("Theor need on end one cycle %v", calc.TheorEndTime.Format(calc.Layout))
+	//	counter++
+	//}
+	//
+	//if calc.NeededTime != 0 {
+	//	calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.NeededTime) * time.Minute)
+	//	calc.NeededTime -= calc.NeededTime
+	//	counter++
+	//}
+	//
+	////log.Info().Msgf("Theor end %v", calc.TheorEndTime.Format(calc.Layout))
+	//calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(timeInfo.Up+timeInfo.Adjustment) * time.Minute)
+	//calcedEnd := calc.createCalcTime(strings.Split(calc.TheorEndTime.Format(calc.Layout), " ")[1])
+	//check := float64(calcedEnd.Unix() - calc.MachineStartTime.Unix())
+	//canDoLastDay := round(check / inSecForDetail)
+	//log.Info().Msgf("CHECK TIME! %v", counter)
+	//
+	//log.Info().Caller().Msgf("end time %v", calc.TheorEndTime.Format(calc.Layout))
+	//return calc.TheorEndTime.Format(calc.Layout), calc.TheorEndTime.Sub(calc.WorkerFullStartTime).Hours() / 24, [2]float64{canDoForFirstDay, canDoLastDay}
 	//return calc.TheorEndTime.Format(calc.Layout), float64(counter), [2]float64{canDoForFirstDay, canDoLastDay}
 	//return "", 32, [2]float64{15, 22}
 }

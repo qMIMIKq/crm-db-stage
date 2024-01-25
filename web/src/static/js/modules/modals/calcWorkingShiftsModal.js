@@ -41,7 +41,7 @@ const shiftsModal = `
         </div>
         
         <div class='confirm__section'>
-            <button class='main__button route__btn confirm__button confirm__button--search'>ОК</button>
+            <button class='main__button route__btn confirm__button confirm__button--search confirm__button--search__theor'>ОК</button>
         </div>
     </div>
    </div>
