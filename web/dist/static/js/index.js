@@ -4591,14 +4591,14 @@ const changeIssuedModal = `
         <label class='route__label'>Дата</label>
         <input type="date" class="main__button modal-issued__date route__input">
         
-         <label class='route__label' for='route__user'>Наладка (мин)</label>
+         <label class='route__label for-oper' for='route__user'>Наладка (мин)</label>
          <input 
           type='number'
           class='route__input modal-issued__input modal-issued__input--adj text-input main__input main__input'
           name='error_msg' 
           id='error-route__msg'>
       
-        <label class='route__label' for='route__user'>Выдано (шт)</label>
+        <label class='route__label for-oper' for='route__user'>Выдано (шт)</label>
         <input 
           autofocus
           type='number'
@@ -4607,7 +4607,7 @@ const changeIssuedModal = `
           id='error-route__msg'>
           
         <div class="modal__shift-block">
-            <label style="margin-bottom: 0;" for="last" class="route__label">
+            <label style="margin-bottom: 0;" for="last" class="route__label for-oper">
                 Последняя
             </label>
             <input type="checkbox" name="last" id="last">
@@ -4643,7 +4643,9 @@ const issuedHandler = (e, issuedInput, issuedTodayInput, plotI, userI, updateDat
     userData.classList.add('hidden__input');
     plot.classList.add('hidden__input');
     date.classList.add('hidden__input');
-    modal.querySelectorAll('.route__label').forEach(label => label.classList.add('hidden__input'));
+    modal.querySelectorAll('.route__label').forEach(label => {
+      if (!label.classList.contains('for-oper')) label.classList.add('hidden__input');
+    });
   }
   const modalIssuedInput = modal.querySelector('.modal-issued__input--done');
   modalIssuedInput.focus();
