@@ -445,23 +445,6 @@ export const triggerRoutesModal = e => {
     controlQuantityAccess(routeQuantity)
     // controlQuantityAccess(routeDayQuantity)
 
-    routeQuantity.addEventListener('change', e => {
-        activateOnInput(e, 'section-finish__sub')
-        addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
-        // getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
-        dayQuantityInfo['quantity'] = e.target.value
-        modalElem.querySelector('#day_quantity').click()
-        document.querySelector('.confirm__button--search__theor').click()
-
-        console.log(dayQuantityInfo)
-    })
-
-    routeDayQuantity.addEventListener('change', e => {
-        activateOnInput(e, 'section-finish__sub')
-        addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
-        getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
-    })
-
     const routeForm = modalElem.querySelector('.route__config')
     const issued = modalElem.querySelector('#route__issued')
     const visibleLogs = document.querySelector("#visible__comments")
@@ -624,13 +607,6 @@ export const triggerRoutesModal = e => {
 
         shift.value = routeInfo.shift
 
-        dayQuantityInfo = {
-            'up': routeInfo.up,
-            'adjustment': routeInfo.adjustment,
-            'time': routeInfo.time,
-            'quantity': routeInfo.quantity,
-        }
-
         planned = routeInfo['planned']
 
         // if (planned) {
@@ -768,9 +744,12 @@ export const triggerRoutesModal = e => {
 
         if (routeInfo['quantity']) {
             routeQuantity.value = routeInfo['quantity']
+            // dayQuantityInfo['quantity'] = routeInfo['quantity']
             // controlQuantityAccess(routeDayQuantity)
         } else {
-            routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
+            const quant = currentOrder.querySelector('input[name="quantity"]').value
+            routeQuantity.value = quant
+            // dayQuantityInfo['quantity'] = quant
         }
 
         if (routeInfo['day_quantity']) {
@@ -819,10 +798,18 @@ export const triggerRoutesModal = e => {
             disableBtn('end-route__time')
         }
 
+        dayQuantityInfo = {
+            'up': routeInfo.up,
+            'adjustment': routeInfo.adjustment,
+            'time': routeInfo.time,
+            'quantity': routeInfo.quantity,
+        }
+
     } else {
         routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
         disableBtn('route-plan__date')
         drawPlots()
+        dayQuantityInfo['quantity']  = routeQuantity.value
     }
 
     const dayQuantity = document.querySelector('#day_quantity')
@@ -830,6 +817,23 @@ export const triggerRoutesModal = e => {
         calcWorkingShiftsModal(e.target, dayQuantityInfo, () => {
             getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
         })
+    })
+
+    routeQuantity.addEventListener('change', e => {
+        activateOnInput(e, 'section-finish__sub')
+        addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
+        // getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
+        dayQuantityInfo['quantity'] = e.target.value
+        modalElem.querySelector('#day_quantity').click()
+        document.querySelector('.confirm__button--search__theor').click()
+
+        console.log(dayQuantityInfo)
+    })
+
+    routeDayQuantity.addEventListener('change', e => {
+        activateOnInput(e, 'section-finish__sub')
+        addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
+        getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
     })
 
 

@@ -110,14 +110,29 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
         //   dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
         // }
 
+        console.log(seconds)
+
         if (seconds) {
             console.log(dayQuantityInfo.quantity)
 
             const inDay = Math.floor(defaultWorkTime / seconds)
+            console.log(inDay)
             if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
                 dayQuantityInput.value = inDay
             } else {
                 dayQuantityInput.value = dayQuantityInfo.quantity
+            }
+        } else {
+            if (check) {
+                dayQuantityInput.value = ''
+                document.querySelector('#shifts').value = ''
+                document.querySelector('#route__teorend').value = ''
+                addLog(user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments')
+                modal.click()
+                return
+            } else {
+                modal.click()
+                return
             }
         }
 

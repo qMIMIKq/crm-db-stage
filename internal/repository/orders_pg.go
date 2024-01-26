@@ -148,6 +148,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				if len(route.AddedDates) > 0 {
 					o.planningPG.CreatePlanningObject(route, order, order.ID, routePos, routeID, false)
 				}
+				log.Info().Caller().Msgf("route id is %v", routeID)
 
 				planQuery := fmt.Sprintf(`
 					INSERT INTO plans (route_id, order_id, route_plot, plan_date, divider, queues)
@@ -197,7 +198,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					if checkPlanDate.Unix() >= checkToday.Unix() {
 						issued, _ := strconv.Atoi(route.Issued)
-						log.Info().Caller().Msgf("date is %v today is %v theor end %v", info.Date, today, route.TheorEnd)
+						//log.Info().Caller().Msgf("date is %v today is %v theor end %v", info.Date, today, route.TheorEnd)
 
 						var dayQuantity string
 						if strings.Contains(route.DayQuantity, "/") {
@@ -237,12 +238,15 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					keys = append(keys, reportDate)
 				}
 				sort.Strings(keys)
+				log.Info().Interface("keys", keys).Msgf("keys")
 				//log.Info().Interface("sorted dates", keys).Msgf("KEYS!!!")
 
 				//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
 				//log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
 
 				var issuedThisTurn int
+				counter := 0
+				haveFirstReport := false
 				for _, reportDate := range keys {
 					reportIssued := routeReports.ReportsData[reportDate]
 					changerDate, _ := time.Parse(layout, reportDate)
@@ -290,40 +294,42 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					`)
 
 					//var totalIssued int
-					haveFirstReport := false
-					for i, report := range reports {
+					for _, report := range reports {
 						oldReportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
 
-						dayQuantity := "0"
-						if haveFirstReport {
-							if strings.Contains(route.DayQuantity, "/") {
-								dayQuantity = strings.Split(route.DayQuantity, "/")[1]
-							} else {
-								dayQuantity = route.DayQuantity
-							}
-						} else {
-							if strings.Contains(route.DayQuantity, "/") {
-								dayQuantity = strings.Split(route.DayQuantity, "/")[0]
-							} else {
-								dayQuantity = route.DayQuantity
-							}
-						}
+						//dayQuantity := "0"
+						//if haveFirstReport {
+						//	if strings.Contains(route.DayQuantity, "/") {
+						//		dayQuantity = strings.Split(route.DayQuantity, "/")[1]
+						//	} else {
+						//		dayQuantity = route.DayQuantity
+						//	}
+						//} else {
+						//	if strings.Contains(route.DayQuantity, "/") {
+						//		dayQuantity = strings.Split(route.DayQuantity, "/")[0]
+						//	} else {
+						//		dayQuantity = route.DayQuantity
+						//	}
+						//}
 
-						log.Info().Caller().Msgf("day quantity %v", dayQuantity)
-						if _, err := o.db.Exec(updateReportInfoQuery, route.Quantity, route.NeedShifts, dayQuantity, route.TheorEnd, report.ReportID); err != nil {
+						//log.Info().Caller().Msgf("day quantity %v", dayQuantity)
+						if _, err := o.db.Exec(updateReportInfoQuery, route.Quantity, route.NeedShifts, route.DayQuantity, route.TheorEnd, report.ReportID); err != nil {
 							log.Err(err).Caller().Msg("error is")
 						}
 
 						if changerDate.Unix() == oldReportDate.Unix() {
-							log.Info().Msgf("index with report is %v", i+1)
-							haveFirstReport = true
+							log.Info().Caller().Msgf("changer date %v, is first %v", changerDate, !haveFirstReport)
+							counter += 1
+							log.Info().Msgf("index with report is %v", counter)
+							//haveFirstReport = true
 							//log.Info().Msgf("last? %v", shift)
 
 							if _, err := o.db.Exec(`
 								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6 WHERE report_id = $7
-								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, reportIssued.Adjustment, report.ReportID); err != nil {
+								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, counter, shift, reportIssued.Adjustment, report.ReportID); err != nil {
 								log.Err(err).Caller().Msg("error is")
 							}
+
 						}
 					}
 				}
@@ -445,6 +451,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				//log.Info().Msgf("order id %v / report route id %v / report route plot %v", order.ID, routeReports.RouteID, routeReports.RoutePlot)
 
 				var issuedThisTurn int
+				counter := 0
 				for _, reportDate := range keys {
 					reportIssued := routeReports.ReportsData[reportDate]
 					changerDate, _ := time.Parse(layout, reportDate)
@@ -503,36 +510,37 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					`)
 
 					//var totalIssued int
-					haveFirstReport := false
-					for i, report := range reports {
+					//haveFirstReport := false
+					for _, report := range reports {
 						oldReportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
 
-						dayQuantity := "0"
-						if haveFirstReport {
-							if strings.Contains(route.DayQuantity, "/") {
-								dayQuantity = strings.Split(route.DayQuantity, "/")[1]
-							} else {
-								dayQuantity = route.DayQuantity
-							}
-						} else {
-							if strings.Contains(route.DayQuantity, "/") {
-								dayQuantity = strings.Split(route.DayQuantity, "/")[0]
-							} else {
-								dayQuantity = route.DayQuantity
-							}
-						}
+						//dayQuantity := "0"
+						//if haveFirstReport {
+						//	if strings.Contains(route.DayQuantity, "/") {
+						//		dayQuantity = strings.Split(route.DayQuantity, "/")[1]
+						//	} else {
+						//		dayQuantity = route.DayQuantity
+						//	}
+						//} else {
+						//	if strings.Contains(route.DayQuantity, "/") {
+						//		dayQuantity = strings.Split(route.DayQuantity, "/")[0]
+						//	} else {
+						//		dayQuantity = route.DayQuantity
+						//	}
+						//}
 
-						if _, err := o.db.Exec(updateReportInfoQuery, route.Quantity, route.NeedShifts, dayQuantity, route.TheorEnd, report.ReportID); err != nil {
+						if _, err := o.db.Exec(updateReportInfoQuery, route.Quantity, route.NeedShifts, route.DayQuantity, route.TheorEnd, report.ReportID); err != nil {
 							log.Err(err).Msg("error is")
 						}
 
 						if changerDate.Unix() == oldReportDate.Unix() {
-							log.Info().Msgf("index is %v", i+1)
-							haveFirstReport = true
+							counter += 1
+							log.Info().Caller().Msgf("index with report is %v", counter)
+							//haveFirstReport = true
 
 							if _, err := o.db.Exec(`
 									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6 WHERE report_id = $7
-								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, reportIssued.Adjustment, report.ReportID); err != nil {
+								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, counter, shift, reportIssued.Adjustment, report.ReportID); err != nil {
 								log.Err(err).Msg("error is")
 							}
 						}
