@@ -19,6 +19,26 @@ const searchOrdersModal = `
             name='every' 
             id='search-orders__every'>
         </div>
+        
+        <div class="modal_content-block">
+        <label class="search-orders__label" for="search-orders__client">Строка</label>
+          <input 
+            placeholder="Строка"
+            type='number'
+            class='route__input search-orders__input main__input'
+            name='id' 
+            id='search-orders__number'>
+        </div>
+        
+        <div class="modal_content-block">
+        <label class="search-orders__label" for="search-orders__client">№ Заказа</label>
+          <input 
+            placeholder="№ Заказа"
+            type='text'
+            class='route__input search-orders__input main__input'
+            name='number' 
+            id='search-orders__number'>
+        </div>
           
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">Клиент</label>
@@ -50,27 +70,6 @@ const searchOrdersModal = `
             id='search-orders__material'>
 <!--        </div>-->
         
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Строка</label>
-          <input 
-            placeholder="Строка"
-            type='number'
-            class='route__input search-orders__input main__input'
-            name='id' 
-            id='search-orders__number'>
-        </div>
-        
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">№ Заказа</label>
-          <input 
-            placeholder="№ Заказа"
-            type='text'
-            class='route__input search-orders__input main__input'
-            name='number' 
-            id='search-orders__number'>
-        </div>
-        
-        
         <div class='confirm__section'>
             <button class='main__button route__btn confirm__button confirm__button--search'>Найти</button>
         </div>
@@ -79,35 +78,37 @@ const searchOrdersModal = `
 `
 
 export const searchOrdersHandler = () => {
-  const searchModal = showModal(searchOrdersModal)
-  const inputs = searchModal.querySelectorAll('input')
+    const searchModal = showModal(searchOrdersModal)
+    const inputs = searchModal.querySelectorAll('input')
 
-  const everySearch = searchModal.querySelector('#search-orders__every')
-  everySearch.addEventListener('input', e => {
-    inputs.forEach(input => {
-      if (e.target.value !== '' && input !== e.target) {
-        state['tableFilters'][input.name] = ''
-        input.value = ''
-        input.setAttribute('disabled', true)
-        input.setAttribute('readonly', true)
-      } else {
-        input.removeAttribute('disabled')
-        input.removeAttribute('readonly')
-      }
-    })
-  })
+    const everySearch = searchModal.querySelector('#search-orders__every')
+    everySearch.focus()
 
-  const searchBtn = searchModal.querySelector('.confirm__button--search')
-  searchBtn.addEventListener('click', () => {
-    inputs.forEach(input => {
-      if (input.value) {
-        state['filtered'] = true
-        state['searched'] = true
-        state['tableFilters'][input.name] = input.value
-      }
+    everySearch.addEventListener('input', e => {
+        inputs.forEach(input => {
+            if (e.target.value !== '' && input !== e.target) {
+                state['tableFilters'][input.name] = ''
+                input.value = ''
+                input.setAttribute('disabled', true)
+                input.setAttribute('readonly', true)
+            } else {
+                input.removeAttribute('disabled')
+                input.removeAttribute('readonly')
+            }
+        })
     })
 
-    searchModal.click()
-    newAllFilter()
-  })
+    const searchBtn = searchModal.querySelector('.confirm__button--search')
+    searchBtn.addEventListener('click', () => {
+        inputs.forEach(input => {
+            if (input.value) {
+                state['filtered'] = true
+                state['searched'] = true
+                state['tableFilters'][input.name] = input.value
+            }
+        })
+
+        searchModal.click()
+        newAllFilter()
+    })
 }

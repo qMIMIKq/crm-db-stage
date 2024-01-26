@@ -111,7 +111,14 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
         // }
 
         if (seconds) {
-            dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
+            console.log(dayQuantityInfo.quantity)
+
+            const inDay = Math.floor(defaultWorkTime / seconds)
+            if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
+                dayQuantityInput.value = inDay
+            } else {
+                dayQuantityInput.value = dayQuantityInfo.quantity
+            }
         }
 
         dayQuantityInfo.up = Number(up.value)

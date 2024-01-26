@@ -4046,7 +4046,13 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     // }
 
     if (seconds) {
-      dayQuantityInput.value = Math.floor(defaultWorkTime / seconds);
+      console.log(dayQuantityInfo.quantity);
+      const inDay = Math.floor(defaultWorkTime / seconds);
+      if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
+        dayQuantityInput.value = inDay;
+      } else {
+        dayQuantityInput.value = dayQuantityInfo.quantity;
+      }
     }
     dayQuantityInfo.up = Number(up.value);
     dayQuantityInfo.adjustment = Number(adjustment.value);
@@ -6393,6 +6399,26 @@ const searchOrdersModal = `
             name='every' 
             id='search-orders__every'>
         </div>
+        
+        <div class="modal_content-block">
+        <label class="search-orders__label" for="search-orders__client">Строка</label>
+          <input 
+            placeholder="Строка"
+            type='number'
+            class='route__input search-orders__input main__input'
+            name='id' 
+            id='search-orders__number'>
+        </div>
+        
+        <div class="modal_content-block">
+        <label class="search-orders__label" for="search-orders__client">№ Заказа</label>
+          <input 
+            placeholder="№ Заказа"
+            type='text'
+            class='route__input search-orders__input main__input'
+            name='number' 
+            id='search-orders__number'>
+        </div>
           
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">Клиент</label>
@@ -6424,27 +6450,6 @@ const searchOrdersModal = `
             id='search-orders__material'>
 <!--        </div>-->
         
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">Строка</label>
-          <input 
-            placeholder="Строка"
-            type='number'
-            class='route__input search-orders__input main__input'
-            name='id' 
-            id='search-orders__number'>
-        </div>
-        
-        <div class="modal_content-block">
-        <label class="search-orders__label" for="search-orders__client">№ Заказа</label>
-          <input 
-            placeholder="№ Заказа"
-            type='text'
-            class='route__input search-orders__input main__input'
-            name='number' 
-            id='search-orders__number'>
-        </div>
-        
-        
         <div class='confirm__section'>
             <button class='main__button route__btn confirm__button confirm__button--search'>Найти</button>
         </div>
@@ -6455,6 +6460,7 @@ const searchOrdersHandler = () => {
   const searchModal = (0,_showModal__WEBPACK_IMPORTED_MODULE_0__.showModal)(searchOrdersModal);
   const inputs = searchModal.querySelectorAll('input');
   const everySearch = searchModal.querySelector('#search-orders__every');
+  everySearch.focus();
   everySearch.addEventListener('input', e => {
     inputs.forEach(input => {
       if (e.target.value !== '' && input !== e.target) {
