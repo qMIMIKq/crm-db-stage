@@ -153,7 +153,15 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 
 	canWorkTodaySeconds := canWorkTodayWithDetails * 60
 	canWorkTodayTotal *= 60
-	canDoForFirstDay := math.Ceil(canWorkTodaySeconds / inSecForDetail)
+
+	var canDoForFirstDay float64 = 0
+	if canWorkTodaySeconds > 0 {
+		canDoForFirstDay = math.Ceil(canWorkTodaySeconds / inSecForDetail)
+	}
+
+	if canDoForFirstDay > float64(timeInfo.Quantity) {
+		canDoForFirstDay = float64(timeInfo.Quantity)
+	}
 
 	log.Info().Caller().Msgf("can work today in seconds %v / in sec for details %v, can do today in details %v", canWorkTodaySeconds, inSecForDetail, canDoForFirstDay)
 	log.Info().Caller().Msgf("can work today total in seconds %v", canWorkTodayTotal)
@@ -191,10 +199,6 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 
 		log.Info().Caller().Msgf("end counter %v, end time %v", counter, calc.TheorEndTime)
 
-		if canDoForFirstDay > float64(timeInfo.Quantity) {
-			canDoForFirstDay = float64(timeInfo.Quantity)
-		}
-
 		return calc.TheorEndTime.Format(calc.Layout), float64(counter), [2]float64{canDoForFirstDay, 0}
 	} else {
 		log.Info().Caller().Msgf("needed time smaller them working time")
@@ -224,10 +228,6 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 			}
 
 			counter++
-		}
-
-		if canDoForFirstDay > float64(timeInfo.Quantity) {
-			canDoForFirstDay = float64(timeInfo.Quantity)
 		}
 
 		return calc.TheorEndTime.Format(calc.Layout), float64(counter), [2]float64{canDoForFirstDay, 0}
