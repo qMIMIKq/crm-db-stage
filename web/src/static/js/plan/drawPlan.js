@@ -121,6 +121,9 @@ export const drawPlan = (d, data) => {
     })
   }
 
+  console.log(d)
+
+
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.id}" class='table-form table-form--plan table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
@@ -162,6 +165,9 @@ export const drawPlan = (d, data) => {
           </li>
           <li class="table-body_cell table__route--report">
               <input readonly type="text" class="table__data table__data--ro" value="${d.route_plot}">
+          </li>
+          <li  class='table-body_cell table-body__helper table__shift--report'>
+              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper table__plan--report'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>

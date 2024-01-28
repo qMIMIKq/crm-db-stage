@@ -68,6 +68,8 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
   insertPlace.insertAdjacentHTML(position, `
       <form id="form-${d.id}" class='table-form table-form--old showed-order' method='POST'>
         <ul class='main-table__item'>
+            <input id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove">
+        
             <li class='table-body_cell table__db'>
                 <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
                 <input id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
@@ -316,8 +318,9 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
 
   if (routes) {
     colorRoutes(routes, currentOrder)
+    deleteOrdersHandler(currentOrder, d.issued, routes, d.id)
   } else {
-    deleteOrdersHandler(currentOrder, d.issued, false, d.id)
+    deleteOrdersHandler(currentOrder, d.issued, routes, d.id)
   }
 
   addTriggers(currentOrder, "#db_id", showRoutesIssued)

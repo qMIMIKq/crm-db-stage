@@ -6,7 +6,7 @@ import {sendData} from "../sendData";
 import {showResult} from "../submitControl";
 import {getTime} from "../getTime";
 import {changeErrorHandler} from "./errorModal";
-import {issuedHandler} from "./issuedModal";
+import {issuedHandlerModal} from "./issuedModal";
 import {changePauseHandler} from "./pauseModal";
 import {appAddr} from "../../../../../../appAddr";
 import {planDateHandler} from "./planModal";
@@ -247,124 +247,124 @@ const issuedModal = `
 `
 
 const drawLogs = (data) => {
-    const logsList = document.querySelector('.section-logs__list')
-    const logsItems = logsList.querySelectorAll('.section-logs__item')
-    if (logsItems !== null) {
-        logsItems.forEach(item => {
-            item.remove()
-        })
-    }
-
-    const filter = document.querySelector('.logs-filter__button--current').textContent
-
-    data.value.split('---').reverse().forEach(log => {
-        if (log.trim() !== '') {
-            let flag = true
-
-            state.systemWords.forEach(word => {
-                if (log.includes(word)) {
-                    flag = false
-                }
-            })
-
-            if (filter === 'Все') {
-                if (log.includes('ОШИБКА')) {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-          <li class='section-logs__item section-logs__item--error'>${log}</li>
-        `)
-                } else if (log.includes('REPORTMSG')) {
-                } else if (log.includes('ПАУЗА')) {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-          <li class='section-logs__item section-logs__item--pause'>${log}</li>
-        `)
-                } else if (flag) {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-            <li class='section-logs__item'>${log}</li>
-        `)
-                } else {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-            <li class='section-logs__item section-logs__item--system'>${log}</li>
-          `)
-                }
-            } else if (filter === 'Комментарии') {
-                if (log.includes('ОШИБКА')) {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-          <li class='section-logs__item section-logs__item--error'>${log}</li>
-        `)
-                } else if (log.includes('REPORTMSG')) {
-                } else if (log.includes('ПАУЗА')) {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-          <li class='section-logs__item section-logs__item--pause'>${log}</li>
-        `)
-                } else if (flag) {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-            <li class='section-logs__item'>${log}</li>
-        `)
-                }
-            } else if (filter === 'Логи') {
-                if (flag) {
-
-                } else {
-                    logsList.insertAdjacentHTML(`beforeend`, `
-            <li class='section-logs__item section-logs__item--system'>${log}</li>
-          `)
-                }
-            }
-        }
+  const logsList = document.querySelector('.section-logs__list')
+  const logsItems = logsList.querySelectorAll('.section-logs__item')
+  if (logsItems !== null) {
+    logsItems.forEach(item => {
+      item.remove()
     })
+  }
+
+  const filter = document.querySelector('.logs-filter__button--current').textContent
+
+  data.value.split('---').reverse().forEach(log => {
+    if (log.trim() !== '') {
+      let flag = true
+
+      state.systemWords.forEach(word => {
+        if (log.includes(word)) {
+          flag = false
+        }
+      })
+
+      if (filter === 'Все') {
+        if (log.includes('ОШИБКА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+          <li class='section-logs__item section-logs__item--error'>${log}</li>
+        `)
+        } else if (log.includes('REPORTMSG')) {
+        } else if (log.includes('ПАУЗА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+          <li class='section-logs__item section-logs__item--pause'>${log}</li>
+        `)
+        } else if (flag) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item'>${log}</li>
+        `)
+        } else {
+          logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item section-logs__item--system'>${log}</li>
+          `)
+        }
+      } else if (filter === 'Комментарии') {
+        if (log.includes('ОШИБКА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+          <li class='section-logs__item section-logs__item--error'>${log}</li>
+        `)
+        } else if (log.includes('REPORTMSG')) {
+        } else if (log.includes('ПАУЗА')) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+          <li class='section-logs__item section-logs__item--pause'>${log}</li>
+        `)
+        } else if (flag) {
+          logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item'>${log}</li>
+        `)
+        }
+      } else if (filter === 'Логи') {
+        if (flag) {
+
+        } else {
+          logsList.insertAdjacentHTML(`beforeend`, `
+            <li class='section-logs__item section-logs__item--system'>${log}</li>
+          `)
+        }
+      }
+    }
+  })
 }
 
 const saveData = (data, selector) => {
-    const dataInput = document.querySelector(selector)
-    if (dataInput.value.length) {
-        dataInput.value += '---' + data
-    } else {
-        dataInput.value = data
-    }
-    return dataInput
+  const dataInput = document.querySelector(selector)
+  if (dataInput.value.length) {
+    dataInput.value += '---' + data
+  } else {
+    dataInput.value = data
+  }
+  return dataInput
 }
 
 export const addReportMsg = (report, selector, filter) => {
-    let logMsg = `REPORTMSG ${report}`
-    const visible = saveData(logMsg, selector)
-    saveData(logMsg, '#route__comments')
-    drawLogs(visible, filter)
+  let logMsg = `REPORTMSG ${report}`
+  const visible = saveData(logMsg, selector)
+  saveData(logMsg, '#route__comments')
+  drawLogs(visible, filter)
 }
 
 export const addLog = (name, log, selector) => {
-    const today = getTime().replaceAll('-', '.')
-    let logMsg = `${today}    ${name} ${log}`
-    const visible = saveData(logMsg, selector)
-    saveData(logMsg, '#route__comments')
-    drawLogs(visible)
-    return logMsg
+  const today = getTime().replaceAll('-', '.')
+  let logMsg = `${today}    ${name} ${log}`
+  const visible = saveData(logMsg, selector)
+  saveData(logMsg, '#route__comments')
+  drawLogs(visible)
+  return logMsg
 }
 
 export const activateOnInput = (e, cls) => {
-    if (e.target.value !== '') {
-        activateNextStage(cls)
-    } else {
-        disableBtn(cls)
-    }
+  if (e.target.value !== '') {
+    activateNextStage(cls)
+  } else {
+    disableBtn(cls)
+  }
 }
 
 export const setDateToInput = inputId => {
-    const today = getTime().replaceAll('-', '.')
-    const timeInput = document.querySelector('#' + inputId)
-    timeInput.value = today
+  const today = getTime().replaceAll('-', '.')
+  const timeInput = document.querySelector('#' + inputId)
+  timeInput.value = today
 }
 
 export const activateNextStage = btnClass => {
-    const btn = document.querySelector('.' + btnClass)
-    btn.removeAttribute('disabled')
-    btn.removeAttribute('readonly')
-    btn.classList.add('clickable')
+  const btn = document.querySelector('.' + btnClass)
+  btn.removeAttribute('disabled')
+  btn.removeAttribute('readonly')
+  btn.classList.add('clickable')
 }
 
 const disableBtn = btnClass => {
-    const btn = document.querySelector('.' + btnClass)
-    btn.setAttribute('disabled', 'true')
-    btn.classList.remove('clickable')
+  const btn = document.querySelector('.' + btnClass)
+  btn.setAttribute('disabled', 'true')
+  btn.classList.remove('clickable')
 }
 
 export const confirmChangeTimeModal = `
@@ -380,597 +380,599 @@ export const confirmChangeTimeModal = `
 `
 
 export const confirmChangeTimeHandler = (e, operation, alertContent) => {
-    if (e.target.value === '') {
-        return
+  if (e.target.value === '') {
+    return
+  }
+  showModal(confirmChangeTimeModal)
+
+  const modal = document.querySelector('.modal--confirm')
+  const okBtn = modal.querySelector('.confirm__button--ok')
+  const cncltn = modal.querySelector('.confirm__button--cncl')
+  if (alertContent) {
+    modal.querySelector('.confirm__title').textContent = alertContent
+  }
+
+  okBtn.addEventListener('click', () => {
+    let logMsg
+    switch (e.target.name) {
+      case 'start_time':
+        logMsg = 'Сбросил время начала'
+        activateNextStage("route__select--plot")
+        break
+      case 'end_time':
+        logMsg = 'Сбросил время сдачи'
+        break
+      case 'pause_time':
+        logMsg = 'Сбросил время паузы'
+        break
     }
-    showModal(confirmChangeTimeModal)
 
-    const modal = document.querySelector('.modal--confirm')
-    const okBtn = modal.querySelector('.confirm__button--ok')
-    const cncltn = modal.querySelector('.confirm__button--cncl')
-    if (alertContent) {
-        modal.querySelector('.confirm__title').textContent = alertContent
+    e.target.value = ''
+    operation()
+    modal.click()
+    try {
+      addLog(user.nickname, logMsg, '#visible__comments')
+    } catch {
     }
+  })
 
-    okBtn.addEventListener('click', () => {
-        let logMsg
-        switch (e.target.name) {
-            case 'start_time':
-                logMsg = 'Сбросил время начала'
-                activateNextStage("route__select--plot")
-                break
-            case 'end_time':
-                logMsg = 'Сбросил время сдачи'
-                break
-            case 'pause_time':
-                logMsg = 'Сбросил время паузы'
-                break
-        }
-
-        e.target.value = ''
-        operation()
-        modal.click()
-        try {
-            addLog(user.nickname, logMsg, '#visible__comments')
-        } catch {
-        }
-    })
-
-    cncltn.addEventListener('click', () => {
-        modal.click()
-    })
+  cncltn.addEventListener('click', () => {
+    modal.click()
+  })
 }
 
 export const triggerRoutesModal = e => {
-    const routeInput = e.target.parentNode.querySelector('.hidden__input')
-    const modalElem = showModal(routeModal)
-    let logName = state['adminCheck'] || state['techCheck'] || state['manCheck'] ? user.nickname : ''
+  const routeInput = e.target.parentNode.querySelector('.hidden__input')
+  const modalElem = showModal(routeModal)
+  let logName = state['adminCheck'] || state['techCheck'] || state['manCheck'] ? user.nickname : ''
 
-    const adminStatus = state['adminCheck'] || state['techCheck']
-    const operStatus = state['operCheck']
-    const manStatus = state['manCheck']
+  const adminStatus = state['adminCheck'] || state['techCheck']
+  const operStatus = state['operCheck']
+  const manStatus = state['manCheck']
 
-    let planned = false
-    let info = false
-    let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
+  let planned = false
+  let info = false
+  let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
 
-    if (routeInfo !== '') {
-        info = true
-        routeInfo = JSON.parse(routeInfo)
+  if (routeInfo !== '') {
+    info = true
+    routeInfo = JSON.parse(routeInfo)
+  }
+
+  const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
+  const routeQuantity = modalElem.querySelector('#quantity')
+  const routeDayQuantity = modalElem.querySelector('#day_quantity')
+  controlQuantityAccess(routeQuantity)
+  // controlQuantityAccess(routeDayQuantity)
+  const canRemove = currentOrder.querySelector('#can-remove')
+  console.log(canRemove)
+
+  const routeForm = modalElem.querySelector('.route__config')
+  const issued = modalElem.querySelector('#route__issued')
+  const visibleLogs = document.querySelector("#visible__comments")
+  const issuedToday = modalElem.querySelector('#route-issued__today')
+  const startTime = document.querySelector('.start-route__time')
+  const endTime = document.querySelector('.end-route__time')
+  const deleteBtn = document.querySelector('#route__delete')
+  const theorEndInp = document.querySelector('#route__teorend')
+  const shifts = document.querySelector('#shifts')
+  const shift = document.querySelector('#shift')
+
+  const doPause = (reset) => {
+    if (reset) {
+      pauseBtn.classList.remove('route-type__paused')
+      pauseTimeInput.value = ''
+    } else {
+      pauseBtn.classList.add('route-type__paused')
     }
 
-    const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
-    const routeQuantity = modalElem.querySelector('#quantity')
-    const routeDayQuantity = modalElem.querySelector('#day_quantity')
-    controlQuantityAccess(routeQuantity)
-    // controlQuantityAccess(routeDayQuantity)
+    if (!pauseBtn.classList.contains('route-type__paused')) {
+      if (!reset) {
+        setDateToInput('pause-route__time')
+      }
+      disableBtn('route__select--user')
 
-    const routeForm = modalElem.querySelector('.route__config')
-    const issued = modalElem.querySelector('#route__issued')
-    const visibleLogs = document.querySelector("#visible__comments")
-    const issuedToday = modalElem.querySelector('#route-issued__today')
-    const startTime = document.querySelector('.start-route__time')
-    const endTime = document.querySelector('.end-route__time')
-    const deleteBtn = document.querySelector('#route__delete')
-    const theorEndInp = document.querySelector('#route__teorend')
-    const shifts = document.querySelector('#shifts')
-    const shift = document.querySelector('#shift')
+      if (!planObj.planStart) {
+        disableBtn('route-plan__date')
+      }
 
-    const doPause = (reset) => {
-        if (reset) {
-            pauseBtn.classList.remove('route-type__paused')
-            pauseTimeInput.value = ''
-        } else {
-            pauseBtn.classList.add('route-type__paused')
-        }
-
-        if (!pauseBtn.classList.contains('route-type__paused')) {
-            if (!reset) {
-                setDateToInput('pause-route__time')
-            }
-            disableBtn('route__select--user')
-
-            if (!planObj.planStart) {
-                disableBtn('route-plan__date')
-            }
-
-            disableBtn('start-route__btn')
-            disableBtn('start-route__time')
-            disableBtn('issued-modal_trigger')
+      disableBtn('start-route__btn')
+      disableBtn('start-route__time')
+      disableBtn('issued-modal_trigger')
 
 
-            disableBtn('end-route__btn')
-            disableBtn('end-route__time')
-        } else {
-            pauseBtn.textContent = 'Пауза'
+      disableBtn('end-route__btn')
+      disableBtn('end-route__time')
+    } else {
+      pauseBtn.textContent = 'Пауза'
 
-            activateNextStage('route__select--user')
-            if (routePlot.value !== 'Выберите участок') {
-                planDateInput.removeAttribute('disabled')
-            }
-
-            if (routeUser.value !== 'Выберите оператора') {
-                if (startTime.value) {
-                    activateNextStage('issued-modal_trigger')
-                } else {
-                    activateNextStage('start-route__btn')
-                }
-            }
-
-            if (startTime.value) {
-                activateNextStage('end-route__btn')
-                activateNextStage('start-route__time')
-            }
-
-            if (endTime.value) {
-                disableBtn('end-route__btn')
-                activateNextStage('end-route__time')
-            }
-        }
-    }
-
-    const pauseBtn = routeForm.querySelector('.pause-route__btn')
-    const pauseTimeInput = routeForm.querySelector('.pause-route__time')
-    const pauseTextInput = document.querySelector('#pause-route__msg')
-    pauseBtn.addEventListener('click', e => {
-        changePauseHandler(e, pauseTextInput, pauseTimeInput, routeUser.value, doPause)
-    })
-
-    const issuedTodayStart = document.querySelector('#route__issued-today')
-    const startBtn = routeForm.querySelector('.start-route__btn')
-    const endBTn = routeForm.querySelector('.end-route__btn')
-    const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
-    const reportChanger = []
-    // const dynEndInp = document.querySelector('#route__dynend')
-
-    const planDateInputStart = document.querySelector('#plan_start')
-    const planDateInput = document.querySelector('#route-plan__date')
-    let planObj = {
-        'exclude': '',
-        'planStart': '',
-        'planEnd': '',
-        'faster': false
-    }
-
-    const errInput = document.querySelector('#error-route__msg')
-    const errTime = document.querySelector('.error__time')
-    const errBtn = routeForm.querySelector('.error-route__btn')
-    errBtn.addEventListener('click', e => {
-        changeErrorHandler(e, errInput, errTime, routeUser.value)
-    })
-
-    if (state['adminCheck'] || state['techCheck']) {
-        document.querySelector('.start-route__time').removeAttribute('disabled')
-        activateNextStage('route__select--plot')
+      activateNextStage('route__select--user')
+      if (routePlot.value !== 'Выберите участок') {
         planDateInput.removeAttribute('disabled')
+      }
 
-        startTime.addEventListener('click', e => {
-            confirmChangeTimeHandler(e, () => {
-                activateNextStage('start-route__btn')
-                startBtn.classList.remove('route-type__start')
-                endBTn.classList.remove('route-type__finish')
-                endTime.value = ''
-                disableBtn('end-route__btn')
-            })
-        })
-
-        endTime.addEventListener('click', e => {
-            confirmChangeTimeHandler(e, () => {
-                endBTn.classList.remove('route-type__finish')
-                activateNextStage('end-route__btn')
-            })
-        })
-    }
-
-    const commentInput = document.querySelector('#section-logs__comment')
-    commentInput.addEventListener('input', e => {
-        activateOnInput(e, 'send__comment')
-    })
-    const commentBtn = document.querySelector('.send__comment')
-    commentBtn.addEventListener('click', e => {
-        let name
-        if (logName === '') {
-            name = routeUser.value
+      if (routeUser.value !== 'Выберите оператора') {
+        if (startTime.value) {
+          activateNextStage('issued-modal_trigger')
         } else {
-            name = logName
+          activateNextStage('start-route__btn')
         }
+      }
 
-        let log = `${document.querySelector('#section-logs__comment').value}`
+      if (startTime.value) {
+        activateNextStage('end-route__btn')
+        activateNextStage('start-route__time')
+      }
 
-        addLog(name, log, '#visible__comments')
+      if (endTime.value) {
+        disableBtn('end-route__btn')
+        activateNextStage('end-route__time')
+      }
+    }
+  }
 
-        modalElem.querySelector('#last_comment').value = `${name} ${log}`
-        document.querySelector('#section-logs__comment').value = ''
-        disableBtn('send__comment')
+  const pauseBtn = routeForm.querySelector('.pause-route__btn')
+  const pauseTimeInput = routeForm.querySelector('.pause-route__time')
+  const pauseTextInput = document.querySelector('#pause-route__msg')
+  pauseBtn.addEventListener('click', e => {
+    changePauseHandler(e, pauseTextInput, pauseTimeInput, routeUser.value, doPause)
+  })
+
+  const issuedTodayStart = document.querySelector('#route__issued-today')
+  const startBtn = routeForm.querySelector('.start-route__btn')
+  const endBTn = routeForm.querySelector('.end-route__btn')
+  const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
+  const reportChanger = []
+  // const dynEndInp = document.querySelector('#route__dynend')
+
+  const planDateInputStart = document.querySelector('#plan_start')
+  const planDateInput = document.querySelector('#route-plan__date')
+  let planObj = {
+    'exclude': '',
+    'planStart': '',
+    'planEnd': '',
+    'faster': false
+  }
+
+  const errInput = document.querySelector('#error-route__msg')
+  const errTime = document.querySelector('.error__time')
+  const errBtn = routeForm.querySelector('.error-route__btn')
+  errBtn.addEventListener('click', e => {
+    changeErrorHandler(e, errInput, errTime, routeUser.value)
+  })
+
+  if (state['adminCheck'] || state['techCheck']) {
+    document.querySelector('.start-route__time').removeAttribute('disabled')
+    activateNextStage('route__select--plot')
+    planDateInput.removeAttribute('disabled')
+
+    startTime.addEventListener('click', e => {
+      confirmChangeTimeHandler(e, () => {
+        activateNextStage('start-route__btn')
+        startBtn.classList.remove('route-type__start')
+        endBTn.classList.remove('route-type__finish')
+        endTime.value = ''
+        disableBtn('end-route__btn')
+      })
     })
 
-    let addedDates = []
-    let dbAddedDates = []
-    let dayQuantityInfo = {
-        'up': 0,
-        'adjustment': 0,
-        'time': 0,
-        'quantity': 0,
+    endTime.addEventListener('click', e => {
+      confirmChangeTimeHandler(e, () => {
+        endBTn.classList.remove('route-type__finish')
+        activateNextStage('end-route__btn')
+      })
+    })
+  }
+
+  const commentInput = document.querySelector('#section-logs__comment')
+  commentInput.addEventListener('input', e => {
+    activateOnInput(e, 'send__comment')
+  })
+  const commentBtn = document.querySelector('.send__comment')
+  commentBtn.addEventListener('click', e => {
+    let name
+    if (logName === '') {
+      name = routeUser.value
+    } else {
+      name = logName
     }
 
-    const routeUser = document.querySelector('.route__select--user')
+    let log = `${document.querySelector('#section-logs__comment').value}`
 
-    if (info) {
-        planDateInput.removeAttribute('disabled')
-        let comments = routeInfo['comments']
-        if (routeInfo['last_comment']) {
-            document.querySelector('#last_comment').value = routeInfo['last_comment']
+    addLog(name, log, '#visible__comments')
+
+    modalElem.querySelector('#last_comment').value = `${name} ${log}`
+    document.querySelector('#section-logs__comment').value = ''
+    disableBtn('send__comment')
+  })
+
+  let addedDates = []
+  let dbAddedDates = []
+  let dayQuantityInfo = {
+    'up': 0,
+    'adjustment': 0,
+    'time': 0,
+    'quantity': 0,
+  }
+
+  const routeUser = document.querySelector('.route__select--user')
+
+  if (info) {
+    planDateInput.removeAttribute('disabled')
+    let comments = routeInfo['comments']
+    if (routeInfo['last_comment']) {
+      document.querySelector('#last_comment').value = routeInfo['last_comment']
+    }
+    if (routeInfo.issued_today) {
+      issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
+    }
+
+    shift.value = routeInfo.shift
+
+    planned = routeInfo['planned']
+
+    // if (planned) {
+    //   planDateInput.value = 'В планировании'
+    // }
+
+    if (routeInfo['db_plan']) {
+      let today = getTime()
+      today = today.substring(0, today.length - 5).trim()
+
+      dbAddedDates = routeInfo['db_plan']
+      planDateInput.value = 'В плане'
+
+      dbAddedDates.map(dateInfo => {
+        dateInfo['queues'] = dateInfo['queues'].split(', ')
+        dateInfo['date'] = dateInfo['date'].split('T')[0]
+
+        if (today === dateInfo['date']) {
+          planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
         }
-        if (routeInfo.issued_today) {
-            issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
+
+        addedDates[dateInfo['date']] = {
+          'divider': dateInfo.divider,
+          'queues': dateInfo.queues
         }
+      })
+    }
 
-        shift.value = routeInfo.shift
+    planObj = {
+      'exclude': routeInfo['exclude_days'],
+      'planStart': routeInfo['plan_start'],
+      'planEnd': routeInfo['plan_date'],
+      'faster': routeInfo['plan_faster']
+    }
 
-        planned = routeInfo['planned']
+    if (routeInfo['issued']) {
+      issued.value = routeInfo['issued']
 
-        // if (planned) {
-        //   planDateInput.value = 'В планировании'
-        // }
+      if (!operStatus) {
+        activateNextStage('report-route__btn')
+      }
+    }
 
-        if (routeInfo['db_plan']) {
-            let today = getTime()
-            today = today.substring(0, today.length - 5).trim()
+    if (logName !== '') {
+      deleteBtn.removeAttribute('disabled')
+      deleteBtn.addEventListener('click', e => {
+        confirmChangeTimeHandler(e, () => {
+          sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
+            .then(resp => {
+              if (resp.ok) showResult(true)
+              routeInput.value = ""
+              const infoParent = routeInput.parentNode
+              const routeInfo = infoParent.querySelector(`.click-chose`)
+              routeInfo.value = '-'
+              routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
+              modalElem.remove()
+              const parent = routeInput.closest('.table-form--old')
+              if (!(parent === null)) {
+                parent.classList.remove('table-form--old')
+                parent.classList.add('table-form--upd')
+                submitData()
+              }
 
-            dbAddedDates = routeInfo['db_plan']
-            planDateInput.value = 'В плане'
-
-            dbAddedDates.map(dateInfo => {
-                dateInfo['queues'] = dateInfo['queues'].split(', ')
-                dateInfo['date'] = dateInfo['date'].split('T')[0]
-
-                if (today === dateInfo['date']) {
-                    planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
-                }
-
-                addedDates[dateInfo['date']] = {
-                    'divider': dateInfo.divider,
-                    'queues': dateInfo.queues
-                }
+              // getOrders('get-all', true)
             })
-        }
+        }, 'Удалить маршрут?')
+      })
+    }
 
-        planObj = {
-            'exclude': routeInfo['exclude_days'],
-            'planStart': routeInfo['plan_start'],
-            'planEnd': routeInfo['plan_date'],
-            'faster': routeInfo['plan_faster']
-        }
+    if (routeInfo['start_time']) {
+      disableBtn('route__select--plot')
+    }
 
-        if (routeInfo['issued']) {
-            issued.value = routeInfo['issued']
-
-            if (!operStatus) {
-                activateNextStage('report-route__btn')
-            }
-        }
-
-        if (logName !== '') {
-            deleteBtn.removeAttribute('disabled')
-            deleteBtn.addEventListener('click', e => {
-                confirmChangeTimeHandler(e, () => {
-                    sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
-                        .then(resp => {
-                            if (resp.ok) showResult(true)
-                            routeInput.value = ""
-                            const infoParent = routeInput.parentNode
-                            const routeInfo = infoParent.querySelector(`.click-chose`)
-                            routeInfo.value = '-'
-                            routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
-                            modalElem.remove()
-                            const parent = routeInput.closest('.table-form--old')
-                            if (!(parent === null)) {
-                                parent.classList.remove('table-form--old')
-                                parent.classList.add('table-form--upd')
-                                submitData()
-                            }
-
-                            // getOrders('get-all', true)
-                        })
-                }, 'Удалить маршрут?')
-            })
-        }
-
-        if (routeInfo['start_time']) {
-            disableBtn('route__select--plot')
-        }
-
-        if (routeInfo.user) {
-            routeUser.insertAdjacentHTML('beforeend', `
+    if (routeInfo.user) {
+      routeUser.insertAdjacentHTML('beforeend', `
         <option selected value="${routeInfo['user']}">${routeInfo['user']}</option>
       `)
-        }
-
-        drawPlots(routeInfo['plot'], routeInfo['user'])
-
-        activateNextStage('route__select--user')
-        activateNextStage('pause-route__btn')
-
-        if (routeInfo['user']) {
-            activateNextStage('error-route__btn')
-        }
-
-        if (logName !== '') {
-            controlCommentAccess(commentInput)
-        }
-
-        if (routeInfo['user']) {
-            controlCommentAccess(commentInput)
-
-            if (routeInfo.start_time) {
-                activateNextStage('issued-modal_trigger')
-            }
-        }
-
-        if (!routeInfo['start_time'] && routeInfo.user) {
-            activateNextStage('start-route__btn')
-        } else if (routeInfo.start_time) {
-            activateNextStage('end-route__btn')
-            startBtn.classList.add('route-type__start')
-        }
-
-        startTime.value = routeInfo['start_time']
-        endTime.value = routeInfo['end_time']
-        errInput.value = routeInfo['error_msg']
-        errTime.value = routeInfo['error_time']
-
-        theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : ''
-        // dynEndInp.value = dynEnd ? dynEnd : ''
-
-        if (routeInfo['plan_date']) {
-            planDateInput.value = routeInfo['plan_date']
-            planDateInputStart.value = routeInfo['plan_start']
-            planDateInput.classList.add('route-type__finish')
-        } else {
-            planDateInput.classList.remove('route-type__finish')
-        }
-
-        if (comments) {
-            comments = comments.map(c => `${c['date']}    ${c['value']}`)
-            comments = comments.join('---')
-            visibleLogs.value = comments
-
-            comments = comments.split('---')
-            comments = comments.filter(c => c.includes('REPORTMSG'))
-            modalElem.querySelector('#issued__all').value = comments.join('---')
-        }
-
-        activateNextStage('section-finish__sub')
-
-        if (routeInfo['quantity']) {
-            routeQuantity.value = routeInfo['quantity']
-            // dayQuantityInfo['quantity'] = routeInfo['quantity']
-            // controlQuantityAccess(routeDayQuantity)
-        } else {
-            const quant = currentOrder.querySelector('input[name="quantity"]').value
-            routeQuantity.value = quant
-            // dayQuantityInfo['quantity'] = quant
-        }
-
-        if (routeInfo['day_quantity']) {
-            // controlQuantityAccess(routeDayQuantity)
-            routeDayQuantity.value = routeInfo['day_quantity']
-        }
-
-        shifts.value = routeInfo.need_shifts
-
-        if (routeInfo['end_time']) {
-            disableBtn('end-route__btn')
-            disableBtn('pause-route__btn')
-            endBTn.classList.add('route-type__finish')
-        }
-
-        if (routeInfo['error_msg']) {
-            errInput.setAttribute('disabled', '')
-            errBtn.classList.add('route-type__error')
-
-            if (state['adminCheck'] || state['techCheck']) {
-            }
-        }
-
-        if (routeInfo['start_time']) {
-            issuedToday.classList.add('text-input')
-            issuedToday.removeAttribute('disabled')
-        }
-
-        if (routeInfo['pause_time']) {
-            pauseTimeInput.value = routeInfo['pause_time']
-            pauseTextInput.value = routeInfo['pause_msg']
-            pauseBtn.textContent = 'Пауза'
-            pauseBtn.classList.add('route-type__paused')
-            disableBtn('route__select--user')
-
-            if (!planObj.planStart) {
-                disableBtn('route-plan__date')
-            }
-
-            disableBtn('start-route__btn')
-            disableBtn('start-route__time')
-            disableBtn('issued-modal_trigger')
-
-
-            disableBtn('end-route__btn')
-            disableBtn('end-route__time')
-        }
-
-        dayQuantityInfo = {
-            'up': routeInfo.up,
-            'adjustment': routeInfo.adjustment,
-            'time': routeInfo.time,
-            'quantity': routeInfo.quantity,
-        }
-
-    } else {
-        routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
-        disableBtn('route-plan__date')
-        drawPlots()
-        dayQuantityInfo['quantity']  = routeQuantity.value
     }
 
-    const dayQuantity = document.querySelector('#day_quantity')
-    dayQuantity.addEventListener('click', e => {
-        calcWorkingShiftsModal(e.target, dayQuantityInfo, () => {
-            getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
-        })
-    })
+    drawPlots(routeInfo['plot'], routeInfo['user'])
 
-    routeQuantity.addEventListener('change', e => {
-        activateOnInput(e, 'section-finish__sub')
-        addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
-        // getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
-        dayQuantityInfo['quantity'] = e.target.value
-        modalElem.querySelector('#day_quantity').click()
-        document.querySelector('.confirm__button--search__theor').click()
+    activateNextStage('route__select--user')
+    activateNextStage('pause-route__btn')
 
-        console.log(dayQuantityInfo)
-    })
-
-    routeDayQuantity.addEventListener('change', e => {
-        activateOnInput(e, 'section-finish__sub')
-        addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
-        getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
-    })
-
-
-    let plannedObj = {
-        'planned': planned
+    if (routeInfo['user']) {
+      activateNextStage('error-route__btn')
     }
 
-    issuedBtn.addEventListener('click', e => {
-        issuedHandler(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime)
-    })
-
-    planDateInput.addEventListener('click', e => {
-        // planned = true
-        // planDateInput.value = 'В планировании'
-
-        if (info) {
-            planDateHandler(addedDates, routePlot.value, routeInfo['route_id'], plannedObj, planDateInput, shifts.value)
-        } else {
-            planDateHandler(addedDates, routePlot.value, '0', plannedObj, planDateInput, shifts.value)
-        }
-    })
-
-    if (operStatus || manStatus) {
-        disableBtn('route__select--plot')
-        disableBtn('report-route__btn')
-        disableBtn('section-finish__delete')
-        disableBtn('route-plan__date')
-        disableBtn('end-route__time')
-        // modalElem.querySelector('.logs-filter').classList.add('hidden__input')
+    if (logName !== '') {
+      controlCommentAccess(commentInput)
     }
 
-    if (manStatus) {
-        disableBtn('route__select--user')
-        disableBtn('start-route__btn')
-        disableBtn('end-route__btn')
-        disableBtn('pause-route__btn')
-        disableBtn('error-route__btn')
-        disableBtn('issued-modal_trigger')
-    }
+    if (routeInfo['user']) {
+      controlCommentAccess(commentInput)
 
-    const dbID = currentOrder.querySelector('#db_id').value
-    const num = currentOrder.querySelector('#number').value
-    modalElem.querySelector('.modal-header__db').textContent = '№' + dbID
-    modalElem.querySelector('.modal-header__number').textContent = '№ заказа ' + num
-
-    const routePlot = document.querySelector('#route__plot')
-    routePlot.addEventListener('change', e => {
-        const connector = document.querySelector('#plot-connection')
-        let plotName = ''
-
-        connector.querySelectorAll('option').forEach(conn => {
-            if (e.target.value === conn.value) {
-                plotName = conn.textContent
-            }
-        })
-
-        addLog(logName, `Выбрал этап ${routePlot.value}`, '#visible__comments')
-        drawUsers(plotName, null, true)
-        activateNextStage('route__select--user')
-        activateNextStage('section-finish__sub')
-        activateNextStage('pause-route__btn')
-        activateNextStage('error-route__btn')
-        activateNextStage('section-logs__input')
-        planDateInput.removeAttribute('disabled')
-        controlQuantityAccess(routeQuantity)
-        controlCommentAccess(commentInput)
-    })
-
-    const prevUserVal = routeUser.value
-    routeUser.addEventListener('change', () => {
-        addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
-
-        if (prevUserVal === 'Выберите оператора') {
-            activateNextStage('start-route__btn')
-            activateNextStage('error-route__btn')
-            controlCommentAccess(commentInput)
-        }
-    })
-
-    drawLogs(visibleLogs)
-    startBtn.addEventListener('click', () => {
-        setDateToInput('start-route__time')
-        if (!pauseTimeInput.value) {
-            activateNextStage('end-route__btn')
-        }
-
-        activateNextStage('pause-route__btn')
-        activateNextStage('section-finish__sub')
+      if (routeInfo.start_time) {
         activateNextStage('issued-modal_trigger')
-        disableBtn('start-route__btn')
-        disableBtn('route__select--plot')
-        addLog(routeUser.value, 'Начал', '#visible__comments')
-        issuedToday.classList.add('text-input')
-        issuedToday.removeAttribute('disabled')
-        startBtn.classList.add('route-type__start')
+      }
+    }
 
-        getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
+    if (!routeInfo['start_time'] && routeInfo.user) {
+      activateNextStage('start-route__btn')
+    } else if (routeInfo.start_time) {
+      activateNextStage('end-route__btn')
+      startBtn.classList.add('route-type__start')
+    }
+
+    startTime.value = routeInfo['start_time']
+    endTime.value = routeInfo['end_time']
+    errInput.value = routeInfo['error_msg']
+    errTime.value = routeInfo['error_time']
+
+    theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : ''
+    // dynEndInp.value = dynEnd ? dynEnd : ''
+
+    if (routeInfo['plan_date']) {
+      planDateInput.value = routeInfo['plan_date']
+      planDateInputStart.value = routeInfo['plan_start']
+      planDateInput.classList.add('route-type__finish')
+    } else {
+      planDateInput.classList.remove('route-type__finish')
+    }
+
+    if (comments) {
+      comments = comments.map(c => `${c['date']}    ${c['value']}`)
+      comments = comments.join('---')
+      visibleLogs.value = comments
+
+      comments = comments.split('---')
+      comments = comments.filter(c => c.includes('REPORTMSG'))
+      modalElem.querySelector('#issued__all').value = comments.join('---')
+    }
+
+    activateNextStage('section-finish__sub')
+
+    if (routeInfo['quantity']) {
+      routeQuantity.value = routeInfo['quantity']
+      // dayQuantityInfo['quantity'] = routeInfo['quantity']
+      // controlQuantityAccess(routeDayQuantity)
+    } else {
+      const quant = currentOrder.querySelector('input[name="quantity"]').value
+      routeQuantity.value = quant
+      // dayQuantityInfo['quantity'] = quant
+    }
+
+    if (routeInfo['day_quantity']) {
+      // controlQuantityAccess(routeDayQuantity)
+      routeDayQuantity.value = routeInfo['day_quantity']
+    }
+
+    shifts.value = routeInfo.need_shifts
+
+    if (routeInfo['end_time']) {
+      disableBtn('end-route__btn')
+      disableBtn('pause-route__btn')
+      endBTn.classList.add('route-type__finish')
+    }
+
+    if (routeInfo['error_msg']) {
+      errInput.setAttribute('disabled', '')
+      errBtn.classList.add('route-type__error')
+
+      if (state['adminCheck'] || state['techCheck']) {
+      }
+    }
+
+    if (routeInfo['start_time']) {
+      issuedToday.classList.add('text-input')
+      issuedToday.removeAttribute('disabled')
+    }
+
+    if (routeInfo['pause_time']) {
+      pauseTimeInput.value = routeInfo['pause_time']
+      pauseTextInput.value = routeInfo['pause_msg']
+      pauseBtn.textContent = 'Пауза'
+      pauseBtn.classList.add('route-type__paused')
+      disableBtn('route__select--user')
+
+      if (!planObj.planStart) {
+        disableBtn('route-plan__date')
+      }
+
+      disableBtn('start-route__btn')
+      disableBtn('start-route__time')
+      disableBtn('issued-modal_trigger')
+
+
+      disableBtn('end-route__btn')
+      disableBtn('end-route__time')
+    }
+
+    dayQuantityInfo = {
+      'up': routeInfo.up,
+      'adjustment': routeInfo.adjustment,
+      'time': routeInfo.time,
+      'quantity': routeInfo.quantity,
+    }
+
+  } else {
+    routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
+    disableBtn('route-plan__date')
+    drawPlots()
+    dayQuantityInfo['quantity'] = routeQuantity.value
+  }
+
+  const dayQuantity = document.querySelector('#day_quantity')
+  dayQuantity.addEventListener('click', e => {
+    calcWorkingShiftsModal(e.target, dayQuantityInfo, () => {
+      getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
+    })
+  })
+
+  routeQuantity.addEventListener('change', e => {
+    activateOnInput(e, 'section-finish__sub')
+    addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
+    // getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
+    dayQuantityInfo['quantity'] = e.target.value
+    modalElem.querySelector('#day_quantity').click()
+    document.querySelector('.confirm__button--search__theor').click()
+
+    console.log(dayQuantityInfo)
+  })
+
+  routeDayQuantity.addEventListener('change', e => {
+    activateOnInput(e, 'section-finish__sub')
+    addLog(logName, `Установил дневной тираж в ${e.target.value}`, '#visible__comments')
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
+  })
+
+
+  let plannedObj = {
+    'planned': planned
+  }
+
+  issuedBtn.addEventListener('click', e => {
+    issuedHandlerModal(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime, canRemove)
+  })
+
+  planDateInput.addEventListener('click', e => {
+    // planned = true
+    // planDateInput.value = 'В планировании'
+
+    if (info) {
+      planDateHandler(addedDates, routePlot.value, routeInfo['route_id'], plannedObj, planDateInput, shifts.value)
+    } else {
+      planDateHandler(addedDates, routePlot.value, '0', plannedObj, planDateInput, shifts.value)
+    }
+  })
+
+  if (operStatus || manStatus) {
+    disableBtn('route__select--plot')
+    disableBtn('report-route__btn')
+    disableBtn('section-finish__delete')
+    disableBtn('route-plan__date')
+    disableBtn('end-route__time')
+    // modalElem.querySelector('.logs-filter').classList.add('hidden__input')
+  }
+
+  if (manStatus) {
+    disableBtn('route__select--user')
+    disableBtn('start-route__btn')
+    disableBtn('end-route__btn')
+    disableBtn('pause-route__btn')
+    disableBtn('error-route__btn')
+    disableBtn('issued-modal_trigger')
+  }
+
+  const dbID = currentOrder.querySelector('#db_id').value
+  const num = currentOrder.querySelector('#number').value
+  modalElem.querySelector('.modal-header__db').textContent = '№' + dbID
+  modalElem.querySelector('.modal-header__number').textContent = '№ заказа ' + num
+
+  const routePlot = document.querySelector('#route__plot')
+  routePlot.addEventListener('change', e => {
+    const connector = document.querySelector('#plot-connection')
+    let plotName = ''
+
+    connector.querySelectorAll('option').forEach(conn => {
+      if (e.target.value === conn.value) {
+        plotName = conn.textContent
+      }
     })
 
-    // END
-    endBTn.addEventListener('click', () => {
-        setDateToInput('end-route__time')
-        disableBtn('end-route__btn')
-        disableBtn('pause-route__btn')
-        endBTn.classList.add('route-type__finish')
-        addLog(routeUser.value, 'Закончил', '#visible__comments')
+    addLog(logName, `Выбрал этап ${routePlot.value}`, '#visible__comments')
+    drawUsers(plotName, null, true)
+    activateNextStage('route__select--user')
+    activateNextStage('section-finish__sub')
+    activateNextStage('pause-route__btn')
+    activateNextStage('error-route__btn')
+    activateNextStage('section-logs__input')
+    planDateInput.removeAttribute('disabled')
+    controlQuantityAccess(routeQuantity)
+    controlCommentAccess(commentInput)
+  })
+
+  const prevUserVal = routeUser.value
+  routeUser.addEventListener('change', () => {
+    addLog(logName, `Назначил оператора ${routeUser.value}`, '#visible__comments')
+
+    if (prevUserVal === 'Выберите оператора') {
+      activateNextStage('start-route__btn')
+      activateNextStage('error-route__btn')
+      controlCommentAccess(commentInput)
+    }
+  })
+
+  drawLogs(visibleLogs)
+  startBtn.addEventListener('click', () => {
+    setDateToInput('start-route__time')
+    if (!pauseTimeInput.value) {
+      activateNextStage('end-route__btn')
+    }
+
+    activateNextStage('pause-route__btn')
+    activateNextStage('section-finish__sub')
+    activateNextStage('issued-modal_trigger')
+    disableBtn('start-route__btn')
+    disableBtn('route__select--plot')
+    addLog(routeUser.value, 'Начал', '#visible__comments')
+    issuedToday.classList.add('text-input')
+    issuedToday.removeAttribute('disabled')
+    startBtn.classList.add('route-type__start')
+
+    getTheorEndTime(routeQuantity.value, routeDayQuantity.value, issued.value, startTime.value, theorEndInp, shifts, dayQuantityInfo, dayQuantity)
+  })
+
+  // END
+  endBTn.addEventListener('click', () => {
+    setDateToInput('end-route__time')
+    disableBtn('end-route__btn')
+    disableBtn('pause-route__btn')
+    endBTn.classList.add('route-type__finish')
+    addLog(routeUser.value, 'Закончил', '#visible__comments')
+  })
+
+  // REPORT ISSUED
+  const reportIssued = document.querySelector('.report-route__btn')
+  reportIssued.addEventListener('click', () => {
+    const iM = showModal(issuedModal)
+    const dataPlace = iM.querySelector('.issued-list')
+
+    const res = {}
+    document.querySelector('#issued__all').value.split('---').forEach(rep => {
+      if (rep.trim() !== '') {
+        rep = rep.replaceAll('REPORTMSG', '').trim().split('__')
+        if (res.hasOwnProperty(rep[0])) {
+          res[rep[0]]['operators'].push(rep[1])
+          res[rep[0]]['plots'].push(rep[2])
+          res[rep[0]]['summary'] += Number(rep[3])
+        } else {
+          res[rep[0]] = {
+            'operators': [rep[1]],
+            'plots': [rep[2]],
+            'summary': Number(rep[3]),
+          }
+        }
+      }
     })
 
-    // REPORT ISSUED
-    const reportIssued = document.querySelector('.report-route__btn')
-    reportIssued.addEventListener('click', () => {
-        const iM = showModal(issuedModal)
-        const dataPlace = iM.querySelector('.issued-list')
+    for (const [date, info] of Object.entries(res)) {
+      let operators = [...new Set(info.operators)].join('/')
+      let plots = [...new Set(info.plots)].join('/')
 
-        const res = {}
-        document.querySelector('#issued__all').value.split('---').forEach(rep => {
-            if (rep.trim() !== '') {
-                rep = rep.replaceAll('REPORTMSG', '').trim().split('__')
-                if (res.hasOwnProperty(rep[0])) {
-                    res[rep[0]]['operators'].push(rep[1])
-                    res[rep[0]]['plots'].push(rep[2])
-                    res[rep[0]]['summary'] += Number(rep[3])
-                } else {
-                    res[rep[0]] = {
-                        'operators': [rep[1]],
-                        'plots': [rep[2]],
-                        'summary': Number(rep[3]),
-                    }
-                }
-            }
-        })
-
-        for (const [date, info] of Object.entries(res)) {
-            let operators = [...new Set(info.operators)].join('/')
-            let plots = [...new Set(info.plots)].join('/')
-
-            dataPlace.insertAdjacentHTML(`beforeend`, `
+      dataPlace.insertAdjacentHTML(`beforeend`, `
         <li style='text-align: center' class='comment__item'>
           <ul class="issued-top">
             <li class="issued-top__item issued-top__item--date">${date}</li>
@@ -980,244 +982,244 @@ export const triggerRoutesModal = e => {
           </ul>
         </li>
       `)
-        }
-
-        addLog(logName, 'Просмотрел отчет по сменам', '#visible__comments')
-    })
-
-    const logsFilters = document.querySelectorAll('.logs-filter__button')
-    logsFilters.forEach(filter => {
-        filter.addEventListener('click', e => {
-            logsFilters.forEach(btn => btn.classList.remove('logs-filter__button--current'))
-            filter.classList.add('logs-filter__button--current')
-            drawLogs(visibleLogs)
-        })
-    })
-
-    window.addEventListener('keydown', subCommentByEnter)
-    document.querySelector('.section-finish__sub').addEventListener('click', () => {
-        modalElem.querySelectorAll('.route__input').forEach(input => {
-            input.removeAttribute('disabled')
-        })
-
-        const formData = new FormData(routeForm)
-        const obj = {}
-        formData.forEach((value, key) => {
-            obj[key] = value
-        })
-
-        let resAddedDates = []
-        for (const [addedDate, entry] of Object.entries(addedDates)) {
-            resAddedDates.push({
-                'date': addedDate,
-                'date_info': entry
-            })
-        }
-
-        obj['plot'] = routeForm.querySelector('#route__plot').value
-        obj['comments'] = createReportObj(obj['comments'])
-        obj['error_msg'] = errInput.value
-        obj['plan_date'] = planObj.planEnd
-        obj['plan_start'] = planObj.planStart
-        obj['plan_faster'] = planObj.faster
-        obj['exclude_days'] = planObj.exclude
-        obj['route_id'] = routeInfo.route_id
-        obj['report_changer'] = reportChanger
-        obj['planned'] = plannedObj['planned']
-        obj['issued_today'] = issuedTodayStart.value
-        obj['added_dates'] = resAddedDates
-        obj['report_changer'] = reportChanger.sort((a, b) => a.date > b.date ? 1 : -1)
-        obj['up'] = dayQuantityInfo.up
-        obj['time'] = dayQuantityInfo.time
-        obj['adjustment'] = dayQuantityInfo.adjustment
-        obj['need_shifts'] = Number(shifts.value)
-        console.log(shift.value)
-        // obj['planned'] = !!(dbID && planned)
-
-
-        routeInput.value = JSON.stringify(obj)
-        const parent = routeInput.closest('.table-form--old')
-
-        if (!(parent === null)) {
-            parent.classList.remove('table-form--old')
-            parent.classList.add('table-form--upd')
-            //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
-        }
-        submitData()
-
-        document.querySelector('.modal--route').remove()
-        window.removeEventListener('keydown', subCommentByEnter)
-    })
-
-    if (state['isArchive']) {
-        modalElem.querySelectorAll('input').forEach(inp => {
-            inp.setAttribute('disabled', 'true')
-        })
-        modalElem.querySelectorAll('select').forEach(sel => {
-            sel.setAttribute('disabled', 'true')
-        })
     }
+
+    addLog(logName, 'Просмотрел отчет по сменам', '#visible__comments')
+  })
+
+  const logsFilters = document.querySelectorAll('.logs-filter__button')
+  logsFilters.forEach(filter => {
+    filter.addEventListener('click', e => {
+      logsFilters.forEach(btn => btn.classList.remove('logs-filter__button--current'))
+      filter.classList.add('logs-filter__button--current')
+      drawLogs(visibleLogs)
+    })
+  })
+
+  window.addEventListener('keydown', subCommentByEnter)
+  document.querySelector('.section-finish__sub').addEventListener('click', () => {
+    modalElem.querySelectorAll('.route__input').forEach(input => {
+      input.removeAttribute('disabled')
+    })
+
+    const formData = new FormData(routeForm)
+    const obj = {}
+    formData.forEach((value, key) => {
+      obj[key] = value
+    })
+
+    let resAddedDates = []
+    for (const [addedDate, entry] of Object.entries(addedDates)) {
+      resAddedDates.push({
+        'date': addedDate,
+        'date_info': entry
+      })
+    }
+
+    obj['plot'] = routeForm.querySelector('#route__plot').value
+    obj['comments'] = createReportObj(obj['comments'])
+    obj['error_msg'] = errInput.value
+    obj['plan_date'] = planObj.planEnd
+    obj['plan_start'] = planObj.planStart
+    obj['plan_faster'] = planObj.faster
+    obj['exclude_days'] = planObj.exclude
+    obj['route_id'] = routeInfo.route_id
+    obj['report_changer'] = reportChanger
+    obj['planned'] = plannedObj['planned']
+    obj['issued_today'] = issuedTodayStart.value
+    obj['added_dates'] = resAddedDates
+    obj['report_changer'] = reportChanger.sort((a, b) => a.date > b.date ? 1 : -1)
+    obj['up'] = dayQuantityInfo.up
+    obj['time'] = dayQuantityInfo.time
+    obj['adjustment'] = dayQuantityInfo.adjustment
+    obj['need_shifts'] = Number(shifts.value)
+    console.log(shift.value)
+    // obj['planned'] = !!(dbID && planned)
+
+
+    routeInput.value = JSON.stringify(obj)
+    const parent = routeInput.closest('.table-form--old')
+
+    if (!(parent === null)) {
+      parent.classList.remove('table-form--old')
+      parent.classList.add('table-form--upd')
+      //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
+    }
+    submitData()
+
+    document.querySelector('.modal--route').remove()
+    window.removeEventListener('keydown', subCommentByEnter)
+  })
+
+  if (state['isArchive']) {
+    modalElem.querySelectorAll('input').forEach(inp => {
+      inp.setAttribute('disabled', 'true')
+    })
+    modalElem.querySelectorAll('select').forEach(sel => {
+      sel.setAttribute('disabled', 'true')
+    })
+  }
 }
 
 const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo, dayInput) => {
-    if (routeQuantity && routeDayQuantity) {
-        shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
+  if (routeQuantity && routeDayQuantity) {
+    shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
+  }
+
+  if (routeQuantity && routeDayQuantity && startTime) {
+    if (Number(routeDayQuantity) > Number(routeQuantity)) {
+      routeDayQuantity = routeQuantity
+      dayInput.value = routeDayQuantity
     }
 
-    if (routeQuantity && routeDayQuantity && startTime) {
-        if (Number(routeDayQuantity) > Number(routeQuantity)) {
-            routeDayQuantity = routeQuantity
-            dayInput.value = routeDayQuantity
-        }
-
-        const timeInfo = {
-            'quantity': Number(routeQuantity),
-            'day_quantity': Number(routeDayQuantity),
-            'issued': Number(issued),
-            'start_time': startTime,
-            'machine_start': '08:00',
-            'machine_end': '20:00',
-            'up': Number(quantityInfo.up),
-            'adjustment': Number(quantityInfo.adjustment),
-            'time': String(quantityInfo.time)
-        }
-
-        sendData(`${appAddr}/api/time/theoretic`, 'POST', JSON.stringify(timeInfo))
-            .then(res => {
-                return res.json()
-            })
-            .then(data => {
-                theorEndInp.value = data.date
-                shifts.value = Math.ceil(data.days)
-                let checkDayInput = dayInput.value.split('/')
-                if (checkDayInput.length > 1) {
-                    checkDayInput = checkDayInput[1]
-                } else {
-                    checkDayInput = checkDayInput[0]
-                }
-
-                dayInput.value = `${data.can_do[0]}/${checkDayInput}/0`
-                console.log(data.can_do)
-                // dynEndInp.value = data.result
-            })
+    const timeInfo = {
+      'quantity': Number(routeQuantity),
+      'day_quantity': Number(routeDayQuantity),
+      'issued': Number(issued),
+      'start_time': startTime,
+      'machine_start': '08:00',
+      'machine_end': '20:00',
+      'up': Number(quantityInfo.up),
+      'adjustment': Number(quantityInfo.adjustment),
+      'time': String(quantityInfo.time)
     }
+
+    sendData(`${appAddr}/api/time/theoretic`, 'POST', JSON.stringify(timeInfo))
+      .then(res => {
+        return res.json()
+      })
+      .then(data => {
+        theorEndInp.value = data.date
+        shifts.value = Math.ceil(data.days)
+        let checkDayInput = dayInput.value.split('/')
+        if (checkDayInput.length > 1) {
+          checkDayInput = checkDayInput[1]
+        } else {
+          checkDayInput = checkDayInput[0]
+        }
+
+        dayInput.value = `${data.can_do[0]}/${checkDayInput}/${data.can_do[1]}`
+        console.log(data.can_do)
+        // dynEndInp.value = data.result
+      })
+  }
 }
 
 export const subCommentByEnter = e => {
-    if (e.code === 'Enter') {
-        const commentInput = document.querySelector('#section-logs__comment')
-        if (commentInput && commentInput.value) {
-            document.querySelector('.send__comment').click()
-        }
+  if (e.code === 'Enter') {
+    const commentInput = document.querySelector('#section-logs__comment')
+    if (commentInput && commentInput.value) {
+      document.querySelector('.send__comment').click()
     }
+  }
 }
 
 const createReportObj = (data) => {
-    let res = data.split('---')
-    res = res.map(c => c.split('    '))
-    res = res.map(c => ({
-        'date': c[0],
-        'value': c[1]
-    }))
+  let res = data.split('---')
+  res = res.map(c => c.split('    '))
+  res = res.map(c => ({
+    'date': c[0],
+    'value': c[1]
+  }))
 
-    return res
+  return res
 }
 
 export const drawPlots = (plotI, user) => {
-    const plotsSelect = document.querySelector('#route__plot')
-    const plotsConnection = document.querySelector('#plot-connection')
-    if (plotI) {
-        plotsSelect.insertAdjacentHTML('beforeend', `
+  const plotsSelect = document.querySelector('#route__plot')
+  const plotsConnection = document.querySelector('#plot-connection')
+  if (plotI) {
+    plotsSelect.insertAdjacentHTML('beforeend', `
       <option selected value='${plotI}'>${plotI}</option>
   `)
 
-    }
+  }
 
-    const plotsResp = getData('filters/get-all')
+  const plotsResp = getData('filters/get-all')
 
-    plotsResp.then(plots => {
-        plots.data = plots.data.filter(d => !d.disable)
-        let check
+  plotsResp.then(plots => {
+    plots.data = plots.data.filter(d => !d.disable)
+    let check
 
-        plots.data.forEach(plot => {
-            check = String(plotI) === String(plot.name)
+    plots.data.forEach(plot => {
+      check = String(plotI) === String(plot.name)
 
-            if (!check) {
-                plotsSelect.insertAdjacentHTML('beforeend', `
+      if (!check) {
+        plotsSelect.insertAdjacentHTML('beforeend', `
           <option value='${plot.name}'>${plot.name}</option>
        `)
-            }
+      }
 
-            plotsConnection.insertAdjacentHTML('beforeend', `
+      plotsConnection.insertAdjacentHTML('beforeend', `
           <option ${String(plotI) === String(plot.name) ? 'selected' : ''} value='${plot.name}'>${plot.plot}</option>
       `)
-        })
-
-        // if (!check && plotI) {
-        //   plotsSelect.insertAdjacentHTML('beforeend', `
-        //       <option selected value='${plotI}'>${plotI}</option>
-        //   `)
-        //
-        //   plotsConnection.insertAdjacentHTML('beforeend', `
-        //       <option selected value='${plotI}'>${plotI}</option>
-        //   `)
-        // }
-
-        if (plotI) {
-            drawUsers(plotsConnection.querySelector('option[selected]').textContent, user, false)
-        }
     })
+
+    // if (!check && plotI) {
+    //   plotsSelect.insertAdjacentHTML('beforeend', `
+    //       <option selected value='${plotI}'>${plotI}</option>
+    //   `)
+    //
+    //   plotsConnection.insertAdjacentHTML('beforeend', `
+    //       <option selected value='${plotI}'>${plotI}</option>
+    //   `)
+    // }
+
+    if (plotI) {
+      drawUsers(plotsConnection.querySelector('option[selected]').textContent, user, false)
+    }
+  })
 }
 
 export const drawUsers = (plotName, userI, change) => {
-    const usersSelect = document.querySelector('#route__user')
+  const usersSelect = document.querySelector('#route__user')
 
-    if (change) {
-        usersSelect.querySelectorAll('option').forEach(elem => {
-            elem.remove()
-        })
+  if (change) {
+    usersSelect.querySelectorAll('option').forEach(elem => {
+      elem.remove()
+    })
 
-        usersSelect.insertAdjacentHTML(`beforeend`, `
+    usersSelect.insertAdjacentHTML(`beforeend`, `
       <option selected disabled>Выберите оператора</option>
     `)
 
-        if (userI) {
-            usersSelect.insertAdjacentHTML(`beforeend`, `
+    if (userI) {
+      usersSelect.insertAdjacentHTML(`beforeend`, `
         <option selected value="${userI}">${userI}</option>
       `)
-        }
     }
+  }
 
-    let check = false
-    const usersResp = getData('users/get-all-operators')
-    usersResp.then(users => {
-        if (users.data) {
-            if (plotName) {
-                users.data = users.data.filter(u => u.plot === plotName)
-            }
+  let check = false
+  const usersResp = getData('users/get-all-operators')
+  usersResp.then(users => {
+    if (users.data) {
+      if (plotName) {
+        users.data = users.data.filter(u => u.plot === plotName)
+      }
 
-            users.data.forEach(user => {
-                check = String(userI) === String(user.nickname)
+      users.data.forEach(user => {
+        check = String(userI) === String(user.nickname)
 
-                if (!check) {
-                    usersSelect.insertAdjacentHTML('beforeend', `
+        if (!check) {
+          usersSelect.insertAdjacentHTML('beforeend', `
             <option value='${user.nickname}'>${user.nickname}</option>
           `)
-                }
-            })
         }
-    })
+      })
+    }
+  })
 }
 
 const controlQuantityAccess = (routeQuantity) => {
-    if (state['adminCheck'] || state['techCheck']) {
-        routeQuantity.removeAttribute('readonly')
-        routeQuantity.style.cursor = 'text'
-    }
+  if (state['adminCheck'] || state['techCheck']) {
+    routeQuantity.removeAttribute('readonly')
+    routeQuantity.style.cursor = 'text'
+  }
 }
 
 const controlCommentAccess = (commentInput) => {
-    commentInput.removeAttribute('readonly')
-    commentInput.removeAttribute('disabled')
-    commentInput.style.cursor = 'text'
+  commentInput.removeAttribute('readonly')
+  commentInput.removeAttribute('disabled')
+  commentInput.style.cursor = 'text'
 }

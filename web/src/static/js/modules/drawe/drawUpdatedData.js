@@ -124,6 +124,7 @@ export const drawUpdatedData = (d, data, filtered) => {
     currentOrder.classList.add('table-form--old')
 
     const routes = d["db_routes"]
+    console.log(routes)
 
     const completedBlock = currentOrder.querySelector('.table__issued--done')
     if (completedBlock && !state['isArchive']) {
@@ -214,8 +215,9 @@ export const drawUpdatedData = (d, data, filtered) => {
 
       if (routes) {
         colorRoutes(routes, currentOrder)
+        deleteOrdersHandler(currentOrder, d.issued, routes, d.id)
       } else {
-        deleteOrdersHandler(currentOrder, d.issued, false, d.id)
+        deleteOrdersHandler(currentOrder, d.issued, routes, d.id)
       }
       drawHelpers(currentOrder)
     }

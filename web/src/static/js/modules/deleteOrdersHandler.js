@@ -36,7 +36,25 @@ const confirmDeleteHandler = (e, operation, titleText) => {
 export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = true) => {
   const checkBtn = currentOrder.querySelector('#order__delete')
 
-  if (issued == 0 && state['adminCheck'] && !routes && !checkBtn) {
+  let canRemove = true
+  if (routes) {
+    canRemoveLoop:
+      for (let i = 0; i < routes.length; i++) {
+        // console.log(routes[i].issued)
+        const comments = routes[i].comments
+
+        for (let j = 0; j < comments.length; j++) {
+          if (comments[j].value.includes('За смену')) {
+            canRemove = false
+            break canRemoveLoop
+          }
+        }
+      }
+  } else {
+    canRemove = true
+  }
+
+  if (canRemove) {
     // console.log('hi')
     if (hidden) {
       currentOrder.querySelector('.table__db').insertAdjacentHTML(`afterbegin`, `
@@ -57,5 +75,10 @@ export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = t
         })
       }, `Подвтердить удаление заказа №${id}?`)
     })
+  } else {
+    try {
+      checkBtn.remove()
+    } catch {
+    }
   }
 }

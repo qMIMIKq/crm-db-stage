@@ -18,8 +18,6 @@ func (p *PlanningPG) GetAllPlanning(planningRange *domain.PlanningRange) ([]*dom
 	from, _ := time.Parse(layout, planningRange.From)
 	minDate := from.Add(-24 * time.Hour).Format(layout)
 
-	log.Info().Msgf("Yesterday %v", minDate)
-
 	planningQuery := fmt.Sprintf(`
 		SELECT * FROM planning ORDER BY order_id
  `)
@@ -68,6 +66,7 @@ func (p *PlanningPG) GetAllPlanning(planningRange *domain.PlanningRange) ([]*dom
 		}
 	}
 
+	log.Info().Interface("planning", planning).Msg("plan!")
 	return planning, err
 }
 
@@ -111,13 +110,13 @@ func (p *PlanningPG) CreatePlanningObject(route *domain.Route, order *domain.Ord
 	} else {
 		planningQuery := fmt.Sprintf(`
 			UPDATE planning
-				 SET order_id = $1, order_number = $2,order_client =$3,order_name = $4,
+				 SET order_id = $1, order_number = $2, order_client =$3, order_name = $4,
 						 order_quantity = $5, order_issued = $6, time_of_modify = $7, route_id = $8, route_plot = $9, need_shifts = $10, position = $11
 		  WHERE planning_id = $12
 			RETURNING planning_id
 	`)
 
-		err = p.db.QueryRow(planningQuery, id, order.Number, order.Client, order.Name, order.Quantity, order.Issued, order.TimeOfModify, routeID, route.Plot, route.NeedShifts, routePos, planningID).Scan(&planningID)
+		err = p.db.QueryRow(planningQuery, id, order.Number, order.Client, order.Name, order.Quantity, route.Issued, order.TimeOfModify, routeID, route.Plot, route.NeedShifts, routePos, planningID).Scan(&planningID)
 	}
 
 	return planningID, err

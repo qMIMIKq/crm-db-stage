@@ -12,7 +12,6 @@ const shiftsModal = `
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">УП</label>
           <input 
-            autofocus
             placeholder="УП"
             type='number'
             class='route__input search-orders__input main__input'
@@ -115,7 +114,7 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
         if (seconds) {
             console.log(dayQuantityInfo.quantity)
 
-            const inDay = Math.floor(defaultWorkTime / seconds)
+            const inDay = Math.round(defaultWorkTime / seconds)
             console.log(inDay)
             if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
                 dayQuantityInput.value = inDay

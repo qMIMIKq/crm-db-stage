@@ -54,17 +54,17 @@ export const copyOrderHandler = e => {
   table.insertAdjacentHTML('afterbegin', orderHTML)
 
   const currElem = document.querySelector('.table-form--new')
-  currElem.querySelector('#number').value = obj.number
-  currElem.querySelector('input[name="client"]').value = obj.client
-  currElem.querySelector('input[name="quantity"]').value = obj.quantity
-  currElem.querySelector('input[name="issued"]').value = obj.issued
-  currElem.querySelector('input[name="end_time"]').value = obj.end_time
-  console.log(currElem.querySelector('select[name="m"]'))
+  // currElem.querySelector('#number').value = obj.number
+  // currElem.querySelector('input[name="client"]').value = obj.client
+  // currElem.querySelector('input[name="quantity"]').value = obj.quantity
+  // currElem.querySelector('input[name="issued"]').value = obj.issued
+  // currElem.querySelector('input[name="end_time"]').value = obj.end_time
+  // console.log(currElem.querySelector('select[name="m"]'))
 
   drawSubmit()
   drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
   drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
-  currElem.querySelector('select[name="m"]').value = obj.m
+  // currElem.querySelector('select[name="m"]').value = obj.m
 
   bindOrdersListeners(currElem)
   addTriggers(currElem, '.table__files', triggerFilesModal)

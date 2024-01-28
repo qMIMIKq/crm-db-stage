@@ -20,6 +20,7 @@ type Order struct {
 	Routes       map[string]*Route `json:"routes_json"`
 	DbRoutes     []*Route          `json:"db_routes"`
 	TimeOfModify interface{}       `json:"time_of_modify" db:"time_of_modify"`
+	CanRemove    string            `json:"can_remove" db:"can_remove"`
 }
 
 type GetOrder struct {

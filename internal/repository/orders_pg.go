@@ -148,7 +148,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				if len(route.AddedDates) > 0 {
 					o.planningPG.CreatePlanningObject(route, order, order.ID, routePos, routeID, false)
 				}
-				log.Info().Caller().Msgf("route id is %v", routeID)
+				//log.Info().Caller().Msgf("route id is %v", routeID)
 
 				planQuery := fmt.Sprintf(`
 					INSERT INTO plans (route_id, order_id, route_plot, plan_date, divider, queues)
@@ -238,7 +238,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					keys = append(keys, reportDate)
 				}
 				sort.Strings(keys)
-				log.Info().Interface("keys", keys).Msgf("keys")
+				//log.Info().Interface("keys", keys).Msgf("keys")
 				//log.Info().Interface("sorted dates", keys).Msgf("KEYS!!!")
 
 				//log.Info().Interface("RESULT REPORTS", routeReports).Msg("REPORTS!!!")
@@ -246,7 +246,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 				var issuedThisTurn int
 				counter := 0
-				haveFirstReport := false
+				//canRemoveRoute := true
 				for _, reportDate := range keys {
 					reportIssued := routeReports.ReportsData[reportDate]
 					changerDate, _ := time.Parse(layout, reportDate)
@@ -287,6 +287,10 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						log.Err(err).Caller().Msg("error is")
 					}
 
+					if len(reports) > 0 {
+						//log.Info().Caller().Msgf("can't remove this route %v", route.Plot)
+					}
+
 					updateReportInfoQuery := fmt.Sprintf(`
 						UPDATE reports
 							 SET quantity = $1, need_shifts = $2, plan = $3, order_timestamp = $4
@@ -318,9 +322,9 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						}
 
 						if changerDate.Unix() == oldReportDate.Unix() {
-							log.Info().Caller().Msgf("changer date %v, is first %v", changerDate, !haveFirstReport)
+							//log.Info().Caller().Msgf("changer date %v, is first %v", changerDate, !haveFirstReport)
 							counter += 1
-							log.Info().Msgf("index with report is %v", counter)
+							//log.Info().Msgf("index with report is %v", counter)
 							//haveFirstReport = true
 							//log.Info().Msgf("last? %v", shift)
 
@@ -332,6 +336,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 						}
 					}
+				}
+
+				_, err = o.db.Exec("UPDATE planning SET shift = $1 WHERE route_id = $2", counter, routeID)
+				if err != nil {
+					log.Err(err).Caller().Msg("error is")
 				}
 
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
@@ -452,6 +461,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 				var issuedThisTurn int
 				counter := 0
+				//canRemoveRoute := true
 				for _, reportDate := range keys {
 					reportIssued := routeReports.ReportsData[reportDate]
 					changerDate, _ := time.Parse(layout, reportDate)
@@ -492,6 +502,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						log.Err(err).Caller().Msg("error is")
 					}
 
+					if len(reports) > 0 {
+						//log.Info().Caller().Msgf("can't remove this route %v", route.Plot)
+						//canRemoveRoute = false
+					}
+
 					//	reportQuery := fmt.Sprintf(`
 					//	INSERT INTO reports
 					//				 (report_date, order_id, order_number, order_client,
@@ -511,6 +526,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					//var totalIssued int
 					//haveFirstReport := false
+
 					for _, report := range reports {
 						oldReportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
 
@@ -545,6 +561,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							}
 						}
 					}
+				}
+
+				_, err = o.db.Exec("UPDATE planning SET shift = $1 WHERE route_id = $2", counter, routeID)
+				if err != nil {
+					log.Err(err).Caller().Msg("error is")
 				}
 
 				for _, comment := range route.Comments {
@@ -775,6 +796,11 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 					}
 				}
 			}
+
+			//_, err = o.db.Exec("UPDATE planning SET shift = $1 WHERE route_id = $2", counter, routeID)
+			//if err != nil {
+			//	log.Err(err).Caller().Msg("error is")
+			//}
 
 			for _, comment := range route.Comments {
 				if len(comment.Date) > 0 {
