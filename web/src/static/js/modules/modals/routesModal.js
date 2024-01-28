@@ -444,8 +444,8 @@ export const triggerRoutesModal = e => {
   const routeDayQuantity = modalElem.querySelector('#day_quantity')
   controlQuantityAccess(routeQuantity)
   // controlQuantityAccess(routeDayQuantity)
-  const canRemove = currentOrder.querySelector('#can-remove')
-  console.log(canRemove)
+  // const canRemove = currentOrder.querySelector('#can-remove')
+  // console.log(canRemove)
 
   const routeForm = modalElem.querySelector('.route__config')
   const issued = modalElem.querySelector('#route__issued')
