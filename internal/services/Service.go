@@ -32,6 +32,7 @@ type Users interface {
 	GetUsers() ([]domain.UserInfo, error)
 	GetAllUsers() (domain.Users, error)
 	GetOperators() ([]domain.UserInfo, error)
+	GetManagers() ([]domain.UserInfo, error)
 	GetUsersByGroupAndPlot(user domain.UserInfo) ([]domain.UserInfo, error)
 	GetUserByID(id string) (user domain.UserInfo, err error)
 	CreateUser(user domain.UserInfo) (int, error)

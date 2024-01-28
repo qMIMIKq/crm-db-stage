@@ -39,6 +39,10 @@ func (u UsersService) GetOperators() ([]domain.UserInfo, error) {
 	return u.repo.GetOperators()
 }
 
+func (u UsersService) GetManagers() ([]domain.UserInfo, error) {
+	return u.repo.GetManagers()
+}
+
 func (u UsersService) GetUsers() ([]domain.UserInfo, error) {
 	return u.repo.GetUsers()
 }

@@ -5,6 +5,7 @@ import (
 	"crm/internal/services"
 	"github.com/gin-gonic/gin"
 	ginSession "github.com/go-session/gin-session"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -15,6 +16,18 @@ func (h *Handler) getOperators(c *gin.Context) {
 	userInfo := user.(domain.UserInfo)
 
 	users, err := h.services.Users.GetUsersByGroupAndPlot(userInfo)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"data": users,
+	})
+}
+
+func (h *Handler) getManagers(c *gin.Context) {
+	log.Info().Caller().Msgf("get managers")
+	users, err := h.services.Users.GetManagers()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err)
 	}

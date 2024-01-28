@@ -3760,8 +3760,7 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-
-  // console.time('get orders')
+  console.time('get orders');
 
   // console.log('start time', state.maxTime)
   const params = {
@@ -3773,11 +3772,9 @@ const getOrders = function () {
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
   (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    // console.timeEnd('get orders')
+    console.timeEnd('get orders');
     const title = document.querySelector('.main-header__title');
-
-    // console.time('draw orders')
-
+    console.time('draw orders');
     if (!data.data) {
       if (!updateOnly) {
         hideOrders();
@@ -3790,7 +3787,7 @@ const getOrders = function () {
       // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
     }
 
-    (0,_getData__WEBPACK_IMPORTED_MODULE_2__.getData)('users/get-users').then(res => {
+    (0,_getData__WEBPACK_IMPORTED_MODULE_2__.getData)('users/get-managers').then(res => {
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
       // deleteOrders()
 
@@ -3817,7 +3814,7 @@ const getOrders = function () {
           _state__WEBPACK_IMPORTED_MODULE_1__.state.deadlines.push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено');
           _state__WEBPACK_IMPORTED_MODULE_1__.state.timestamps.push(d.timestamp.split('T')[0]);
           if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.filter(user => user.group === 'менеджер');
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data;
             _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = _state__WEBPACK_IMPORTED_MODULE_1__.state.managers.map(user => user.nickname);
           }
         });
@@ -3841,8 +3838,7 @@ const getOrders = function () {
           (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)(true);
         }
       }
-
-      // console.timeEnd('draw orders')
+      console.timeEnd('draw orders');
 
       // console.time('add filters and listeners')
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
@@ -6536,6 +6532,7 @@ const showModal = modal => {
   modalElem.classList.remove('bounceOutDown');
   body.classList.add('body_block');
   modalElem.addEventListener('click', ev => {
+    console.time("close modal");
     const target = ev.target;
     if (target === modalElem) {
       modalElem.classList.add('bounceOutDown');
@@ -6544,6 +6541,7 @@ const showModal = modal => {
       modalElem.remove();
       window.removeEventListener('keydown', _routesModal__WEBPACK_IMPORTED_MODULE_0__.subCommentByEnter);
     }
+    console.timeEnd("close modal");
   });
   return modalElem;
 };

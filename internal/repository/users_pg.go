@@ -77,6 +77,28 @@ func (u *UsersPG) GetOperators() ([]domain.UserInfo, error) {
 	return users, err
 }
 
+func (u *UsersPG) GetManagers() ([]domain.UserInfo, error) {
+	var users []domain.UserInfo
+
+	query := fmt.Sprintf(`
+			SELECT u.user_id, u.user_name, 
+			       u.nickname, u.general, 
+			       g.group_name, p.plot_name
+				FROM users_rights ur
+             JOIN users u on u.user_id = ur.user_id
+             JOIN groups g on g.group_id = ur.group_id
+             JOIN plots p on p.plot_id = ur.plot_id
+       WHERE g.group_name = $1 
+				 AND u.disable = false
+         AND u.general = false
+       ORDER BY u.user_name DESC;
+  `)
+
+	err := u.db.Select(&users, query, "менеджер")
+	log.Info().Interface("managers", users).Msg("managers is")
+	return users, err
+}
+
 func (u *UsersPG) GetAllUsers() (domain.Users, error) {
 	query := fmt.Sprintf(`
 		SELECT u.user_id, u.user_name, u.nickname, u.disable, g.group_name, p.plot_name

@@ -49,6 +49,7 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 		users := api.Group("/users")
 		{
 			users.GET("/get-operators", h.getOperators)
+			users.GET("/get-managers", h.getManagers)
 			users.GET("/get-all-operators", h.getAllOperators)
 			users.GET("/get-users", h.getUsers)
 			users.GET("/get-all", h.getAllUsers)
