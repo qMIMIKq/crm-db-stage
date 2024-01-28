@@ -93,7 +93,7 @@ func (u *UsersPG) GetManagers() ([]domain.UserInfo, error) {
   `)
 
 	err := u.db.Select(&users, query, "менеджер")
-	log.Info().Interface("managers", users).Msg("managers is")
+	//log.Info().Interface("managers", users).Msg("managers is")
 	return users, err
 }
 

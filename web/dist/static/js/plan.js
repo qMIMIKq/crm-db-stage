@@ -1521,7 +1521,7 @@ const chooseHandler = e => {
     }
   });
   parent.querySelectorAll('.table__data').forEach(item => {
-    console.log('bind listener to item!');
+    // console.log('bind listener to item!')
 
     // item.classList.remove('table__data--current')
     switch (action) {
@@ -3739,7 +3739,8 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-  console.time('get orders');
+
+  // console.time('get orders')
 
   // console.log('start time', state.maxTime)
   const params = {
@@ -3751,9 +3752,11 @@ const getOrders = function () {
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
   (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    console.timeEnd('get orders');
+    // console.timeEnd('get orders')
     const title = document.querySelector('.main-header__title');
-    console.time('draw orders');
+
+    // console.time('draw orders')
+
     if (!data.data) {
       if (!updateOnly) {
         hideOrders();
@@ -3818,7 +3821,8 @@ const getOrders = function () {
           (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)(true);
         }
       }
-      console.timeEnd('draw orders');
+
+      // console.timeEnd('draw orders')
 
       // console.time('add filters and listeners')
       // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
