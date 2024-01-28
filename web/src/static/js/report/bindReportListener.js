@@ -1,6 +1,6 @@
-import {drawSubmit} from './submitControl';
-import {state} from './state';
-import {submitData} from "./submitOrdersData";
+import {submitData} from "../modules/submitOrdersData";
+import {drawSubmit} from "../modules/submitControl";
+import {state} from "../modules/state";
 
 const changeElemHandler = e => {
   const parent = e.target.closest('.table-form--old')
@@ -17,7 +17,7 @@ const changeElemHandler = e => {
 
 let label, listener, action, cls
 
-export const bindOrdersListeners = (currentElem) => {
+export const bindReportsListeners = (currentElem) => {
   document.querySelectorAll('.table__data').forEach(innerLabel => {
     label = innerLabel
 
@@ -25,21 +25,25 @@ export const bindOrdersListeners = (currentElem) => {
       listener = 'focus'
       action = 'add'
       cls = 'table__data--chosen'
+      console.log(listener,action)
       setChooseListeners(innerLabel, listener, action, cls)
 
       listener = 'blur'
       action = 'remove'
       cls = 'table__data--chosen'
+      console.log(listener,action)
       setChooseListeners(innerLabel, listener, action, cls)
 
       listener = 'focus'
       action = 'show-current'
       cls = 'table__data--current'
+      console.log(listener,action)
       setChooseListeners(innerLabel, listener, action, cls)
 
       listener = 'blur'
       action = 'remove'
       cls = 'table__data--current'
+      console.log(listener,action)
       setChooseListeners(innerLabel, listener, action, cls)
     } else if (!innerLabel.classList.contains('click-select')) {
       listener = 'click'
@@ -92,6 +96,8 @@ const chooseHandler = e => {
     // console.log('bind listener to item!')
 
     // item.classList.remove('table__data--current')
+    console.log(action)
+    console.log(listener)
     switch (action) {
       case 'add':
         e.target.classList.add('table__data--current')

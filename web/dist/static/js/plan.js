@@ -1465,29 +1465,29 @@ const bindOrdersListeners = currentElem => {
       listener = 'focus';
       action = 'add';
       cls = 'table__data--chosen';
-      setChooseListeners(innerLabel, 'focus', 'add', 'table__data--chosen');
+      setChooseListeners(innerLabel, listener, action, cls);
       listener = 'blur';
       action = 'remove';
       cls = 'table__data--chosen';
-      setChooseListeners(innerLabel, 'blur', 'remove', 'table__data--chosen');
+      setChooseListeners(innerLabel, listener, action, cls);
       listener = 'focus';
       action = 'show-current';
       cls = 'table__data--current';
-      setChooseListeners(innerLabel, 'focus', 'show-current', 'table__data--current');
+      setChooseListeners(innerLabel, listener, action, cls);
       listener = 'blur';
       action = 'remove';
       cls = 'table__data--current';
-      setChooseListeners(innerLabel, 'blur', 'remove', 'table__data--current');
+      setChooseListeners(innerLabel, listener, action, cls);
     } else if (!innerLabel.classList.contains('click-select')) {
       listener = 'click';
       action = 'add';
       cls = 'table__data--chosen';
-      setChooseListeners(innerLabel, 'click', 'add', 'table__data--chosen');
+      setChooseListeners(innerLabel, 'click', 'add', cls);
     } else {
       listener = 'click';
       action = 'toggle';
       cls = 'table__data--chosen';
-      setChooseListeners(innerLabel, 'click', 'toggle', 'table__data--chosen');
+      setChooseListeners(innerLabel, 'click', 'toggle', cls);
     }
   });
   document.querySelectorAll('.table__data').forEach(label => {
@@ -1846,16 +1846,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _routesDraw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
 /* harmony import */ var _getTime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../getTime */ "./web/src/static/js/modules/getTime.js");
 /* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../addTriggers */ "./web/src/static/js/modules/addTriggers.js");
-/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
-/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
-/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
-/* harmony import */ var _copyOrderHandler__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../copyOrderHandler */ "./web/src/static/js/modules/copyOrderHandler.js");
-/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
-/* harmony import */ var _helpersDraw__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./helpersDraw */ "./web/src/static/js/modules/drawe/helpersDraw.js");
-/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../showFull */ "./web/src/static/js/modules/showFull.js");
-
+/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../addTriggers */ "./web/src/static/js/modules/addTriggers.js");
+/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
+/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
+/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
+/* harmony import */ var _copyOrderHandler__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../copyOrderHandler */ "./web/src/static/js/modules/copyOrderHandler.js");
+/* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../getOrders */ "./web/src/static/js/modules/getOrders.js");
+/* harmony import */ var _helpersDraw__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./helpersDraw */ "./web/src/static/js/modules/drawe/helpersDraw.js");
+/* harmony import */ var _showFull__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../showFull */ "./web/src/static/js/modules/showFull.js");
 
 
 
@@ -2145,8 +2143,8 @@ const drawOrders = (insertPlace, position, d, data, users) => {
     });
   }
   if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.isArchive) {
-    (0,_getOrders__WEBPACK_IMPORTED_MODULE_15__.cleanSelect)(currentOrder, ".table-p-select");
-    (0,_getOrders__WEBPACK_IMPORTED_MODULE_15__.cleanSelect)(currentOrder, ".table-m-select");
+    (0,_getOrders__WEBPACK_IMPORTED_MODULE_14__.cleanSelect)(currentOrder, ".table-p-select");
+    (0,_getOrders__WEBPACK_IMPORTED_MODULE_14__.cleanSelect)(currentOrder, ".table-m-select");
     (0,_drawDeadlineP__WEBPACK_IMPORTED_MODULE_1__.drawDeadlineP)(currentOrder, ".table-p-select", _state__WEBPACK_IMPORTED_MODULE_2__.state.deadlinesP, d.p);
     (0,_drawManagers__WEBPACK_IMPORTED_MODULE_3__.drawManagers)(currentOrder, ".table-m-select", _state__WEBPACK_IMPORTED_MODULE_2__.state.managers, d.m);
   }
@@ -2156,14 +2154,14 @@ const drawOrders = (insertPlace, position, d, data, users) => {
   } else {
     (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id);
   }
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, "#db_id", _showFull__WEBPACK_IMPORTED_MODULE_17__.showRoutesIssued);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_11__.triggerFilesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, '.table__route', _modals_routesModal__WEBPACK_IMPORTED_MODULE_12__.triggerRoutesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_13__.triggerCommentsModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_14__.copyOrderHandler);
-  (0,_helpersDraw__WEBPACK_IMPORTED_MODULE_16__.drawHelpers)(currentOrder);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, "#db_id", _showFull__WEBPACK_IMPORTED_MODULE_16__.showRoutesIssued);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_10__.triggerFilesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__route', _modals_routesModal__WEBPACK_IMPORTED_MODULE_11__.triggerRoutesModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_12__.triggerCommentsModal);
+  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_13__.copyOrderHandler);
+  (0,_helpersDraw__WEBPACK_IMPORTED_MODULE_15__.drawHelpers)(currentOrder);
   if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck) {
-    (0,_addTriggers__WEBPACK_IMPORTED_MODULE_10__.addTriggers)(currentOrder, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_14__.copyOrderHandler);
+    (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_13__.copyOrderHandler);
   } else {
     document.querySelectorAll('#order__copy').forEach(copy => copy.remove());
   }
@@ -7591,6 +7589,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _planShowCurrentLine__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../planShowCurrentLine */ "./web/src/static/js/plan/planShowCurrentLine.js");
 /* harmony import */ var _report_drawReport__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../report/drawReport */ "./web/src/static/js/report/drawReport.js");
 /* harmony import */ var _modules_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../modules/drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
+/* harmony import */ var _modules_bindListeners__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../modules/bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+
 
 
 
@@ -7799,6 +7799,7 @@ const newAllPlanFilter = async init => {
   const dataLength = _modules_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_6__.table.querySelectorAll('.showed-order').length;
   document.querySelector('.main-header__title').textContent = `Планирование (${dataLength})`;
   (0,_planShowCurrentLine__WEBPACK_IMPORTED_MODULE_4__.planShowCurrentLine)();
+  // bindOrdersListeners()
 };
 
 /***/ }),
@@ -8494,18 +8495,22 @@ const planShowCurrentLine = () => {
   const mainTable = document.querySelector('.main__table');
   const forms = mainTable.querySelectorAll('form');
   forms.forEach(form => {
-    form.querySelector('#db_id').addEventListener('click', () => {
-      form.querySelectorAll('.table__data').forEach(data => {
-        data.classList.toggle('table__data--chosen');
+    try {
+      form.querySelector('#db_id').addEventListener('click', () => {
+        form.querySelectorAll('.table__data').forEach(data => {
+          data.classList.toggle('table__data--chosen');
+        });
+        form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen');
       });
-      form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen');
-    });
-    form.querySelector('.shift__forw').addEventListener('click', () => {
-      form.querySelectorAll('.table__data').forEach(data => {
-        data.classList.toggle('table__data--chosen');
+    } catch {}
+    try {
+      form.querySelector('.shift__forw').addEventListener('click', () => {
+        form.querySelectorAll('.table__data').forEach(data => {
+          data.classList.toggle('table__data--chosen');
+        });
+        form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen');
       });
-      form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen');
-    });
+    } catch {}
   });
 };
 
@@ -8632,6 +8637,162 @@ const shiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
 
 /***/ }),
 
+/***/ "./web/src/static/js/report/bindReportListener.js":
+/*!********************************************************!*\
+  !*** ./web/src/static/js/report/bindReportListener.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "bindReportsListeners": () => (/* binding */ bindReportsListeners)
+/* harmony export */ });
+/* harmony import */ var _modules_submitOrdersData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _modules_submitControl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/submitControl */ "./web/src/static/js/modules/submitControl.js");
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+
+
+
+const changeElemHandler = e => {
+  const parent = e.target.closest('.table-form--old');
+  if (parent !== null) {
+    parent.classList.remove('table-form--old');
+    parent.classList.add('table-form--upd');
+    (0,_modules_submitOrdersData__WEBPACK_IMPORTED_MODULE_0__.submitData)();
+    // submitSingleOrder(parent.getAttribute('id'))
+  } else {
+    (0,_modules_submitControl__WEBPACK_IMPORTED_MODULE_1__.drawSubmit)();
+  }
+};
+let label, listener, action, cls;
+const bindReportsListeners = currentElem => {
+  document.querySelectorAll('.table__data').forEach(innerLabel => {
+    label = innerLabel;
+    if (!innerLabel.classList.contains('click-chose') && !innerLabel.classList.contains('click-select')) {
+      listener = 'focus';
+      action = 'add';
+      cls = 'table__data--chosen';
+      console.log(listener, action);
+      setChooseListeners(innerLabel, listener, action, cls);
+      listener = 'blur';
+      action = 'remove';
+      cls = 'table__data--chosen';
+      console.log(listener, action);
+      setChooseListeners(innerLabel, listener, action, cls);
+      listener = 'focus';
+      action = 'show-current';
+      cls = 'table__data--current';
+      console.log(listener, action);
+      setChooseListeners(innerLabel, listener, action, cls);
+      listener = 'blur';
+      action = 'remove';
+      cls = 'table__data--current';
+      console.log(listener, action);
+      setChooseListeners(innerLabel, listener, action, cls);
+    } else if (!innerLabel.classList.contains('click-select')) {
+      listener = 'click';
+      action = 'add';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'click', 'add', cls);
+    } else {
+      listener = 'click';
+      action = 'toggle';
+      cls = 'table__data--chosen';
+      setChooseListeners(innerLabel, 'click', 'toggle', cls);
+    }
+  });
+  document.querySelectorAll('.table__data').forEach(label => {
+    label.removeEventListener('change', changeElemHandler);
+    label.addEventListener('change', changeElemHandler);
+  });
+  document.querySelectorAll('input').forEach(el => {
+    el.tabIndex = -1;
+    el.autocomplete = 'off';
+  });
+  document.querySelectorAll('button').forEach(el => {
+    el.tabIndex = -1;
+  });
+  document.querySelectorAll('a').forEach(el => {
+    el.tabIndex = -1;
+  });
+  document.querySelectorAll('select').forEach(el => {
+    el.tabIndex = -1;
+  });
+};
+const chooseHandler = e => {
+  const parent = e.target.closest('.main-table__item');
+  document.querySelectorAll('.table__data--chosen').forEach(chosen => {
+    chosen.classList.remove('table__data--current');
+    if (parent.querySelector('#db_id').classList.contains('table__data--opened')) {
+      if (!chosen.classList.contains('tr')) {
+        chosen.classList.remove(cls);
+      }
+    } else if (chosen.classList.contains('tr') && chosen.parentNode.parentNode.parentNode.parentNode.querySelector('#db_id').classList.contains('table__data--opened')) {} else {
+      chosen.classList.remove(cls);
+    }
+  });
+  parent.querySelectorAll('.table__data').forEach(item => {
+    // console.log('bind listener to item!')
+
+    // item.classList.remove('table__data--current')
+    console.log(action);
+    console.log(listener);
+    switch (action) {
+      case 'add':
+        e.target.classList.add('table__data--current');
+        if (!label.classList.contains('table__data--opened')) {
+          _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+          item.classList.add(cls);
+
+          // item.classList.add('table__data--current')
+          // if (item.parentElement.classList.contains('table__route')) {
+          //   item.parentElement.classList.add('table__data--chosen')
+          // }
+
+          // if (parent.classList.contains('table__route')) {
+          //   parent.classList.add('table__data--chosen')
+          // }
+
+          _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.currentOrder = parent.querySelector('#db_id').value;
+        }
+        break;
+      case 'show-current':
+        _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+        e.target.classList.add(cls);
+        break;
+      case 'toggle':
+        // item.classList.remove('table__data--current')
+        _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+        if (!e.target.classList.contains('table__data--opened')) {
+          item.classList.remove('table__data--chosen');
+        } else {
+          item.classList.add(cls);
+        }
+        break;
+      default:
+        item.classList.remove('table__data--current');
+        if (cls === 'table__data--current') {
+          _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = false;
+          item.classList.remove(cls);
+          return;
+        }
+        if (!label.classList.contains('table__data--opened')) {
+          _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = false;
+          item.classList.remove(cls);
+        }
+    }
+  });
+};
+const setChooseListeners = (innerLabel, innerListener) => {
+  if (!innerLabel.classList.contains('table__data--clicker')) {
+    innerLabel.removeEventListener(innerListener, chooseHandler);
+    innerLabel.addEventListener(innerListener, chooseHandler);
+  }
+};
+
+/***/ }),
+
 /***/ "./web/src/static/js/report/drawReport.js":
 /*!************************************************!*\
   !*** ./web/src/static/js/report/drawReport.js ***!
@@ -8668,7 +8829,11 @@ const drawReport = async (d, i) => {
     if (d.plan.includes('/')) {
       if (d.current_shift == 1) {
         center = d.plan.split('/')[0];
-      } else {
+      }
+      // else if (Number(d.current_shift) >= Number(d.need_shifts)) {
+      //     center = d.plan.split('/')[2]
+      // }
+      else {
         center = d.plan.split('/')[1];
       }
     } else {
@@ -8699,7 +8864,7 @@ const drawReport = async (d, i) => {
               <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro ${d.not_planned ? 'table__endtime--dead' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input class='table__data  ${d.not_planned ? 'table__endtime--dead' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
               <input class='table__data table__data--ro' name='id' type='text' readonly value='${timestamp}' tabindex='-1' autocomplete='off'>
@@ -8798,6 +8963,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_filters_filterRoutesState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../modules/filters/filterRoutesState */ "./web/src/static/js/modules/filters/filterRoutesState.js");
 /* harmony import */ var _modules_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../modules/drawe/routesDraw */ "./web/src/static/js/modules/drawe/routesDraw.js");
 /* harmony import */ var _modules_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../modules/drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
+/* harmony import */ var _modules_bindListeners__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../modules/bindListeners */ "./web/src/static/js/modules/bindListeners.js");
+/* harmony import */ var _bindReportListener__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../bindReportListener */ "./web/src/static/js/report/bindReportListener.js");
+/* harmony import */ var _plan_planShowCurrentLine__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../plan/planShowCurrentLine */ "./web/src/static/js/plan/planShowCurrentLine.js");
+/* harmony import */ var _reportShowCurrentLine__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../reportShowCurrentLine */ "./web/src/static/js/report/reportShowCurrentLine.js");
+
+
+
+
 
 
 
@@ -8824,7 +8997,6 @@ const newAllReportFilter = init => {
           }
           let filter = tableFilters['every'];
           const orderData = String(order[type]);
-          console.log(order.id, type, orderData, filter);
           if (orderData.trim().toLowerCase().includes(filter.trim().toLowerCase())) {
             console.log('find this');
             flag = true;
@@ -8985,6 +9157,7 @@ const newAllReportFilter = init => {
   }
   const dataLength = _modules_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_6__.table.querySelectorAll('.showed-order').length;
   document.querySelector('.main-header__title').textContent = `План/факт (${dataLength})`;
+  (0,_reportShowCurrentLine__WEBPACK_IMPORTED_MODULE_10__.reportShowCurrentLine)();
 };
 
 /***/ }),
@@ -9179,6 +9352,33 @@ const getReports = () => {
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.drawReportsFilter)([...new Set(nums)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.numsReportFilter);
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.drawReportsFilter)([...new Set(operators)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.operatorReportFilter);
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.bindReportsFilters)();
+  });
+};
+
+/***/ }),
+
+/***/ "./web/src/static/js/report/reportShowCurrentLine.js":
+/*!***********************************************************!*\
+  !*** ./web/src/static/js/report/reportShowCurrentLine.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "reportShowCurrentLine": () => (/* binding */ reportShowCurrentLine)
+/* harmony export */ });
+const reportShowCurrentLine = () => {
+  const mainTable = document.querySelector('.main__table');
+  const forms = mainTable.querySelectorAll('form');
+  forms.forEach(form => {
+    try {
+      form.querySelector('#db_id').addEventListener('click', () => {
+        form.querySelectorAll('.table__data').forEach(data => {
+          data.classList.toggle('table__data--chosen');
+        });
+      });
+    } catch {}
   });
 };
 

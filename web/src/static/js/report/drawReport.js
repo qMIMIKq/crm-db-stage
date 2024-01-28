@@ -24,7 +24,11 @@ export const drawReport = async (d, i) => {
         if (d.plan.includes('/')) {
             if (d.current_shift == 1) {
                 center = d.plan.split('/')[0]
-            } else {
+            }
+            // else if (Number(d.current_shift) >= Number(d.need_shifts)) {
+              //     center = d.plan.split('/')[2]
+            // }
+            else {
                 center = d.plan.split('/')[1]
             }
         } else {
@@ -60,7 +64,7 @@ export const drawReport = async (d, i) => {
               <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro ${d.not_planned ? 'table__endtime--dead' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input class='table__data  ${d.not_planned ? 'table__endtime--dead' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
               <input class='table__data table__data--ro' name='id' type='text' readonly value='${timestamp}' tabindex='-1' autocomplete='off'>

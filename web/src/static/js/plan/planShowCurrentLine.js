@@ -3,18 +3,22 @@ export const planShowCurrentLine = () => {
   const forms = mainTable.querySelectorAll('form')
 
   forms.forEach(form => {
-    form.querySelector('#db_id').addEventListener('click', () => {
-      form.querySelectorAll('.table__data').forEach(data => {
-        data.classList.toggle('table__data--chosen')
+    try {
+      form.querySelector('#db_id').addEventListener('click', () => {
+        form.querySelectorAll('.table__data').forEach(data => {
+          data.classList.toggle('table__data--chosen')
+        })
+        form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
       })
-      form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
-    })
+    } catch {}
 
-    form.querySelector('.shift__forw').addEventListener('click', () => {
-      form.querySelectorAll('.table__data').forEach(data => {
-        data.classList.toggle('table__data--chosen')
+    try {
+      form.querySelector('.shift__forw').addEventListener('click', () => {
+        form.querySelectorAll('.table__data').forEach(data => {
+          data.classList.toggle('table__data--chosen')
+        })
+        form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
       })
-      form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
-    })
+    } catch {}
   })
 }

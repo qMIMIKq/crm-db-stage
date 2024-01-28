@@ -66,7 +66,6 @@ func (p *PlanningPG) GetAllPlanning(planningRange *domain.PlanningRange) ([]*dom
 		}
 	}
 
-	log.Info().Interface("planning", planning).Msg("plan!")
 	return planning, err
 }
 

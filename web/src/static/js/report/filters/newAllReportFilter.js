@@ -5,6 +5,10 @@ import {controlReportsFiltersReset} from "./reportFilters";
 import {filterRoutesState} from "../../modules/filters/filterRoutesState";
 import {colorRoutes} from "../../modules/drawe/routesDraw";
 import {drawOrders, table} from "../../modules/drawe/drawOrders";
+import {bindOrdersListeners} from "../../modules/bindListeners";
+import {bindReportsListeners} from "../bindReportListener";
+import {planShowCurrentLine} from "../../plan/planShowCurrentLine";
+import {reportShowCurrentLine} from "../reportShowCurrentLine";
 
 export const newAllReportFilter = (init) => {
   hideOrders()
@@ -33,7 +37,6 @@ export const newAllReportFilter = (init) => {
           let filter = tableFilters['every']
           const orderData = String(order[type])
 
-          console.log(order.id, type, orderData, filter)
           if ((orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
             console.log('find this')
             flag = true
@@ -223,4 +226,5 @@ export const newAllReportFilter = (init) => {
 
   const dataLength = table.querySelectorAll('.showed-order').length
   document.querySelector('.main-header__title').textContent = `План/факт (${dataLength})`
+  reportShowCurrentLine()
 }

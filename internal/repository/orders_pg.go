@@ -329,8 +329,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							//log.Info().Msgf("last? %v", shift)
 
 							if _, err := o.db.Exec(`
-								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6 WHERE report_id = $7
-								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, counter, shift, reportIssued.Adjustment, report.ReportID); err != nil {
+								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6, need_shifts = $7 WHERE report_id = $8
+								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, counter, shift, reportIssued.Adjustment, route.NeedShifts, report.ReportID); err != nil {
 								log.Err(err).Caller().Msg("error is")
 							}
 
@@ -555,8 +555,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							//haveFirstReport = true
 
 							if _, err := o.db.Exec(`
-									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6 WHERE report_id = $7
-								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, counter, shift, reportIssued.Adjustment, report.ReportID); err != nil {
+									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6, need_shifts = $7 WHERE report_id = $8
+								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, counter, shift, reportIssued.Adjustment, route.NeedShifts, report.ReportID); err != nil {
 								log.Err(err).Msg("error is")
 							}
 						}
@@ -789,8 +789,8 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 						log.Info().Msgf("index is %v", i+1)
 
 						if _, err := o.db.Exec(`
-									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6 WHERE report_id = $7
-								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, reportIssued.Adjustment, report.ReportID); err != nil {
+									UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6, need_shifts = $7 WHERE report_id = $8
+								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, i+1, shift, reportIssued.Adjustment, route.NeedShifts, report.ReportID); err != nil {
 							log.Err(err).Msg("error is")
 						}
 					}

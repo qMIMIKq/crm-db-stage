@@ -36,7 +36,7 @@ if (window.location.href.endsWith('main/table')) {
   }, 6000)
 
   setInterval(() => {
-    console.log('remove interval')
+    // console.log('remove interval')
     clearInterval(updateInterval)
     updateInterval = setInterval(() => {
       if (!state.isArchive) {

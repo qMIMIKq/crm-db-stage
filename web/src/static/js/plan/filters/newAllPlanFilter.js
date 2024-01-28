@@ -5,6 +5,7 @@ import {drawPlan} from "../drawPlan";
 import {planShowCurrentLine} from "../planShowCurrentLine";
 import {drawReport} from "../../report/drawReport";
 import {table} from "../../modules/drawe/drawOrders";
+import {bindOrdersListeners} from "../../modules/bindListeners";
 
 export const newAllPlanFilter = async (init) => {
   hideOrders()
@@ -242,4 +243,5 @@ export const newAllPlanFilter = async (init) => {
   document.querySelector('.main-header__title').textContent = `Планирование (${dataLength})`
 
   planShowCurrentLine()
+  // bindOrdersListeners()
 }

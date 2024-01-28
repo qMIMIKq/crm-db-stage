@@ -7,7 +7,6 @@ import {deleteOrdersHandler} from "../deleteOrdersHandler";
 import {colorRoutes} from "./routesDraw";
 import {getTime} from "../getTime";
 import {submitData} from "../submitOrdersData";
-import {bindOrdersListeners} from "../bindListeners";
 import {addTriggers} from "../addTriggers";
 import {triggerFilesModal} from "../modals/downloadFilesModal";
 import {triggerRoutesModal} from "../modals/routesModal";
