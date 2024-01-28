@@ -3781,15 +3781,17 @@ const getOrders = function () {
               _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = d.time_of_modify;
             }
           }
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.nums.push(isEmptyData(d.number));
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.clients.push(isEmptyData(d.client));
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.materials.push(isEmptyData(d.material));
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.names.push(isEmptyData(d.name));
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.quantity.push(isEmptyData(d.quantity));
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.issued.push(isEmptyData(d.issued));
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.managers.push(isEmptyData(d.m));
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.deadlines.push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено');
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.timestamps.push(d.timestamp.split('T')[0]);
+
+          // state['nums'].push(isEmptyData(d.number))
+          // state['clients'].push(isEmptyData(d.client))
+          // state['materials'].push(isEmptyData(d.material))
+          // state['names'].push(isEmptyData(d.name))
+          // state['quantity'].push(isEmptyData(d.quantity))
+          // state['issued'].push(isEmptyData(d.issued))
+          // state['managers'].push(isEmptyData(d.m))
+          // state['deadlines'].push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено')
+          // state['timestamps'].push(d.timestamp.split('T')[0])
+
           if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
             _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data;
             _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = _state__WEBPACK_IMPORTED_MODULE_1__.state.managers.map(user => user.nickname);
@@ -3818,16 +3820,16 @@ const getOrders = function () {
       console.timeEnd('draw orders');
 
       // console.time('add filters and listeners')
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.names)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.quantity)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.quantityFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.issued)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.issuedFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.managers)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.managerFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.deadlines)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deadlineFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)([...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.timestamps)].sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.timestampFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
+      // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
+      // drawTableFilter([...new Set(state['clients'])].sort(), clientsFilter)
+      // drawTableFilter([...new Set(state['materials'])].sort(), materialsFilter)
+      // drawTableFilter([...new Set(state['names'])].sort(), namesFilter)
+      // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
+      // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
+      // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
+      // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
+      // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
+      // bindTableFilters()
 
       // console.timeEnd('add filters and listeners')
 
@@ -9166,8 +9168,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
 /* harmony import */ var _modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/admin/adminHandler */ "./web/src/static/js/modules/admin/adminHandler.js");
-/* harmony import */ var _modules_getTime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/getTime */ "./web/src/static/js/modules/getTime.js");
-
 
 
 
@@ -9195,14 +9195,20 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-  const updateMainTableData = () => {
-    setInterval(() => {
+  let updateInterval = setInterval(() => {
+    if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
+      (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
+    }
+  }, 1000);
+  setInterval(() => {
+    console.log('remove interval');
+    clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
       if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
         (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
       }
-    }, 5000);
-  };
-  updateMainTableData();
+    }, 6000);
+  }, 30000);
 }
 
 /***/ }),

@@ -4,7 +4,6 @@ import {topFiltersHandler} from "../modules/filters/topFilters";
 import {state} from "../modules/state";
 import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
 import {adminHandler} from "../modules/admin/adminHandler";
-import {getTime} from "../modules/getTime";
 
 export const user = JSON.parse(localStorage.getItem("user"))
 if (!user) {
@@ -29,13 +28,21 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-  const updateMainTableData = () => {
-    setInterval(() => {
+
+  let updateInterval = setInterval(() => {
+    if (!state.isArchive) {
+      getOrders('get-all', true)
+    }
+  }, 1000)
+
+  setInterval(() => {
+    console.log('remove interval')
+    clearInterval(updateInterval)
+    updateInterval = setInterval(() => {
       if (!state.isArchive) {
         getOrders('get-all', true)
       }
-    }, 5000)
-  }
-  updateMainTableData()
+    }, 6000)
+  }, 30000)
 }
 
