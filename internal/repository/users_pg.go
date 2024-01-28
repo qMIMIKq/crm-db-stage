@@ -81,7 +81,11 @@ func (u *UsersPG) GetManagers() ([]domain.UserInfo, error) {
 	var users []domain.UserInfo
 
 	query := fmt.Sprintf(`
-			SELECT u.user_id, u.nickname 
+			SELECT u.user_id,u.nickname 
+			  FROM users_rights ur
+             JOIN users u on u.user_id = ur.user_id
+             JOIN groups g on g.group_id = ur.group_id
+             JOIN plots p on p.plot_id = ur.plot_id
        WHERE g.group_name = $1 
 				 AND u.disable = false
          AND u.general = false
