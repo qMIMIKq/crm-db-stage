@@ -33,7 +33,7 @@ if (window.location.href.endsWith('main/table')) {
     if (!state.isArchive) {
       getOrders('get-all', true)
     }
-  }, 1000)
+  }, 6000)
 
   setInterval(() => {
     console.log('remove interval')

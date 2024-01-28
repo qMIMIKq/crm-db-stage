@@ -8005,7 +8005,7 @@ if (window.location.href.endsWith('main/table')) {
     if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
       (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
     }
-  }, 1000);
+  }, 6000);
   setInterval(() => {
     console.log('remove interval');
     clearInterval(updateInterval);
