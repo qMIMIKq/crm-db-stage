@@ -89,6 +89,8 @@ const chooseHandler = e => {
   })
 
   parent.querySelectorAll('.table__data').forEach(item => {
+    // console.log('bind listener to item!')
+
     // item.classList.remove('table__data--current')
     switch (action) {
       case 'add':

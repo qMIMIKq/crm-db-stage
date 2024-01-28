@@ -1521,6 +1521,8 @@ const chooseHandler = e => {
     }
   });
   parent.querySelectorAll('.table__data').forEach(item => {
+    console.log('bind listener to item!');
+
     // item.classList.remove('table__data--current')
     switch (action) {
       case 'add':
@@ -3793,8 +3795,7 @@ const getOrders = function () {
           // state['timestamps'].push(d.timestamp.split('T')[0])
 
           if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data;
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = _state__WEBPACK_IMPORTED_MODULE_1__.state.managers.map(user => user.nickname);
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.map(user => user.nickname);
           }
         });
         if (updateOnly) {
@@ -8014,7 +8015,7 @@ if (window.location.href.endsWith('main/table')) {
         (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
       }
     }, 6000);
-  }, 30000);
+  }, 100000);
 }
 
 /***/ }),

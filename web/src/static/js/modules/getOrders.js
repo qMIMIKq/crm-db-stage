@@ -1,17 +1,4 @@
-import {
-  bindTableFilters,
-  clientsFilter,
-  deadlineFilter,
-  deleteTableFilters,
-  drawTableFilter,
-  issuedFilter,
-  managerFilter,
-  materialsFilter,
-  namesFilter,
-  numsFilter,
-  quantityFilter,
-  timestampFilter
-} from './filters/tableFilters';
+import {deleteTableFilters} from './filters/tableFilters';
 import {state} from './state';
 import {getData} from './getData';
 import {archiveFrom, archiveTo,} from "./filters/tableRoutesFilters";
@@ -62,7 +49,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     routesBlock.classList.remove('hidden__input')
   }
 
-  console.time('get orders')
+  // console.time('get orders')
 
   // console.log('start time', state.maxTime)
   const params = {
@@ -77,10 +64,10 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
-      console.timeEnd('get orders')
+      // console.timeEnd('get orders')
       const title = document.querySelector('.main-header__title')
 
-      console.time('draw orders')
+      // console.time('draw orders')
 
       if (!data.data) {
         if (!updateOnly) {
@@ -124,8 +111,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
               // state['timestamps'].push(d.timestamp.split('T')[0])
 
               if (!state['filtered']) {
-                state['managers'] = res.data
-                state['managers'] = state['managers'].map(user => user.nickname)
+                state['managers'] = res.data.map(user => user.nickname)
               }
             })
 
@@ -151,7 +137,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
             }
           }
 
-          console.timeEnd('draw orders')
+          // console.timeEnd('draw orders')
 
           // console.time('add filters and listeners')
           // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)

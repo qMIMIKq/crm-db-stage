@@ -43,6 +43,6 @@ if (window.location.href.endsWith('main/table')) {
         getOrders('get-all', true)
       }
     }, 6000)
-  }, 30000)
+  }, 100000)
 }
 
