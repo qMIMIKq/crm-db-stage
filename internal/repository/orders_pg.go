@@ -313,11 +313,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							log.Err(err).Caller().Msg("error is")
 						}
 
-						if i >= route.NeedShifts {
-							if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
-								log.Err(err).Caller().Msg("error is")
-							}
-						}
+						//if i >= route.NeedShifts {
+						//	if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
+						//		log.Err(err).Caller().Msg("error is")
+						//	}
+						//}
 
 						if changerDate.Unix() == oldReportDate.Unix() {
 							counter += 1
@@ -556,11 +556,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							log.Err(err).Caller().Msg("error is")
 						}
 
-						if i >= route.NeedShifts {
-							if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
-								log.Err(err).Caller().Msg("error is")
-							}
-						}
+						//if i >= route.NeedShifts {
+						//	if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
+						//		log.Err(err).Caller().Msg("error is")
+						//	}
+						//}
 
 						if changerDate.Unix() == oldReportDate.Unix() {
 							counter += 1
