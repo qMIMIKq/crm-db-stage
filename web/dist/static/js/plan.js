@@ -4117,7 +4117,7 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     console.log(seconds);
     if (seconds) {
       console.log(dayQuantityInfo.quantity);
-      const inDay = Math.round(defaultWorkTime / seconds);
+      const inDay = Math.ceil(defaultWorkTime / seconds);
       console.log(inDay);
       if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
         dayQuantityInput.value = inDay;
