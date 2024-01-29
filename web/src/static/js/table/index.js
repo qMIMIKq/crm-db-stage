@@ -4,6 +4,7 @@ import {topFiltersHandler} from "../modules/filters/topFilters";
 import {state} from "../modules/state";
 import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
 import {adminHandler} from "../modules/admin/adminHandler";
+import {getData} from "../modules/getData";
 
 export const user = JSON.parse(localStorage.getItem("user"))
 if (!user) {
@@ -20,7 +21,10 @@ if (window.location.href.endsWith('main/table')) {
   adminHandler()
   tableRoutesFiltersHandler()
   topFiltersHandler()
-  getOrders('get-all', false)
+  getData('users/get-managers')
+    .then(res => {
+      state['managers'] = res.data.map(user => user.nickname)
+    }).then(() => getOrders('get-all', false))
 
   const subBtn = document.querySelector(".header-button__add")
   if (!(state["adminCheck"] || state['manCheck'])) {

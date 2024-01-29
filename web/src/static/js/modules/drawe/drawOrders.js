@@ -21,6 +21,7 @@ export const table = document.querySelector('.main-table')
 export const drawOrders = (insertPlace, position, d, data, users) => {
   // console.time(`draw order ${d.id}`)
 
+  console.log('can remove ', d.can_remove)
   controlFiltersReset()
   let uniqueFileNames = []
 
@@ -67,7 +68,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
   insertPlace.insertAdjacentHTML(position, `
       <form id="form-${d.id}" class='table-form table-form--old showed-order' method='POST'>
         <ul class='main-table__item'>
-            <input id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove">
+            <input id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove" value="${d.can_remove}">
         
             <li class='table-body_cell table__db'>
                 <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
@@ -340,8 +341,9 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
 
 export const orderHTML = `
 <form class="table-form table-form--new" method="POST">
-            <ul class="main-table__item">
+            <ul class="main-table__item">            
                     <li class="table-body_cell table-body__helper table__db">
+                        <input id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove" value="yes">
                         <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
                         <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
                     </li>

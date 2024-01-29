@@ -1756,21 +1756,27 @@ const deleteOrdersHandler = function (currentOrder, issued, routes, id) {
   if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.adminCheck) {
     return;
   }
-  let canRemove = true;
-  if (routes) {
-    canRemoveLoop: for (let i = 0; i < routes.length; i++) {
-      // console.log(routes[i].issued)
-      const comments = routes[i].comments;
-      for (let j = 0; j < comments.length; j++) {
-        if (comments[j].value.includes('За смену')) {
-          canRemove = false;
-          break canRemoveLoop;
-        }
-      }
-    }
-  } else {
-    canRemove = true;
-  }
+  let canRemove = currentOrder.querySelector('#can-remove');
+  console.log(canRemove);
+  canRemove = canRemove.value === 'yes';
+
+  // if (routes) {
+  //   canRemoveLoop:
+  //     for (let i = 0; i < routes.length; i++) {
+  //       // console.log(routes[i])
+  //       const comments = routes[i].comments
+  //
+  //       for (let j = 0; j < comments.length; j++) {
+  //         if (comments[j].value.includes('За смену')) {
+  //           canRemove = false
+  //           break canRemoveLoop
+  //         }
+  //       }
+  //     }
+  // } else {
+  //   canRemove = true
+  // }
+
   if (canRemove) {
     // console.log('hi')
     if (hidden) {
@@ -1901,6 +1907,7 @@ const table = document.querySelector('.main-table');
 const drawOrders = (insertPlace, position, d, data, users) => {
   // console.time(`draw order ${d.id}`)
 
+  console.log('can remove ', d.can_remove);
   (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.controlFiltersReset)();
   let uniqueFileNames = [];
   if (d.files !== null && d.files !== undefined) {
@@ -1938,7 +1945,7 @@ const drawOrders = (insertPlace, position, d, data, users) => {
   insertPlace.insertAdjacentHTML(position, `
       <form id="form-${d.id}" class='table-form table-form--old showed-order' method='POST'>
         <ul class='main-table__item'>
-            <input id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove">
+            <input id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove" value="${d.can_remove}">
         
             <li class='table-body_cell table__db'>
                 <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
@@ -2197,8 +2204,9 @@ const drawOrders = (insertPlace, position, d, data, users) => {
 
 const orderHTML = `
 <form class="table-form table-form--new" method="POST">
-            <ul class="main-table__item">
+            <ul class="main-table__item">            
                     <li class="table-body_cell table-body__helper table__db">
+                        <input id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove" value="yes">
                         <input class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
                         <input id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value="" tabindex="-1" autocomplete="off">
                     </li>
@@ -2452,6 +2460,7 @@ const drawUpdatedData = (d, data, filtered) => {
       return;
     }
     currentOrder.querySelector('#number').value = d.number;
+    currentOrder.querySelector('#can-remove').value = d.can_remove;
     currentOrder.querySelector('input[name="client"]').value = d.client;
     currentOrder.querySelector('input[name="files"]').value = `${d.files ? d.files.join(', ') : ''}`;
     currentOrder.querySelector('#total_files').value = uniqueFileNames.length;
@@ -3738,14 +3747,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filters/tableFilters */ "./web/src/static/js/modules/filters/tableFilters.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _getData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getData */ "./web/src/static/js/modules/getData.js");
-/* harmony import */ var _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
-/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
-/* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
-/* harmony import */ var _filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./filters/newAllFilter */ "./web/src/static/js/modules/filters/newAllFilter.js");
-/* harmony import */ var _drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./drawe/drawUpdatedData */ "./web/src/static/js/modules/drawe/drawUpdatedData.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-
+/* harmony import */ var _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
+/* harmony import */ var _sendData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./sendData */ "./web/src/static/js/modules/sendData.js");
+/* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
+/* harmony import */ var _filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./filters/newAllFilter */ "./web/src/static/js/modules/filters/newAllFilter.js");
+/* harmony import */ var _drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./drawe/drawUpdatedData */ "./web/src/static/js/modules/drawe/drawUpdatedData.js");
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 
 
 
@@ -3794,13 +3801,13 @@ const getOrders = function () {
   // console.log('start time', state.maxTime)
   const params = {
     'order_old': _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive,
-    'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__.archiveFrom.value,
-    'archive_to': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_3__.archiveTo.value,
+    'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_2__.archiveFrom.value,
+    'archive_to': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_2__.archiveTo.value,
     'update_only': updateOnly,
     'update_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime,
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
-  (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
+  (0,_sendData__WEBPACK_IMPORTED_MODULE_3__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
     // console.timeEnd('get orders')
     const title = document.querySelector('.main-header__title');
 
@@ -3818,94 +3825,89 @@ const getOrders = function () {
       // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
     }
 
-    (0,_getData__WEBPACK_IMPORTED_MODULE_2__.getData)('users/get-managers').then(res => {
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
-      // deleteOrders()
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
+    // deleteOrders()
 
-      if (data.data) {
-        data.data.forEach(d => {
-          if (_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime) {
-            if (d.time_of_modify) {
-              let maxGetTime = new Date(_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime).getTime();
-              let dTime = new Date(d.time_of_modify).getTime();
-              _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = dTime >= maxGetTime ? d.time_of_modify : _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime;
-            }
-          } else {
-            if (d.time_of_modify) {
-              _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = d.time_of_modify;
-            }
+    if (data.data) {
+      data.data.forEach(d => {
+        if (_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime) {
+          if (d.time_of_modify) {
+            let maxGetTime = new Date(_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime).getTime();
+            let dTime = new Date(d.time_of_modify).getTime();
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = dTime >= maxGetTime ? d.time_of_modify : _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime;
           }
-
-          // state['nums'].push(isEmptyData(d.number))
-          // state['clients'].push(isEmptyData(d.client))
-          // state['materials'].push(isEmptyData(d.material))
-          // state['names'].push(isEmptyData(d.name))
-          // state['quantity'].push(isEmptyData(d.quantity))
-          // state['issued'].push(isEmptyData(d.issued))
-          // state['managers'].push(isEmptyData(d.m))
-          // state['deadlines'].push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено')
-          // state['timestamps'].push(d.timestamp.split('T')[0])
-
-          if (!_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
-            _state__WEBPACK_IMPORTED_MODULE_1__.state.managers = res.data.map(user => user.nickname);
-          }
-        });
-        if (updateOnly) {
-          const routesStatusFilter = document.querySelector('.route__filter--chosen');
-          let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
-          data.data.forEach(d => {
-            (0,_drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_7__.drawUpdatedData)(d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, filtered);
-          });
-          if (filtered) {
-            (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)();
-          } else {
-            (0,_bindListeners__WEBPACK_IMPORTED_MODULE_8__.bindOrdersListeners)();
-          }
-
-          // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
         } else {
-          // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
-          _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
-          (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)(true);
+          if (d.time_of_modify) {
+            _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = d.time_of_modify;
+          }
         }
-      }
 
-      // console.timeEnd('draw orders')
+        // state['nums'].push(isEmptyData(d.number))
+        // state['clients'].push(isEmptyData(d.client))
+        // state['materials'].push(isEmptyData(d.material))
+        // state['names'].push(isEmptyData(d.name))
+        // state['quantity'].push(isEmptyData(d.quantity))
+        // state['issued'].push(isEmptyData(d.issued))
+        // state['managers'].push(isEmptyData(d.m))
+        // state['deadlines'].push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено')
+        // state['timestamps'].push(d.timestamp.split('T')[0])
+      });
 
-      // console.time('add filters and listeners')
-      // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
-      // drawTableFilter([...new Set(state['clients'])].sort(), clientsFilter)
-      // drawTableFilter([...new Set(state['materials'])].sort(), materialsFilter)
-      // drawTableFilter([...new Set(state['names'])].sort(), namesFilter)
-      // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
-      // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
-      // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
-      // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
-      // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-      // bindTableFilters()
-
-      // console.timeEnd('add filters and listeners')
-
-      // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
-      loader.classList.add('hidden__input');
-      if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
-        document.querySelectorAll('.table__data').forEach(field => {
-          field.setAttribute("readonly", "true");
+      if (updateOnly) {
+        const routesStatusFilter = document.querySelector('.route__filter--chosen');
+        let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
+        data.data.forEach(d => {
+          (0,_drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_6__.drawUpdatedData)(d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, filtered);
         });
+        if (filtered) {
+          (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)();
+        } else {
+          (0,_bindListeners__WEBPACK_IMPORTED_MODULE_7__.bindOrdersListeners)();
+        }
+
+        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+      } else {
+        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
+        (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)(true);
       }
+    }
 
-      // const lastOrder = document.querySelector('.table__data--chosen')
-      // if (lastOrder) {
-      //   lastOrder.scrollIntoView({block: 'center'})
-      // }
+    // console.timeEnd('draw orders')
 
-      // document.querySelectorAll(".table-form").forEach(form => {
-      //   form.addEventListener('click', e => {
-      //     console.log("I am form hi)")
-      //   })
-      // })
-    });
+    // console.time('add filters and listeners')
+    // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
+    // drawTableFilter([...new Set(state['clients'])].sort(), clientsFilter)
+    // drawTableFilter([...new Set(state['materials'])].sort(), materialsFilter)
+    // drawTableFilter([...new Set(state['names'])].sort(), namesFilter)
+    // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
+    // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
+    // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
+    // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
+    // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
+    // bindTableFilters()
+
+    // console.timeEnd('add filters and listeners')
+
+    // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
+    loader.classList.add('hidden__input');
+    if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+      document.querySelectorAll('.table__data').forEach(field => {
+        field.setAttribute("readonly", "true");
+      });
+    }
+
+    // const lastOrder = document.querySelector('.table__data--chosen')
+    // if (lastOrder) {
+    //   lastOrder.scrollIntoView({block: 'center'})
+    // }
+
+    // document.querySelectorAll(".table-form").forEach(form => {
+    //   form.addEventListener('click', e => {
+    //     console.log("I am form hi)")
+    //   })
+    // })
   });
 };
 
@@ -6088,7 +6090,6 @@ const triggerRoutesModal = e => {
         helper.textContent = 'Средняя';
       }
     }
-    console.log(e.target.value);
   });
   dayQuantity.addEventListener('mouseleave', e => {
     try {
@@ -6953,6 +6954,7 @@ const createRes = forms => {
         }
       }
     });
+    console.log(obj);
     res.push(obj);
     // console.log(res)
   });
@@ -7801,6 +7803,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/filters/tableRoutesFilters */ "./web/src/static/js/modules/filters/tableRoutesFilters.js");
 /* harmony import */ var _modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/admin/adminHandler */ "./web/src/static/js/modules/admin/adminHandler.js");
+/* harmony import */ var _modules_getData__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/getData */ "./web/src/static/js/modules/getData.js");
+
 
 
 
@@ -7821,7 +7825,9 @@ if (window.location.href.endsWith('main/table')) {
   (0,_modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_5__.adminHandler)();
   (0,_modules_filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_4__.tableRoutesFiltersHandler)();
   (0,_modules_filters_topFilters__WEBPACK_IMPORTED_MODULE_2__.topFiltersHandler)();
-  (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', false);
+  (0,_modules_getData__WEBPACK_IMPORTED_MODULE_6__.getData)('users/get-managers').then(res => {
+    _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.managers = res.data.map(user => user.nickname);
+  }).then(() => (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', false));
   const subBtn = document.querySelector(".header-button__add");
   if (!(_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.adminCheck || _modules_state__WEBPACK_IMPORTED_MODULE_3__.state.manCheck)) {
     subBtn.classList.add("hidden__input");

@@ -79,6 +79,7 @@ export const drawUpdatedData = (d, data, filtered) => {
     }
 
     currentOrder.querySelector('#number').value = d.number
+    currentOrder.querySelector('#can-remove').value = d.can_remove
     currentOrder.querySelector('input[name="client"]').value = d.client
     currentOrder.querySelector('input[name="files"]').value = `${d.files ? d.files.join(', ') : ''}`
     currentOrder.querySelector('#total_files').value = uniqueFileNames.length

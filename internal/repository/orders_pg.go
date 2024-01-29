@@ -49,6 +49,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 	var err error
 	for _, order := range orders {
 		timeOfModify := time.Now().In(loc).Format("2006-01-02 15:04:05")
+		order.CanRemove = "yes"
 
 		if order.EndTime != "" {
 			_, err = o.db.Exec(query, order.Number, order.Sample,
@@ -119,6 +120,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 		//	 WHERE route_id = $4 AND plan_date = $5
 		//`)
 
+		onlyOneFlag := false
 		err = o.reportsPG.RemoveForUpdateReports(order.ID)
 		for name, route := range order.Routes {
 			var routeID int
@@ -342,6 +344,67 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				if err != nil {
 					log.Err(err).Caller().Msg("error is")
 				}
+
+				//log.Info().Caller().Interface("keys", keys).Msg("check keys")
+				//log.Info().Caller().Interface("added dates", route.AddedDates).Msg("check plans")
+				//log.Info().Caller().Interface("start", route.StartTime).Msg("check start")
+				//log.Info().Caller().Interface("end", route.EndTime).Msg("check end")
+				//log.Info().Caller().Interface("error", route.ErrorTime).Msg("check error")
+				//log.Info().Caller().Interface("pause", route.PauseTime).Msg("check pause")
+				//
+				//if !onlyOneFlag {
+				//	if len(route.StartTime) > 0 || len(keys) > 0 || len(route.AddedDates) > 0 ||
+				//		len(route.ErrorTime) > 0 || len(route.PauseTime) > 0 {
+				//		log.Info().Caller().Msgf("we have keys or added dates or start time or plan dates or error or pause time")
+				//	} else {
+				//		//order.CanRemove = "yes"
+				//		//onlyOneFlag = true
+				//	}
+				//}
+
+				if !onlyOneFlag {
+					//canRemove := true
+
+					if len(keys) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.StartTime) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.AddedDates) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.ErrorTime) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.PauseTime) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					//if !(len(route.StartTime) > 0) || !(len(keys) > 0) || !(len(route.AddedDates) > 0) ||
+					//	!(len(route.ErrorTime) > 0) || !(len(route.PauseTime) > 0) {
+					//	log.Info().Caller().Msgf("we have keys or added dates or start time or plan dates or error or pause time")
+					//} else {
+					//	//order.CanRemove = "yes"
+					//	//onlyOneFlag = true
+					//}
+				}
+
+				//if !(len(keys) > 0) || !(len(route.AddedDates) > 0) || !(len(route.StartTime) > 0) || !(len(route.EndTime) > 0) ||
+				//	!(len(route.ErrorTime) > 0) || !(len(route.PauseTime) > 0) {
+				//	//onlyOneFlag = t
+				//} else {
+				//
+				//}
 
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
@@ -568,6 +631,43 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					log.Err(err).Caller().Msg("error is")
 				}
 
+				if !onlyOneFlag {
+					//canRemove := true
+
+					if len(keys) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.StartTime) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.AddedDates) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.ErrorTime) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					if len(route.PauseTime) > 0 {
+						order.CanRemove = "no"
+						onlyOneFlag = true
+					}
+
+					//if !(len(route.StartTime) > 0) || !(len(keys) > 0) || !(len(route.AddedDates) > 0) ||
+					//	!(len(route.ErrorTime) > 0) || !(len(route.PauseTime) > 0) {
+					//	log.Info().Caller().Msgf("we have keys or added dates or start time or plan dates or error or pause time")
+					//} else {
+					//	//order.CanRemove = "yes"
+					//	//onlyOneFlag = true
+					//}
+				}
+
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
 						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
@@ -578,6 +678,12 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 			}
 		}
+
+		log.Info().Msgf("can remove %v", order.CanRemove)
+		_, err = o.db.Exec("UPDATE orders SET can_remove = $1 WHERE order_id = $2", order.CanRemove, order.ID)
+		if err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
 	}
 
 	return err
@@ -587,8 +693,8 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 	orderQuery := fmt.Sprintf(`
 			INSERT INTO orders
 						 (order_number,order_sample,order_client,order_name,
-						 order_material, order_quantity, order_issued, order_m, order_endtime, order_otk, order_p, time_of_modify)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+						 order_material, order_quantity, order_issued, order_m, order_endtime, order_otk, order_p, time_of_modify, can_remove)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 			RETURNING order_id
 	`)
 
@@ -634,10 +740,10 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 
 		if order.EndTime != "" {
 			err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
-				order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P, timeOfModify).Scan(&id)
+				order.Name, order.Material, order.Quantity, order.Issued, order.M, order.EndTime, order.OTK, order.P, timeOfModify, "yes").Scan(&id)
 		} else {
 			err = o.db.QueryRow(orderQuery, order.Number, order.Sample, order.Client,
-				order.Name, order.Material, order.Quantity, order.Issued, order.M, nil, order.OTK, order.P, timeOfModify).Scan(&id)
+				order.Name, order.Material, order.Quantity, order.Issued, order.M, nil, order.OTK, order.P, timeOfModify, "yes").Scan(&id)
 		}
 
 		err = o.db.Select(&files, getFilesQuery, id)
@@ -654,6 +760,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 		}
 
 		var routeID int
+		onlyOneFlag := false
 		for name, route := range order.Routes {
 			routePos := strings.Split(name, "-")[1]
 			log.Info().Msgf("route %v / theor end %v", route.Plot, route.TheorEnd)
@@ -802,14 +909,56 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			//	log.Err(err).Caller().Msg("error is")
 			//}
 
+			if !onlyOneFlag {
+				//canRemove := true
+
+				if len(keys) > 0 {
+					order.CanRemove = "no"
+					onlyOneFlag = true
+				}
+
+				if len(route.StartTime) > 0 {
+					order.CanRemove = "no"
+					onlyOneFlag = true
+				}
+
+				if len(route.AddedDates) > 0 {
+					order.CanRemove = "no"
+					onlyOneFlag = true
+				}
+
+				if len(route.ErrorTime) > 0 {
+					order.CanRemove = "no"
+					onlyOneFlag = true
+				}
+
+				if len(route.PauseTime) > 0 {
+					order.CanRemove = "no"
+					onlyOneFlag = true
+				}
+
+				//if !(len(route.StartTime) > 0) || !(len(keys) > 0) || !(len(route.AddedDates) > 0) ||
+				//	!(len(route.ErrorTime) > 0) || !(len(route.PauseTime) > 0) {
+				//	log.Info().Caller().Msgf("we have keys or added dates or start time or plan dates or error or pause time")
+				//} else {
+				//	//order.CanRemove = "yes"
+				//	//onlyOneFlag = true
+				//}
+			}
+
 			for _, comment := range route.Comments {
 				if len(comment.Date) > 0 {
 					_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 				}
 			}
 		}
-	}
 
+		log.Info().Msgf("can remove %v", order.CanRemove)
+		_, err = o.db.Exec("UPDATE orders SET can_remove = $1 WHERE order_id = $2", order.CanRemove, id)
+		if err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
+	}
 	return err
 }
 

@@ -41,6 +41,8 @@ const createRes = forms => {
         }
       }
     })
+
+    console.log(obj)
     res.push(obj)
     // console.log(res)
   })

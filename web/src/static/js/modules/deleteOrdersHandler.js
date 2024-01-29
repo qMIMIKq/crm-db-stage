@@ -40,23 +40,27 @@ export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = t
     return
   }
 
-  let canRemove = true
-  if (routes) {
-    canRemoveLoop:
-      for (let i = 0; i < routes.length; i++) {
-        // console.log(routes[i].issued)
-        const comments = routes[i].comments
 
-        for (let j = 0; j < comments.length; j++) {
-          if (comments[j].value.includes('За смену')) {
-            canRemove = false
-            break canRemoveLoop
-          }
-        }
-      }
-  } else {
-    canRemove = true
-  }
+  let canRemove = currentOrder.querySelector('#can-remove')
+  console.log(canRemove)
+  canRemove = canRemove.value === 'yes'
+
+  // if (routes) {
+  //   canRemoveLoop:
+  //     for (let i = 0; i < routes.length; i++) {
+  //       // console.log(routes[i])
+  //       const comments = routes[i].comments
+  //
+  //       for (let j = 0; j < comments.length; j++) {
+  //         if (comments[j].value.includes('За смену')) {
+  //           canRemove = false
+  //           break canRemoveLoop
+  //         }
+  //       }
+  //     }
+  // } else {
+  //   canRemove = true
+  // }
 
   if (canRemove) {
     // console.log('hi')
