@@ -42,7 +42,7 @@ export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = t
 
 
   let canRemove = currentOrder.querySelector('#can-remove')
-  console.log(canRemove)
+  // console.log(canRemove)
   canRemove = canRemove.value === 'yes'
 
   // if (routes) {

@@ -32,7 +32,6 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-
   let updateInterval = setInterval(() => {
     if (!state.isArchive) {
       getOrders('get-all', true)

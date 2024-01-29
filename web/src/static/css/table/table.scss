@@ -39,6 +39,10 @@ input.tr {
 }
 
 .table {
+  &-form {
+    color: $text_gray;
+  }
+
   &__cell {
     font-size: 14px;
     font-weight: 400;
@@ -97,8 +101,8 @@ input.tr {
     text-align: center;
     border-radius: 1px;
     border: none;
-    background: white;
-    color: $text_gray;
+    background: transparent;
+    color: inherit;
     outline: 3.3px $button_color;
     position: relative;
 

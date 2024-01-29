@@ -9,6 +9,7 @@ import {triggerRoutesModal} from "./modals/routesModal";
 import {triggerCommentsModal} from "./modals/commentsModal";
 import {drawSubmit} from "./submitControl";
 import {getTime} from "./getTime";
+import {reportShowCurrentLine} from "../report/reportShowCurrentLine";
 
 export const copyOrderHandler = e => {
   const parentForm = e.target.closest('form')
@@ -50,7 +51,6 @@ export const copyOrderHandler = e => {
     }
   })
 
-
   table.insertAdjacentHTML('afterbegin', orderHTML)
 
   const currElem = document.querySelector('.table-form--new')
@@ -67,6 +67,7 @@ export const copyOrderHandler = e => {
   // currElem.querySelector('select[name="m"]').value = obj.m
 
   bindOrdersListeners(currElem)
+  // reportShowCurrentLine()
   addTriggers(currElem, '.table__files', triggerFilesModal)
   addTriggers(currElem, '.table__route', triggerRoutesModal)
   addTriggers(currElem, '.table__comment', triggerCommentsModal)

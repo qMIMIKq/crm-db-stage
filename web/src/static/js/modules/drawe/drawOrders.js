@@ -21,7 +21,7 @@ export const table = document.querySelector('.main-table')
 export const drawOrders = (insertPlace, position, d, data, users) => {
   // console.time(`draw order ${d.id}`)
 
-  console.log('can remove ', d.can_remove)
+  // console.log('can remove ', d.can_remove)
   controlFiltersReset()
   let uniqueFileNames = []
 

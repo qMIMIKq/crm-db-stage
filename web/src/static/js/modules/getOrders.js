@@ -5,6 +5,7 @@ import {sendData} from "./sendData";
 import {appAddr} from "../../../../../appAddr";
 import {newAllFilter} from "./filters/newAllFilter";
 import {drawUpdatedData} from "./drawe/drawUpdatedData";
+import {reportShowCurrentLine} from "../report/reportShowCurrentLine";
 import {bindOrdersListeners} from "./bindListeners";
 
 
@@ -119,6 +120,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           if (filtered) {
             newAllFilter()
           } else {
+            // reportShowCurrentLine()
             bindOrdersListeners()
           }
 

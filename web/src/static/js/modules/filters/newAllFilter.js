@@ -5,6 +5,7 @@ import {drawOrders, table} from "../drawe/drawOrders";
 import {bindOrdersListeners} from "../bindListeners";
 import {controlFiltersReset} from "./tableFilters";
 import {colorRoutes} from "../drawe/routesDraw";
+import {reportShowCurrentLine} from "../../report/reportShowCurrentLine";
 
 export const newAllFilter = (init) => {
     hideOrders()
@@ -333,4 +334,5 @@ export const newAllFilter = (init) => {
     const dataLength = table.querySelectorAll('.showed-order').length
     document.querySelector('.main-header__title').textContent = state.isArchive ? `Архив заказов (${dataLength})` : `Журнал заказов (${dataLength})`
     bindOrdersListeners()
+    // reportShowCurrentLine()
 }

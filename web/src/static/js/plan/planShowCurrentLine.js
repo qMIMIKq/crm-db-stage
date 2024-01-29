@@ -3,22 +3,18 @@ export const planShowCurrentLine = () => {
   const forms = mainTable.querySelectorAll('form')
 
   forms.forEach(form => {
-    try {
-      form.querySelector('#db_id').addEventListener('click', () => {
-        form.querySelectorAll('.table__data').forEach(data => {
-          data.classList.toggle('table__data--chosen')
-        })
-        form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
+    form.addEventListener('click', e => {
+      forms.forEach(outterForm => {
+        outterForm.classList.remove('table__data--chosen')
+        try {
+          outterForm.querySelector('.table__data--current').classList.remove('table__data--current')
+        } catch {
+        }
       })
-    } catch {}
 
-    try {
-      form.querySelector('.shift__forw').addEventListener('click', () => {
-        form.querySelectorAll('.table__data').forEach(data => {
-          data.classList.toggle('table__data--chosen')
-        })
-        form.querySelector('.table__route--date__list').classList.toggle('table__data--chosen')
-      })
-    } catch {}
+      const target = e.target
+      target.classList.add('table__data--current')
+      form.classList.add('table__data--chosen')
+    })
   })
 }
