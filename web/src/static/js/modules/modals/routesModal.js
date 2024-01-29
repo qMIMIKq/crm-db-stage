@@ -844,7 +844,7 @@ export const triggerRoutesModal = e => {
   }
 
   issuedBtn.addEventListener('click', e => {
-    issuedHandlerModal(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime, canRemove)
+    issuedHandlerModal(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime)
   })
 
   planDateInput.addEventListener('click', e => {
@@ -1063,7 +1063,7 @@ export const triggerRoutesModal = e => {
 
 const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo, dayInput) => {
   if (routeQuantity && routeDayQuantity) {
-    shifts.value = Math.ceil(routeQuantity / routeDayQuantity)
+    shifts.value = Math.floor(routeQuantity / routeDayQuantity)
   }
 
   if (routeQuantity && routeDayQuantity && startTime) {

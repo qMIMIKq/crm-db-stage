@@ -6081,7 +6081,7 @@ const triggerRoutesModal = e => {
     'planned': planned
   };
   issuedBtn.addEventListener('click', e => {
-    (0,_issuedModal__WEBPACK_IMPORTED_MODULE_8__.issuedHandlerModal)(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime, canRemove);
+    (0,_issuedModal__WEBPACK_IMPORTED_MODULE_8__.issuedHandlerModal)(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime);
   });
   planDateInput.addEventListener('click', e => {
     // planned = true
@@ -6276,7 +6276,7 @@ const triggerRoutesModal = e => {
 };
 const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo, dayInput) => {
   if (routeQuantity && routeDayQuantity) {
-    shifts.value = Math.ceil(routeQuantity / routeDayQuantity);
+    shifts.value = Math.floor(routeQuantity / routeDayQuantity);
   }
   if (routeQuantity && routeDayQuantity && startTime) {
     if (Number(routeDayQuantity) > Number(routeQuantity)) {

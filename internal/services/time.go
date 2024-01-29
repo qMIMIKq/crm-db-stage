@@ -78,10 +78,10 @@ func (c *EndTimeCalculator) setQuantityAtMinute() {
 	c.QuantityAtMinute = c.DayQuantity / c.MachineWorkingMinutes
 }
 
-func (c *EndTimeCalculator) findNeededTime() float64 {
-	c.NeededTime = (c.FullQuantity / c.DayQuantity) * c.MachineWorkingMinutes
-	return c.NeededTime
-}
+//func (c *EndTimeCalculator) findNeededTime() float64 {
+//	c.NeededTime = (c.FullQuantity / c.DayQuantity) * c.MachineWorkingMinutes
+//	return c.NeededTime
+//}
 
 func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float64, [2]float64) {
 	log.Info().Interface("time info", timeInfo).Msg("time info is")
@@ -92,8 +92,8 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 		MachineStringStartTime: timeInfo.MachineStart,
 		MachineStringEndTime:   timeInfo.MachineEnd,
 		FullQuantity:           float64(timeInfo.Quantity),
-		DayQuantity:            float64(timeInfo.DayQuantity),
-		Issued:                 float64(timeInfo.Issued),
+		//DayQuantity:            float64(timeInfo.DayQuantity),
+		Issued: float64(timeInfo.Issued),
 	}
 
 	calc.WorkerFullStartTime = calc.createFullTime(calc.WorkerStringStartTime)
@@ -106,6 +106,8 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 	calc.MachineWorkingSeconds = calc.MachineWorkingMinutes * 60
 	calc.setQuantityAtMinute()
 	//calc.findNeededTime()
+
+	log.Info().Caller().Msgf("day quantity %v", timeInfo.DayQuantity)
 
 	calc.RestTime = time.Duration(-calc.findWorkingMinutes(calc.MachineStartTime, calc.MachineEndTime)) * time.Minute
 
@@ -145,7 +147,9 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 
 	var canDoForFirstDay float64 = 0
 	if canWorkTodaySeconds > 0 {
-		canDoForFirstDay = round(canWorkTodaySeconds / inSecForDetail)
+		check := canWorkTodaySeconds / inSecForDetail
+		log.Info().Msgf("check is %v", check)
+		canDoForFirstDay = math.Floor(canWorkTodaySeconds / inSecForDetail)
 	}
 
 	if canDoForFirstDay > float64(timeInfo.Quantity) {
@@ -171,10 +175,11 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 
 			} else {
 				calc.NeededTime -= calc.MachineWorkingSeconds
-				totalCalculated += math.Floor(calc.MachineWorkingSeconds / inSecForDetail)
+				totalCalculated += float64(timeInfo.DayQuantity)
 				calc.TheorEndTime = calc.TheorEndTime.Add(time.Duration(calc.MachineWorkingSeconds) * time.Second)
 				calc.TheorEndTime = calc.TheorEndTime.Add(calc.RestTime)
 			}
+
 			counter++
 		}
 
@@ -183,6 +188,8 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 			calc.NeededTime -= calc.NeededTime
 			counter++
 		}
+
+		log.Info().Caller().Msgf("last shift value %v", float64(timeInfo.Quantity)-totalCalculated)
 
 		return calc.TheorEndTime.Format(calc.Layout), float64(counter), [2]float64{canDoForFirstDay, float64(timeInfo.Quantity) - totalCalculated}
 	} else {

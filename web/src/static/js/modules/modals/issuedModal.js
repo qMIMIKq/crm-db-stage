@@ -57,7 +57,7 @@ const changeIssuedModal = `
    </div>
 `
 
-export const issuedHandlerModal = (e, issuedInput, issuedTodayInput, plotI, userI, updateData, shift, canRemove) => {
+export const issuedHandlerModal = (e, issuedInput, issuedTodayInput, plotI, userI, updateData, shift) => {
   const modal = showModal(changeIssuedModal)
   const okBtn = modal.querySelector('.confirm__button--ok')
   const cnclBtn = modal.querySelector('.confirm__button--cncl')
