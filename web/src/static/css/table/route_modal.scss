@@ -297,6 +297,10 @@
   display: flex;
   justify-content: space-between;
 
+  &--rel {
+    position: relative;
+  }
+
   &__labels {
     display: flex;
     justify-content: center;

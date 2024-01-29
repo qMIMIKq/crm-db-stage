@@ -36,6 +36,10 @@ const confirmDeleteHandler = (e, operation, titleText) => {
 export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = true) => {
   const checkBtn = currentOrder.querySelector('#order__delete')
 
+  if (!state.adminCheck) {
+    return
+  }
+
   let canRemove = true
   if (routes) {
     canRemoveLoop:

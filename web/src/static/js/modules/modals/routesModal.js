@@ -77,7 +77,7 @@ const routeModal = `
                             <label class='route__label quantity-block__shifts' for='shifts'>Смен</label>
                         </div>
                         
-                        <div class="quantity-block">
+                        <div class="quantity-block quantity-block--rel">
                           <input readonly class='route__input--top route__input--small text-input progress-block__input main__input route-day__quantity' name='day_quantity' type='text' id='day_quantity' placeholder="В смену">
                           <input style='cursor: default' readonly class='route__input--top route__input--small text-input progress-block__input main__input' type='number' id='shifts' placeholder="Смен">
                         </div>
@@ -821,6 +821,38 @@ export const triggerRoutesModal = e => {
     })
   })
 
+  dayQuantity.addEventListener('mouseenter', e => {
+    if (e.target.value) {
+      e.target.insertAdjacentHTML('afterend', `
+        <div class="check-helper">VALUE</div>
+      `)
+
+      const helper = modalElem.querySelector('.check-helper')
+      if (helper) {
+        const helperHeight = helper.clientHeight
+        if (helperHeight > 23) {
+          helper.style.bottom = '-' + String(helperHeight - 23 + 25) + 'px'
+          helper.style.left = '-48px'
+        } else {
+          helper.style.bottom = '-35px'
+          helper.style.left = '-48px'
+        }
+      }
+
+      if (e.target.value.includes('/')) {
+        helper.textContent = 'Первая/Средняя'
+      } else {
+        helper.textContent = 'Средняя'
+      }
+    }
+  })
+
+  dayQuantity.addEventListener('mouseleave', e => {
+    try {
+      modalElem.querySelector('.check-helper').remove()
+    } catch {}
+  })
+
   routeQuantity.addEventListener('change', e => {
     activateOnInput(e, 'section-finish__sub')
     addLog(logName, `Установил тираж в ${e.target.value}`, '#visible__comments')
@@ -1098,7 +1130,8 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
           checkDayInput = checkDayInput[0]
         }
 
-        dayInput.value = `${data.can_do[0]}/${checkDayInput}/${data.can_do[1]}`
+        // dayInput.value = `${data.can_do[0]}/${checkDayInput}/${data.can_do[1]}`
+        dayInput.value = `${data.can_do[0]}/${checkDayInput}`
         console.log(data.can_do)
         // dynEndInp.value = data.result
       })
