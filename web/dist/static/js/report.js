@@ -7245,10 +7245,19 @@ __webpack_require__.r(__webpack_exports__);
 
 const table = document.querySelector('.main-table');
 const shiftCounter = {};
-const drawReport = async (d, i) => {
+const drawReport = async d => {
   (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_1__.controlReportsFiltersReset)();
 
   // console.log(d.shift, d.current_shift)
+  // console.log(d)
+  // if (d.prev_total) {
+  //   console.log(d.order_id, d.report_date.split('T')[0].replaceAll("-", "."), d.prev_total)
+  // }
+  console.log(d.order_id, d);
+
+  // if (d.hidden_shift) {
+  //   console.log(d.hidden_shift)
+  // }
 
   let last = false;
   if (d.current_shift) {
@@ -7275,11 +7284,27 @@ const drawReport = async (d, i) => {
       center = d.plan;
     }
   }
-  if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {
-    center = d.quantity - d.issued;
-    if (center < 0) center = 0;
+  if (d.current_shift) {
+    if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {
+      center = d.quantity - d.prev_total;
+      if (center < 0) center = 0;
+    }
+  } else {
+    if (d.hidden_shift && Number(d.hidden_shift) >= Number(d.need_shifts)) {
+      center = d.quantity - d.prev_total;
+      if (center < 0) center = 0;
+    }
   }
-  console.log(d.current_shift, d.need_shifts);
+
+  // if (d.need_shifts) {
+  // d.current_shift ||
+
+  // }
+
+  //
+
+  // console.log(d.current_shift, d.need_shifts)
+
   if (d.plan && d.issued_plan) {
     percents = d.issued_plan / center * 100;
   }
@@ -7492,7 +7517,7 @@ const newAllReportFilter = init => {
             hiddenOrder.classList.remove('hidden__input');
             hiddenOrder.classList.add('showed-order');
           } else {
-            (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order, i);
+            (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order);
           }
         }
         flag = false;
@@ -7586,7 +7611,7 @@ const newAllReportFilter = init => {
           hiddenOrder.classList.remove('hidden__input');
           hiddenOrder.classList.add('showed-order');
         } else {
-          (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order, i);
+          (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order);
         }
       }
       flag = true;
@@ -7604,7 +7629,7 @@ const newAllReportFilter = init => {
             hiddenOrder.classList.remove('hidden__input');
             hiddenOrder.classList.add('showed-order');
           } else {
-            (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order, i);
+            (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order);
           }
         }
         flag = true;
@@ -7615,7 +7640,7 @@ const newAllReportFilter = init => {
     if (init) {
       (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
       _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach((order, i) => {
-        (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order, i);
+        (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order);
       });
     } else {
       _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach((order, i) => {
@@ -7624,7 +7649,7 @@ const newAllReportFilter = init => {
           hiddenOrder.classList.remove('hidden__input');
           hiddenOrder.classList.add('showed-order');
         } else {
-          (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order, i);
+          (0,_drawReport__WEBPACK_IMPORTED_MODULE_2__.drawReport)(order);
         }
       });
     }
@@ -8277,7 +8302,8 @@ const getReports = () => {
     // deleteTableFilters()
     // deleteOrders()
     _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders = data.data;
-    console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders);
+    // console.log(state.orders)
+
     data.data.forEach(d => {
       nums.push((0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.isEmptyData)(d.order_number));
       ids.push((0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.isEmptyData)(d.order_id));

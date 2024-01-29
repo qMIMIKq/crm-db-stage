@@ -63,7 +63,7 @@ export const newAllReportFilter = (init) => {
             hiddenOrder.classList.add('showed-order')
 
           } else {
-            drawReport(order, i)
+            drawReport(order)
           }
         }
 
@@ -172,7 +172,7 @@ export const newAllReportFilter = (init) => {
           hiddenOrder.classList.remove('hidden__input')
           hiddenOrder.classList.add('showed-order')
         } else {
-          drawReport(order, i)
+          drawReport(order)
         }
       }
 
@@ -195,7 +195,7 @@ export const newAllReportFilter = (init) => {
             hiddenOrder.classList.remove('hidden__input')
             hiddenOrder.classList.add('showed-order')
           } else {
-            drawReport(order, i)
+            drawReport(order)
           }
         }
 
@@ -209,7 +209,7 @@ export const newAllReportFilter = (init) => {
       deleteOrders()
 
       state.orders.forEach((order, i) => {
-        drawReport(order, i)
+        drawReport(order)
       })
     } else {
       state.orders.forEach((order, i) => {
@@ -218,7 +218,7 @@ export const newAllReportFilter = (init) => {
           hiddenOrder.classList.remove('hidden__input')
           hiddenOrder.classList.add('showed-order')
         } else {
-          drawReport(order, i)
+          drawReport(order)
         }
       })
     }

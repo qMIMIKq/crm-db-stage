@@ -3,10 +3,19 @@ import {controlReportsFiltersReset} from "./filters/reportFilters";
 
 export const table = document.querySelector('.main-table')
 export const shiftCounter = {}
-export const drawReport = async (d, i) => {
+export const drawReport = async (d) => {
   controlReportsFiltersReset()
 
   // console.log(d.shift, d.current_shift)
+  // console.log(d)
+  // if (d.prev_total) {
+  //   console.log(d.order_id, d.report_date.split('T')[0].replaceAll("-", "."), d.prev_total)
+  // }
+  console.log(d.order_id, d)
+
+  // if (d.hidden_shift) {
+  //   console.log(d.hidden_shift)
+  // }
 
   let last = false
   if (d.current_shift) {
@@ -36,12 +45,27 @@ export const drawReport = async (d, i) => {
     }
   }
 
-  if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {
-    center = d.quantity - d.issued
-    if (center < 0) center = 0
+  if (d.current_shift) {
+    if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {
+      center = d.quantity - d.prev_total
+      if (center < 0) center = 0
+    }
+
+  } else {
+    if (d.hidden_shift && Number(d.hidden_shift) >= Number(d.need_shifts)) {
+      center = d.quantity - d.prev_total
+      if (center < 0) center = 0
+    }
   }
 
-  console.log(d.current_shift, d.need_shifts)
+  // if (d.need_shifts) {
+    // d.current_shift ||
+
+  // }
+
+  //
+
+  // console.log(d.current_shift, d.need_shifts)
 
   if (d.plan && d.issued_plan) {
     percents = (d.issued_plan / center) * 100

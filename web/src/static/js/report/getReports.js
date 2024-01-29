@@ -59,7 +59,7 @@ export const getReports = () => {
       // deleteTableFilters()
       // deleteOrders()
       state['orders'] = data.data
-      console.log(state.orders)
+      // console.log(state.orders)
 
       data.data.forEach(d => {
         nums.push(isEmptyData(d.order_number))
