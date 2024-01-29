@@ -313,18 +313,18 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							log.Err(err).Caller().Msg("error is")
 						}
 
+						if i >= route.NeedShifts {
+							if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
+								log.Err(err).Caller().Msg("error is")
+							}
+						}
+
 						if changerDate.Unix() == oldReportDate.Unix() {
 							counter += 1
 
 							if _, err := o.db.Exec(`
 								UPDATE reports SET issued = $1, issued_plan = $2, operator = $3, current_shift = $4, shift = $5, adjustment = $6, need_shifts = $7, prev_total = $8 WHERE report_id = $9
 								`, issuedThisTurn, reportIssued.Issued, reportIssued.Operator, counter, shift, reportIssued.Adjustment, route.NeedShifts, issuedThisTurn-prevIssued, report.ReportID); err != nil {
-								log.Err(err).Caller().Msg("error is")
-							}
-						}
-
-						if i >= route.NeedShifts {
-							if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
 								log.Err(err).Caller().Msg("error is")
 							}
 						}
@@ -540,22 +540,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						log.Err(err).Caller().Msg("error is")
 					}
 
-					if len(reports) > 0 {
-						//log.Info().Caller().Msgf("can't remove this route %v", route.Plot)
-						//canRemoveRoute = false
-					}
-
-					//	reportQuery := fmt.Sprintf(`
-					//	INSERT INTO reports
-					//				 (report_date, order_id, order_number, order_client,
-					//					order_name, quantity, issued, plan,
-					//					operator, issued_plan, order_material, order_plot,
-					//					adding_date, route_position, route_id, order_timestamp,
-					//					shift, need_shifts, not_planned, adjustment)
-					//	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
-					//	RETURNING report_id
-					//`)
-
 					updateReportInfoQuery := fmt.Sprintf(`
 						UPDATE reports
 							 SET quantity = $1, need_shifts = $2, 
@@ -572,6 +556,12 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							log.Err(err).Caller().Msg("error is")
 						}
 
+						if i >= route.NeedShifts {
+							if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
+								log.Err(err).Caller().Msg("error is")
+							}
+						}
+
 						if changerDate.Unix() == oldReportDate.Unix() {
 							counter += 1
 
@@ -582,11 +572,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 							}
 						}
 
-						if i >= route.NeedShifts {
-							if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
-								log.Err(err).Caller().Msg("error is")
-							}
-						}
+						//if i >= route.NeedShifts {
+						//	if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
+						//		log.Err(err).Caller().Msg("error is")
+						//	}
+						//}
 					}
 				}
 
