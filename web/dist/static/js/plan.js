@@ -2464,7 +2464,6 @@ const drawUpdatedData = (d, data, filtered) => {
     currentOrder.classList.remove('table-form--upd');
     currentOrder.classList.add('table-form--old');
     const routes = d["db_routes"];
-    console.log(routes);
     const completedBlock = currentOrder.querySelector('.table__issued--done');
     if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
       completedBlock.classList.add('tr');
@@ -3763,7 +3762,8 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-  console.time('get orders');
+
+  // console.time('get orders')
 
   // console.log('start time', state.maxTime)
   const params = {
@@ -3775,9 +3775,11 @@ const getOrders = function () {
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
   (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_5__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    console.timeEnd('get orders');
+    // console.timeEnd('get orders')
     const title = document.querySelector('.main-header__title');
-    console.time('draw orders');
+
+    // console.time('draw orders')
+
     if (!data.data) {
       if (!updateOnly) {
         hideOrders();
@@ -3842,7 +3844,8 @@ const getOrders = function () {
           (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_6__.newAllFilter)(true);
         }
       }
-      console.timeEnd('draw orders');
+
+      // console.timeEnd('draw orders')
 
       // console.time('add filters and listeners')
       // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
@@ -5724,8 +5727,9 @@ const triggerRoutesModal = e => {
   const routeDayQuantity = modalElem.querySelector('#day_quantity');
   controlQuantityAccess(routeQuantity);
   // controlQuantityAccess(routeDayQuantity)
-  const canRemove = currentOrder.querySelector('#can-remove');
-  console.log(canRemove);
+  // const canRemove = currentOrder.querySelector('#can-remove')
+  // console.log(canRemove)
+
   const routeForm = modalElem.querySelector('.route__config');
   const issued = modalElem.querySelector('#route__issued');
   const visibleLogs = document.querySelector("#visible__comments");
@@ -9434,7 +9438,7 @@ if (window.location.href.endsWith('main/table')) {
     }
   }, 6000);
   setInterval(() => {
-    console.log('remove interval');
+    // console.log('remove interval')
     clearInterval(updateInterval);
     updateInterval = setInterval(() => {
       if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {

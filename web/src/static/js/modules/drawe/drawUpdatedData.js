@@ -124,7 +124,6 @@ export const drawUpdatedData = (d, data, filtered) => {
     currentOrder.classList.add('table-form--old')
 
     const routes = d["db_routes"]
-    console.log(routes)
 
     const completedBlock = currentOrder.querySelector('.table__issued--done')
     if (completedBlock && !state['isArchive']) {
