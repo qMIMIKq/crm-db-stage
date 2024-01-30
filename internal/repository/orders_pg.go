@@ -586,8 +586,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 
 				if !onlyOneFlag {
-					//canRemove := true
-
 					if len(keys) > 0 {
 						order.CanRemove = "no"
 						onlyOneFlag = true
@@ -612,14 +610,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						order.CanRemove = "no"
 						onlyOneFlag = true
 					}
-
-					//if !(len(route.StartTime) > 0) || !(len(keys) > 0) || !(len(route.AddedDates) > 0) ||
-					//	!(len(route.ErrorTime) > 0) || !(len(route.PauseTime) > 0) {
-					//	log.Info().Caller().Msgf("we have keys or added dates or start time or plan dates or error or pause time")
-					//} else {
-					//	//order.CanRemove = "yes"
-					//	//onlyOneFlag = true
-					//}
 				}
 
 				for _, comment := range route.Comments {
