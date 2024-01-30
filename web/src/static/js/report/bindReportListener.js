@@ -102,7 +102,7 @@ const chooseHandler = e => {
       case 'add':
         e.target.classList.add('table__data--current')
         if (!label.classList.contains('table__data--opened')) {
-          state['inWork'] = true
+          // state['inWork'] = true
           item.classList.add(cls)
 
           // item.classList.add('table__data--current')
@@ -119,13 +119,13 @@ const chooseHandler = e => {
         break
 
       case 'show-current':
-        state['inWork'] = true
+        // state['inWork'] = true
         e.target.classList.add(cls)
         break
 
       case 'toggle':
         // item.classList.remove('table__data--current')
-        state['inWork'] = true
+        // state['inWork'] = true
         if (!e.target.classList.contains('table__data--opened')) {
           item.classList.remove('table__data--chosen')
         } else {
@@ -136,12 +136,12 @@ const chooseHandler = e => {
       default:
         item.classList.remove('table__data--current')
         if (cls === 'table__data--current') {
-          state['inWork'] = false
+          // state['inWork'] = false
           item.classList.remove(cls)
           return
         }
         if (!label.classList.contains('table__data--opened')) {
-          state['inWork'] = false
+          // state['inWork'] = false
           item.classList.remove(cls)
         }
     }

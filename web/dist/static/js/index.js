@@ -1609,7 +1609,7 @@ const chooseHandler = e => {
       case 'add':
         e.target.classList.add('table__data--current');
         if (!label.classList.contains('table__data--opened')) {
-          _state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+          // state['inWork'] = true
           item.classList.add(cls);
 
           // item.classList.add('table__data--current')
@@ -1625,12 +1625,12 @@ const chooseHandler = e => {
         }
         break;
       case 'show-current':
-        _state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+        // state['inWork'] = true
         e.target.classList.add(cls);
         break;
       case 'toggle':
         // item.classList.remove('table__data--current')
-        _state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+        // state['inWork'] = true
         if (!e.target.classList.contains('table__data--opened')) {
           item.classList.remove('table__data--chosen');
         } else {
@@ -1640,12 +1640,12 @@ const chooseHandler = e => {
       default:
         item.classList.remove('table__data--current');
         if (cls === 'table__data--current') {
-          _state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = false;
+          // state['inWork'] = false
           item.classList.remove(cls);
           return;
         }
         if (!label.classList.contains('table__data--opened')) {
-          _state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = false;
+          // state['inWork'] = false
           item.classList.remove(cls);
         }
     }
@@ -3234,10 +3234,12 @@ const bindTableFilters = () => {
       const select = wrapper.parentNode.querySelector('select');
       wrapper.classList.add('hidden__input');
       select.classList.remove('hidden__input');
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = true;
     });
   });
   tableFilters.forEach(filter => {
     filter.addEventListener('blur', e => {
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.inWork = false;
       showFilter(e);
     });
   });
@@ -3245,12 +3247,13 @@ const bindTableFilters = () => {
   bindFilter(clientsFilter);
   bindFilter(materialsFilter);
   bindFilter(namesFilter);
-  bindFilter(quantityFilter);
-  bindFilter(issuedFilter);
-  bindFilter(managerFilter);
-  bindFilter(deadlineFilter);
-  bindFilter(timestampFilter);
+  // bindFilter(quantityFilter)
+  // bindFilter(issuedFilter)
+  // bindFilter(managerFilter)
+  // bindFilter(deadlineFilter)
+  // bindFilter(timestampFilter)
 };
+
 const showFilter = e => {
   const target = e.target;
   _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
@@ -3816,9 +3819,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
 /* harmony import */ var _filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./filters/newAllFilter */ "./web/src/static/js/modules/filters/newAllFilter.js");
 /* harmony import */ var _drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./drawe/drawUpdatedData */ "./web/src/static/js/modules/drawe/drawUpdatedData.js");
-/* harmony import */ var _report_reportShowCurrentLine__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../report/reportShowCurrentLine */ "./web/src/static/js/report/reportShowCurrentLine.js");
-/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
-
+/* harmony import */ var _bindListeners__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./bindListeners */ "./web/src/static/js/modules/bindListeners.js");
 
 
 
@@ -3907,11 +3908,10 @@ const getOrders = function () {
             _state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime = d.time_of_modify;
           }
         }
-
-        // state['nums'].push(isEmptyData(d.number))
-        // state['clients'].push(isEmptyData(d.client))
-        // state['materials'].push(isEmptyData(d.material))
-        // state['names'].push(isEmptyData(d.name))
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.nums.push(isEmptyData(d.number));
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.clients.push(isEmptyData(d.client));
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.materials.push(isEmptyData(d.material));
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.names.push(isEmptyData(d.name));
         // state['quantity'].push(isEmptyData(d.quantity))
         // state['issued'].push(isEmptyData(d.issued))
         // state['managers'].push(isEmptyData(d.m))
@@ -3929,7 +3929,7 @@ const getOrders = function () {
           (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)();
         } else {
           // reportShowCurrentLine()
-          (0,_bindListeners__WEBPACK_IMPORTED_MODULE_8__.bindOrdersListeners)();
+          (0,_bindListeners__WEBPACK_IMPORTED_MODULE_7__.bindOrdersListeners)();
         }
 
         // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
@@ -3944,16 +3944,21 @@ const getOrders = function () {
     // console.timeEnd('draw orders')
 
     // console.time('add filters and listeners')
-    // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
-    // drawTableFilter([...new Set(state['clients'])].sort(), clientsFilter)
-    // drawTableFilter([...new Set(state['materials'])].sort(), materialsFilter)
-    // drawTableFilter([...new Set(state['names'])].sort(), namesFilter)
+
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.nums = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort();
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.clients = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients)].sort();
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.materials = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials)].sort();
+    _state__WEBPACK_IMPORTED_MODULE_1__.state.names = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.names)].sort();
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients.sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials.sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names.sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
     // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
     // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
     // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
     // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
     // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-    // bindTableFilters()
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
 
     // console.timeEnd('add filters and listeners')
 
@@ -4454,6 +4459,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
         case 'PDF':
         case 'dxf':
         case 'DXF':
+          console.log(fileName);
           fileNames.push(fileNameWithoutType);
           data.insertAdjacentHTML(`beforeend`, `
             <div class='data__file'>
@@ -4476,6 +4482,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           break;
         case 'png':
         case 'PNG':
+          console.log(fileName);
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
@@ -4497,6 +4504,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           }
           break;
         default:
+          console.log(fileName);
           data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
                     <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
@@ -7203,7 +7211,7 @@ const chooseHandler = e => {
       case 'add':
         e.target.classList.add('table__data--current');
         if (!label.classList.contains('table__data--opened')) {
-          _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+          // state['inWork'] = true
           item.classList.add(cls);
 
           // item.classList.add('table__data--current')
@@ -7219,12 +7227,12 @@ const chooseHandler = e => {
         }
         break;
       case 'show-current':
-        _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+        // state['inWork'] = true
         e.target.classList.add(cls);
         break;
       case 'toggle':
         // item.classList.remove('table__data--current')
-        _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = true;
+        // state['inWork'] = true
         if (!e.target.classList.contains('table__data--opened')) {
           item.classList.remove('table__data--chosen');
         } else {
@@ -7234,12 +7242,12 @@ const chooseHandler = e => {
       default:
         item.classList.remove('table__data--current');
         if (cls === 'table__data--current') {
-          _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = false;
+          // state['inWork'] = false
           item.classList.remove(cls);
           return;
         }
         if (!label.classList.contains('table__data--opened')) {
-          _modules_state__WEBPACK_IMPORTED_MODULE_2__.state.inWork = false;
+          // state['inWork'] = false
           item.classList.remove(cls);
         }
     }
@@ -7943,6 +7951,7 @@ if (window.location.href.endsWith('main/table')) {
 
   let updateInterval = setInterval(() => {
     if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
+      console.log(_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.inWork);
       (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
     }
   }, 6000);

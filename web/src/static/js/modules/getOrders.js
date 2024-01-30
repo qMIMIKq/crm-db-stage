@@ -1,11 +1,18 @@
-import {deleteTableFilters} from './filters/tableFilters';
+import {
+  bindTableFilters,
+  clientsFilter,
+  deleteTableFilters,
+  drawTableFilter,
+  materialsFilter,
+  namesFilter,
+  numsFilter
+} from './filters/tableFilters';
 import {state} from './state';
 import {archiveFrom, archiveTo,} from "./filters/tableRoutesFilters";
 import {sendData} from "./sendData";
 import {appAddr} from "../../../../../appAddr";
 import {newAllFilter} from "./filters/newAllFilter";
 import {drawUpdatedData} from "./drawe/drawUpdatedData";
-import {reportShowCurrentLine} from "../report/reportShowCurrentLine";
 import {bindOrdersListeners} from "./bindListeners";
 
 
@@ -99,10 +106,10 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
             }
           }
 
-          // state['nums'].push(isEmptyData(d.number))
-          // state['clients'].push(isEmptyData(d.client))
-          // state['materials'].push(isEmptyData(d.material))
-          // state['names'].push(isEmptyData(d.name))
+          state['nums'].push(isEmptyData(d.number))
+          state['clients'].push(isEmptyData(d.client))
+          state['materials'].push(isEmptyData(d.material))
+          state['names'].push(isEmptyData(d.name))
           // state['quantity'].push(isEmptyData(d.quantity))
           // state['issued'].push(isEmptyData(d.issued))
           // state['managers'].push(isEmptyData(d.m))
@@ -136,16 +143,22 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
       // console.timeEnd('draw orders')
 
       // console.time('add filters and listeners')
-      // drawTableFilter([...new Set(state['nums'])].sort(), numsFilter)
-      // drawTableFilter([...new Set(state['clients'])].sort(), clientsFilter)
-      // drawTableFilter([...new Set(state['materials'])].sort(), materialsFilter)
-      // drawTableFilter([...new Set(state['names'])].sort(), namesFilter)
+
+      state['nums'] = [...new Set(state['nums'])].sort()
+      state['clients'] = [...new Set(state['clients'])].sort()
+      state['materials'] = [...new Set(state['materials'])].sort()
+      state['names'] = [...new Set(state['names'])].sort()
+
+      drawTableFilter(state.nums, numsFilter)
+      drawTableFilter(state.clients.sort(), clientsFilter)
+      drawTableFilter(state.materials.sort(), materialsFilter)
+      drawTableFilter(state.names.sort(), namesFilter)
       // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
       // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
       // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
       // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
       // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-      // bindTableFilters()
+      bindTableFilters()
 
       // console.timeEnd('add filters and listeners')
 

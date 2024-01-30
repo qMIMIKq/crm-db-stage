@@ -38,10 +38,13 @@ export const bindTableFilters = () => {
       const select = wrapper.parentNode.querySelector('select')
       wrapper.classList.add('hidden__input')
       select.classList.remove('hidden__input')
+      state.inWork = true
     })
   })
+
   tableFilters.forEach(filter => {
     filter.addEventListener('blur', e => {
+      state.inWork = false
       showFilter(e)
     })
   })
@@ -50,11 +53,11 @@ export const bindTableFilters = () => {
   bindFilter(clientsFilter)
   bindFilter(materialsFilter)
   bindFilter(namesFilter)
-  bindFilter(quantityFilter)
-  bindFilter(issuedFilter)
-  bindFilter(managerFilter)
-  bindFilter(deadlineFilter)
-  bindFilter(timestampFilter)
+  // bindFilter(quantityFilter)
+  // bindFilter(issuedFilter)
+  // bindFilter(managerFilter)
+  // bindFilter(deadlineFilter)
+  // bindFilter(timestampFilter)
 }
 
 const showFilter = e => {

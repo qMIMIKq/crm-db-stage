@@ -64,13 +64,13 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 				//url = "http://172.20.10.7:5001/pdf-convert"
 				url = "http://app-converter:5000/pdf-convert"
 			} else {
-				//url = http://172.20.10.7:5001/dxf-convert
+				//url = "http://172.20.10.7:5001/dxf-convert"
 				url = "http://app-converter:5000/dxf-convert"
 			}
 
 			req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body.Bytes()))
 			req.Header.Set("Content-Type", writer.FormDataContentType())
-			if rsp, _ := client.Do(req); rsp.StatusCode != http.StatusOK {
+			if rsp, _ := client.Do(req); rsp != nil && rsp.StatusCode != http.StatusOK {
 				log.Warn().Msgf("FUCK")
 				//return nil, errors.New("can't convert file")
 			}

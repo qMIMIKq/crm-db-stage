@@ -140,6 +140,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
   if (files.length) {
     const fileNames = []
     files.split(', ').map(file => {
+
       const arrDotFile = file.split('.')
       const fileType = arrDotFile[arrDotFile.length - 1]
       const arrSlashFile = file.split('/')
@@ -153,6 +154,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
         case 'PDF':
         case 'dxf':
         case 'DXF':
+          console.log(fileName)
           fileNames.push(fileNameWithoutType)
           data.insertAdjacentHTML(`beforeend`, `
             <div class='data__file'>
@@ -175,6 +177,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           break
         case 'png':
         case 'PNG':
+          console.log(fileName)
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
@@ -196,6 +199,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           }
           break
         default:
+          console.log(fileName)
           data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
                     <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
