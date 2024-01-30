@@ -331,6 +331,19 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
+				var reports []domain.Report
+				err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
+
+				var prevTotal string
+				for _, report := range reports {
+					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
+					log.Info().Caller().Msgf("report date %v / total %v / prev total %v / shift %v hidden shift %v", report.ReportDate, report.Issued, report.PrevTotal, report.CurrentShift, report.HiddenShift)
+					prevTotal = report.Issued
+				}
+
 				_, err = o.db.Exec("UPDATE planning SET shift = $1 WHERE route_id = $2", counter, routeID)
 				if err != nil {
 					log.Err(err).Caller().Msg("error is")
@@ -571,13 +584,25 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 								log.Err(err).Caller().Msg("error is")
 							}
 						}
-
 						//if i >= route.NeedShifts {
 						//	if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", issuedThisTurn-prevIssued, report.ReportID); err != nil {
 						//		log.Err(err).Caller().Msg("error is")
 						//	}
 						//}
 					}
+				}
+
+				var reports []domain.Report
+				err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
+
+				var prevTotal string
+				for _, report := range reports {
+					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
+					log.Info().Caller().Msgf("report date %v / total %v / prev total %v / shift %v hidden shift %v", report.ReportDate, report.Issued, report.PrevTotal, report.CurrentShift, report.HiddenShift)
+					prevTotal = report.Issued
 				}
 
 				_, err = o.db.Exec("UPDATE planning SET shift = $1 WHERE route_id = $2", counter, routeID)

@@ -147,8 +147,8 @@ func (t TimeService) CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float6
 
 	var canDoForFirstDay float64 = 0
 	if canWorkTodaySeconds > 0 {
-		check := canWorkTodaySeconds / inSecForDetail
-		log.Info().Msgf("check is %v", check)
+		//check := canWorkTodaySeconds / inSecForDetail
+		//log.Info().Msgf("check is %v", check)
 		canDoForFirstDay = math.Ceil(canWorkTodaySeconds / inSecForDetail)
 	}
 
