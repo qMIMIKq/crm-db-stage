@@ -34,13 +34,11 @@ if (window.location.href.endsWith('main/table')) {
 
   let updateInterval = setInterval(() => {
     if (!state.isArchive) {
-      console.log(state.inWork)
       getOrders('get-all', true)
     }
   }, 6000)
 
   setInterval(() => {
-    // console.log('remove interval')
     clearInterval(updateInterval)
     updateInterval = setInterval(() => {
       if (!state.isArchive) {

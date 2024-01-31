@@ -804,7 +804,7 @@ export const triggerRoutesModal = e => {
       'up': routeInfo.up || 0,
       'adjustment': routeInfo.adjustment || 0,
       'time': routeInfo.time || 0,
-      'quantity': routeInfo.quantity || 0,
+      'quantity': routeInfo.quantity || currentOrder.querySelector('input[name="quantity"]').value || 0,
     }
 
   } else {

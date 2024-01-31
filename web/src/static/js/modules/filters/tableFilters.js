@@ -53,11 +53,7 @@ export const bindTableFilters = () => {
   bindFilter(clientsFilter)
   bindFilter(materialsFilter)
   bindFilter(namesFilter)
-  // bindFilter(quantityFilter)
-  // bindFilter(issuedFilter)
-  // bindFilter(managerFilter)
-  // bindFilter(deadlineFilter)
-  // bindFilter(timestampFilter)
+  console.log(state.nums)
 }
 
 const showFilter = e => {

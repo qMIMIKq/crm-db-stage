@@ -30,7 +30,6 @@ export const copyOrderHandler = e => {
 
     const today = getTime()
     const userName = userInf.nickname
-    console.log(userName)
 
     if (key.includes('route')) {
       if (value) {

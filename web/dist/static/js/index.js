@@ -1712,7 +1712,6 @@ const copyOrderHandler = e => {
     }
     const today = (0,_getTime__WEBPACK_IMPORTED_MODULE_10__.getTime)();
     const userName = _state__WEBPACK_IMPORTED_MODULE_1__.userInf.nickname;
-    console.log(userName);
     if (key.includes('route')) {
       if (value) {
         const data = JSON.parse(value);
@@ -3247,13 +3246,8 @@ const bindTableFilters = () => {
   bindFilter(clientsFilter);
   bindFilter(materialsFilter);
   bindFilter(namesFilter);
-  // bindFilter(quantityFilter)
-  // bindFilter(issuedFilter)
-  // bindFilter(managerFilter)
-  // bindFilter(deadlineFilter)
-  // bindFilter(timestampFilter)
+  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums);
 };
-
 const showFilter = e => {
   const target = e.target;
   _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = true;
@@ -3892,9 +3886,8 @@ const getOrders = function () {
       // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
     }
 
-    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
     // deleteOrders()
-
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
     if (data.data) {
       data.data.forEach(d => {
         if (_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime) {
@@ -3912,13 +3905,8 @@ const getOrders = function () {
         _state__WEBPACK_IMPORTED_MODULE_1__.state.clients.push(isEmptyData(d.client));
         _state__WEBPACK_IMPORTED_MODULE_1__.state.materials.push(isEmptyData(d.material));
         _state__WEBPACK_IMPORTED_MODULE_1__.state.names.push(isEmptyData(d.name));
-        // state['quantity'].push(isEmptyData(d.quantity))
-        // state['issued'].push(isEmptyData(d.issued))
-        // state['managers'].push(isEmptyData(d.m))
-        // state['deadlines'].push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено')
-        // state['timestamps'].push(d.timestamp.split('T')[0])
+        console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums);
       });
-
       if (updateOnly) {
         const routesStatusFilter = document.querySelector('.route__filter--chosen');
         let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
@@ -3939,28 +3927,29 @@ const getOrders = function () {
         _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
         (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)(true);
       }
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.nums = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort();
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.clients = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients)].sort();
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.materials = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials)].sort();
+      _state__WEBPACK_IMPORTED_MODULE_1__.state.names = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.names)].sort();
+      console.log('after', _state__WEBPACK_IMPORTED_MODULE_1__.state.nums);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
+      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
     }
 
     // console.timeEnd('draw orders')
 
     // console.time('add filters and listeners')
-
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.nums = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort();
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.clients = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients)].sort();
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.materials = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials)].sort();
-    _state__WEBPACK_IMPORTED_MODULE_1__.state.names = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.names)].sort();
-    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
-    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients.sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
-    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials.sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
-    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names.sort(), _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
     // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
     // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
     // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
     // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
     // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
 
     // console.timeEnd('add filters and listeners')
+    console.log('before', _state__WEBPACK_IMPORTED_MODULE_1__.state.nums);
 
     // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
     loader.classList.add('hidden__input');
@@ -4147,11 +4136,9 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     //   dayQuantityInput.value = Math.floor(defaultWorkTime / seconds)
     // }
 
-    console.log(seconds);
+    console.log(dayQuantityInfo.quantity);
     if (seconds) {
-      console.log(dayQuantityInfo.quantity);
       const inDay = Math.ceil(defaultWorkTime / seconds);
-      console.log(inDay);
       if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
         dayQuantityInput.value = inDay;
       } else {
@@ -6133,7 +6120,7 @@ const triggerRoutesModal = e => {
       'up': routeInfo.up || 0,
       'adjustment': routeInfo.adjustment || 0,
       'time': routeInfo.time || 0,
-      'quantity': routeInfo.quantity || 0
+      'quantity': routeInfo.quantity || currentOrder.querySelector('input[name="quantity"]').value || 0
     };
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value;
@@ -7964,12 +7951,10 @@ if (window.location.href.endsWith('main/table')) {
 
   let updateInterval = setInterval(() => {
     if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
-      console.log(_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.inWork);
       (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
     }
   }, 6000);
   setInterval(() => {
-    // console.log('remove interval')
     clearInterval(updateInterval);
     updateInterval = setInterval(() => {
       if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {

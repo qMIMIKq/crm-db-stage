@@ -88,9 +88,8 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
       }
 
-
-      deleteTableFilters()
       // deleteOrders()
+      deleteTableFilters()
 
       if (data.data) {
         data.data.forEach(d => {
@@ -110,11 +109,8 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           state['clients'].push(isEmptyData(d.client))
           state['materials'].push(isEmptyData(d.material))
           state['names'].push(isEmptyData(d.name))
-          // state['quantity'].push(isEmptyData(d.quantity))
-          // state['issued'].push(isEmptyData(d.issued))
-          // state['managers'].push(isEmptyData(d.m))
-          // state['deadlines'].push(d.end_time ? isEmptyData(d.end_time.split('T')[0]) : 'Не заполнено')
-          // state['timestamps'].push(d.timestamp.split('T')[0])
+
+          console.log(state.nums)
         })
 
         if (updateOnly) {
@@ -138,29 +134,34 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           state['filteredOrders'] = state['orders'].filter(o => o)
           newAllFilter(true)
         }
+
+        state['nums'] = [...new Set(state['nums'])].sort()
+        state['clients'] = [...new Set(state['clients'])].sort()
+        state['materials'] = [...new Set(state['materials'])].sort()
+        state['names'] = [...new Set(state['names'])].sort()
+
+        console.log('after', state.nums)
+
+
+        drawTableFilter(state.nums, numsFilter)
+        drawTableFilter(state.clients, clientsFilter)
+        drawTableFilter(state.materials, materialsFilter)
+        drawTableFilter(state.names, namesFilter)
+
+        bindTableFilters()
       }
 
       // console.timeEnd('draw orders')
 
       // console.time('add filters and listeners')
-
-      state['nums'] = [...new Set(state['nums'])].sort()
-      state['clients'] = [...new Set(state['clients'])].sort()
-      state['materials'] = [...new Set(state['materials'])].sort()
-      state['names'] = [...new Set(state['names'])].sort()
-
-      drawTableFilter(state.nums, numsFilter)
-      drawTableFilter(state.clients.sort(), clientsFilter)
-      drawTableFilter(state.materials.sort(), materialsFilter)
-      drawTableFilter(state.names.sort(), namesFilter)
       // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
       // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
       // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
       // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
       // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-      bindTableFilters()
 
       // console.timeEnd('add filters and listeners')
+      console.log('before', state.nums)
 
       // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
       loader.classList.add('hidden__input')
