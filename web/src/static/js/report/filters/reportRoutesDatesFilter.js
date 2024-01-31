@@ -5,6 +5,7 @@ export const reportRoutesDatesFilter = () => {
   const filterBtn = document.querySelector('.header-routes__planned--report')
   const filterDateFrom = document.querySelector('.header-routes__planned-date--report__from')
   const filterDateTo = document.querySelector('.header-routes__planned-date--report__to')
+  const refreshDataBtn = document.querySelector('.report-refresh')
 
   let today = getTime()
   today = today.substring(0, today.length - 5).trim()
@@ -46,7 +47,7 @@ export const reportRoutesDatesFilter = () => {
     getReports()
   })
 
-  filterBtn.addEventListener('click', () => {
+  refreshDataBtn.addEventListener('click', () => {
     getReports()
   })
 }

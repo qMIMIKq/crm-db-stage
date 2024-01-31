@@ -8,7 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&family=Yanone+Kaffeesatz:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&family=Yanone+Kaffeesatz:wght@200;300;400;500;600;700&display=swap"
+          rel="stylesheet">
     <title>{{.Title}}</title>
 </head>
 <body>
@@ -17,9 +18,9 @@
         <nav class="header__nav nav">
             <div class="nav__filters nav-filters">
                 {{if eq .GroupID "5"}}
-                    <select name="user" class="select-user main__button--select main__select">
+                <select name="user" class="select-user main__button--select main__select">
 
-                    </select>
+                </select>
                 {{end}}
 
                 <ul class="nav-filters__list nav-filters__plots"></ul>
@@ -75,9 +76,12 @@
                     </li>
                 </ul>
 
-{{/*                <div class="nav-control__total">*/}}
-{{/*                    Всего в работе*/}}
-{{/*                </div>*/}}
+                {{/*
+                <div class="nav-control__total">*/}}
+                    {{/* Всего в работе*/}}
+                    {{/*
+                </div>
+                */}}
             </div>
         </nav>
     </header>
@@ -124,11 +128,17 @@
                 </button>
                 <button class="main__button hidden__input header-routes__filter header-routes__error">Ошибка</button>
                 <button class="main__button hidden__input header-routes__filter header-routes__completed">Сдал</button>
-                <button class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В плане</button>
+                <button class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В
+                    плане
+                </button>
+
+                <button class="main__button--click report-refresh">Обновить</button>
                 <label class="planned__label">От</label>
-                <input type="date" class="main__button--click header-routes__filter header-routes__planned-date--report__from">
+                <input type="date"
+                       class="main__button--click header-routes__filter header-routes__planned-date--report__from">
                 <label class="planned__label">До</label>
-                <input type="date" class="main__button--click header-routes__filter header-routes__planned-date--report__to">
+                <input type="date"
+                       class="main__button--click header-routes__filter header-routes__planned-date--report__to">
             </div>
         </header>
 

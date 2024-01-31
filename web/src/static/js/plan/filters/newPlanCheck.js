@@ -11,6 +11,7 @@ export const reportPlanningDatesFilter = () => {
   const filterDateTo = document.querySelector('.header-routes__planned-date--report__to')
   const planDivider = document.querySelector('.plan-divider')
   const planHider = document.querySelector('.plan-hider')
+  const refreshDataBtn = document.querySelector('.report-refresh')
 
   planHider.addEventListener('click', () => {
     planHider.classList.toggle('plan-hider--chosen')
@@ -33,6 +34,11 @@ export const reportPlanningDatesFilter = () => {
   filterDateTo.setAttribute('min', String(today.trim()))
   filterDateFrom.setAttribute('min', String(today.trim()))
   const dynamicDate = document.querySelector('.table__route--date')
+
+  refreshDataBtn.addEventListener('click', () => {
+    deleteOrders()
+    getPlans()
+  })
 
   const recreatePlansTable = () => {
     deleteOrders()

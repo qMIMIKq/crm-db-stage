@@ -74,7 +74,7 @@ ul {
   &--reports {
     @media screen and (min-width: 1912px) {
       margin: 0 auto 15px;
-      width: 1912px;
+      width: 2017px;
     }
   }
 
@@ -448,4 +448,8 @@ input:disabled {
 
 .not-planned {
   color: #d4d421 !important;
+}
+
+.report-refresh {
+  margin-right: 10px;
 }
