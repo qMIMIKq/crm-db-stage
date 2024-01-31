@@ -42,7 +42,7 @@ const createRes = forms => {
       }
     })
 
-    console.log(obj)
+    // console.log(obj)
     res.push(obj)
     // console.log(res)
   })

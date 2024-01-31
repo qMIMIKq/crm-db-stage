@@ -59,10 +59,10 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
     adjustment.value = dayQuantityInfo.adjustment
     time.value = dayQuantityInfo.time
 
-    let check = false
+    let checkChange = false
 
     ;[up, adjustment, time].forEach(input => input.addEventListener('change', () => {
-        check = true
+        checkChange = true
     }))
 
     const defaultWorkTime = 43200
@@ -122,10 +122,11 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
                 dayQuantityInput.value = dayQuantityInfo.quantity
             }
         } else {
-            if (check) {
+            if (checkChange) {
                 dayQuantityInput.value = ''
                 document.querySelector('#shifts').value = ''
                 document.querySelector('#route__teorend').value = ''
+                console.log("just check ",checkChange)
                 addLog(user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments')
                 modal.click()
                 return
@@ -139,7 +140,8 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
         dayQuantityInfo.adjustment = Number(adjustment.value)
         dayQuantityInfo.time = Number(timeValue)
 
-        if (dayQuantityInfo.time && check) {
+        if (dayQuantityInfo.time && checkChange) {
+            console.log("theor check ",checkChange)
             addLog(user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments')
             getTheor()
         }

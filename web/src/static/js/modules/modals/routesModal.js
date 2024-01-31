@@ -801,10 +801,10 @@ export const triggerRoutesModal = e => {
     }
 
     dayQuantityInfo = {
-      'up': routeInfo.up,
-      'adjustment': routeInfo.adjustment,
-      'time': routeInfo.time,
-      'quantity': routeInfo.quantity,
+      'up': routeInfo.up || 0,
+      'adjustment': routeInfo.adjustment || 0,
+      'time': routeInfo.time || 0,
+      'quantity': routeInfo.quantity || 0,
     }
 
   } else {

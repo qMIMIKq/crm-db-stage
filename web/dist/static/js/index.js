@@ -4102,9 +4102,9 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
   up.value = dayQuantityInfo.up;
   adjustment.value = dayQuantityInfo.adjustment;
   time.value = dayQuantityInfo.time;
-  let check = false;
+  let checkChange = false;
   [up, adjustment, time].forEach(input => input.addEventListener('change', () => {
-    check = true;
+    checkChange = true;
   }));
   const defaultWorkTime = 43200;
   time.addEventListener('input', e => {
@@ -4158,10 +4158,11 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
         dayQuantityInput.value = dayQuantityInfo.quantity;
       }
     } else {
-      if (check) {
+      if (checkChange) {
         dayQuantityInput.value = '';
         document.querySelector('#shifts').value = '';
         document.querySelector('#route__teorend').value = '';
+        console.log("just check ", checkChange);
         (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
         modal.click();
         return;
@@ -4173,7 +4174,8 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     dayQuantityInfo.up = Number(up.value);
     dayQuantityInfo.adjustment = Number(adjustment.value);
     dayQuantityInfo.time = Number(timeValue);
-    if (dayQuantityInfo.time && check) {
+    if (dayQuantityInfo.time && checkChange) {
+      console.log("theor check ", checkChange);
       (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
       getTheor();
     }
@@ -6126,10 +6128,10 @@ const triggerRoutesModal = e => {
       disableBtn('end-route__time');
     }
     dayQuantityInfo = {
-      'up': routeInfo.up,
-      'adjustment': routeInfo.adjustment,
-      'time': routeInfo.time,
-      'quantity': routeInfo.quantity
+      'up': routeInfo.up || 0,
+      'adjustment': routeInfo.adjustment || 0,
+      'time': routeInfo.time || 0,
+      'quantity': routeInfo.quantity || 0
     };
   } else {
     routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value;
@@ -6675,7 +6677,7 @@ const showModal = modal => {
   modalElem.classList.remove('bounceOutDown');
   body.classList.add('body_block');
   modalElem.addEventListener('click', ev => {
-    console.time("close modal");
+    // console.time("close modal")
     const target = ev.target;
     if (target === modalElem) {
       modalElem.classList.add('bounceOutDown');
@@ -6684,8 +6686,9 @@ const showModal = modal => {
       modalElem.remove();
       window.removeEventListener('keydown', _routesModal__WEBPACK_IMPORTED_MODULE_0__.subCommentByEnter);
     }
-    console.timeEnd("close modal");
+    // console.timeEnd("close modal")
   });
+
   return modalElem;
 };
 
@@ -7029,7 +7032,8 @@ const createRes = forms => {
         }
       }
     });
-    console.log(obj);
+
+    // console.log(obj)
     res.push(obj);
     // console.log(res)
   });

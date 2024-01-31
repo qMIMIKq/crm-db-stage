@@ -12,7 +12,7 @@ export const showModal = modal => {
   modalElem.classList.remove('bounceOutDown')
   body.classList.add('body_block')
   modalElem.addEventListener('click', ev => {
-    console.time("close modal")
+    // console.time("close modal")
     const target = ev.target
     if (target === modalElem) {
       modalElem.classList.add('bounceOutDown')
@@ -21,7 +21,7 @@ export const showModal = modal => {
       modalElem.remove()
       window.removeEventListener('keydown', subCommentByEnter)
     }
-    console.timeEnd("close modal")
+    // console.timeEnd("close modal")
   })
   return modalElem
 }
