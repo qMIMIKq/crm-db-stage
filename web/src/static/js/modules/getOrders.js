@@ -139,17 +139,14 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         state['clients'] = [...new Set(state['clients'])].sort()
         state['materials'] = [...new Set(state['materials'])].sort()
         state['names'] = [...new Set(state['names'])].sort()
-
-        console.log('after', state.nums)
-
-
-        drawTableFilter(state.nums, numsFilter)
-        drawTableFilter(state.clients, clientsFilter)
-        drawTableFilter(state.materials, materialsFilter)
-        drawTableFilter(state.names, namesFilter)
-
-        bindTableFilters()
       }
+
+      drawTableFilter(state.nums, numsFilter)
+      drawTableFilter(state.clients, clientsFilter)
+      drawTableFilter(state.materials, materialsFilter)
+      drawTableFilter(state.names, namesFilter)
+
+      bindTableFilters()
 
       // console.timeEnd('draw orders')
 
@@ -161,7 +158,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
       // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
 
       // console.timeEnd('add filters and listeners')
-      console.log('before', state.nums)
 
       // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
       loader.classList.add('hidden__input')

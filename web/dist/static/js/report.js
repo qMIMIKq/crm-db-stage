@@ -3223,7 +3223,6 @@ const bindTableFilters = () => {
   bindFilter(clientsFilter);
   bindFilter(materialsFilter);
   bindFilter(namesFilter);
-  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums);
 };
 const showFilter = e => {
   const target = e.target;
@@ -3908,13 +3907,12 @@ const getOrders = function () {
       _state__WEBPACK_IMPORTED_MODULE_1__.state.clients = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients)].sort();
       _state__WEBPACK_IMPORTED_MODULE_1__.state.materials = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials)].sort();
       _state__WEBPACK_IMPORTED_MODULE_1__.state.names = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.names)].sort();
-      console.log('after', _state__WEBPACK_IMPORTED_MODULE_1__.state.nums);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
-      (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
     }
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.numsFilter);
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.clients, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.clientsFilter);
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
+    (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
 
     // console.timeEnd('draw orders')
 
@@ -3926,7 +3924,6 @@ const getOrders = function () {
     // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
 
     // console.timeEnd('add filters and listeners')
-    console.log('before', _state__WEBPACK_IMPORTED_MODULE_1__.state.nums);
 
     // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
     loader.classList.add('hidden__input');
