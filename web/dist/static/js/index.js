@@ -4710,12 +4710,12 @@ const changeIssuedModal = `
           name='error_msg' 
           id='error-route__msg'>
           
-        <div class="modal__shift-block">
-            <label style="margin-bottom: 0;" for="last" class="route__label for-oper">
-                Последняя
-            </label>
-            <input type="checkbox" name="last" id="last">
-        </div>
+<!--        <div class="modal__shift-block">-->
+<!--            <label style="margin-bottom: 0;" for="last" class="route__label for-oper">-->
+<!--                Последняя-->
+<!--            </label>-->
+<!--            <input type="checkbox" name="last" id="last">-->
+<!--        </div>-->
         
         <div class='confirm__section'>
             <button disabled class='main__button--click confirm__button confirm__button--ok issued-ok'>ОК</button>
@@ -7686,7 +7686,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "idReportFilter": () => (/* binding */ idReportFilter),
 /* harmony export */   "numsReportFilter": () => (/* binding */ numsReportFilter),
 /* harmony export */   "operatorReportFilter": () => (/* binding */ operatorReportFilter),
-/* harmony export */   "plotsReportFilter": () => (/* binding */ plotsReportFilter),
+/* harmony export */   "positionReportFilter": () => (/* binding */ positionReportFilter),
 /* harmony export */   "reportFiltersWrapper": () => (/* binding */ reportFiltersWrapper)
 /* harmony export */ });
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../modules/state */ "./web/src/static/js/modules/state.js");
@@ -7696,8 +7696,9 @@ __webpack_require__.r(__webpack_exports__);
 const reportFiltersWrapper = document.querySelector('.main-table__header');
 const idReportFilter = document.querySelector('#id');
 const numsReportFilter = document.querySelector('#numbers');
-const plotsReportFilter = document.querySelector('#order_plot');
+// export const plotsReportFilter = document.querySelector('#order_plot')
 const operatorReportFilter = document.querySelector('#operator');
+const positionReportFilter = document.querySelector('#route_position');
 const deleteReportsFilters = () => {
   const filters = document.querySelectorAll('.table__filter--new');
   if (filters[0] !== null) {
@@ -7729,6 +7730,8 @@ const bindReportsFilters = () => {
   bindFilter(idReportFilter);
   bindFilter(numsReportFilter);
   bindFilter(reportFiltersWrapper);
+  bindFilter(positionReportFilter);
+  bindFilter(operatorReportFilter);
 };
 const showFilter = e => {
   const target = e.target;
@@ -7740,6 +7743,7 @@ const showFilter = e => {
 const filterReports = (type, filter) => {
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.filtered = true;
   _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type] = filter;
+  console.log(type, filter);
   (0,_newAllReportFilter__WEBPACK_IMPORTED_MODULE_1__.newAllReportFilter)(false);
 };
 const bindFilter = elem => {
@@ -7844,6 +7848,7 @@ const getReports = () => {
     const nums = [];
     const ids = [];
     const operators = [];
+    const positions = [];
 
     // deleteTableFilters()
     // deleteOrders()
@@ -7854,12 +7859,14 @@ const getReports = () => {
       nums.push((0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.isEmptyData)(d.order_number));
       ids.push((0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.isEmptyData)(d.order_id));
       operators.push((0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.isEmptyData)(d.operator));
+      positions.push((0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.isEmptyData)(d.route_position));
     });
     (0,_filters_newAllReportFilter__WEBPACK_IMPORTED_MODULE_5__.newAllReportFilter)(true);
     loader.classList.add('hidden__input');
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.drawReportsFilter)([...new Set(ids)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.idReportFilter);
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.drawReportsFilter)([...new Set(nums)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.numsReportFilter);
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.drawReportsFilter)([...new Set(operators)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.operatorReportFilter);
+    (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.drawReportsFilter)([...new Set(positions)], _filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.positionReportFilter);
     (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_3__.bindReportsFilters)();
   });
 };

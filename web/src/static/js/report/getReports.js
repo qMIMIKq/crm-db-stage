@@ -6,7 +6,8 @@ import {
   deleteReportsFilters,
   drawReportsFilter,
   idReportFilter,
-  numsReportFilter, operatorReportFilter
+  numsReportFilter,
+  operatorReportFilter, positionReportFilter
 } from "./filters/reportFilters";
 import {appAddr} from "../../../../../appAddr";
 import {newAllReportFilter} from "./filters/newAllReportFilter";
@@ -55,6 +56,7 @@ export const getReports = () => {
       const nums = []
       const ids = []
       const operators = []
+      const positions = []
 
       // deleteTableFilters()
       // deleteOrders()
@@ -65,6 +67,7 @@ export const getReports = () => {
         nums.push(isEmptyData(d.order_number))
         ids.push(isEmptyData(d.order_id))
         operators.push(isEmptyData(d.operator))
+        positions.push(isEmptyData(d.route_position))
       })
 
       newAllReportFilter(true)
@@ -72,6 +75,7 @@ export const getReports = () => {
       drawReportsFilter([...new Set(ids)], idReportFilter)
       drawReportsFilter([...new Set(nums)], numsReportFilter)
       drawReportsFilter([...new Set(operators)], operatorReportFilter)
+      drawReportsFilter([...new Set(positions)], positionReportFilter)
 
       bindReportsFilters()
     })

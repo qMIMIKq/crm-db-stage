@@ -4,8 +4,9 @@ import {newAllReportFilter} from "./newAllReportFilter";
 export const reportFiltersWrapper = document.querySelector('.main-table__header')
 export const idReportFilter = document.querySelector('#id')
 export const numsReportFilter = document.querySelector('#numbers')
-export const plotsReportFilter = document.querySelector('#order_plot')
+// export const plotsReportFilter = document.querySelector('#order_plot')
 export const operatorReportFilter = document.querySelector('#operator')
+export const positionReportFilter = document.querySelector('#route_position')
 
 
 export const deleteReportsFilters = () => {
@@ -44,6 +45,8 @@ export const bindReportsFilters = () => {
   bindFilter(idReportFilter)
   bindFilter(numsReportFilter)
   bindFilter(reportFiltersWrapper)
+  bindFilter(positionReportFilter)
+  bindFilter(operatorReportFilter)
 }
 
 const showFilter = e => {
@@ -57,6 +60,8 @@ const showFilter = e => {
 const filterReports = (type, filter) => {
   state['filtered'] = true
   state['tableFilters'][type] = filter
+  console.log(type, filter)
+
   newAllReportFilter(false)
 }
 
