@@ -140,7 +140,7 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
     dayQuantityInfo.adjustment = Number(adjustment.value)
     dayQuantityInfo.time = Number(timeValue)
 
-    if (dayQuantityInfo.time && checkChange) {
+    if (dayQuantityInfo.time) {
       console.log("theor check ", checkChange)
       getTheor()
 
