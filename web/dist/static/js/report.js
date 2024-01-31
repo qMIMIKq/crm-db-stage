@@ -4689,12 +4689,12 @@ const changeIssuedModal = `
           name='error_msg' 
           id='error-route__msg'>
           
-<!--        <div class="modal__shift-block">-->
-<!--            <label style="margin-bottom: 0;" for="last" class="route__label for-oper">-->
-<!--                Последняя-->
-<!--            </label>-->
-<!--            <input type="checkbox" name="last" id="last">-->
-<!--        </div>-->
+        <div class="modal__shift-block hidden__input">
+            <label style="margin-bottom: 0;" for="last" class="route__label for-oper">
+                Последняя
+            </label>
+            <input type="checkbox" name="last" id="last">
+        </div>
         
         <div class='confirm__section'>
             <button disabled class='main__button--click confirm__button confirm__button--ok issued-ok'>ОК</button>
