@@ -4153,8 +4153,10 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     dayQuantityInfo.time = Number(timeValue);
     if (dayQuantityInfo.time && checkChange) {
       console.log("theor check ", checkChange);
-      (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
       getTheor();
+      if (checkChange) {
+        (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
+      }
     }
     modal.click();
   });

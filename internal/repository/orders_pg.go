@@ -299,9 +299,9 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					updateReportInfoQuery := fmt.Sprintf(`
 						UPDATE reports
-							 SET quantity = $1, need_shifts = $2, 
-							     plan = $3, order_timestamp = $4, hidden_shift = $5
-						 WHERE report_id = $6
+							 SET quantity = $1, need_shifts = $2, plan = $3, order_timestamp = $4, hidden_shift = $5,
+							     order_number = $6, order_client = $7, order_name = $8
+						 WHERE report_id = $9
 					`)
 
 					for i, report := range reports {
@@ -309,7 +309,9 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 						//log.Info().Caller().Msgf("day quantity %v", dayQuantity)
 						if _, err := o.db.Exec(updateReportInfoQuery, route.Quantity, route.NeedShifts,
-							route.DayQuantity, route.TheorEnd, i+1, report.ReportID); err != nil {
+							route.DayQuantity, route.TheorEnd, i+1, order.Number,
+							order.Client, order.Name, report.ReportID,
+						); err != nil {
 							log.Err(err).Caller().Msg("error is")
 						}
 
@@ -555,9 +557,9 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					updateReportInfoQuery := fmt.Sprintf(`
 						UPDATE reports
-							 SET quantity = $1, need_shifts = $2, 
-							     plan = $3, order_timestamp = $4, hidden_shift = $5
-						 WHERE report_id = $6
+							 SET quantity = $1, need_shifts = $2, plan = $3, order_timestamp = $4, hidden_shift = $5,
+							     order_number = $6, order_client = $7, order_name = $8
+						 WHERE report_id = $9
 					`)
 
 					for i, report := range reports {
@@ -565,7 +567,9 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 						//log.Info().Caller().Msgf("day quantity %v", dayQuantity)
 						if _, err := o.db.Exec(updateReportInfoQuery, route.Quantity, route.NeedShifts,
-							route.DayQuantity, route.TheorEnd, i+1, report.ReportID); err != nil {
+							route.DayQuantity, route.TheorEnd, i+1, order.Number,
+							order.Client, order.Name, report.ReportID,
+						); err != nil {
 							log.Err(err).Caller().Msg("error is")
 						}
 
