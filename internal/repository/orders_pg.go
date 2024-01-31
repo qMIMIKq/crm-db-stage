@@ -336,10 +336,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				var reports []domain.Report
 				err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
 
-				var prevTotal string
-				var totalForPlan string
-				var shift int
-				var hiddenShift int
+				var prevTotal, totalForPlan string
+				var shift, hiddenShift, lastHiddenWithShift int
 				for i, report := range reports {
 					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
 						log.Err(err).Caller().Msg("error is")
@@ -351,18 +349,19 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
+						lastHiddenWithShift = report.HiddenShift
 					}
 
 					hiddenShift = report.HiddenShift
 					prevTotal = report.Issued
+					log.Info().Msgf("hidden shift %v / shift %v / last hidden with shift %v", hiddenShift, shift, lastHiddenWithShift)
 				}
 
-				if hiddenShift >= shift {
+				if hiddenShift >= shift && shift != 1 {
 					shift -= 1
 					if shift < 0 {
 						shift = 0
 					}
-
 				}
 
 				_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
@@ -395,22 +394,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						order.CanRemove = "no"
 						onlyOneFlag = true
 					}
-
-					//if !(len(route.StartTime) > 0) || !(len(keys) > 0) || !(len(route.AddedDates) > 0) ||
-					//	!(len(route.ErrorTime) > 0) || !(len(route.PauseTime) > 0) {
-					//	log.Info().Caller().Msgf("we have keys or added dates or start time or plan dates or error or pause time")
-					//} else {
-					//	//order.CanRemove = "yes"
-					//	//onlyOneFlag = true
-					//}
 				}
-
-				//if !(len(keys) > 0) || !(len(route.AddedDates) > 0) || !(len(route.StartTime) > 0) || !(len(route.EndTime) > 0) ||
-				//	!(len(route.ErrorTime) > 0) || !(len(route.PauseTime) > 0) {
-				//	//onlyOneFlag = t
-				//} else {
-				//
-				//}
 
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
@@ -618,10 +602,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				var reports []domain.Report
 				err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
 
-				var prevTotal string
-				var totalForPlan string
-				var shift int
-				var hiddenShift int
+				var prevTotal, totalForPlan string
+				var shift, hiddenShift, lastHiddenWithShift int
 				for i, report := range reports {
 					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
 						log.Err(err).Caller().Msg("error is")
@@ -633,18 +615,19 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
+						lastHiddenWithShift = report.HiddenShift
 					}
 
 					hiddenShift = report.HiddenShift
 					prevTotal = report.Issued
+					log.Info().Msgf("hidden shift %v / shift %v / last hidden with shift %v", hiddenShift, shift, lastHiddenWithShift)
 				}
 
-				if hiddenShift >= shift {
+				if hiddenShift >= shift && shift != 1 {
 					shift -= 1
 					if shift < 0 {
 						shift = 0
 					}
-
 				}
 
 				_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
@@ -921,10 +904,8 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			var reports []domain.Report
 			err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
 
-			var prevTotal string
-			var totalForPlan string
-			var shift int
-			var hiddenShift int
+			var prevTotal, totalForPlan string
+			var shift, hiddenShift, lastHiddenWithShift int
 			for i, report := range reports {
 				if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
 					log.Err(err).Caller().Msg("error is")
@@ -936,18 +917,24 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 
 				if report.CurrentShift != 0 {
 					shift = report.CurrentShift
+					lastHiddenWithShift = report.HiddenShift
 				}
 
 				hiddenShift = report.HiddenShift
 				prevTotal = report.Issued
+				log.Info().Msgf("hidden shift %v / shift %v / last hidden with shift %v", hiddenShift, shift, lastHiddenWithShift)
 			}
 
-			if hiddenShift >= shift {
+			if hiddenShift >= shift && shift != 1 {
 				shift -= 1
 				if shift < 0 {
 					shift = 0
 				}
+			}
 
+			_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
+			if err != nil {
+				log.Err(err).Caller().Msg("error is")
 			}
 
 			_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
