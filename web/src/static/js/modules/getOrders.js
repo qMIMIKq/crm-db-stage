@@ -89,9 +89,10 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
       }
 
       // deleteOrders()
-      deleteTableFilters()
 
       if (data.data) {
+        deleteTableFilters()
+
         data.data.forEach(d => {
           if (state['maxTime']) {
             if (d.time_of_modify) {
@@ -109,8 +110,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           state['clients'].push(isEmptyData(d.client))
           state['materials'].push(isEmptyData(d.material))
           state['names'].push(isEmptyData(d.name))
-
-          console.log(state.nums)
         })
 
         if (updateOnly) {
@@ -139,14 +138,14 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         state['clients'] = [...new Set(state['clients'])].sort()
         state['materials'] = [...new Set(state['materials'])].sort()
         state['names'] = [...new Set(state['names'])].sort()
+
+        drawTableFilter(state.nums, numsFilter)
+        drawTableFilter(state.clients, clientsFilter)
+        drawTableFilter(state.materials, materialsFilter)
+        drawTableFilter(state.names, namesFilter)
+
+        bindTableFilters()
       }
-
-      drawTableFilter(state.nums, numsFilter)
-      drawTableFilter(state.clients, clientsFilter)
-      drawTableFilter(state.materials, materialsFilter)
-      drawTableFilter(state.names, namesFilter)
-
-      bindTableFilters()
 
       // console.timeEnd('draw orders')
 

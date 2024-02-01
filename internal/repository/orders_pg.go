@@ -165,7 +165,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					checkToday, _ := time.Parse(layout, today)
 
 					if route.EndTime != "" {
-						log.Info().Msgf("comepleted %v / %v", order.ID, route.Plot)
 
 						if checkPlanDate.Unix() > checkToday.Unix() {
 							continue datesLoop
@@ -307,6 +306,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					for i, report := range reports {
 						oldReportDate, _ := time.Parse(layout, strings.Split(report.ReportDate, "T")[0])
 
+						//log.Info().Msgf("need shifts %v", route.NeedShifts)
 						//log.Info().Caller().Msgf("day quantity %v", dayQuantity)
 						if _, err := o.db.Exec(updateReportInfoQuery, route.Quantity, route.NeedShifts,
 							route.DayQuantity, route.TheorEnd, i+1, order.Number,
@@ -334,14 +334,16 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 
 				var reports []domain.Report
-				err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
+				if err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeID); err != nil {
+					log.Err(err).Msgf("error is")
+				}
 
 				var prevTotal, totalForPlan string
-				var shift, hiddenShift, lastHiddenWithShift int
+				var shift, hiddenShift int
+				checkTheor := false
 				for i, report := range reports {
-					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
-						log.Err(err).Caller().Msg("error is")
-					}
+					theorAdjustment := ""
+					hiddenShift = report.HiddenShift
 
 					if i == len(reports)-2 {
 						totalForPlan = report.Issued
@@ -349,12 +351,22 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
-						lastHiddenWithShift = report.HiddenShift
+
+						if report.CurrentShift == 1 && !checkTheor {
+							theorAdjustment = strconv.Itoa(route.Adjustment)
+							checkTheor = true
+						}
+					} else if !checkTheor {
+						theorAdjustment = strconv.Itoa(route.Adjustment)
+						//checkTheor = true
 					}
 
-					hiddenShift = report.HiddenShift
+					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1, theor_adjustment = $2  WHERE report_id = $3", prevTotal, theorAdjustment, report.ReportID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
 					prevTotal = report.Issued
-					log.Info().Msgf("hidden shift %v / shift %v / last hidden with shift %v", hiddenShift, shift, lastHiddenWithShift)
+					//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 				}
 
 				if hiddenShift >= shift && shift != 1 {
@@ -364,8 +376,13 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
-				_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
-				if err != nil {
+				if checkTheor {
+					if _, err = o.db.Exec("UPDATE reports SET theor_adjustment = $1 WHERE current_shift < 1 AND route_id = $2", "", routeID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+				}
+
+				if _, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID); err != nil {
 					log.Err(err).Caller().Msg("error is")
 				}
 
@@ -600,14 +617,16 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 
 				var reports []domain.Report
-				err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
+				if err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeID); err != nil {
+					log.Err(err).Msgf("error is")
+				}
 
 				var prevTotal, totalForPlan string
-				var shift, hiddenShift, lastHiddenWithShift int
+				var shift, hiddenShift int
+				checkTheor := false
 				for i, report := range reports {
-					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
-						log.Err(err).Caller().Msg("error is")
-					}
+					theorAdjustment := ""
+					hiddenShift = report.HiddenShift
 
 					if i == len(reports)-2 {
 						totalForPlan = report.Issued
@@ -615,12 +634,22 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
-						lastHiddenWithShift = report.HiddenShift
+
+						if report.CurrentShift == 1 && !checkTheor {
+							theorAdjustment = strconv.Itoa(route.Adjustment)
+							checkTheor = true
+						}
+					} else if !checkTheor {
+						theorAdjustment = strconv.Itoa(route.Adjustment)
+						//checkTheor = true
 					}
 
-					hiddenShift = report.HiddenShift
+					if _, err := o.db.Exec("UPDATE reports SET prev_total = $1, theor_adjustment = $2  WHERE report_id = $3", prevTotal, theorAdjustment, report.ReportID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+
 					prevTotal = report.Issued
-					log.Info().Msgf("hidden shift %v / shift %v / last hidden with shift %v", hiddenShift, shift, lastHiddenWithShift)
+					//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 				}
 
 				if hiddenShift >= shift && shift != 1 {
@@ -630,8 +659,13 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
-				_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
-				if err != nil {
+				if checkTheor {
+					if _, err = o.db.Exec("UPDATE reports SET theor_adjustment = $1 WHERE current_shift < 1 AND route_id = $2", "", routeID); err != nil {
+						log.Err(err).Caller().Msg("error is")
+					}
+				}
+
+				if _, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID); err != nil {
 					log.Err(err).Caller().Msg("error is")
 				}
 
@@ -902,14 +936,16 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			}
 
 			var reports []domain.Report
-			err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeReports.RouteID)
+			if err = o.db.Select(&reports, "SELECT * FROM reports WHERE route_id = $1 ORDER BY report_date", routeID); err != nil {
+				log.Err(err).Msgf("error is")
+			}
 
 			var prevTotal, totalForPlan string
-			var shift, hiddenShift, lastHiddenWithShift int
+			var shift, hiddenShift int
+			checkTheor := false
 			for i, report := range reports {
-				if _, err := o.db.Exec("UPDATE reports SET prev_total = $1 WHERE report_id = $2", prevTotal, report.ReportID); err != nil {
-					log.Err(err).Caller().Msg("error is")
-				}
+				theorAdjustment := ""
+				hiddenShift = report.HiddenShift
 
 				if i == len(reports)-2 {
 					totalForPlan = report.Issued
@@ -917,12 +953,22 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 
 				if report.CurrentShift != 0 {
 					shift = report.CurrentShift
-					lastHiddenWithShift = report.HiddenShift
+
+					if report.CurrentShift == 1 && !checkTheor {
+						theorAdjustment = strconv.Itoa(route.Adjustment)
+						checkTheor = true
+					}
+				} else if !checkTheor {
+					theorAdjustment = strconv.Itoa(route.Adjustment)
+					//checkTheor = true
 				}
 
-				hiddenShift = report.HiddenShift
+				if _, err := o.db.Exec("UPDATE reports SET prev_total = $1, theor_adjustment = $2  WHERE report_id = $3", prevTotal, theorAdjustment, report.ReportID); err != nil {
+					log.Err(err).Caller().Msg("error is")
+				}
+
 				prevTotal = report.Issued
-				log.Info().Msgf("hidden shift %v / shift %v / last hidden with shift %v", hiddenShift, shift, lastHiddenWithShift)
+				//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 			}
 
 			if hiddenShift >= shift && shift != 1 {
@@ -932,15 +978,16 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				}
 			}
 
-			_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
-			if err != nil {
+			if checkTheor {
+				if _, err = o.db.Exec("UPDATE reports SET theor_adjustment = $1 WHERE current_shift < 1 AND route_id = $2", "", routeID); err != nil {
+					log.Err(err).Caller().Msg("error is")
+				}
+			}
+
+			if _, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID); err != nil {
 				log.Err(err).Caller().Msg("error is")
 			}
 
-			_, err = o.db.Exec("UPDATE planning SET shift = $1, order_issued = $2 WHERE route_id = $3", shift, totalForPlan, routeID)
-			if err != nil {
-				log.Err(err).Caller().Msg("error is")
-			}
 			//_, err = o.db.Exec("UPDATE planning SET shift = $1 WHERE route_id = $2", counter, routeID)
 			//if err != nil {
 			//	log.Err(err).Caller().Msg("error is")

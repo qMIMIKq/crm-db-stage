@@ -136,6 +136,15 @@ export const drawReport = async (d) => {
           <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--need-shift'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
+         
+          <li class="table-body_cell table__use table__plan--theoradj">
+             <input readonly class="table__data" tabindex="-1"
+              type="number" 
+              name="issued" 
+              required  autocomplete="off"
+              value="${d.theor_adjustment}">
+          </li>
+          
           <li class="table-body_cell table__use table__plan--adj">
              <input readonly class="table__data" tabindex="-1"
               type="number" 

@@ -9,6 +9,11 @@ type PlansService struct {
 	repo repository.Plans
 }
 
+func (p PlansService) AutoShiftPlan(shift *domain.PlanShift) error {
+	//TODO implement me
+	return p.repo.AutoShiftPlan(shift)
+}
+
 func (p PlansService) ShiftPlan(shift *domain.PlanShift) error {
 	return p.repo.ShiftPlan(shift)
 }

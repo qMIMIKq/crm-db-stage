@@ -15,6 +15,37 @@ type PlansPG struct {
 	reportsPG *ReportsPG
 }
 
+func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
+	log.Info().Caller().Interface("shifter", shift).Msgf("shift is")
+
+	var planDates []*domain.DbPlanInfo
+	queryRoutePlan := fmt.Sprintf(`
+		SELECT plan_date, divider, queues, route_id, route_plot, order_id
+		  FROM plans
+     WHERE route_id != $1
+       AND route_plot = $2
+       AND plan_date > $3
+		 ORDER BY plan_date
+	`)
+
+	startForRemove := shift.LastDate
+	planRoutes := map[string][]*domain.DbPlanInfo{}
+	log.Info().Caller().Msgf("remove planf from date %v", startForRemove)
+
+	err := p.db.Select(&planDates, queryRoutePlan, shift.RouteID, shift.RoutePlot, shift.LastDate)
+	if err != nil {
+		return err
+	}
+
+	for _, plan := range planDates {
+		log.Info().Caller().Interface("plan", plan).Msgf("plan !")
+		planRoutes[plan.RouteID] = append(planRoutes[plan.RouteID], plan)
+	}
+
+	//TODO implement me
+	return nil
+}
+
 func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 	var planDates []*domain.DbPlanInfo
 	queryRoutePlan := fmt.Sprintf(`

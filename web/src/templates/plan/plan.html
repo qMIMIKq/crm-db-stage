@@ -17,11 +17,11 @@
     <header class="header">
         <nav class="header__nav nav">
             <div class="nav__filters nav-filters">
-                {{/*                {{if eq .GroupID "5"}}*/}}
-                {{/*                    <select name="user" class="select-user main__button--select main__select">*/}}
+                {{/* {{if eq .GroupID "5"}}*/}}
+                {{/* <select name="user" class="select-user main__button--select main__select">*/}}
 
-                {{/*                    </select>*/}}
-                {{/*                {{end}}*/}}
+                {{/* </select>*/}}
+                {{/* {{end}}*/}}
 
                 <ul class="nav-filters__list nav-filters__plots"></ul>
                 <ul class="nav-filters__list nav-filters__filters"></ul>
@@ -76,9 +76,12 @@
                     </li>
                 </ul>
 
-                {{/*                <div class="nav-control__total">*/}}
-                {{/*                    Всего в работе*/}}
-                {{/*                </div>*/}}
+                {{/*
+                <div class="nav-control__total">*/}}
+                    {{/* Всего в работе*/}}
+                    {{/*
+                </div>
+                */}}
             </div>
         </nav>
     </header>
@@ -234,6 +237,14 @@
                         <option value="все">Все</option>
                     </select>
                 </li>
+<!--                <li class="table__cell table__cell&#45;&#45;top table__plan&#45;&#45;shift">-->
+<!--                    <label for="order_operator">Авто</label>-->
+<!--                    <input class="hidden__input filter__type" value="plan" type="text">-->
+<!--                    <select class="table__filter main__button main__select hidden__input" name="issued"-->
+<!--                            id="auto-shifting">-->
+<!--                        <option value="все">Все</option>-->
+<!--                    </select>-->
+<!--                </li>-->
                 <li class="table__cell table__cell--top table__plan--shift">
                     <label for="order_operator">Сдвиг</label>
                     <input class="hidden__input filter__type" value="plan" type="text">

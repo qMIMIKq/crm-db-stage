@@ -109,14 +109,15 @@ export const issuedHandlerModal = (e, issuedInput, issuedTodayInput, plotI, user
     }
     addReportMsg(`${date.value.replaceAll('-', '.') || today.replaceAll('-', '.')}__${userData.value}__${plot.value}__${modalIssuedInput.value}__${modalShift.checked ? "last" : "nlast"}__${modalAdjustmentInput.value}`, '#visible__comments')
 
-    if (modalShift.checked) {
-      shift.value = 'Последняя'
-    } else {
-      shift.value = ''
-    }
+    // if (modalShift.checked) {
+    //   shift.value = 'Последняя'
+    // } else {
+    //   shift.value = ''
+    // }
 
+    shift.value = ''
     if (check) {
-      addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} Наладка ${modalAdjustmentInput.value} Выдал ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments')
+      addLog(user.nickname, `${plot.value} За смену ${date.value === today ? '' : date.value} ${userData.value} Наладка ${modalAdjustmentInput.value} Выдал ${modalIssuedInput.value}`, '#visible__comments')
       let alreadyInDateCheck = false
 
       for (let i = 0; i < updateData.length; i++) {
@@ -137,7 +138,6 @@ export const issuedHandlerModal = (e, issuedInput, issuedTodayInput, plotI, user
       if (date.value !== today) {
 
       } else {
-        console.log('TODAY')
         if (modalIssuedInput.value) {
           issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value)
         }
@@ -145,7 +145,7 @@ export const issuedHandlerModal = (e, issuedInput, issuedTodayInput, plotI, user
 
     } else {
       issuedTodayInput.value = Number(issuedTodayInput.value) + Number(modalIssuedInput.value)
-      addLog(userData.value, `${plot.value} За смену ${modalIssuedInput.value} ${modalShift.checked ? 'последняя' : ''}`, '#visible__comments')
+      addLog(userData.value, `${plot.value} За смену ${modalIssuedInput.value}`, '#visible__comments')
     }
 
     // canRemove.value = "no"

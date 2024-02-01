@@ -6,6 +6,7 @@ import {getPlans} from "./getPlans";
 import {addTriggers} from "../modules/addTriggers";
 import {triggerFilesModal} from "../modules/modals/downloadFilesModal";
 import {shiftHandler} from "./shiftHandler";
+import {autoShiftHandler} from "./autoShiftHandler";
 
 export const table = document.querySelector('.main-table')
 
@@ -172,6 +173,10 @@ export const drawPlan = (d, data) => {
           <li  class='table-body_cell table-body__helper table__plan--report'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
+<!--          <li  class='table-body_cell table-body_cell&#45;&#45;flex table-body__helper table__plan&#45;&#45;shift'>-->
+<!--&lt;!&ndash;              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>&ndash;&gt;-->
+<!--              <input readonly class='table__data shift__auto main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='Авто' tabindex='-1' autocomplete='off'>-->
+<!--          </li>-->
           <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
 <!--              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
               <input readonly class='table__data shift__forw main__button click-chose table__data--ro' type='text' name='material' value='>' tabindex='-1' autocomplete='off'>
@@ -582,6 +587,12 @@ const planningHandler = (currentOrder, d, addedDates) => {
     // shiftPrev.addEventListener('click', () => {
     //   // console.log(modalAddedDates)
     //   shiftHandler(shifter, 'prev', modalAddedDates)
+    // })
+
+    // const shiftAuto = currentOrder.querySelector('.shift__auto')
+    // shiftAuto.addEventListener('click', () => {
+    //   // console.log(modalAddedDates)
+    //   autoShiftHandler(shifter, '', modalAddedDates, currentOrder)
     // })
 
     const shiftForw = currentOrder.querySelector('.shift__forw')
