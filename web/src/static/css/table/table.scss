@@ -490,15 +490,35 @@ input.tr {
     max-width: 105px;
   }
 
+  &__plan--shift {
+    min-width: 73px;
+    max-width: 73px;
+  }
+
+  &__plan--need-shift {
+    min-width: 100px;
+    max-width: 100px;
+  }
+
+  &__plan--adj {
+    min-width: 90px;
+    max-width: 90px;
+  }
+
+  &__plan--percent {
+    min-width: 80px;
+    max-width: 80px;
+  }
+
   &__shift--report {
     min-width: 75px;
     max-width: 75px;
   }
 
-  &__plan--shift {
-    min-width: 65px;
-    max-width: 65px;
-  }
+  //&__plan--shift {
+  //  min-width: 65px;
+  //  max-width: 65px;
+  //}
 
   &__route--report {
     min-width: 75px;

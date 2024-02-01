@@ -130,13 +130,13 @@ export const drawReport = async (d) => {
           <li class="table-body_cell table__operator--report">
             <input readonly type="text" class="table__data" value="${d.operator}">
           </li>
-          <li class='table-body_cell table-body__helper ${d.shift ? "table-body__attr" : ""} table__plan--report'>
+          <li class='table-body_cell table-body__helper ${d.shift ? "table-body__attr" : ""} table__plan--shift'>
               <input readonly class='table__data table__data--ro ${burning ? 'bg-red' : ''} ${last ? 'report-complete' : ''}' type='text' name='shift' value='${d.current_shift || ""}' tabindex='-1' autocomplete='off'>
           </li>
-          <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--report'>
+          <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--need-shift'>
               <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
-          <li class="table-body_cell table__use table__plan--report">
+          <li class="table-body_cell table__use table__plan--adj">
              <input readonly class="table__data" tabindex="-1"
               type="number" 
               name="issued" 
@@ -160,7 +160,7 @@ export const drawReport = async (d) => {
               required  autocomplete="off"
               value="${d.issued}">
           </li>
-          <li class="table-body_cell table__issued-plan--report">
+          <li class="table-body_cell table__plan--percent">
             <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>
           </li>
         </ul>

@@ -24,6 +24,7 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 
 	for _, file := range files {
 		//log.Info().Interface("file", file).Caller().Msgf("file")
+		//log.Info().Msgf("file name %v", file.Filename)
 
 		filePath := DataPath + file.Filename
 		fileType := strings.Split(file.Filename, ".")
@@ -61,11 +62,11 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 
 			var url string
 			if checkType == "pdf" {
-				//url = "http://172.20.10.7:5001/pdf-convert"
-				url = "http://app-converter:5000/pdf-convert"
+				url = "http://172.20.10.7:5001/pdf-convert"
+				//url = "http://app-converter:5000/pdf-convert"
 			} else {
-				//url = "http://172.20.10.7:5001/dxf-convert"
-				url = "http://app-converter:5000/dxf-convert"
+				url = "http://172.20.10.7:5001/dxf-convert"
+				//url = "http://app-converter:5000/dxf-convert"
 			}
 
 			req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body.Bytes()))
