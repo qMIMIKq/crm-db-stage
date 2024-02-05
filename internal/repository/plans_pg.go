@@ -18,6 +18,8 @@ type PlansPG struct {
 func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 	log.Info().Caller().Interface("shifter", shift).Msgf("shift is")
 
+	dateLayout := "2006-01-02"
+
 	var planDates []*domain.DbPlanInfo
 	queryRoutePlan := fmt.Sprintf(`
 		SELECT plan_date, divider, queues, route_id, route_plot, order_id
@@ -30,7 +32,7 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 
 	startForRemove := shift.LastDate
 	planRoutes := map[string][]*domain.DbPlanInfo{}
-	log.Info().Caller().Msgf("remove planf from date %v", startForRemove)
+	log.Info().Caller().Msgf("remove plan from date %v", startForRemove)
 
 	err := p.db.Select(&planDates, queryRoutePlan, shift.RouteID, shift.RoutePlot, shift.LastDate)
 	if err != nil {
@@ -38,11 +40,183 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 	}
 
 	for _, plan := range planDates {
-		log.Info().Caller().Interface("plan", plan).Msgf("plan !")
 		planRoutes[plan.RouteID] = append(planRoutes[plan.RouteID], plan)
 	}
 
-	//TODO implement me
+	deleteQuery := fmt.Sprintf(`
+		DELETE FROM plans
+		 WHERE route_id = $1
+			 AND plan_date >= $2
+	`)
+
+	planQuery := fmt.Sprintf(`
+		INSERT INTO plans (route_id, order_id, route_plot, plan_date, divider, queues)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`)
+
+	_, err = p.db.Exec(deleteQuery, shift.RouteID, startForRemove)
+	for i := 0; i < shift.Shifts; i++ {
+		var newDate time.Time
+		res, _ := time.Parse(dateLayout, strings.Split(shift.LastDate, "T")[0])
+		if i != 0 {
+			newDate = res.Add(24 * time.Hour)
+		} else {
+			newDate = res
+		}
+
+		stringDate := newDate.Format(dateLayout)
+		log.Info().Caller().Msgf("string date for plan %v", stringDate)
+		shift.LastDate = stringDate
+		if _, err = p.db.Exec(planQuery, shift.RouteID, shift.OrderID, shift.RoutePlot, stringDate, 1, 1); err != nil {
+			log.Err(err).Msg("error is")
+		}
+
+	}
+
+	log.Info().Caller().Msgf("last date from shifter %v", shift.LastDate)
+
+	lastDate, _ := time.Parse(dateLayout, strings.Split(shift.LastDate, "T")[0])
+	for id := range planRoutes {
+		_, err = p.db.Exec(deleteQuery, id, startForRemove)
+
+		log.Info().Caller().Msgf("route id %v", id)
+		//log.Info().Caller().Interface("plan", plans).Msgf("plan for id %v", id)
+	}
+
+	for _, plan := range planDates {
+		planDate, _ := time.Parse(dateLayout, strings.Split(plan.PlanDate, "T")[0])
+
+		var dateForQuery string
+		if lastDate.Unix() >= planDate.Unix() {
+			log.Info().Caller().Msg("bigger")
+			lastDate = lastDate.Add(24 * time.Hour)
+			dateForQuery = lastDate.Format(dateLayout)
+		} else {
+			log.Info().Caller().Msg("smaller")
+			//planDate.Add(24 * time.Hour)
+			dateForQuery = planDate.Format(dateLayout)
+		}
+
+		_, err = p.db.Exec(planQuery, plan.RouteID, plan.OrderID, plan.RoutePlot, dateForQuery, plan.Divider, plan.Queues)
+		log.Info().Caller().Msgf("plan date %v / date for query %v", plan.PlanDate, dateForQuery)
+	}
+
+	var shiftCheck []string
+	shiftQuery := fmt.Sprintf(`
+		SELECT plan_date
+		  FROM plans
+		 WHERE route_id = $1
+	`)
+
+	err = p.db.Select(&shiftCheck, shiftQuery, shift.RouteID)
+	log.Info().Interface("check", shiftCheck).Msg("shift check")
+
+	for i, check := range shiftCheck {
+		shiftCheck[i] = strings.Split(check, "T")[0]
+	}
+
+	var routesInfo []*domain.Route
+	var routeInfo domain.Route
+
+	queryRoutes := fmt.Sprintf(`
+		SELECT *
+	  FROM routes
+	 WHERE route_id = $1
+	`)
+
+	err = p.db.Get(&routeInfo, queryRoutes, shift.RouteID)
+	routeInfo.PlanDates = strings.Join(shiftCheck, ", ")
+	routesInfo = append(routesInfo, &routeInfo)
+
+	for route, plans := range planRoutes {
+		var routeInfo domain.Route
+		err = p.db.Get(&routeInfo, queryRoutes, route)
+
+		var planDates []string
+		for _, plan := range plans {
+			planDates = append(planDates, plan.PlanDate)
+		}
+
+		routeInfo.PlanDates = strings.Join(planDates, ", ")
+		routesInfo = append(routesInfo, &routeInfo)
+	}
+
+	routePlanQuery := fmt.Sprintf(`
+		UPDATE routes 
+       SET plan_dates = $1
+		WHERE route_id = $2
+  `)
+
+	deleteReportsQuery := fmt.Sprintf(`
+		DELETE FROM reports WHERE route_id = $1 AND report_date >= $2
+	`)
+
+	loc, _ := time.LoadLocation("Europe/Moscow")
+	timeOfModify := time.Now().In(loc).Format("2006-01-02 15:04:05")
+	orderModifyQuery := fmt.Sprintf(`
+		UPDATE orders SET time_of_modify = $1 WHERE order_id = $2
+	`)
+
+	orderQuery := fmt.Sprintf(`
+		SELECT * FROM orders WHERE order_id = $1
+	`)
+
+	layout := "2006-01-02"
+	today := time.Now().In(loc).Format(layout)
+
+	var order domain.Order
+	for _, route := range routesInfo {
+		if _, err := p.db.Exec(deleteReportsQuery, route.RouteID, startForRemove); err != nil {
+			return err
+		}
+
+		if _, err := p.db.Exec(routePlanQuery, route.PlanDates, route.RouteID); err != nil {
+			return err
+		}
+
+		if _, err := p.db.Exec(orderModifyQuery, timeOfModify, route.OrderID); err != nil {
+			return err
+		}
+
+		err = p.db.Get(&order, orderQuery, route.OrderID)
+		if err != nil {
+			return err
+		}
+		log.Info().Interface("order", order).Msgf("order with id %v", order.ID)
+
+		for _, date := range strings.Split(route.PlanDates, ", ") {
+			log.Info().Caller().Msgf("date %v", date)
+
+			reportQuery := fmt.Sprintf(`
+				INSERT INTO reports
+							 (report_date, order_id, order_number, order_client, 
+								order_name, quantity, issued, plan, 
+								operator, issued_plan, order_material, order_plot, 
+								adding_date, route_position, route_id, order_timestamp,
+								shift, need_shifts, not_planned)
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+				RETURNING report_id
+			`)
+			err = p.db.QueryRow(
+				reportQuery, date, route.OrderID, order.Number, order.Client, order.Name, route.Quantity, route.Issued,
+				route.DayQuantity, "", "", order.Material, route.Plot, today, route.RoutePosition, route.RouteID,
+				order.TimeStamp, "", route.NeedShifts, false,
+			).Err()
+			if err != nil {
+				return err
+			}
+		}
+
+		fmt.Println("")
+	}
+
+	//var currentShift int
+	//for route, lastDate := range routesLastDates {
+	//	currentShift += 1
+	//
+	//	log.Info().Msgf("route %v / last date %v", route, lastDate)
+	//}
+
 	return nil
 }
 

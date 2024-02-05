@@ -56,9 +56,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     routesBlock.classList.remove('hidden__input')
   }
 
-  // console.time('get orders')
-
-  // console.log('start time', state.maxTime)
   const params = {
     'order_old': state.isArchive,
     'archive_from': archiveFrom.value,
@@ -71,11 +68,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
-      // console.timeEnd('get orders')
       const title = document.querySelector('.main-header__title')
-
-      // console.time('draw orders')
-
       if (!data.data) {
         if (!updateOnly) {
           hideOrders()
@@ -83,12 +76,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           title.textContent = state.isArchive ? 'Архив пуст' : 'Журнал пуст'
           return
         }
-        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
-
-        // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
       }
-
-      // deleteOrders()
 
       if (data.data) {
         deleteTableFilters()
@@ -114,7 +102,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
 
         if (updateOnly) {
           const routesStatusFilter = document.querySelector('.route__filter--chosen')
-          let filtered = state.filtered || !!state.currentTopFilters.length || routesStatusFilter
+          let filtered = state.filtered || !!state.currentTopFilters.length || routesStatusFilter || state.searched
           data.data.forEach(d => {
             drawUpdatedData(d, state.orders, filtered)
           })
@@ -122,15 +110,11 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           if (filtered) {
             newAllFilter()
           } else {
-            // reportShowCurrentLine()
             bindOrdersListeners()
           }
 
-          // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
         } else {
-          // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
           state['orders'] = data.data
-          state['filteredOrders'] = state['orders'].filter(o => o)
           newAllFilter(true)
         }
 
@@ -147,18 +131,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         bindTableFilters()
       }
 
-      // console.timeEnd('draw orders')
-
-      // console.time('add filters and listeners')
-      // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
-      // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
-      // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
-      // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
-      // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-
-      // console.timeEnd('add filters and listeners')
-
-      // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
       loader.classList.add('hidden__input')
       if (state['isArchive']) {
         document.querySelectorAll('.table__data').forEach(field => {
@@ -166,16 +138,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         })
       }
 
-      // const lastOrder = document.querySelector('.table__data--chosen')
-      // if (lastOrder) {
-      //   lastOrder.scrollIntoView({block: 'center'})
-      // }
-
-      // document.querySelectorAll(".table-form").forEach(form => {
-      //   form.addEventListener('click', e => {
-      //     console.log("I am form hi)")
-      //   })
-      // })
     })
 }
 
@@ -189,8 +151,6 @@ export const cleanSelect = (currentOrder, select) => {
 
 export const deleteOrders = () => {
   const orders = document.querySelectorAll('.table-form')
-  // document.querySelector('.orders__total').remove()
-
   orders.forEach(order => {
     order.remove()
   })
@@ -198,8 +158,6 @@ export const deleteOrders = () => {
 
 export const hideOrders = () => {
   const orders = document.querySelectorAll('.table-form')
-  // document.querySelector('.orders__total').remove()
-
   orders.forEach(order => {
     order.classList.add('hidden__input')
     order.classList.remove('showed-order')

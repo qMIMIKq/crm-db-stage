@@ -3832,10 +3832,6 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-
-  // console.time('get orders')
-
-  // console.log('start time', state.maxTime)
   const params = {
     'order_old': _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive,
     'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_2__.archiveFrom.value,
@@ -3845,11 +3841,7 @@ const getOrders = function () {
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
   (0,_sendData__WEBPACK_IMPORTED_MODULE_3__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    // console.timeEnd('get orders')
     const title = document.querySelector('.main-header__title');
-
-    // console.time('draw orders')
-
     if (!data.data) {
       if (!updateOnly) {
         hideOrders();
@@ -3857,13 +3849,7 @@ const getOrders = function () {
         title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? 'Архив пуст' : 'Журнал пуст';
         return;
       }
-      // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
-
-      // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
     }
-
-    // deleteOrders()
-
     if (data.data) {
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
       data.data.forEach(d => {
@@ -3885,22 +3871,17 @@ const getOrders = function () {
       });
       if (updateOnly) {
         const routesStatusFilter = document.querySelector('.route__filter--chosen');
-        let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
+        let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter || _state__WEBPACK_IMPORTED_MODULE_1__.state.searched;
         data.data.forEach(d => {
           (0,_drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_6__.drawUpdatedData)(d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, filtered);
         });
         if (filtered) {
           (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)();
         } else {
-          // reportShowCurrentLine()
           (0,_bindListeners__WEBPACK_IMPORTED_MODULE_7__.bindOrdersListeners)();
         }
-
-        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
       } else {
-        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
         _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
         (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)(true);
       }
       _state__WEBPACK_IMPORTED_MODULE_1__.state.nums = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort();
@@ -3913,39 +3894,14 @@ const getOrders = function () {
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
     }
-
-    // console.timeEnd('draw orders')
-
-    // console.time('add filters and listeners')
-    // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
-    // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
-    // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
-    // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
-    // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-
-    // console.timeEnd('add filters and listeners')
-
-    // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
     loader.classList.add('hidden__input');
     if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
       document.querySelectorAll('.table__data').forEach(field => {
         field.setAttribute("readonly", "true");
       });
     }
-
-    // const lastOrder = document.querySelector('.table__data--chosen')
-    // if (lastOrder) {
-    //   lastOrder.scrollIntoView({block: 'center'})
-    // }
-
-    // document.querySelectorAll(".table-form").forEach(form => {
-    //   form.addEventListener('click', e => {
-    //     console.log("I am form hi)")
-    //   })
-    // })
   });
 };
-
 const cleanSelect = (currentOrder, select) => {
   const selectElem = currentOrder.querySelector(select);
   selectElem.querySelectorAll('option').forEach(option => {
@@ -3954,16 +3910,12 @@ const cleanSelect = (currentOrder, select) => {
 };
 const deleteOrders = () => {
   const orders = document.querySelectorAll('.table-form');
-  // document.querySelector('.orders__total').remove()
-
   orders.forEach(order => {
     order.remove();
   });
 };
 const hideOrders = () => {
   const orders = document.querySelectorAll('.table-form');
-  // document.querySelector('.orders__total').remove()
-
   orders.forEach(order => {
     order.classList.add('hidden__input');
     order.classList.remove('showed-order');
@@ -7058,6 +7010,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_sendData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/sendData */ "./web/src/static/js/modules/sendData.js");
 /* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
 /* harmony import */ var _getPlans__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getPlans */ "./web/src/static/js/plan/getPlans.js");
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+
 
 
 
@@ -7091,6 +7045,30 @@ const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
   const shifts = modal.querySelector('.modal-issued__input');
   const okBtn = modal.querySelector('.confirm__button--ok');
   const cnclBtn = modal.querySelector('.confirm__button--cncl');
+  let needShifts = currentOrder.querySelector('input[name="need_shifts"]').value;
+  let totalShifts = currentOrder.querySelector('input[name="shifts"]').value;
+  console.log(totalShifts, needShifts);
+  if (needShifts && needShifts !== '') {
+    totalShifts = totalShifts ? Number(totalShifts) : 0;
+    needShifts = Number(needShifts) - totalShifts;
+    if (needShifts === 0) {
+      needShifts = '';
+    } else {
+      shifts.value = needShifts;
+      (0,_modules_modals_routesModal__WEBPACK_IMPORTED_MODULE_1__.activateNextStage)('confirm__button--ok');
+    }
+  }
+  const current = {
+    'id': currentOrder.getAttribute('id').split('-')[1],
+    'route_plot': currentOrder.querySelector('input[name="route_plot"]').value,
+    'eldest_date': '',
+    'first_date': ''
+  };
+  const currentDates = currentOrder.querySelectorAll('.plan-dates__item--inplan');
+  current.first_date = currentDates[0].querySelector('.date').value;
+  current.eldest_date = currentDates[currentDates.length - 1].querySelector('.date').value;
+  console.log(current);
+  let checkDates = _modules_state__WEBPACK_IMPORTED_MODULE_5__.state.orders.filter(order => String(order.id) !== current.id && order.route_plot === current.route_plot);
   let canMove = false;
   const endDate = new Date(startTime);
   let lastDate;
@@ -7098,7 +7076,8 @@ const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
     const eldestDates = Object.keys(addedDates);
     const eldestDate = new Date(eldestDates[eldestDates.length - 1]);
     lastDate = eldestDates[eldestDates.length - 1];
-    console.log(endDate, eldestDate);
+    // console.log(endDate, eldestDate)
+    console.log(lastDate);
     if (eldestDate.getTime() >= endDate.getTime()) {
       console.log('WE GOT OLD');
       canMove = true;
@@ -7135,8 +7114,10 @@ const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
   okBtn.addEventListener('click', () => {
     shifter['move_to'] = moveTo;
     shifter['shifts'] = Number(shifts.value);
-    shifter['last_date'] = lastDate;
-    console.log(shifter);
+    shifter['last_date'] = current.first_date;
+
+    // console.log(shifter)
+
     (0,_modules_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_3__.appAddr}/api/plans/shift-auto`, 'POST', JSON.stringify(shifter)).then(resp => {
       return resp.json();
     }).then(res => {
@@ -7156,7 +7137,6 @@ const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
       currentOrder.querySelector('.table__route--date__list').classList.remove('table__data--chosen');
     }
   });
-  console.log(modal);
 };
 
 /***/ }),
@@ -7265,7 +7245,9 @@ const drawPlan = (d, data) => {
   let day = String(yst.getDate());
   day = day.length === 1 ? `0${day}` : day;
   yst = `${yst.getFullYear()}-${month}-${day}`;
-  console.log(today, yst);
+
+  // console.log(today, yst)
+
   let datesList = Object.keys(addedDates);
   let checkForPlanning = datesList.includes(yst) && !datesList.includes(today);
   let uniqueFileNames = [];
@@ -7288,7 +7270,9 @@ const drawPlan = (d, data) => {
       }
     });
   }
-  console.log(d);
+
+  // console.log(d)
+
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.id}" class='table-form table-form--plan table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
@@ -7329,24 +7313,24 @@ const drawPlan = (d, data) => {
               <input readonly type="text" class="table__data table__data--ro" value="${d.position}">
           </li>
           <li class="table-body_cell table__route--report">
-              <input readonly type="text" class="table__data table__data--ro" value="${d.route_plot}">
+              <input readonly type="text" name="route_plot" class="table__data table__data--ro" value="${d.route_plot}">
           </li>
           <li  class='table-body_cell table-body__helper table__shift--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
+              <input readonly class='table__data table__data--ro' type='text' name='shifts' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper table__plan--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
+              <input readonly class='table__data table__data--ro' type='text' name='need_shifts' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
-<!--          <li  class='table-body_cell table-body_cell&#45;&#45;flex table-body__helper table__plan&#45;&#45;shift'>-->
-<!--&lt;!&ndash;              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>&ndash;&gt;-->
-<!--              <input readonly class='table__data shift__auto main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='Авто' tabindex='-1' autocomplete='off'>-->
-<!--          </li>-->
+          <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
+<!--              <input readonly class='table__data shift__prev main__button click-chose table__data--ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
+              <input readonly class='table__data shift__auto main__button click-chose table__data--ro' type='text' name='material' value='Авто' tabindex='-1' autocomplete='off'>
+          </li>
           <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
 <!--              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
               <input readonly class='table__data shift__forw main__button click-chose table__data--ro' type='text' name='material' value='>' tabindex='-1' autocomplete='off'>
           </li>
           <li class="table-body_cell hidden__input table__route--report">
-              <input readonly type="text" class="table__data" value="${d.route_id}">
+              <input readonly type="text" name="route_id" class="table__data" value="${d.route_id}">
           </li>
           
           <li class="table-body_cell table__route--date">
@@ -7715,12 +7699,11 @@ const planningHandler = (currentOrder, d, addedDates) => {
     //   shiftHandler(shifter, 'prev', modalAddedDates)
     // })
 
-    // const shiftAuto = currentOrder.querySelector('.shift__auto')
-    // shiftAuto.addEventListener('click', () => {
-    //   // console.log(modalAddedDates)
-    //   autoShiftHandler(shifter, '', modalAddedDates, currentOrder)
-    // })
-
+    const shiftAuto = currentOrder.querySelector('.shift__auto');
+    shiftAuto.addEventListener('click', () => {
+      // console.log(modalAddedDates)
+      (0,_autoShiftHandler__WEBPACK_IMPORTED_MODULE_8__.autoShiftHandler)(shifter, '', modalAddedDates, currentOrder);
+    });
     const shiftForw = currentOrder.querySelector('.shift__forw');
     shiftForw.addEventListener('click', () => {
       // console.log(modalAddedDates)

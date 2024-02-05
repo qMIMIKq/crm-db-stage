@@ -93,7 +93,7 @@ export const drawPlan = (d, data) => {
   day = day.length === 1 ? `0${day}` : day
   yst = `${yst.getFullYear()}-${month}-${day}`
 
-  console.log(today, yst)
+  // console.log(today, yst)
 
   let datesList = Object.keys(addedDates)
   let checkForPlanning = datesList.includes(yst) && !datesList.includes(today)
@@ -122,7 +122,7 @@ export const drawPlan = (d, data) => {
     })
   }
 
-  console.log(d)
+  // console.log(d)
 
 
   table.insertAdjacentHTML(`afterbegin`, `
@@ -165,24 +165,24 @@ export const drawPlan = (d, data) => {
               <input readonly type="text" class="table__data table__data--ro" value="${d.position}">
           </li>
           <li class="table-body_cell table__route--report">
-              <input readonly type="text" class="table__data table__data--ro" value="${d.route_plot}">
+              <input readonly type="text" name="route_plot" class="table__data table__data--ro" value="${d.route_plot}">
           </li>
           <li  class='table-body_cell table-body__helper table__shift--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
+              <input readonly class='table__data table__data--ro' type='text' name='shifts' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper table__plan--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
+              <input readonly class='table__data table__data--ro' type='text' name='need_shifts' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
-<!--          <li  class='table-body_cell table-body_cell&#45;&#45;flex table-body__helper table__plan&#45;&#45;shift'>-->
-<!--&lt;!&ndash;              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>&ndash;&gt;-->
-<!--              <input readonly class='table__data shift__auto main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='Авто' tabindex='-1' autocomplete='off'>-->
-<!--          </li>-->
+          <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
+<!--              <input readonly class='table__data shift__prev main__button click-chose table__data--ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
+              <input readonly class='table__data shift__auto main__button click-chose table__data--ro' type='text' name='material' value='Авто' tabindex='-1' autocomplete='off'>
+          </li>
           <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
 <!--              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
               <input readonly class='table__data shift__forw main__button click-chose table__data--ro' type='text' name='material' value='>' tabindex='-1' autocomplete='off'>
           </li>
           <li class="table-body_cell hidden__input table__route--report">
-              <input readonly type="text" class="table__data" value="${d.route_id}">
+              <input readonly type="text" name="route_id" class="table__data" value="${d.route_id}">
           </li>
           
           <li class="table-body_cell table__route--date">
@@ -589,11 +589,11 @@ const planningHandler = (currentOrder, d, addedDates) => {
     //   shiftHandler(shifter, 'prev', modalAddedDates)
     // })
 
-    // const shiftAuto = currentOrder.querySelector('.shift__auto')
-    // shiftAuto.addEventListener('click', () => {
-    //   // console.log(modalAddedDates)
-    //   autoShiftHandler(shifter, '', modalAddedDates, currentOrder)
-    // })
+    const shiftAuto = currentOrder.querySelector('.shift__auto')
+    shiftAuto.addEventListener('click', () => {
+      // console.log(modalAddedDates)
+      autoShiftHandler(shifter, '', modalAddedDates, currentOrder)
+    })
 
     const shiftForw = currentOrder.querySelector('.shift__forw')
     shiftForw.addEventListener('click', () => {

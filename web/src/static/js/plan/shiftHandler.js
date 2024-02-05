@@ -61,7 +61,6 @@ export const shiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
     lastDate = endDate
   }
 
-
   switch (moveTo) {
     case 'forw':
       title.textContent += ' вперёд'

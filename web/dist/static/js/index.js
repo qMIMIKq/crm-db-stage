@@ -3855,10 +3855,6 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-
-  // console.time('get orders')
-
-  // console.log('start time', state.maxTime)
   const params = {
     'order_old': _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive,
     'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_2__.archiveFrom.value,
@@ -3868,11 +3864,7 @@ const getOrders = function () {
     'start_time': _state__WEBPACK_IMPORTED_MODULE_1__.state.startTime
   };
   (0,_sendData__WEBPACK_IMPORTED_MODULE_3__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    // console.timeEnd('get orders')
     const title = document.querySelector('.main-header__title');
-
-    // console.time('draw orders')
-
     if (!data.data) {
       if (!updateOnly) {
         hideOrders();
@@ -3880,13 +3872,7 @@ const getOrders = function () {
         title.textContent = _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive ? 'Архив пуст' : 'Журнал пуст';
         return;
       }
-      // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
-
-      // document.querySelector('.nav-control__total').textContent = `Всего в ${state.isArchive ? 'архиве' : 'работе'} 0`
     }
-
-    // deleteOrders()
-
     if (data.data) {
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
       data.data.forEach(d => {
@@ -3908,22 +3894,17 @@ const getOrders = function () {
       });
       if (updateOnly) {
         const routesStatusFilter = document.querySelector('.route__filter--chosen');
-        let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter;
+        let filtered = _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!_state__WEBPACK_IMPORTED_MODULE_1__.state.currentTopFilters.length || routesStatusFilter || _state__WEBPACK_IMPORTED_MODULE_1__.state.searched;
         data.data.forEach(d => {
           (0,_drawe_drawUpdatedData__WEBPACK_IMPORTED_MODULE_6__.drawUpdatedData)(d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, filtered);
         });
         if (filtered) {
           (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)();
         } else {
-          // reportShowCurrentLine()
           (0,_bindListeners__WEBPACK_IMPORTED_MODULE_7__.bindOrdersListeners)();
         }
-
-        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
       } else {
-        // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
         _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
-        _state__WEBPACK_IMPORTED_MODULE_1__.state.filteredOrders = _state__WEBPACK_IMPORTED_MODULE_1__.state.orders.filter(o => o);
         (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)(true);
       }
       _state__WEBPACK_IMPORTED_MODULE_1__.state.nums = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort();
@@ -3936,39 +3917,14 @@ const getOrders = function () {
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
     }
-
-    // console.timeEnd('draw orders')
-
-    // console.time('add filters and listeners')
-    // drawTableFilter([...new Set(state['quantity'])].sort(), quantityFilter)
-    // drawTableFilter([...new Set(state['issued'])].sort(), issuedFilter)
-    // drawTableFilter([...new Set(state['managers'])].sort(), managerFilter)
-    // drawTableFilter([...new Set(state['deadlines'])].sort(), deadlineFilter)
-    // drawTableFilter([...new Set(state['timestamps'])].sort(), timestampFilter)
-
-    // console.timeEnd('add filters and listeners')
-
-    // title.textContent = state.isArchive ? `Архив заказов (${state.orders.length})` : `Журнал заказов (${state.orders.length})`
     loader.classList.add('hidden__input');
     if (_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
       document.querySelectorAll('.table__data').forEach(field => {
         field.setAttribute("readonly", "true");
       });
     }
-
-    // const lastOrder = document.querySelector('.table__data--chosen')
-    // if (lastOrder) {
-    //   lastOrder.scrollIntoView({block: 'center'})
-    // }
-
-    // document.querySelectorAll(".table-form").forEach(form => {
-    //   form.addEventListener('click', e => {
-    //     console.log("I am form hi)")
-    //   })
-    // })
   });
 };
-
 const cleanSelect = (currentOrder, select) => {
   const selectElem = currentOrder.querySelector(select);
   selectElem.querySelectorAll('option').forEach(option => {
@@ -3977,16 +3933,12 @@ const cleanSelect = (currentOrder, select) => {
 };
 const deleteOrders = () => {
   const orders = document.querySelectorAll('.table-form');
-  // document.querySelector('.orders__total').remove()
-
   orders.forEach(order => {
     order.remove();
   });
 };
 const hideOrders = () => {
   const orders = document.querySelectorAll('.table-form');
-  // document.querySelector('.orders__total').remove()
-
   orders.forEach(order => {
     order.classList.add('hidden__input');
     order.classList.remove('showed-order');

@@ -279,17 +279,3 @@ export const topReportFilter = () => {
   }
   draw()
 }
-
-export const filterRouteReports = () => {
-  const filters = state['currentTopFilters'].map(filter => filter.name)
-
-  state.filteredOrders = state.orders.filter(order => filters.includes(order.order_plot))
-
-  console.log(state.filteredOrders)
-
-  hideOrders()
-  state['filteredOrders'].forEach((order, i) => {
-    globalFilterReports(order, i)
-  })
-  // bindOrdersListeners()
-}

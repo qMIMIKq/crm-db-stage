@@ -1,8 +1,9 @@
 import {showModal} from "../modules/modals/showModal";
-import {activateOnInput} from "../modules/modals/routesModal";
+import {activateNextStage, activateOnInput} from "../modules/modals/routesModal";
 import {sendData} from "../modules/sendData";
 import {appAddr} from "../../../../../appAddr";
 import {getPlans} from "./getPlans";
+import {state} from "../modules/state";
 
 const shiftModal = `
   <div id='modal' style='z-index: 100123' class='modal modal--confirm bounceIn'>
@@ -35,6 +36,37 @@ export const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
   const okBtn = modal.querySelector('.confirm__button--ok')
   const cnclBtn = modal.querySelector('.confirm__button--cncl')
 
+  let needShifts = currentOrder.querySelector('input[name="need_shifts"]').value
+  let totalShifts = currentOrder.querySelector('input[name="shifts"]').value
+
+  console.log(totalShifts, needShifts)
+
+  if (needShifts && needShifts !== '') {
+    totalShifts = totalShifts ? Number(totalShifts) : 0
+    needShifts = Number(needShifts) - totalShifts
+
+    if (needShifts === 0) {
+      needShifts = ''
+    } else {
+      shifts.value = needShifts
+      activateNextStage('confirm__button--ok')
+    }
+  }
+
+  const current = {
+    'id': currentOrder.getAttribute('id').split('-')[1],
+    'route_plot': currentOrder.querySelector('input[name="route_plot"]').value,
+    'eldest_date': '',
+    'first_date': ''
+  }
+
+  const currentDates = currentOrder.querySelectorAll('.plan-dates__item--inplan')
+  current.first_date = currentDates[0].querySelector('.date').value
+  current.eldest_date = currentDates[currentDates.length - 1].querySelector('.date').value
+
+  console.log(current)
+  let checkDates = state.orders.filter(order => String(order.id) !== current.id && order.route_plot === current.route_plot)
+
   let canMove = false
   const endDate = new Date(startTime)
   let lastDate
@@ -42,7 +74,8 @@ export const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
     const eldestDates = Object.keys(addedDates)
     const eldestDate = new Date(eldestDates[eldestDates.length - 1])
     lastDate = eldestDates[eldestDates.length - 1]
-    console.log(endDate, eldestDate)
+    // console.log(endDate, eldestDate)
+    console.log(lastDate)
 
     if (eldestDate.getTime() >= endDate.getTime()) {
       console.log('WE GOT OLD')
@@ -59,7 +92,6 @@ export const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
     endDate.setDate(endDate.getDate() - 1)
     lastDate = endDate
   }
-
 
   switch (moveTo) {
     case 'forw':
@@ -85,9 +117,9 @@ export const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
   okBtn.addEventListener('click', () => {
     shifter['move_to'] = moveTo
     shifter['shifts'] = Number(shifts.value)
-    shifter['last_date'] = lastDate
+    shifter['last_date'] = current.first_date
 
-    console.log(shifter)
+    // console.log(shifter)
 
     sendData(`${appAddr}/api/plans/shift-auto`, 'POST', JSON.stringify(shifter))
       .then(resp => {
@@ -112,6 +144,4 @@ export const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
       currentOrder.querySelector('.table__route--date__list').classList.remove('table__data--chosen')
     }
   })
-
-  console.log(modal)
 }
