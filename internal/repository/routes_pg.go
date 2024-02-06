@@ -86,9 +86,9 @@ func (r *RoutesPG) UpdateRoute(route *domain.Route) error {
 					 pause_time = $7, pause_value = $8, error_time = $9, error_value = $10, day_quantity = $11,
 					 theor_end = $12, dyn_end = $13, plan_date = $14, plan_start = $15,
 					 plan_faster = $16, plan_exclude_days = $17, last_comment = $18, plan_dates = $19,
-					 planned = $20, issued_plan = $21, time = $22, up = $23, adjustment = $24, need_shifts = $25, shift = $26
+					 planned = $20, issued_plan = $21, time = $22, up = $23, adjustment = $24, need_shifts = $25, shift = $26, alert_color = $27
 -- 		WHERE order_id = $27 AND route_position = $28
-		WHERE route_id = $27 
+		WHERE route_id = $28
 		RETURNING route_id
 	`)
 
@@ -103,7 +103,8 @@ func (r *RoutesPG) UpdateRoute(route *domain.Route) error {
 		route.PauseTime, route.PauseMsg, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
 		route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
 		route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "),
-		route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift,
+		route.Planned, route.IssuedToday, route.Time, route.Up,
+		route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor,
 		route.RouteID).Scan(&routeID)
 
 	if err != nil {

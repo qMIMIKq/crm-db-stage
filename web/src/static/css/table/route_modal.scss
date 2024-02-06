@@ -139,6 +139,14 @@
     align-items: center;
     margin-bottom: 15px;
   }
+
+  &__alert {
+    &-btn {
+      &:not(:last-child) {
+        margin-right: 15px;
+      }
+    }
+  }
 }
 
 .report-route__btn {

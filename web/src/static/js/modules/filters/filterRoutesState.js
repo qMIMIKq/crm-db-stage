@@ -28,6 +28,10 @@ export const filterRoutesState = route => {
       }
     }
 
+  } else if (state['routesFilters'].alert) {
+    if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
+      flag = true
+    }
   } else {
     flag = true
   }

@@ -18,7 +18,7 @@ export const newAllFilter = (init) => {
   const tableRouteStatusFilters = state.routesFilters
   const tableFilters = state.tableFilters
 
-  const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted
+  const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted || tableRouteStatusFilters.alert
   const isTopRoutesFiltered = !!topRouteFilters.length
 
   controlFiltersReset()
@@ -283,7 +283,6 @@ export const newAllFilter = (init) => {
               // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
               const hiddenOrder = document.querySelector(`#form-${order.id}`)
               if (hiddenOrder !== null) {
-                console.log('was hidden')
                 hiddenOrder.classList.remove('hidden__input')
                 hiddenOrder.classList.add('showed-order')
                 if (order.db_routes && order.db_routes.length) {

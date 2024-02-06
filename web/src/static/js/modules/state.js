@@ -50,7 +50,8 @@ let state = {
     'error': false,
     'completed': false,
     'unstarted': false,
-    'planned': false
+    'planned': false,
+    'alert': false
   },
   'reports': [],
   'reportFilters': {

@@ -58,6 +58,12 @@
     &:not(:last-child) {
       margin-right: 10px;
     }
+
+    &--select {
+      margin-bottom: 0;
+      height: 27px;
+      padding: 0;
+    }
   }
 
   &__planned {

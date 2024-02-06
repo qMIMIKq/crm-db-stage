@@ -35,6 +35,7 @@ type Route struct {
 	Adjustment      int             `json:"adjustment" db:"adjustment"`
 	Shift           string          `json:"shift" db:"shift"`
 	NeedShifts      int             `json:"need_shifts" db:"need_shifts"`
+	AlertColor      string          `json:"alert_color" db:"alert_color"`
 }
 
 type DbPlanInfo struct {

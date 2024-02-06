@@ -90,8 +90,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 													issued, start_time, end_time, pause_time, error_time, 
 													error_value, day_quantity, theor_end, dyn_end, plan_date, 
  												  plan_start, plan_faster, plan_exclude_days, last_comment, 
-			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shift)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
+			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shift, alert_color)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
 			RETURNING route_id
 		`)
 
@@ -109,8 +109,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						 pause_time = $7, pause_value = $8, error_time = $9, error_value = $10, day_quantity = $11, 
 						 theor_end = $12, dyn_end = $13, plan_date = $14, plan_start = $15,
 						 plan_faster = $16, plan_exclude_days = $17, last_comment = $18, plan_dates = $19, 
-						 planned = $20, issued_plan = $21, time = $22, up = $23, adjustment = $24, need_shifts = $25, shift = $26
-		  WHERE order_id = $27 AND route_position = $28
+						 planned = $20, issued_plan = $21, time = $22, up = $23, adjustment = $24, need_shifts = $25, shift = $26, alert_color = $27
+		  WHERE order_id = $28 AND route_position = $29
 			RETURNING route_id
 		`)
 
@@ -140,7 +140,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					route.PauseTime, route.PauseMsg, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
 					route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
 					route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "),
-					route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift,
+					route.Planned, route.IssuedToday, route.Time, route.Up,
+					route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor,
 					order.ID, routePos).Scan(&routeID)
 
 				if err != nil {
@@ -424,7 +425,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.PauseTime, route.ErrorTime,
 					route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart,
 					route.PlanFaster, route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "),
-					route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift).Scan(&routeID)
+					route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor).Scan(&routeID)
 				route.RouteID = strconv.Itoa(routeID)
 				if err != nil {
 					log.Err(err).Caller().Msg("ERROR")
@@ -738,8 +739,8 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 													issued, start_time, end_time, pause_time, pause_value, error_time, 
 													error_value, day_quantity, theor_end, dyn_end, plan_date, 
 													plan_start, plan_faster, plan_exclude_days, last_comment, 
-			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shift)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
+			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shift, alert_color)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29)
 			RETURNING route_id
 		`)
 
@@ -798,7 +799,8 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				route.EndTime, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
 				route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
 				route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "),
-				route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift).Scan(&routeID)
+				route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment,
+				route.NeedShifts, route.Shift, route.AlertColor).Scan(&routeID)
 
 			planQuery := fmt.Sprintf(`
 				INSERT INTO plans (route_id, order_id, route_plot, plan_date, divider, queues)

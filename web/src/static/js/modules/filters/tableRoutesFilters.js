@@ -2,10 +2,27 @@ import {state} from "../state";
 import {getOrders} from "../getOrders";
 import {getTime} from "../getTime";
 import {newAllFilter} from "./newAllFilter";
+import {colorRoutes} from "../drawe/routesDraw";
+import {drawOrders, table} from "../drawe/drawOrders";
 
 export const inArchiveBtn = document.querySelector('.header-routes__archived')
 export const archiveFrom = document.querySelector('.header-routes__planned-date__from')
 export const archiveTo = document.querySelector('.header-routes__planned-date__to')
+
+export const alertFilter = color => {
+  state.orders.forEach(order => {
+    const hiddenOrder = document.querySelector(`#form-${order.id}`)
+    if (hiddenOrder !== null) {
+      hiddenOrder.classList.remove('hidden__input')
+      hiddenOrder.classList.add('showed-order')
+      if (order.db_routes && order.db_routes.length) {
+        colorRoutes(order.db_routes, hiddenOrder)
+      } else {
+        drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+      }
+    }
+  })
+}
 
 export const tableRoutesFiltersHandler = () => {
   const inWorkBtn = document.querySelector(".header-routes__work")
@@ -13,6 +30,35 @@ export const tableRoutesFiltersHandler = () => {
   const inErrorBtn = document.querySelector(".header-routes__error")
   const completedBtn = document.querySelector(".header-routes__completed")
   const inPlanBtn = document.querySelector(".header-routes__planned")
+  const alertStatusBtn = document.querySelector('.header-routes__alert')
+
+  alertStatusBtn.addEventListener('change', e => {
+    const value = e.target.value
+    alertStatusBtn.style.color = value
+
+    if (value === '') {
+      alertStatusBtn.classList.remove('route__filter--chosen')
+      state['routesFilters'].alert = false
+    } else {
+      try {
+        document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      } catch {
+      }
+
+      alertStatusBtn.classList.add('route__filter--chosen')
+
+      state['routesFilters'].alert = true
+      state['routesFilters'].planned = false
+      state['routesFilters'].started = false
+      state['routesFilters'].unstarted = false
+      state['routesFilters'].error = false
+      state['routesFilters'].completed = false
+    }
+
+    newAllFilter()
+    // alertFilter(value)
+    // console.log()
+  })
 
   const inPlanDate = document.querySelector('.header-routes__planned-date')
 
@@ -51,6 +97,8 @@ export const tableRoutesFiltersHandler = () => {
 
     try {
       document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      alertStatusBtn.style.color = ''
+      alertStatusBtn.value = ''
     } catch {
     }
     inWorkBtn.classList.add('route__filter--chosen')
@@ -60,6 +108,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].error = false
     state['routesFilters'].completed = false
     state['routesFilters'].planned = false
+    state['routesFilters'].alert = false
 
     // getOrders('get-all', true)
     newAllFilter()
@@ -76,6 +125,8 @@ export const tableRoutesFiltersHandler = () => {
 
     try {
       document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      alertStatusBtn.style.color = ''
+      alertStatusBtn.value = ''
     } catch {
     }
     notWorkBtn.classList.add('route__filter--chosen')
@@ -85,6 +136,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].error = false
     state['routesFilters'].completed = false
     state['routesFilters'].planned = false
+    state['routesFilters'].alert = false
 
     newAllFilter()
   })
@@ -103,9 +155,12 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].unstarted = false
     state['routesFilters'].completed = false
     state['routesFilters'].planned = false
+    state['routesFilters'].alert = false
 
     try {
       document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      alertStatusBtn.style.color = ''
+      alertStatusBtn.value = ''
     } catch {
     }
     inErrorBtn.classList.add('route__filter--chosen')
@@ -133,6 +188,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].started = false
     state['routesFilters'].error = false
     state['routesFilters'].planned = false
+    state['routesFilters'].alert = false
 
     newAllFilter()
   })
@@ -143,6 +199,8 @@ export const tableRoutesFiltersHandler = () => {
     if (inPlanBtn.classList.contains('route__filter--chosen')) {
       try {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+        alertStatusBtn.style.color = ''
+        alertStatusBtn.value = ''
       } catch {
       }
       inPlanBtn.classList.add('route__filter--chosen')
@@ -152,6 +210,7 @@ export const tableRoutesFiltersHandler = () => {
       state['routesFilters'].unstarted = false
       state['routesFilters'].error = false
       state['routesFilters'].completed = false
+      state['routesFilters'].alert = false
 
       newAllFilter()
     }
@@ -175,6 +234,8 @@ export const tableRoutesFiltersHandler = () => {
 
     try {
       document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      alertStatusBtn.style.color = ''
+      alertStatusBtn.value = ''
     } catch {
     }
     inPlanBtn.classList.add('route__filter--chosen')
@@ -184,6 +245,7 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].unstarted = false
     state['routesFilters'].error = false
     state['routesFilters'].completed = false
+    state['routesFilters'].alert = false
 
     newAllFilter()
   })

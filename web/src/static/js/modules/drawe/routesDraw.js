@@ -16,6 +16,7 @@ export const colorRoutes = (routes, parent) => {
   routes.forEach(route => {
     const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
     const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
+
     if (dataInput) {
       const infoParent = dataInput.parentNode
       const routeInfo = infoParent.querySelector(`input[value="-"]`)
@@ -68,6 +69,12 @@ export const colorRoutes = (routes, parent) => {
         routeInfo.classList.remove('route--error')
         routeInfo.classList.remove('route--started')
         routeInfo.classList.remove('route--completed')
+      }
+
+      if (route.alert_color && route.alert_color !== '') {
+        routeInfo.style.cssText = `color: ${route.alert_color} !important;`
+      } else {
+        routeInfo.style.cssText = ''
       }
     }
 

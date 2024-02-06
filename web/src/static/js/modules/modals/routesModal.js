@@ -153,6 +153,34 @@ const routeModal = `
                   <button type='button' class='route__btn main__button hidden__input error-route__close'>Сбросить ошибку</button>
                 </div>
                 
+                <div class="route__title">Требует внимания:</div>
+                <div class='route__section route__section--report section-report'>
+                    <!--                    <button type='button' class='clickable route__alert-btn main__button route__btn'>Внимание!</button>-->
+<!--                    <select style="margin-bottom: 0" class="clickable route__select main__button main__select" name="chose-color" id="">-->
+<!--                        <option selected disabled value="">Выберите цвет</option>-->
+<!--                        <option style="color: red" value="red">Красный</option>-->
+<!--                        <option style="color: yellow" value="yellow">Желтый</option>-->
+<!--                        <option style="color: blue;" value="blue">Голубой</option>-->
+<!--                    </select>-->
+                
+                    <button type='button' class='clickable route__alert-btn main__button route__btn'>
+                        Красный    
+                        <input class="hidden__input" type="text" name="color" id="" value="red">
+                    </button>
+
+                      <button type='button' class='clickable route__alert-btn route__btn main__button'>
+                        Синий
+                        <input class="hidden__input" type="text" name="color" id="" value="blue">
+                      </button>
+                      
+                      <button type='button' class='clickable route__alert-btn route__btn main__button'>
+                        Желтый
+                        <input class="hidden__input" type="text" name="color" id="" value="#d0d030">
+                      </button>
+                      
+                      <input class="hidden__input" readonly type="text" name="alert_color" id="alert_color">
+                </div>
+                
                 <div class="route__title">Выдача:</div>
                 <div class='route__section route__section--report section-report'>
                     <button disabled type='button' class='route__btn main__button issued-modal_trigger'>За смену</button>
@@ -529,6 +557,8 @@ export const triggerRoutesModal = (e, page = 'main') => {
   const startBtn = routeForm.querySelector('.start-route__btn')
   const endBTn = routeForm.querySelector('.end-route__btn')
   const issuedBtn = routeForm.querySelector('.issued-modal_trigger')
+  const alertBtns = modalElem.querySelectorAll('.route__alert-btn')
+  const alertColor = modalElem.querySelector('#alert_color')
   const reportChanger = []
   // const dynEndInp = document.querySelector('#route__dynend')
 
@@ -694,6 +724,19 @@ export const triggerRoutesModal = (e, page = 'main') => {
             })
           }
 
+          alertColor.value = routeInfo.alert_color
+          alertBtns.forEach(btn => {
+            let checkColor = btn.querySelector('.hidden__input').value
+            if (alertColor.value === checkColor) {
+              btn.classList.add('route__alert-btn--chosen')
+              btn.style.cssText = `
+                color: ${checkColor};
+                border: 2px solid ${checkColor};
+              `
+              alertColor.value = checkColor
+            }
+          })
+
           if (routeInfo['start_time']) {
             disableBtn('route__select--plot')
           }
@@ -834,6 +877,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
       }
 
       shift.value = routeInfo.shift
+      alertColor.value = routeInfo.alert_color
 
       planned = routeInfo['planned']
 
@@ -1040,6 +1084,50 @@ export const triggerRoutesModal = (e, page = 'main') => {
     drawPlots()
     dayQuantityInfo['quantity'] = routeQuantity.value
   }
+
+  alertBtns.forEach(btn => {
+    let checkColor = btn.querySelector('.hidden__input').value
+    if (alertColor.value === checkColor) {
+      btn.classList.add('route__alert-btn--chosen')
+      btn.style.cssText = `
+          color: ${checkColor};
+          border: 2px solid ${checkColor};
+        `
+      alertColor.value = checkColor
+    }
+
+    btn.addEventListener('click', e => {
+      let btnColor = btn.querySelector('.hidden__input').value
+
+      alertBtns.forEach(outerBtn => {
+        if (btn !== outerBtn) {
+          outerBtn.classList.remove('route__alert-btn--chosen')
+        }
+
+        outerBtn.style.cssText = `
+          color: rgb(66, 66, 66);
+          border: 1px solid rgb(173, 173, 173);
+        `
+      })
+
+      if (!btn.classList.contains('route__alert-btn--chosen')) {
+        btn.classList.add('route__alert-btn--chosen')
+        btn.style.cssText = `
+          color: ${btnColor};
+          border: 2px solid ${btnColor};
+        `
+        alertColor.value = btnColor
+      } else {
+        console.log('chosen now')
+        btn.classList.remove('route__alert-btn--chosen')
+        btn.style.cssText = `
+          color: rgb(66, 66, 66);
+          border: 1px solid rgb(173, 173, 173);
+        `
+        alertColor.value = ''
+      }
+    })
+  })
 
   const dayQuantity = document.querySelector('#day_quantity')
   dayQuantity.addEventListener('click', e => {
@@ -1293,7 +1381,8 @@ export const triggerRoutesModal = (e, page = 'main') => {
     obj['time'] = dayQuantityInfo.time
     obj['adjustment'] = dayQuantityInfo.adjustment
     obj['need_shifts'] = Number(shifts.value)
-    console.log(obj)
+    obj['alert_color'] = alertColor.value
+    // console.log(alertColor.value)
     // obj['planned'] = !!(dbID && planned)
 
     if (page === 'main') {
