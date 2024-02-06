@@ -45,7 +45,7 @@ export const autoShiftHandler = (shifter, moveTo, addedDates, currentOrder) => {
     totalShifts = totalShifts ? Number(totalShifts) : 0
     needShifts = Number(needShifts) - totalShifts
 
-    if (needShifts === 0) {
+    if (needShifts <= 0) {
       needShifts = ''
     } else {
       shifts.value = needShifts

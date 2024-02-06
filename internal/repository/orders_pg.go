@@ -231,7 +231,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					RETURNING report_id
 				`)
 
-				routeReports := getIssuedReports(route)
+				routeReports := GetIssuedReports(route)
 
 				var keys []string
 				for reportDate := range routeReports.ReportsData {
@@ -518,7 +518,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					RETURNING report_id
 				`)
 
-				routeReports := getIssuedReports(route)
+				routeReports := GetIssuedReports(route)
 
 				var keys []string
 				for reportDate := range routeReports.ReportsData {
@@ -855,17 +855,17 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			}
 
 			reportQuery := fmt.Sprintf(`
-					INSERT INTO reports
-								 (report_date, order_id, order_number, order_client, 
-									order_name, quantity, issued, plan, 
-									operator, issued_plan, order_material, order_plot, 
-									adding_date, route_position, route_id, order_timestamp,
-									shift, need_shifts, not_planned)
-					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-					RETURNING report_id
-				`)
+				INSERT INTO reports
+							 (report_date, order_id, order_number, order_client, 
+								order_name, quantity, issued, plan, 
+								operator, issued_plan, order_material, order_plot, 
+								adding_date, route_position, route_id, order_timestamp,
+								shift, need_shifts)
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+				RETURNING report_id
+			`)
 
-			routeReports := getIssuedReports(route)
+			routeReports := GetIssuedReports(route)
 
 			var keys []string
 			for reportDate := range routeReports.ReportsData {
@@ -1222,7 +1222,7 @@ type ReportIssuedInfo struct {
 	Last       bool
 }
 
-func getIssuedReports(route *domain.Route) ReportsIssued {
+func GetIssuedReports(route *domain.Route) ReportsIssued {
 	reportsIssued := ReportsIssued{
 		RouteID:     "",
 		RoutePlot:   "",
