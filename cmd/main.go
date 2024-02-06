@@ -49,7 +49,7 @@ func main() {
 		log.Fatal().Caller().Err(err).Msg("error connecting to database")
 	}
 
-	//buildFrontend(cfg.AppAddressJs)
+	buildFrontend(cfg.AppAddressJs)
 
 	repos := repository.NewRepository(pgDb)
 	if err := repos.Init.InitDB(); err != nil {
