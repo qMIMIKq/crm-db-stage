@@ -85,7 +85,7 @@ addOrder.addEventListener('click', e => {
   drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
   drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
   addTriggers(currElem, '.table__files', triggerFilesModal)
-  addTriggers(currElem, '.table__route', triggerRoutesModal)
+  addTriggers(currElem, '.table__route', e => triggerRoutesModal(e))
   addTriggers(currElem, '.table__comment', triggerCommentsModal)
   addTriggers(currElem, ".order__copy", copyOrderHandler)
 })

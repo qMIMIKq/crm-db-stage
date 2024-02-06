@@ -76,6 +76,8 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 		routes := api.Group("/routes")
 		{
 			routes.POST("/delete/:id", h.deleteRoute)
+			routes.POST("/get-route", h.getRouteByID)
+			routes.POST("/update-route", h.updateRoute)
 		}
 
 		time := api.Group("/time")

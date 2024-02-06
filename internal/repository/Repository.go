@@ -59,6 +59,8 @@ type Orders interface {
 
 type Routes interface {
 	DeleteRoute(routeID string) error
+	GetRouteByID(id int) *domain.Route
+	UpdateRoute(route *domain.Route) error
 }
 
 type Reports interface {
@@ -108,7 +110,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Plots:         NewPlotsPG(db),
 		Files:         NewFilesMwPg(db),
 		Orders:        NewOrdersPG(db, NewReportsPG(db), NewPlanningPG(db)),
-		Routes:        NewRoutesPG(db),
+		Routes:        NewRoutesPG(db, NewReportsPG(db), NewPlanningPG(db)),
 		Init:          NewInitPG(db),
 		Reports:       NewReportsPG(db),
 		Plans:         NewPlansPG(db, NewReportsPG(db)),

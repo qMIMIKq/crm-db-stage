@@ -77,6 +77,7 @@ export const getReports = () => {
       drawReportsFilter([...new Set(operators)], operatorReportFilter)
       drawReportsFilter([...new Set(positions)], positionReportFilter)
 
+
       bindReportsFilters()
     })
 }

@@ -9,7 +9,6 @@ import {triggerRoutesModal} from "./modals/routesModal";
 import {triggerCommentsModal} from "./modals/commentsModal";
 import {drawSubmit} from "./submitControl";
 import {getTime} from "./getTime";
-import {reportShowCurrentLine} from "../report/reportShowCurrentLine";
 
 export const copyOrderHandler = e => {
   const parentForm = e.target.closest('form')
@@ -68,7 +67,7 @@ export const copyOrderHandler = e => {
   bindOrdersListeners(currElem)
   // reportShowCurrentLine()
   addTriggers(currElem, '.table__files', triggerFilesModal)
-  addTriggers(currElem, '.table__route', triggerRoutesModal)
+  addTriggers(currElem, '.table__route', e => triggerRoutesModal(e))
   addTriggers(currElem, '.table__comment', triggerCommentsModal)
   addTriggers(currElem, ".order__copy", copyOrderHandler)
 

@@ -1,5 +1,7 @@
 import {state} from '../modules/state';
 import {controlReportsFiltersReset} from "./filters/reportFilters";
+import {addTriggers} from "../modules/addTriggers";
+import {triggerRoutesModal} from "../modules/modals/routesModal";
 
 export const table = document.querySelector('.main-table')
 export const shiftCounter = {}
@@ -19,9 +21,7 @@ export const drawReport = async (d) => {
 
   let last = false
   if (d.current_shift) {
-    if (d.shift && d.shift === 'Последняя') {
-      last = true
-    } else if (Number(d.issued) >= Number(d.quantity)) {
+    if (Number(d.issued) >= Number(d.quantity)) {
       last = true
     }
   }
@@ -59,7 +59,7 @@ export const drawReport = async (d) => {
   }
 
   // if (d.need_shifts) {
-    // d.current_shift ||
+  // d.current_shift ||
 
   // }
 
@@ -91,6 +91,10 @@ export const drawReport = async (d) => {
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.report_id}" class='table-form table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
+           <li class='table-body_cell hidden__input table__db'>
+              <input id='route_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.route_id}' tabindex='-1' autocomplete='off'>
+          </li>
+      
           <li class='table-body_cell table__db'>
               <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
@@ -129,10 +133,10 @@ export const drawReport = async (d) => {
               value="${d.issued}">
           </li>
           <li class="table-body_cell table__route--report">
-              <input readonly type="text" class="table__data" value="${d.order_plot}">
+              <input readonly type="text" class="table__data order__plot-report" value="${d.order_plot}">
           </li>
            <li class="table-body_cell table__route--report">
-              <input readonly type="text" class="table__data" value="${d.route_position}">
+              <input id="route_position" readonly type="text" class="table__data" value="${d.route_position}">
           </li>
           <li class="table-body_cell table__operator--report">
             <input readonly type="text" class="table__data" value="${d.operator}">
@@ -176,7 +180,7 @@ export const drawReport = async (d) => {
     </form>
   `)
 
-  const currentOrder = document.getElementById(`form-${d.id}`)
+  const currentOrder = document.getElementById(`form-${d.report_id}`)
 
   if (String(d.id) === state['currentOrder']) {
     currentOrder.querySelectorAll('.table__data').forEach(item => {
@@ -190,4 +194,9 @@ export const drawReport = async (d) => {
   // addTriggers(".table__files", triggerFilesModal)
   // addTriggers(".table__route", triggerRoutesModal)
   // addTriggers(".table__comment", triggerCommentsModal)
+  addTriggers(currentOrder, '.order__plot-report', e => triggerRoutesModal(e, 'report'))
+
+  try {
+  } catch {
+  }
 }

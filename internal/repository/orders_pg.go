@@ -178,13 +178,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						}
 					}
 
-					//var issuedToday string
-					//if today == info.Date {
-					//	issuedToday = route.IssuedToday
-					//} else {
-					//	issuedToday = "0"
-					//}
-
 					reportQuery := fmt.Sprintf(`
 						INSERT INTO reports
 									 (report_date, order_id, order_number, order_client, 

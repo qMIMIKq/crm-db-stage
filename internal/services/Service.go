@@ -54,6 +54,8 @@ type Orders interface {
 
 type Routes interface {
 	DeleteRoute(routeID string) error
+	GetRouteByID(id int) *domain.Route
+	UpdateRoute(route *domain.Route) error
 }
 
 type Time interface {

@@ -325,7 +325,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
 
   addTriggers(currentOrder, "#db_id", showRoutesIssued)
   addTriggers(currentOrder, '.table__files', triggerFilesModal)
-  addTriggers(currentOrder, '.table__route', triggerRoutesModal)
+  addTriggers(currentOrder, '.table__route', e => triggerRoutesModal(e))
   addTriggers(currentOrder, '.table__comment', triggerCommentsModal)
   addTriggers(currentOrder, ".order__copy", copyOrderHandler)
   drawHelpers(currentOrder)

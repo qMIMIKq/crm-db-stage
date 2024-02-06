@@ -458,3 +458,13 @@ input:disabled {
 .report-refresh {
   margin-right: 10px;
 }
+
+.order__plot-report {
+  cursor: pointer !important;
+  transition: color .3s linear;
+
+  &:hover {
+    color: $main_green;
+    transition: color .3s linear;
+  }
+}

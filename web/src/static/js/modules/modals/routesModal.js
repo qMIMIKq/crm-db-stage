@@ -421,8 +421,7 @@ export const confirmChangeTimeHandler = (e, operation, alertContent) => {
   })
 }
 
-export const triggerRoutesModal = e => {
-  const routeInput = e.target.parentNode.querySelector('.hidden__input')
+export const triggerRoutesModal = (e, page = 'main') => {
   const modalElem = showModal(routeModal)
   let logName = state['adminCheck'] || state['techCheck'] || state['manCheck'] ? user.nickname : ''
 
@@ -432,11 +431,19 @@ export const triggerRoutesModal = e => {
 
   let planned = false
   let info = false
-  let routeInfo = e.target.parentNode.querySelector('.hidden__input').value
+  let routeInfo
 
-  if (routeInfo !== '') {
+  let routeInput
+  if (page === 'main') {
+    routeInfo = e.target.parentNode.querySelector('.hidden__input').value
+    routeInput = e.target.parentNode.querySelector('.hidden__input')
+
+    if (routeInfo !== '') {
+      info = true
+      routeInfo = JSON.parse(routeInfo)
+    }
+  } else {
     info = true
-    routeInfo = JSON.parse(routeInfo)
   }
 
   const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
@@ -598,213 +605,433 @@ export const triggerRoutesModal = e => {
   const routeUser = document.querySelector('.route__select--user')
 
   if (info) {
-    planDateInput.removeAttribute('disabled')
-    let comments = routeInfo['comments']
-    if (routeInfo['last_comment']) {
-      document.querySelector('#last_comment').value = routeInfo['last_comment']
-    }
-    if (routeInfo.issued_today) {
-      issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
-    }
+    if (page === 'report') {
+      const routeID = e.target.parentNode.parentNode.querySelector('#route_id').value
+      sendData(`${appAddr}/api/routes/get-route`, 'POST', Number(routeID))
+        .then(resp => {
+          return resp.json()
+        })
+        .then(data => {
+          routeInfo = data.data
 
-    shift.value = routeInfo.shift
+          planDateInput.removeAttribute('disabled')
+          let comments = routeInfo['comments']
+          if (routeInfo['last_comment']) {
+            document.querySelector('#last_comment').value = routeInfo['last_comment']
+          }
+          if (routeInfo.issued_today) {
+            issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
+          }
 
-    planned = routeInfo['planned']
+          shift.value = routeInfo.shift
 
-    // if (planned) {
-    //   planDateInput.value = 'В планировании'
-    // }
+          planned = routeInfo['planned']
 
-    if (routeInfo['db_plan']) {
-      let today = getTime()
-      today = today.substring(0, today.length - 5).trim()
+          // if (planned) {
+          //   planDateInput.value = 'В планировании'
+          // }
 
-      dbAddedDates = routeInfo['db_plan']
-      planDateInput.value = 'В плане'
+          if (routeInfo['db_plan']) {
+            let today = getTime()
+            today = today.substring(0, today.length - 5).trim()
 
-      dbAddedDates.map(dateInfo => {
-        dateInfo['queues'] = dateInfo['queues'].split(', ')
-        dateInfo['date'] = dateInfo['date'].split('T')[0]
+            dbAddedDates = routeInfo['db_plan']
+            planDateInput.value = 'В плане'
 
-        if (today === dateInfo['date']) {
-          planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
-        }
+            dbAddedDates.map(dateInfo => {
+              dateInfo['queues'] = dateInfo['queues'].split(', ')
+              dateInfo['date'] = dateInfo['date'].split('T')[0]
 
-        addedDates[dateInfo['date']] = {
-          'divider': dateInfo.divider,
-          'queues': dateInfo.queues
-        }
-      })
-    }
-
-    planObj = {
-      'exclude': routeInfo['exclude_days'],
-      'planStart': routeInfo['plan_start'],
-      'planEnd': routeInfo['plan_date'],
-      'faster': routeInfo['plan_faster']
-    }
-
-    if (routeInfo['issued']) {
-      issued.value = routeInfo['issued']
-
-      if (!operStatus) {
-        activateNextStage('report-route__btn')
-      }
-    }
-
-    if (logName !== '') {
-      deleteBtn.removeAttribute('disabled')
-      deleteBtn.addEventListener('click', e => {
-        confirmChangeTimeHandler(e, () => {
-          sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
-            .then(resp => {
-              if (resp.ok) showResult(true)
-              routeInput.value = ""
-              const infoParent = routeInput.parentNode
-              const routeInfo = infoParent.querySelector(`.click-chose`)
-              routeInfo.value = '-'
-              routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
-              modalElem.remove()
-              const parent = routeInput.closest('.table-form--old')
-              if (!(parent === null)) {
-                parent.classList.remove('table-form--old')
-                parent.classList.add('table-form--upd')
-                submitData()
+              if (today === dateInfo['date']) {
+                planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
               }
 
-              // getOrders('get-all', true)
+              addedDates[dateInfo['date']] = {
+                'divider': dateInfo.divider,
+                'queues': dateInfo.queues
+              }
             })
-        }, 'Удалить маршрут?')
-      })
-    }
+          }
 
-    if (routeInfo['start_time']) {
-      disableBtn('route__select--plot')
-    }
+          planObj = {
+            'exclude': routeInfo['exclude_days'],
+            'planStart': routeInfo['plan_start'],
+            'planEnd': routeInfo['plan_date'],
+            'faster': routeInfo['plan_faster']
+          }
 
-    if (routeInfo.user) {
-      routeUser.insertAdjacentHTML('beforeend', `
+          if (routeInfo['issued']) {
+            issued.value = routeInfo['issued']
+
+            if (!operStatus) {
+              activateNextStage('report-route__btn')
+            }
+          }
+
+          if (logName !== '') {
+            deleteBtn.removeAttribute('disabled')
+            deleteBtn.addEventListener('click', e => {
+              confirmChangeTimeHandler(e, () => {
+                sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
+                  .then(resp => {
+                    if (resp.ok) showResult(true)
+                    routeInput.value = ""
+                    const infoParent = routeInput.parentNode
+                    const routeInfo = infoParent.querySelector(`.click-chose`)
+                    routeInfo.value = '-'
+                    routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
+                    modalElem.remove()
+                    const parent = routeInput.closest('.table-form--old')
+                    if (!(parent === null)) {
+                      parent.classList.remove('table-form--old')
+                      parent.classList.add('table-form--upd')
+                      submitData()
+                    }
+
+                    // getOrders('get-all', true)
+                  })
+              }, 'Удалить маршрут?')
+            })
+          }
+
+          if (routeInfo['start_time']) {
+            disableBtn('route__select--plot')
+          }
+
+          if (routeInfo.user) {
+            routeUser.insertAdjacentHTML('beforeend', `
         <option selected value="${routeInfo['user']}">${routeInfo['user']}</option>
       `)
-    }
+          }
 
-    drawPlots(routeInfo['plot'], routeInfo['user'])
+          drawPlots(routeInfo['plot'], routeInfo['user'])
 
-    activateNextStage('route__select--user')
-    activateNextStage('pause-route__btn')
+          activateNextStage('route__select--user')
+          activateNextStage('pause-route__btn')
 
-    if (routeInfo['user']) {
-      activateNextStage('error-route__btn')
-    }
+          if (routeInfo['user']) {
+            activateNextStage('error-route__btn')
+          }
 
-    if (logName !== '') {
-      controlCommentAccess(commentInput)
-    }
+          if (logName !== '') {
+            controlCommentAccess(commentInput)
+          }
 
-    if (routeInfo['user']) {
-      controlCommentAccess(commentInput)
+          if (routeInfo['user']) {
+            controlCommentAccess(commentInput)
 
-      if (routeInfo.start_time) {
-        activateNextStage('issued-modal_trigger')
-      }
-    }
+            if (routeInfo.start_time) {
+              activateNextStage('issued-modal_trigger')
+            }
+          }
 
-    if (!routeInfo['start_time'] && routeInfo.user) {
-      activateNextStage('start-route__btn')
-    } else if (routeInfo.start_time) {
-      activateNextStage('end-route__btn')
-      startBtn.classList.add('route-type__start')
-    }
+          if (!routeInfo['start_time'] && routeInfo.user) {
+            activateNextStage('start-route__btn')
+          } else if (routeInfo.start_time) {
+            activateNextStage('end-route__btn')
+            startBtn.classList.add('route-type__start')
+          }
 
-    startTime.value = routeInfo['start_time']
-    endTime.value = routeInfo['end_time']
-    errInput.value = routeInfo['error_msg']
-    errTime.value = routeInfo['error_time']
+          startTime.value = routeInfo['start_time']
+          endTime.value = routeInfo['end_time']
+          errInput.value = routeInfo['error_msg']
+          errTime.value = routeInfo['error_time']
 
-    theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : ''
-    // dynEndInp.value = dynEnd ? dynEnd : ''
+          theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : ''
+          // dynEndInp.value = dynEnd ? dynEnd : ''
 
-    if (routeInfo['plan_date']) {
-      planDateInput.value = routeInfo['plan_date']
-      planDateInputStart.value = routeInfo['plan_start']
-      planDateInput.classList.add('route-type__finish')
+          if (routeInfo['plan_date']) {
+            planDateInput.value = routeInfo['plan_date']
+            planDateInputStart.value = routeInfo['plan_start']
+            planDateInput.classList.add('route-type__finish')
+          } else {
+            planDateInput.classList.remove('route-type__finish')
+          }
+
+          if (comments) {
+            comments = comments.map(c => `${c['date']}    ${c['value']}`)
+            comments = comments.join('---')
+            visibleLogs.value = comments
+
+            comments = comments.split('---')
+            comments = comments.filter(c => c.includes('REPORTMSG'))
+            modalElem.querySelector('#issued__all').value = comments.join('---')
+          }
+
+          activateNextStage('section-finish__sub')
+
+          if (routeInfo['quantity']) {
+            routeQuantity.value = routeInfo['quantity']
+            // dayQuantityInfo['quantity'] = routeInfo['quantity']
+            // controlQuantityAccess(routeDayQuantity)
+          } else {
+            const quant = currentOrder.querySelector('input[name="quantity"]').value
+            routeQuantity.value = quant
+            // dayQuantityInfo['quantity'] = quant
+          }
+
+          if (routeInfo['day_quantity']) {
+            // controlQuantityAccess(routeDayQuantity)
+            routeDayQuantity.value = routeInfo['day_quantity']
+          }
+
+          shifts.value = routeInfo.need_shifts
+
+          if (routeInfo['end_time']) {
+            disableBtn('end-route__btn')
+            disableBtn('pause-route__btn')
+            endBTn.classList.add('route-type__finish')
+          }
+
+          if (routeInfo['error_msg']) {
+            errInput.setAttribute('disabled', '')
+            errBtn.classList.add('route-type__error')
+
+            if (state['adminCheck'] || state['techCheck']) {
+            }
+          }
+
+          if (routeInfo['start_time']) {
+            issuedToday.classList.add('text-input')
+            issuedToday.removeAttribute('disabled')
+          }
+
+          if (routeInfo['pause_time']) {
+            pauseTimeInput.value = routeInfo['pause_time']
+            pauseTextInput.value = routeInfo['pause_msg']
+            pauseBtn.textContent = 'Пауза'
+            pauseBtn.classList.add('route-type__paused')
+            disableBtn('route__select--user')
+
+            if (!planObj.planStart) {
+              disableBtn('route-plan__date')
+            }
+
+            disableBtn('start-route__btn')
+            disableBtn('start-route__time')
+            disableBtn('issued-modal_trigger')
+
+
+            disableBtn('end-route__btn')
+            disableBtn('end-route__time')
+          }
+
+          dayQuantityInfo = {
+            'up': routeInfo.up || 0,
+            'adjustment': routeInfo.adjustment || 0,
+            'time': routeInfo.time || 0,
+            'quantity': routeInfo.quantity || currentOrder.querySelector('input[name="quantity"]').value || 0,
+          }
+        })
     } else {
-      planDateInput.classList.remove('route-type__finish')
-    }
-
-    if (comments) {
-      comments = comments.map(c => `${c['date']}    ${c['value']}`)
-      comments = comments.join('---')
-      visibleLogs.value = comments
-
-      comments = comments.split('---')
-      comments = comments.filter(c => c.includes('REPORTMSG'))
-      modalElem.querySelector('#issued__all').value = comments.join('---')
-    }
-
-    activateNextStage('section-finish__sub')
-
-    if (routeInfo['quantity']) {
-      routeQuantity.value = routeInfo['quantity']
-      // dayQuantityInfo['quantity'] = routeInfo['quantity']
-      // controlQuantityAccess(routeDayQuantity)
-    } else {
-      const quant = currentOrder.querySelector('input[name="quantity"]').value
-      routeQuantity.value = quant
-      // dayQuantityInfo['quantity'] = quant
-    }
-
-    if (routeInfo['day_quantity']) {
-      // controlQuantityAccess(routeDayQuantity)
-      routeDayQuantity.value = routeInfo['day_quantity']
-    }
-
-    shifts.value = routeInfo.need_shifts
-
-    if (routeInfo['end_time']) {
-      disableBtn('end-route__btn')
-      disableBtn('pause-route__btn')
-      endBTn.classList.add('route-type__finish')
-    }
-
-    if (routeInfo['error_msg']) {
-      errInput.setAttribute('disabled', '')
-      errBtn.classList.add('route-type__error')
-
-      if (state['adminCheck'] || state['techCheck']) {
+      planDateInput.removeAttribute('disabled')
+      let comments = routeInfo['comments']
+      if (routeInfo['last_comment']) {
+        document.querySelector('#last_comment').value = routeInfo['last_comment']
       }
-    }
-
-    if (routeInfo['start_time']) {
-      issuedToday.classList.add('text-input')
-      issuedToday.removeAttribute('disabled')
-    }
-
-    if (routeInfo['pause_time']) {
-      pauseTimeInput.value = routeInfo['pause_time']
-      pauseTextInput.value = routeInfo['pause_msg']
-      pauseBtn.textContent = 'Пауза'
-      pauseBtn.classList.add('route-type__paused')
-      disableBtn('route__select--user')
-
-      if (!planObj.planStart) {
-        disableBtn('route-plan__date')
+      if (routeInfo.issued_today) {
+        issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
       }
 
-      disableBtn('start-route__btn')
-      disableBtn('start-route__time')
-      disableBtn('issued-modal_trigger')
+      shift.value = routeInfo.shift
+
+      planned = routeInfo['planned']
+
+      // if (planned) {
+      //   planDateInput.value = 'В планировании'
+      // }
+
+      if (routeInfo['db_plan']) {
+        let today = getTime()
+        today = today.substring(0, today.length - 5).trim()
+
+        dbAddedDates = routeInfo['db_plan']
+        planDateInput.value = 'В плане'
+
+        dbAddedDates.map(dateInfo => {
+          dateInfo['queues'] = dateInfo['queues'].split(', ')
+          dateInfo['date'] = dateInfo['date'].split('T')[0]
+
+          if (today === dateInfo['date']) {
+            planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
+          }
+
+          addedDates[dateInfo['date']] = {
+            'divider': dateInfo.divider,
+            'queues': dateInfo.queues
+          }
+        })
+      }
+
+      planObj = {
+        'exclude': routeInfo['exclude_days'],
+        'planStart': routeInfo['plan_start'],
+        'planEnd': routeInfo['plan_date'],
+        'faster': routeInfo['plan_faster']
+      }
+
+      if (routeInfo['issued']) {
+        issued.value = routeInfo['issued']
+
+        if (!operStatus) {
+          activateNextStage('report-route__btn')
+        }
+      }
+
+      if (logName !== '') {
+        deleteBtn.removeAttribute('disabled')
+        deleteBtn.addEventListener('click', e => {
+          confirmChangeTimeHandler(e, () => {
+            sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
+              .then(resp => {
+                if (resp.ok) showResult(true)
+                routeInput.value = ""
+                const infoParent = routeInput.parentNode
+                const routeInfo = infoParent.querySelector(`.click-chose`)
+                routeInfo.value = '-'
+                routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
+                modalElem.remove()
+                const parent = routeInput.closest('.table-form--old')
+                if (!(parent === null)) {
+                  parent.classList.remove('table-form--old')
+                  parent.classList.add('table-form--upd')
+                  submitData()
+                }
+
+                // getOrders('get-all', true)
+              })
+          }, 'Удалить маршрут?')
+        })
+      }
+
+      if (routeInfo['start_time']) {
+        disableBtn('route__select--plot')
+      }
+
+      if (routeInfo.user) {
+        routeUser.insertAdjacentHTML('beforeend', `
+          <option selected value="${routeInfo['user']}">${routeInfo['user']}</option>
+        `)
+      }
+
+      drawPlots(routeInfo['plot'], routeInfo['user'])
+
+      activateNextStage('route__select--user')
+      activateNextStage('pause-route__btn')
+
+      if (routeInfo['user']) {
+        activateNextStage('error-route__btn')
+      }
+
+      if (logName !== '') {
+        controlCommentAccess(commentInput)
+      }
+
+      if (routeInfo['user']) {
+        controlCommentAccess(commentInput)
+
+        if (routeInfo.start_time) {
+          activateNextStage('issued-modal_trigger')
+        }
+      }
+
+      if (!routeInfo['start_time'] && routeInfo.user) {
+        activateNextStage('start-route__btn')
+      } else if (routeInfo.start_time) {
+        activateNextStage('end-route__btn')
+        startBtn.classList.add('route-type__start')
+      }
+
+      startTime.value = routeInfo['start_time']
+      endTime.value = routeInfo['end_time']
+      errInput.value = routeInfo['error_msg']
+      errTime.value = routeInfo['error_time']
+
+      theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : ''
+      // dynEndInp.value = dynEnd ? dynEnd : ''
+
+      if (routeInfo['plan_date']) {
+        planDateInput.value = routeInfo['plan_date']
+        planDateInputStart.value = routeInfo['plan_start']
+        planDateInput.classList.add('route-type__finish')
+      } else {
+        planDateInput.classList.remove('route-type__finish')
+      }
+
+      if (comments) {
+        comments = comments.map(c => `${c['date']}    ${c['value']}`)
+        comments = comments.join('---')
+        visibleLogs.value = comments
+
+        comments = comments.split('---')
+        comments = comments.filter(c => c.includes('REPORTMSG'))
+        modalElem.querySelector('#issued__all').value = comments.join('---')
+      }
+
+      activateNextStage('section-finish__sub')
+
+      if (routeInfo['quantity']) {
+        routeQuantity.value = routeInfo['quantity']
+        // dayQuantityInfo['quantity'] = routeInfo['quantity']
+        // controlQuantityAccess(routeDayQuantity)
+      } else {
+        const quant = currentOrder.querySelector('input[name="quantity"]').value
+        routeQuantity.value = quant
+        // dayQuantityInfo['quantity'] = quant
+      }
+
+      if (routeInfo['day_quantity']) {
+        // controlQuantityAccess(routeDayQuantity)
+        routeDayQuantity.value = routeInfo['day_quantity']
+      }
+
+      shifts.value = routeInfo.need_shifts
+
+      if (routeInfo['end_time']) {
+        disableBtn('end-route__btn')
+        disableBtn('pause-route__btn')
+        endBTn.classList.add('route-type__finish')
+      }
+
+      if (routeInfo['error_msg']) {
+        errInput.setAttribute('disabled', '')
+        errBtn.classList.add('route-type__error')
+
+        if (state['adminCheck'] || state['techCheck']) {
+        }
+      }
+
+      if (routeInfo['start_time']) {
+        issuedToday.classList.add('text-input')
+        issuedToday.removeAttribute('disabled')
+      }
+
+      if (routeInfo['pause_time']) {
+        pauseTimeInput.value = routeInfo['pause_time']
+        pauseTextInput.value = routeInfo['pause_msg']
+        pauseBtn.textContent = 'Пауза'
+        pauseBtn.classList.add('route-type__paused')
+        disableBtn('route__select--user')
+
+        if (!planObj.planStart) {
+          disableBtn('route-plan__date')
+        }
+
+        disableBtn('start-route__btn')
+        disableBtn('start-route__time')
+        disableBtn('issued-modal_trigger')
 
 
-      disableBtn('end-route__btn')
-      disableBtn('end-route__time')
-    }
+        disableBtn('end-route__btn')
+        disableBtn('end-route__time')
+      }
 
-    dayQuantityInfo = {
-      'up': routeInfo.up || 0,
-      'adjustment': routeInfo.adjustment || 0,
-      'time': routeInfo.time || 0,
-      'quantity': routeInfo.quantity || currentOrder.querySelector('input[name="quantity"]').value || 0,
+      dayQuantityInfo = {
+        'up': routeInfo.up || 0,
+        'adjustment': routeInfo.adjustment || 0,
+        'time': routeInfo.time || 0,
+        'quantity': routeInfo.quantity || currentOrder.querySelector('input[name="quantity"]').value || 0,
+      }
     }
 
   } else {
@@ -850,7 +1077,8 @@ export const triggerRoutesModal = e => {
   dayQuantity.addEventListener('mouseleave', e => {
     try {
       modalElem.querySelector('.check-helper').remove()
-    } catch {}
+    } catch {
+    }
   })
 
   routeQuantity.addEventListener('change', e => {
@@ -1029,7 +1257,7 @@ export const triggerRoutesModal = e => {
   })
 
   window.addEventListener('keydown', subCommentByEnter)
-  document.querySelector('.section-finish__sub').addEventListener('click', () => {
+  modalElem.querySelector('.section-finish__sub').addEventListener('click', () => {
     modalElem.querySelectorAll('.route__input').forEach(input => {
       input.removeAttribute('disabled')
     })
@@ -1065,19 +1293,28 @@ export const triggerRoutesModal = e => {
     obj['time'] = dayQuantityInfo.time
     obj['adjustment'] = dayQuantityInfo.adjustment
     obj['need_shifts'] = Number(shifts.value)
-    console.log(shift.value)
+    console.log(obj)
     // obj['planned'] = !!(dbID && planned)
 
+    if (page === 'main') {
+      routeInput.value = JSON.stringify(obj)
+      const parent = routeInput.closest('.table-form--old')
 
-    routeInput.value = JSON.stringify(obj)
-    const parent = routeInput.closest('.table-form--old')
+      if (!(parent === null)) {
+        parent.classList.remove('table-form--old')
+        parent.classList.add('table-form--upd')
+        //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
+      }
+      submitData()
+    } else {
+      obj['order_id'] = currentOrder.querySelector('#db_id').value
+      obj['route_position'] = currentOrder.querySelector('#route_position').value
 
-    if (!(parent === null)) {
-      parent.classList.remove('table-form--old')
-      parent.classList.add('table-form--upd')
-      //   sendData(`${appAddr}/api/reports/update`, 'POST', JSON.stringify(obj))
+      sendData(`${appAddr}/api/routes/update-route`, 'POST', JSON.stringify(obj))
+        .then(resp => {
+          console.log(resp.ok)
+        })
     }
-    submitData()
 
     document.querySelector('.modal--route').remove()
     window.removeEventListener('keydown', subCommentByEnter)
@@ -1091,6 +1328,217 @@ export const triggerRoutesModal = e => {
       sel.setAttribute('disabled', 'true')
     })
   }
+}
+
+const setRouteData = (routeInfo) => {
+  // planDateInput.removeAttribute('disabled')
+  // let comments = routeInfo['comments']
+  // if (routeInfo['last_comment']) {
+  //   document.querySelector('#last_comment').value = routeInfo['last_comment']
+  // }
+  // if (routeInfo.issued_today) {
+  //   issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
+  // }
+  //
+  // shift.value = routeInfo.shift
+  //
+  // planned = routeInfo['planned']
+  //
+  // // if (planned) {
+  // //   planDateInput.value = 'В планировании'
+  // // }
+  //
+  // if (routeInfo['db_plan']) {
+  //   let today = getTime()
+  //   today = today.substring(0, today.length - 5).trim()
+  //
+  //   dbAddedDates = routeInfo['db_plan']
+  //   planDateInput.value = 'В плане'
+  //
+  //   dbAddedDates.map(dateInfo => {
+  //     dateInfo['queues'] = dateInfo['queues'].split(', ')
+  //     dateInfo['date'] = dateInfo['date'].split('T')[0]
+  //
+  //     if (today === dateInfo['date']) {
+  //       planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
+  //     }
+  //
+  //     addedDates[dateInfo['date']] = {
+  //       'divider': dateInfo.divider,
+  //       'queues': dateInfo.queues
+  //     }
+  //   })
+  // }
+  //
+  // planObj = {
+  //   'exclude': routeInfo['exclude_days'],
+  //   'planStart': routeInfo['plan_start'],
+  //   'planEnd': routeInfo['plan_date'],
+  //   'faster': routeInfo['plan_faster']
+  // }
+  //
+  // if (routeInfo['issued']) {
+  //   issued.value = routeInfo['issued']
+  //
+  //   if (!operStatus) {
+  //     activateNextStage('report-route__btn')
+  //   }
+  // }
+  //
+  // if (logName !== '') {
+  //   deleteBtn.removeAttribute('disabled')
+  //   deleteBtn.addEventListener('click', e => {
+  //     confirmChangeTimeHandler(e, () => {
+  //       sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
+  //         .then(resp => {
+  //           if (resp.ok) showResult(true)
+  //           routeInput.value = ""
+  //           const infoParent = routeInput.parentNode
+  //           const routeInfo = infoParent.querySelector(`.click-chose`)
+  //           routeInfo.value = '-'
+  //           routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
+  //           modalElem.remove()
+  //           const parent = routeInput.closest('.table-form--old')
+  //           if (!(parent === null)) {
+  //             parent.classList.remove('table-form--old')
+  //             parent.classList.add('table-form--upd')
+  //             submitData()
+  //           }
+  //
+  //           // getOrders('get-all', true)
+  //         })
+  //     }, 'Удалить маршрут?')
+  //   })
+  // }
+  //
+  // if (routeInfo['start_time']) {
+  //   disableBtn('route__select--plot')
+  // }
+  //
+  // if (routeInfo.user) {
+  //   routeUser.insertAdjacentHTML('beforeend', `
+  //     <option selected value="${routeInfo['user']}">${routeInfo['user']}</option>
+  //   `)
+  // }
+  //
+  // drawPlots(routeInfo['plot'], routeInfo['user'])
+  //
+  // activateNextStage('route__select--user')
+  // activateNextStage('pause-route__btn')
+  //
+  // if (routeInfo['user']) {
+  //   activateNextStage('error-route__btn')
+  // }
+  //
+  // if (logName !== '') {
+  //   controlCommentAccess(commentInput)
+  // }
+  //
+  // if (routeInfo['user']) {
+  //   controlCommentAccess(commentInput)
+  //
+  //   if (routeInfo.start_time) {
+  //     activateNextStage('issued-modal_trigger')
+  //   }
+  // }
+  //
+  // if (!routeInfo['start_time'] && routeInfo.user) {
+  //   activateNextStage('start-route__btn')
+  // } else if (routeInfo.start_time) {
+  //   activateNextStage('end-route__btn')
+  //   startBtn.classList.add('route-type__start')
+  // }
+  //
+  // startTime.value = routeInfo['start_time']
+  // endTime.value = routeInfo['end_time']
+  // errInput.value = routeInfo['error_msg']
+  // errTime.value = routeInfo['error_time']
+  //
+  // theorEndInp.value = routeInfo['theor_end'] ? routeInfo['theor_end'] : ''
+  // // dynEndInp.value = dynEnd ? dynEnd : ''
+  //
+  // if (routeInfo['plan_date']) {
+  //   planDateInput.value = routeInfo['plan_date']
+  //   planDateInputStart.value = routeInfo['plan_start']
+  //   planDateInput.classList.add('route-type__finish')
+  // } else {
+  //   planDateInput.classList.remove('route-type__finish')
+  // }
+  //
+  // if (comments) {
+  //   comments = comments.map(c => `${c['date']}    ${c['value']}`)
+  //   comments = comments.join('---')
+  //   visibleLogs.value = comments
+  //
+  //   comments = comments.split('---')
+  //   comments = comments.filter(c => c.includes('REPORTMSG'))
+  //   modalElem.querySelector('#issued__all').value = comments.join('---')
+  // }
+  //
+  // activateNextStage('section-finish__sub')
+  //
+  // if (routeInfo['quantity']) {
+  //   routeQuantity.value = routeInfo['quantity']
+  //   // dayQuantityInfo['quantity'] = routeInfo['quantity']
+  //   // controlQuantityAccess(routeDayQuantity)
+  // } else {
+  //   const quant = currentOrder.querySelector('input[name="quantity"]').value
+  //   routeQuantity.value = quant
+  //   // dayQuantityInfo['quantity'] = quant
+  // }
+  //
+  // if (routeInfo['day_quantity']) {
+  //   // controlQuantityAccess(routeDayQuantity)
+  //   routeDayQuantity.value = routeInfo['day_quantity']
+  // }
+  //
+  // shifts.value = routeInfo.need_shifts
+  //
+  // if (routeInfo['end_time']) {
+  //   disableBtn('end-route__btn')
+  //   disableBtn('pause-route__btn')
+  //   endBTn.classList.add('route-type__finish')
+  // }
+  //
+  // if (routeInfo['error_msg']) {
+  //   errInput.setAttribute('disabled', '')
+  //   errBtn.classList.add('route-type__error')
+  //
+  //   if (state['adminCheck'] || state['techCheck']) {
+  //   }
+  // }
+  //
+  // if (routeInfo['start_time']) {
+  //   issuedToday.classList.add('text-input')
+  //   issuedToday.removeAttribute('disabled')
+  // }
+  //
+  // if (routeInfo['pause_time']) {
+  //   pauseTimeInput.value = routeInfo['pause_time']
+  //   pauseTextInput.value = routeInfo['pause_msg']
+  //   pauseBtn.textContent = 'Пауза'
+  //   pauseBtn.classList.add('route-type__paused')
+  //   disableBtn('route__select--user')
+  //
+  //   if (!planObj.planStart) {
+  //     disableBtn('route-plan__date')
+  //   }
+  //
+  //   disableBtn('start-route__btn')
+  //   disableBtn('start-route__time')
+  //   disableBtn('issued-modal_trigger')
+  //
+  //
+  //   disableBtn('end-route__btn')
+  //   disableBtn('end-route__time')
+  // }
+  //
+  // dayQuantityInfo = {
+  //   'up': routeInfo.up || 0,
+  //   'adjustment': routeInfo.adjustment || 0,
+  //   'time': routeInfo.time || 0,
+  //   'quantity': routeInfo.quantity || currentOrder.querySelector('input[name="quantity"]').value || 0,
+  // }
 }
 
 const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, theorEndInp, shifts, quantityInfo, dayInput) => {
