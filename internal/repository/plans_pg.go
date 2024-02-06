@@ -163,6 +163,7 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 
 	layout := "2006-01-02"
 	today := time.Now().In(loc).Format(layout)
+	timeToday, _ := time.Parse(dateLayout, today)
 
 	var order domain.Order
 	for _, route := range routesInfo {
@@ -182,11 +183,9 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 		if err != nil {
 			return err
 		}
-		log.Info().Interface("order", order).Msgf("order with id %v", order.ID)
 
 		for _, date := range strings.Split(route.PlanDates, ", ") {
 			log.Info().Caller().Msgf("date %v", date)
-
 			reportQuery := fmt.Sprintf(`
 				INSERT INTO reports
 							 (report_date, order_id, order_number, order_client, 
@@ -197,13 +196,18 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 				RETURNING report_id
 			`)
-			err = p.db.QueryRow(
-				reportQuery, date, route.OrderID, order.Number, order.Client, order.Name, route.Quantity, route.Issued,
-				route.DayQuantity, "", "", order.Material, route.Plot, today, route.RoutePosition, route.RouteID,
-				order.TimeStamp, "", route.NeedShifts, false,
-			).Err()
-			if err != nil {
-				return err
+
+			checkDate, _ := time.Parse(dateLayout, strings.Split(date, "T")[0])
+			log.Info().Msgf("check date %v / today date %v", checkDate, timeToday)
+			if checkDate.Unix() >= timeToday.Unix() {
+				err = p.db.QueryRow(
+					reportQuery, date, route.OrderID, order.Number, order.Client, order.Name, route.Quantity, route.Issued,
+					route.DayQuantity, "", "", order.Material, route.Plot, today, route.RoutePosition, route.RouteID,
+					order.TimeStamp, "", route.NeedShifts, false,
+				).Err()
+				if err != nil {
+					return err
+				}
 			}
 		}
 
@@ -221,6 +225,8 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 }
 
 func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
+	dateLayout := "2006-01-02"
+
 	var planDates []*domain.DbPlanInfo
 	queryRoutePlan := fmt.Sprintf(`
 		SELECT plan_date, divider, queues, route_id, route_plot, order_id
@@ -336,6 +342,7 @@ func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 
 	layout := "2006-01-02"
 	today := time.Now().In(loc).Format(layout)
+	timeToday, _ := time.Parse(dateLayout, today)
 
 	var order domain.Order
 	for _, route := range routesInfo {
@@ -359,7 +366,6 @@ func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 
 		for _, date := range strings.Split(route.PlanDates, ", ") {
 			log.Info().Caller().Msgf("date %v", date)
-
 			reportQuery := fmt.Sprintf(`
 				INSERT INTO reports
 							 (report_date, order_id, order_number, order_client, 
@@ -370,13 +376,17 @@ func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 				RETURNING report_id
 			`)
-			err = p.db.QueryRow(
-				reportQuery, date, route.OrderID, order.Number, order.Client, order.Name, route.Quantity, route.Issued,
-				route.DayQuantity, "", "", order.Material, route.Plot, today, route.RoutePosition, route.RouteID,
-				order.TimeStamp, "", route.NeedShifts, false,
-			).Err()
-			if err != nil {
-				return err
+
+			checkDate, _ := time.Parse(dateLayout, strings.Split(date, "T")[0])
+			if checkDate.Unix() >= timeToday.Unix() {
+				err = p.db.QueryRow(
+					reportQuery, date, route.OrderID, order.Number, order.Client, order.Name, route.Quantity, route.Issued,
+					route.DayQuantity, "", "", order.Material, route.Plot, today, route.RoutePosition, route.RouteID,
+					order.TimeStamp, "", route.NeedShifts, false,
+				).Err()
+				if err != nil {
+					return err
+				}
 			}
 		}
 

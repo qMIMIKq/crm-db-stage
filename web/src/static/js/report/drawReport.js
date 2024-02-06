@@ -121,6 +121,13 @@ export const drawReport = async (d) => {
               required  autocomplete="off"
               value="${d.prev_total}">
           </li>
+          <li class="table-body_cell table__issued--report">
+              <input readonly class="table__data table__data--ro ${last ? 'report-complete' : ''}" tabindex="-1"
+              type="number" 
+              name="issued" 
+              required  autocomplete="off"
+              value="${d.issued}">
+          </li>
           <li class="table-body_cell table__route--report">
               <input readonly type="text" class="table__data" value="${d.order_plot}">
           </li>
@@ -161,13 +168,6 @@ export const drawReport = async (d) => {
           </li>
           <li class="table-body_cell table__issued-plan--report">
             <input readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
-          </li>
-          <li class="table-body_cell table__issued--report">
-              <input readonly class="table__data table__data--ro" tabindex="-1"
-              type="number" 
-              name="issued" 
-              required  autocomplete="off"
-              value="${d.issued}">
           </li>
           <li class="table-body_cell table__plan--percent">
             <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>
