@@ -223,6 +223,10 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 
 	for _, route := range routesInfo {
 		routeReports := GetIssuedReports(route)
+		if err := p.db.Get(&order, orderQuery, route.OrderID); err != nil {
+			log.Err(err).Msgf("error is")
+			return err
+		}
 
 		var keys []string
 		for reportDate := range routeReports.ReportsData {
@@ -317,12 +321,16 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 			theorAdjustment := ""
 			hiddenShift = report.HiddenShift
 
-			if i == len(reports)-2 {
-				totalForPlan = report.Issued
-			}
-
 			if report.CurrentShift != 0 {
 				shift = report.CurrentShift
+
+				log.Info().Msgf("i %v", i)
+				if i != 0 {
+					totalForPlan = reports[i-1].Issued
+				} else {
+					totalForPlan = ""
+				}
+				log.Info().Msgf("total %v", totalForPlan)
 
 				if report.CurrentShift == 1 && !checkTheor {
 					theorAdjustment = strconv.Itoa(route.Adjustment)
@@ -341,7 +349,7 @@ func (p PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 			//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 		}
 
-		if hiddenShift >= shift && shift != 1 {
+		if hiddenShift >= shift {
 			shift -= 1
 			if shift < 0 {
 				shift = 0
@@ -552,6 +560,10 @@ func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 
 	for _, route := range routesInfo {
 		routeReports := GetIssuedReports(route)
+		if err := p.db.Get(&order, orderQuery, route.OrderID); err != nil {
+			log.Err(err).Msgf("error is")
+			return err
+		}
 
 		var keys []string
 		for reportDate := range routeReports.ReportsData {
@@ -653,6 +665,14 @@ func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 			if report.CurrentShift != 0 {
 				shift = report.CurrentShift
 
+				log.Info().Msgf("i %v", i)
+				if i != 0 {
+					totalForPlan = reports[i-1].Issued
+				} else {
+					totalForPlan = ""
+				}
+				log.Info().Msgf("total %v", totalForPlan)
+
 				if report.CurrentShift == 1 && !checkTheor {
 					theorAdjustment = strconv.Itoa(route.Adjustment)
 					checkTheor = true
@@ -670,7 +690,7 @@ func (p PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 			//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 		}
 
-		if hiddenShift >= shift && shift != 1 {
+		if hiddenShift >= shift {
 			shift -= 1
 			if shift < 0 {
 				shift = 0
@@ -929,6 +949,14 @@ func (p PlansPG) UpdatePlan(data *domain.PlanData) error {
 		if report.CurrentShift != 0 {
 			shift = report.CurrentShift
 
+			log.Info().Msgf("i %v", i)
+			if i != 0 {
+				totalForPlan = reports[i-1].Issued
+			} else {
+				totalForPlan = ""
+			}
+			log.Info().Msgf("total %v", totalForPlan)
+
 			if report.CurrentShift == 1 && !checkTheor {
 				theorAdjustment = strconv.Itoa(route.Adjustment)
 				checkTheor = true
@@ -946,7 +974,7 @@ func (p PlansPG) UpdatePlan(data *domain.PlanData) error {
 		//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 	}
 
-	if hiddenShift >= shift && shift != 1 {
+	if hiddenShift >= shift {
 		shift -= 1
 		if shift < 0 {
 			shift = 0

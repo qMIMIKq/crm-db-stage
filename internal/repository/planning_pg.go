@@ -115,7 +115,7 @@ func (p *PlanningPG) CreatePlanningObject(route *domain.Route, order *domain.Ord
 			RETURNING planning_id
 	`)
 
-		err = p.db.QueryRow(planningQuery, id, order.Number, order.Client, order.Name, order.Quantity, route.Issued, order.TimeOfModify, routeID, route.Plot, route.NeedShifts, routePos, planningID).Scan(&planningID)
+		err = p.db.QueryRow(planningQuery, id, order.Number, order.Client, order.Name, route.Quantity, route.Issued, order.TimeOfModify, routeID, route.Plot, route.NeedShifts, routePos, planningID).Scan(&planningID)
 	}
 
 	return planningID, err

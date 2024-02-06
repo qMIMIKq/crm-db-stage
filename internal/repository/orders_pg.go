@@ -339,12 +339,16 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					theorAdjustment := ""
 					hiddenShift = report.HiddenShift
 
-					if i == len(reports)-2 {
-						totalForPlan = report.Issued
-					}
-
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
+
+						log.Info().Msgf("i %v", i)
+						if i != 0 {
+							totalForPlan = reports[i-1].Issued
+						} else {
+							totalForPlan = ""
+						}
+						log.Info().Msgf("total %v", totalForPlan)
 
 						if report.CurrentShift == 1 && !checkTheor {
 							theorAdjustment = strconv.Itoa(route.Adjustment)
@@ -363,7 +367,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 				}
 
-				if hiddenShift >= shift && shift != 1 {
+				if hiddenShift >= shift {
 					shift -= 1
 					if shift < 0 {
 						shift = 0
@@ -629,6 +633,14 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
 
+						log.Info().Msgf("i %v", i)
+						if i != 0 {
+							totalForPlan = reports[i-1].Issued
+						} else {
+							totalForPlan = ""
+						}
+						log.Info().Msgf("total %v", totalForPlan)
+
 						if report.CurrentShift == 1 && !checkTheor {
 							theorAdjustment = strconv.Itoa(route.Adjustment)
 							checkTheor = true
@@ -646,7 +658,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 				}
 
-				if hiddenShift >= shift && shift != 1 {
+				if hiddenShift >= shift {
 					shift -= 1
 					if shift < 0 {
 						shift = 0
@@ -949,6 +961,14 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				if report.CurrentShift != 0 {
 					shift = report.CurrentShift
 
+					log.Info().Msgf("i %v", i)
+					if i != 0 {
+						totalForPlan = reports[i-1].Issued
+					} else {
+						totalForPlan = ""
+					}
+					log.Info().Msgf("total %v", totalForPlan)
+
 					if report.CurrentShift == 1 && !checkTheor {
 						theorAdjustment = strconv.Itoa(route.Adjustment)
 						checkTheor = true
@@ -966,7 +986,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				//log.Info().Msgf("hidden shift %v / shift %v / theor adj %v / adj %v", hiddenShift, shift, theorAdjustment, route.Adjustment)
 			}
 
-			if hiddenShift >= shift && shift != 1 {
+			if hiddenShift >= shift {
 				shift -= 1
 				if shift < 0 {
 					shift = 0
