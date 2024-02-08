@@ -27,11 +27,15 @@ export const newAllPlanFilter = async (init) => {
       if (!order.db_plan) {
         flag = false
       } else {
-        const endDate = new Date(startTime)
-        const eldestDate = new Date(order.db_plan[order.db_plan.length - 1].date.split('T')[0])
-        if (endDate.getTime() > eldestDate.getTime()) {
+        if (!order.checkForPlanning) {
           flag = false
         }
+
+        // const endDate = new Date(startTime)
+        // const eldestDate = new Date(order.db_plan[order.db_plan.length - 1].date.split('T')[0])
+        // if (endDate.getTime() > eldestDate.getTime()) {
+        //   flag = false
+        // }
       }
 
       if (flag) {

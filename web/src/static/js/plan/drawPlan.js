@@ -97,6 +97,7 @@ export const drawPlan = (d, data) => {
 
   let datesList = Object.keys(addedDates)
   let checkForPlanning = datesList.includes(yst) && !datesList.includes(today)
+  d['checkForPlanning'] = checkForPlanning
 
   let uniqueFileNames = []
   if (d.files !== null && d.files !== undefined) {

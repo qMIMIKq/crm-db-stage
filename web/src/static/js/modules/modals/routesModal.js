@@ -175,7 +175,7 @@ const routeModal = `
                       
                       <button type='button' class='clickable route__alert-btn route__btn main__button'>
                         Желтый
-                        <input class="hidden__input" type="text" name="color" id="" value="#d0d030">
+                        <input class="hidden__input" type="text" name="color" id="" value="#e5e516">
                       </button>
                       
                       <input class="hidden__input" readonly type="text" name="alert_color" id="alert_color">
