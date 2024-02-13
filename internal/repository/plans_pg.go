@@ -393,6 +393,12 @@ func (p *PlansPG) ShiftPlanAfterEnd(route *domain.Route) error {
 		}
 	}
 
+	if counter-1 == 0 {
+		return nil
+	}
+
+	log.Info().Msgf("start shifting")
+
 	startDate, _ := time.Parse(layout, dateForStart)
 	startDate = startDate.Add(-24 * time.Hour)
 	startDateString := startDate.Format(layout)
@@ -417,12 +423,22 @@ func (p *PlansPG) ShiftPlanAfterEnd(route *domain.Route) error {
 	`)
 
 	deletePlanQuery := fmt.Sprintf(`
-		DELETE FROM plans WHERE plan_id = $1
+		DELETE FROM plans WHERE route_id = $1 AND plan_date >= $2
 	`)
 
 	deleteReportsQuery := fmt.Sprintf(`
-		DELETE FROM reports WHERE route_id = $1 AND report_date = $2
+		DELETE FROM reports WHERE route_id = $1 AND report_date >= $2
 	`)
+
+	for _, plan := range anotherPlans {
+		if _, err := p.db.Exec(deletePlanQuery, plan.RouteID, dateForStart); err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
+
+		if _, err := p.db.Exec(deleteReportsQuery, plan.RouteID, dateForStart); err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
+	}
 
 	planRoutes := map[string][]*domain.DbPlanInfo{}
 	for i, plan := range anotherPlans {
@@ -439,14 +455,6 @@ func (p *PlansPG) ShiftPlanAfterEnd(route *domain.Route) error {
 
 		anotherPlans[i].PlanDate = checkForMove.Format(layout)
 		planRoutes[plan.RouteID] = append(planRoutes[plan.RouteID], plan)
-
-		if _, err := p.db.Exec(deletePlanQuery, plan.PlanID); err != nil {
-			log.Err(err).Caller().Msg("error is")
-		}
-
-		if _, err := p.db.Exec(deleteReportsQuery, plan.RouteID, plan.PlanDate); err != nil {
-			log.Err(err).Caller().Msg("error is")
-		}
 
 		if _, err := p.db.Exec(updatePlanQuery, plan.RouteID, plan.OrderID, plan.RoutePlot,
 			anotherPlans[i].PlanDate, plan.Divider, plan.Queues); err != nil {
