@@ -74,6 +74,7 @@ type Plans interface {
 	UpdatePlan(data *domain.PlanData) error
 	ShiftPlan(shift *domain.PlanShift) error
 	AutoShiftPlan(shift *domain.PlanShift) error
+	ShiftPlanAfterEnd(route *domain.Route) error
 }
 
 type Groups interface {
@@ -103,18 +104,39 @@ type Repository struct {
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
+	ReportPG := NewReportsPG(db)
+	PlansPG := NewPlansPG(db, ReportPG)
+	PlanningPG := NewPlanningPG(db, PlansPG)
+	OrdersPG := NewOrdersPG(db, ReportPG, PlanningPG)
+	RoutesPG := NewRoutesPG(db, ReportPG, PlanningPG)
+
 	return &Repository{
 		Authorization: NewAuthPG(db),
 		Users:         NewUsersPG(db),
 		Filters:       NewFiltersPG(db),
 		Plots:         NewPlotsPG(db),
 		Files:         NewFilesMwPg(db),
-		Orders:        NewOrdersPG(db, NewReportsPG(db), NewPlanningPG(db)),
-		Routes:        NewRoutesPG(db, NewReportsPG(db), NewPlanningPG(db)),
+		Orders:        OrdersPG,
+		Routes:        RoutesPG,
 		Init:          NewInitPG(db),
 		Reports:       NewReportsPG(db),
-		Plans:         NewPlansPG(db, NewReportsPG(db)),
-		Planning:      NewPlanningPG(db),
+		Plans:         PlansPG,
+		Planning:      PlanningPG,
 		Groups:        NewGroupsPG(db),
 	}
+
+	//return &Repository{
+	//	Authorization: NewAuthPG(db),
+	//	Users:         NewUsersPG(db),
+	//	Filters:       NewFiltersPG(db),
+	//	Plots:         NewPlotsPG(db),
+	//	Files:         NewFilesMwPg(db),
+	//	Orders:        NewOrdersPG(db, ReportPG, NewPlanningPG(db, NewPlansPG(db, NewReportsPG(db)))),
+	//	Routes:        NewRoutesPG(db, NewReportsPG(db), NewPlanningPG(db, NewPlansPG(db, NewReportsPG(db)))),
+	//	Init:          NewInitPG(db),
+	//	Reports:       NewReportsPG(db),
+	//	Plans:         NewPlansPG(db, NewReportsPG(db)),
+	//	Planning:      NewPlanningPG(db, NewPlansPG(db, NewReportsPG(db))),
+	//	Groups:        NewGroupsPG(db),
+	//}
 }

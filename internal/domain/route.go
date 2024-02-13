@@ -39,6 +39,7 @@ type Route struct {
 }
 
 type DbPlanInfo struct {
+	PlanID    string `json:"plan_id" db:"plan_id"`
 	PlanDate  string `json:"date" db:"plan_date"`
 	Divider   string `json:"divider" db:"divider"`
 	Queues    string `json:"queues" db:"queues"`

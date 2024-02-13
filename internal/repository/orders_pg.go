@@ -1077,7 +1077,7 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
        WHERE completed = true 
  						 AND order_endtime >= $1
 						 AND order_endtime <= $2
-		   ORDER BY order_id ASC;
+		   ORDER BY order_endtime ASC;
 		`)
 	} else if params.Planning {
 

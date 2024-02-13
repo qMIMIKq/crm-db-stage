@@ -130,7 +130,7 @@ export const drawPlan = (d, data) => {
     <form id="form-${d.id}" class='table-form table-form--plan table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
-              <input id='db_id' class='table__data ${checkForPlanning ? 'not-planned' : ''} main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
+              <input id='db_id' class='table__data ${checkForPlanning ? 'bg-red' : ''} main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
               <input id="timestamp" class='table__data table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>

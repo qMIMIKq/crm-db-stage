@@ -10,7 +10,8 @@ import (
 )
 
 type PlanningPG struct {
-	db *sqlx.DB
+	db      *sqlx.DB
+	plansPG *PlansPG
 }
 
 func (p *PlanningPG) GetAllPlanning(planningRange *domain.PlanningRange) ([]*domain.Planning, error) {
@@ -93,6 +94,7 @@ func (p *PlanningPG) CreatePlanningObject(route *domain.Route, order *domain.Ord
 
 	if route.EndTime != "" || order.Completed {
 		_, err = p.db.Exec("DELETE FROM planning WHERE planning_id = $1", planningID)
+		err = p.plansPG.ShiftPlanAfterEnd(route)
 		return planningID, err
 	}
 
@@ -121,6 +123,11 @@ func (p *PlanningPG) CreatePlanningObject(route *domain.Route, order *domain.Ord
 	return planningID, err
 }
 
-func NewPlanningPG(db *sqlx.DB) *PlanningPG {
-	return &PlanningPG{db: db}
+func (p *PlanningPG) ShiftPlanningAfterEnd(planningID int, route *domain.Route) error {
+
+	return nil
+}
+
+func NewPlanningPG(db *sqlx.DB, plansPG *PlansPG) *PlanningPG {
+	return &PlanningPG{db: db, plansPG: plansPG}
 }

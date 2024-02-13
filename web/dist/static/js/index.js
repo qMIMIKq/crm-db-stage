@@ -4263,6 +4263,7 @@ const triggerCommentsModal = e => {
   const commentsArr = comments.value.split('.-.');
   const newCommentsArr = newComments.value.split('.-.');
   drawComments(commentsList, commentsArr);
+  commentElem.focus();
   const saveBtn = document.querySelector('.comment__button');
   saveBtn.addEventListener('click', ev => {
     let value = commentElem.value;
