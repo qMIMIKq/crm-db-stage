@@ -98,6 +98,8 @@ export const triggerCommentsModal = e => {
       ev.target.textContent = 'Сохранить'
       ev.target.setAttribute('disabled', '')
     }, 1000)
+
+    modalElem.click()
   })
   commentElem.addEventListener('input', e => {
     if (e.target.value !== '') {

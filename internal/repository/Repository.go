@@ -88,6 +88,10 @@ type Planning interface {
 	GetAllPlanning(planningRange *domain.PlanningRange) ([]*domain.Planning, error)
 }
 
+type TimeReports interface {
+	CalcTimeDataForReports(dateReportInfo *DateTimeInfo, resultReportTimeInfo *TimeReportInfo, comment domain.Comment) string
+}
+
 type Repository struct {
 	Plans
 	Init
@@ -101,14 +105,16 @@ type Repository struct {
 	Files
 	Reports
 	Planning
+	TimeReports
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	ReportPG := NewReportsPG(db)
 	PlansPG := NewPlansPG(db, ReportPG)
 	PlanningPG := NewPlanningPG(db, PlansPG)
-	OrdersPG := NewOrdersPG(db, ReportPG, PlanningPG)
 	RoutesPG := NewRoutesPG(db, ReportPG, PlanningPG)
+	TimeReportsPG := NewTimeReportsPG(db)
+	OrdersPG := NewOrdersPG(db, ReportPG, PlanningPG, TimeReportsPG)
 
 	return &Repository{
 		Authorization: NewAuthPG(db),
@@ -123,6 +129,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Plans:         PlansPG,
 		Planning:      PlanningPG,
 		Groups:        NewGroupsPG(db),
+		TimeReports:   TimeReportsPG,
 	}
 
 	//return &Repository{

@@ -12,9 +12,10 @@ import (
 )
 
 type OrdersPG struct {
-	db         *sqlx.DB
-	reportsPG  *ReportsPG
-	planningPG *PlanningPG
+	db            *sqlx.DB
+	reportsPG     *ReportsPG
+	planningPG    *PlanningPG
+	timeReportsPG *TimeReportsPG
 }
 
 func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
@@ -342,7 +343,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
 
-						log.Info().Msgf("i %v", i)
+						//log.Info().Msgf("i %v", i)
 						if i != 0 {
 							totalForPlan = reports[i-1].Issued
 						} else {
@@ -411,11 +412,33 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
+				dateReportInfo := &DateTimeInfo{}
+				resultReportTimeInfo := &TimeReportInfo{
+					RouteID: routeID,
+				}
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
+						o.timeReportsPG.CalcTimeDataForReports(dateReportInfo, resultReportTimeInfo, comment)
 						_, err = o.db.Exec(routeCommentsQuery, dbRoutePos[0].RouteID, comment.Date, comment.Value)
 					}
+				}
+				resultReportTimeInfo.FullTime = resultReportTimeInfo.BeforeStart + resultReportTimeInfo.FromStartToEnd + resultReportTimeInfo.ErrorsTime + resultReportTimeInfo.PausesTime
+				//log.Info().Interface("result time", resultReportTimeInfo).Msg("result")
+
+				if _, err := o.db.Exec("DELETE FROM time_reports WHERE route_id = $1", routeID); err != nil {
+					log.Err(err).Caller().Msg("error is")
+				}
+
+				reportTimeQuery := fmt.Sprintf(`
+					INSERT INTO time_reports (route_id, route_plot, before_start, from_start_to_end, error, paused, full_time)
+					     VALUES ($1, $2, $3, $4, $5, $6, $7)
+				`)
+
+				if _, err := o.db.Exec(reportTimeQuery, routeID, route.Plot,
+					resultReportTimeInfo.BeforeStart.String(), resultReportTimeInfo.FromStartToEnd.String(),
+					resultReportTimeInfo.ErrorsTime.String(), resultReportTimeInfo.PausesTime.String(), resultReportTimeInfo.FullTime.String()); err != nil {
+					log.Err(err).Caller().Msg("error is")
 				}
 
 			} else {
@@ -633,13 +656,13 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					if report.CurrentShift != 0 {
 						shift = report.CurrentShift
 
-						log.Info().Msgf("i %v", i)
+						//log.Info().Msgf("i %v", i)
 						if i != 0 {
 							totalForPlan = reports[i-1].Issued
 						} else {
 							totalForPlan = ""
 						}
-						log.Info().Msgf("total %v", totalForPlan)
+						//log.Info().Msgf("total %v", totalForPlan)
 
 						if report.CurrentShift == 1 && !checkTheor {
 							theorAdjustment = strconv.Itoa(route.Adjustment)
@@ -702,14 +725,20 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 				}
 
+				dateReportInfo := &DateTimeInfo{}
+				resultReportTimeInfo := &TimeReportInfo{
+					RouteID: routeID,
+				}
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
+						o.timeReportsPG.CalcTimeDataForReports(dateReportInfo, resultReportTimeInfo, comment)
 						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 						if err != nil {
 							log.Err(err).Caller().Msg("ERROR")
 						}
 					}
 				}
+				log.Info().Interface("result time", resultReportTimeInfo).Msg("result")
 			}
 		}
 
@@ -888,7 +917,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				reportIssued := routeReports.ReportsData[reportDate]
 				changerDate, _ := time.Parse(layout, reportDate)
 				issuedThisTurn += reportIssued.Issued
-				log.Info().Caller().Msgf("total issued %v", issuedThisTurn)
+				//log.Info().Caller().Msgf("total issued %v", issuedThisTurn)
 
 				if issuedThisTurn < 0 {
 					issuedThisTurn = 0
@@ -961,13 +990,13 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				if report.CurrentShift != 0 {
 					shift = report.CurrentShift
 
-					log.Info().Msgf("i %v", i)
+					//log.Info().Msgf("i %v", i)
 					if i != 0 {
 						totalForPlan = reports[i-1].Issued
 					} else {
 						totalForPlan = ""
 					}
-					log.Info().Msgf("total %v", totalForPlan)
+					//log.Info().Msgf("total %v", totalForPlan)
 
 					if report.CurrentShift == 1 && !checkTheor {
 						theorAdjustment = strconv.Itoa(route.Adjustment)
@@ -1037,11 +1066,16 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 				}
 			}
 
+			dateReportInfo := &DateTimeInfo{}
+			resultReportTimeInfo := &TimeReportInfo{}
 			for _, comment := range route.Comments {
 				if len(comment.Date) > 0 {
+					o.timeReportsPG.CalcTimeDataForReports(dateReportInfo, resultReportTimeInfo, comment)
 					_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 				}
 			}
+
+			log.Info().Interface("result time", resultReportTimeInfo).Msg("result")
 		}
 
 		_, err = o.db.Exec("UPDATE orders SET can_remove = $1 WHERE order_id = $2", order.CanRemove, id)
@@ -1133,6 +1167,10 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 		 ORDER BY plan_date
 	`)
 
+	queryRouteTimeReports := fmt.Sprintf(`
+		SELECT * FROM time_reports WHERE route_id = $1
+	`)
+
 	//queryRouteBusyPlan := fmt.Sprintf(`
 	//	SELECT plan_date, divider, queues
 	//	  FROM plans
@@ -1210,6 +1248,10 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 				newAdded.DateInfo.Queues = strings.Split(dateInfo.Queues, ", ")
 
 				route.AddedDates = append(route.AddedDates, newAdded)
+			}
+
+			if err := o.db.Get(&route.TimeReportsInfo, queryRouteTimeReports, route.RouteID); err != nil {
+				//log.Err(err).Caller().Msg("error is")
 			}
 
 			//err = o.db.Select(&route.BusyDates, queryRouteBusyPlan, route.Plot, today, route.RouteID)
@@ -1341,6 +1383,6 @@ func (o *OrdersPG) getOrderSubInfo(order *domain.Order, queryFiles, queryComment
 	*outErr = err
 }
 
-func NewOrdersPG(db *sqlx.DB, reportsPg *ReportsPG, planningPG *PlanningPG) *OrdersPG {
-	return &OrdersPG{db: db, reportsPG: reportsPg, planningPG: planningPG}
+func NewOrdersPG(db *sqlx.DB, reportsPg *ReportsPG, planningPG *PlanningPG, timeReportsPG *TimeReportsPG) *OrdersPG {
+	return &OrdersPG{db: db, reportsPG: reportsPg, planningPG: planningPG, timeReportsPG: timeReportsPG}
 }

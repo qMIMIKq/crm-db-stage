@@ -12,7 +12,7 @@ import {drawHelpers} from "./helpersDraw";
 
 export const drawUpdatedData = (d, data, filtered) => {
   let uniqueFileNames = []
-  console.log(d)
+  // console.log(d)
 
   const currentOrder = document.querySelector(`#form-${d.id}`)
   const orders = state.orders
@@ -79,7 +79,7 @@ export const drawUpdatedData = (d, data, filtered) => {
     //   return
     // }
 
-    console.log(currentOrder)
+    // console.log(currentOrder)
 
     currentOrder.querySelector('#number').value = d.number
     currentOrder.querySelector('#can-remove').value = d.can_remove

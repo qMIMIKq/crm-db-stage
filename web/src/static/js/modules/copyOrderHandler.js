@@ -27,7 +27,7 @@ export const copyOrderHandler = e => {
         break
     }
 
-    const today = getTime()
+    const today = getTime().replaceAll('-', '.')
     const userName = userInf.nickname
 
     if (key.includes('route')) {

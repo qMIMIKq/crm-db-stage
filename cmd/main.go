@@ -44,13 +44,12 @@ func buildFrontend(addr string) {
 func main() {
 	cfg := config.GetConfig()
 
+	buildFrontend(cfg.AppAddressJs)
+
 	pgDb, err := database.NewPostgresDB(cfg.CrmDB)
 	if err != nil {
 		log.Fatal().Caller().Err(err).Msg("error connecting to database")
 	}
-
-	buildFrontend(cfg.AppAddressJs)
-
 	repos := repository.NewRepository(pgDb)
 	if err := repos.Init.InitDB(); err != nil {
 		log.Fatal().Err(err).Msg("error init tables")

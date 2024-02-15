@@ -12,6 +12,7 @@ import {appAddr} from "../../../../../../appAddr";
 import {planDateHandler} from "./planModal";
 import {submitData} from "../submitOrdersData";
 import {calcWorkingShiftsModal} from "./calcWorkingShiftsModal";
+import {timeReportsHandlerModal} from "./timeReportsHandlerModal";
 
 const routeModal = `
    <div id='modal' class='modal modal--route bounceIn'>
@@ -186,6 +187,7 @@ const routeModal = `
                     <button disabled type='button' class='route__btn main__button issued-modal_trigger'>За смену</button>
                     <input class="hidden__input" readonly type="text" name="shift" id="shift">
                     <button style="align-self: flex-start" type='button' disabled class='clickable main__button route__btn report-route__btn'>Отчет</button>
+                    <button style="align-self: flex-start" type='button' class='clickable main__button route__btn report__time-route__btn'>Время</button>
                     
                     <div class='section-report__issued'>
                         <input 
@@ -407,7 +409,7 @@ export const confirmChangeTimeModal = `
    </div>
 `
 
-export const confirmChangeTimeHandler = (e, operation, alertContent) => {
+export const confirmChangeTimeHandler = (e, operation, alertContent, checkPlan) => {
   if (e.target.value === '') {
     return
   }
@@ -417,15 +419,18 @@ export const confirmChangeTimeHandler = (e, operation, alertContent) => {
   const okBtn = modal.querySelector('.confirm__button--ok')
   const cncltn = modal.querySelector('.confirm__button--cncl')
   if (alertContent) {
-    modal.querySelector('.confirm__title').textContent = alertContent
+    modal.querySelector('.confirm__title').innerHTML = alertContent
   }
 
+  console.log(checkPlan)
   okBtn.addEventListener('click', () => {
     let logMsg
     switch (e.target.name) {
       case 'start_time':
         logMsg = 'Сбросил время начала'
-        activateNextStage("route__select--plot")
+        if (!checkPlan) {
+          activateNextStage("route__select--plot")
+        }
         break
       case 'end_time':
         logMsg = 'Сбросил время сдачи'
@@ -477,6 +482,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
   const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
   const routeQuantity = modalElem.querySelector('#quantity')
   const routeDayQuantity = modalElem.querySelector('#day_quantity')
+  let checkPlan = false
   controlQuantityAccess(routeQuantity)
   // controlQuantityAccess(routeDayQuantity)
   // const canRemove = currentOrder.querySelector('#can-remove')
@@ -580,7 +586,9 @@ export const triggerRoutesModal = (e, page = 'main') => {
 
   if (state['adminCheck'] || state['techCheck']) {
     document.querySelector('.start-route__time').removeAttribute('disabled')
-    activateNextStage('route__select--plot')
+    if (!checkPlan) {
+      activateNextStage("route__select--plot")
+    }
     planDateInput.removeAttribute('disabled')
 
     startTime.addEventListener('click', e => {
@@ -590,14 +598,14 @@ export const triggerRoutesModal = (e, page = 'main') => {
         endBTn.classList.remove('route-type__finish')
         endTime.value = ''
         disableBtn('end-route__btn')
-      })
+      }, '', checkPlan)
     })
 
     endTime.addEventListener('click', e => {
       confirmChangeTimeHandler(e, () => {
         endBTn.classList.remove('route-type__finish')
         activateNextStage('end-route__btn')
-      })
+      }, '', checkPlan)
     })
   }
 
@@ -664,6 +672,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
           if (routeInfo['db_plan']) {
             let today = getTime()
             today = today.substring(0, today.length - 5).trim()
+            const todayDate = new Date(today)
 
             dbAddedDates = routeInfo['db_plan']
             planDateInput.value = 'В плане'
@@ -676,12 +685,19 @@ export const triggerRoutesModal = (e, page = 'main') => {
                 planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
               }
 
+              const dateInfoDate = new Date(dateInfo['date'])
+              if (dateInfoDate.getTime() >= todayDate.getTime()) {
+                checkPlan = true
+              }
+
               addedDates[dateInfo['date']] = {
                 'divider': dateInfo.divider,
                 'queues': dateInfo.queues
               }
             })
           }
+
+          console.log(checkPlan)
 
           planObj = {
             'exclude': routeInfo['exclude_days'],
@@ -701,6 +717,18 @@ export const triggerRoutesModal = (e, page = 'main') => {
           if (logName !== '') {
             deleteBtn.removeAttribute('disabled')
             deleteBtn.addEventListener('click', e => {
+              const finished = routeInfo.end_time !== ''
+              const hasReports = !!modalElem.querySelector('#issued__all').value.length
+
+              let msgText = ''
+              if (hasReports && finished) {
+                msgText = 'Имеет отчёты и завершён!'
+              } else if (hasReports) {
+                msgText = 'Имеет отчёты!'
+              } else if (finished) {
+                msgText = 'Завершён!'
+              }
+
               confirmChangeTimeHandler(e, () => {
                 sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
                   .then(resp => {
@@ -720,7 +748,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
 
                     // getOrders('get-all', true)
                   })
-              }, 'Удалить маршрут?')
+              }, `Удалить маршрут? <br> <span style="color:red">${msgText}</span>`, checkPlan)
             })
           }
 
@@ -737,7 +765,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
             }
           })
 
-          if (routeInfo['start_time']) {
+          if (routeInfo['start_time'] || checkPlan) {
             disableBtn('route__select--plot')
           }
 
@@ -876,6 +904,8 @@ export const triggerRoutesModal = (e, page = 'main') => {
         issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
       }
 
+      // console.log(routeInfo.time_reports_info)
+
       shift.value = routeInfo.shift
       alertColor.value = routeInfo.alert_color
 
@@ -888,6 +918,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
       if (routeInfo['db_plan']) {
         let today = getTime()
         today = today.substring(0, today.length - 5).trim()
+        const todayDate = new Date(today)
 
         dbAddedDates = routeInfo['db_plan']
         planDateInput.value = 'В плане'
@@ -900,12 +931,19 @@ export const triggerRoutesModal = (e, page = 'main') => {
             planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
           }
 
+          const dateInfoDate = new Date(dateInfo['date'])
+          if (dateInfoDate.getTime() >= todayDate.getTime()) {
+            checkPlan = true
+          }
+
           addedDates[dateInfo['date']] = {
             'divider': dateInfo.divider,
             'queues': dateInfo.queues
           }
         })
       }
+
+      console.log(checkPlan)
 
       planObj = {
         'exclude': routeInfo['exclude_days'],
@@ -925,6 +963,20 @@ export const triggerRoutesModal = (e, page = 'main') => {
       if (logName !== '') {
         deleteBtn.removeAttribute('disabled')
         deleteBtn.addEventListener('click', e => {
+          const finished = routeInfo.end_time !== ''
+          const hasReports = !!modalElem.querySelector('#issued__all').value.length
+
+          let msgText = ''
+          if (hasReports && finished) {
+            msgText = 'Имеет отчёты и завершён!'
+          } else if (hasReports) {
+            msgText = 'Имеет отчёты!'
+          } else if (finished) {
+            msgText = 'Завершён!'
+          }
+
+          // let alertContent
+
           confirmChangeTimeHandler(e, () => {
             sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
               .then(resp => {
@@ -944,11 +996,11 @@ export const triggerRoutesModal = (e, page = 'main') => {
 
                 // getOrders('get-all', true)
               })
-          }, 'Удалить маршрут?')
+          }, `Удалить маршрут? <br> <span style="color:red">${msgText}</span>`, checkPlan)
         })
       }
 
-      if (routeInfo['start_time']) {
+      if (routeInfo['start_time'] || checkPlan) {
         disableBtn('route__select--plot')
       }
 
@@ -1129,6 +1181,11 @@ export const triggerRoutesModal = (e, page = 'main') => {
     })
   })
 
+  const timeReportsBtn = document.querySelector('.report__time-route__btn')
+  timeReportsBtn.addEventListener('click', e => {
+    timeReportsHandlerModal(e, routeInfo.time_reports_info)
+  })
+
   const dayQuantity = document.querySelector('#day_quantity')
   dayQuantity.addEventListener('click', e => {
     calcWorkingShiftsModal(e.target, dayQuantityInfo, () => {
@@ -1206,7 +1263,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
     }
   })
 
-  if (operStatus || manStatus) {
+  if (operStatus || manStatus || checkPlan) {
     disableBtn('route__select--plot')
     disableBtn('report-route__btn')
     disableBtn('section-finish__delete')

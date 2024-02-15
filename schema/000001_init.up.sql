@@ -227,3 +227,20 @@ create table planning
     need_shifts     integer      DEFAULT 0,
     position        VARCHAR(255) DEFAULT ''
 );
+
+CREATE TABLE time_reports
+(
+    id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    route_id          INT REFERENCES routes (route_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    route_plot        VARCHAR(255) DEFAULT '',
+    before_start      VARCHAR(255) DEFAULT '',
+    from_start_to_end VARCHAR(255) DEFAULT '',
+    error             VARCHAR(255) DEFAULT '',
+    paused            VARCHAR(255) DEFAULT ''
+);
+
+CREATE TABLE time_reports_plots
+(
+    id          SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    expectation VARCHAR(255) DEFAULT ''
+);

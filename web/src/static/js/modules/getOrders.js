@@ -80,7 +80,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
 
       if (data.data) {
         deleteTableFilters()
-        console.log('we have data')
+        // console.log('we have data')
 
         data.data.forEach(d => {
           if (state['maxTime']) {
@@ -102,10 +102,10 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         })
 
         if (updateOnly) {
-          console.log('update only')
+          // console.log('update only')
           const routesStatusFilter = document.querySelector('.route__filter--chosen')
           let filtered = state.filtered || !!state.currentTopFilters.length || routesStatusFilter || state.searched
-          console.log('filtered', filtered)
+          // console.log('filtered', filtered)
           if (filtered) {
             newAllFilter()
           } else {
