@@ -22,7 +22,6 @@ export const timeReportsHandlerModal = (e, timeInfo) => {
   const timeDataList = timeModal.querySelector('.time-data__list')
   const newTimeInfo = {}
 
-
   for (const [key, value] of Object.entries(timeInfo)) {
     let prefix
     switch (key) {
@@ -54,25 +53,22 @@ export const timeReportsHandlerModal = (e, timeInfo) => {
         })
         newValue = parseFloat(newValue.join('.')).toFixed(2)
 
-        timeInfo[key] = newValue.replace('.', 'ч') + 'м'
         newTimeInfo[key] = newValue
 
         timeDataList.insertAdjacentHTML(`beforeend`, `
-          <li class="time-data__item ${bolder}">${prefix}: ${timeInfo[key]}</li>
+          <li class="time-data__item ${bolder}">${prefix}: ${newValue.replace('.', 'ч') + 'м'}</li>
         `)
       } else if (value.includes("m")) {
         const arrValue = value.split('m')[0]
         let newValue = arrValue.replaceAll('h', '.').replaceAll('m', '')
         if (newValue.length === 1) newValue = `0${newValue}`
         newValue = parseFloat(`0.${newValue}`).toFixed(2)
-        timeInfo[key] = newValue.replace('.', 'ч') + 'м'
         newTimeInfo[key] = newValue
 
         timeDataList.insertAdjacentHTML(`beforeend`, `
-          <li class="time-data__item ${bolder}">${prefix}: ${timeInfo[key]}</li>
+          <li class="time-data__item ${bolder}">${prefix}: ${newValue.replace('.', 'ч') + 'м'}</li>
         `)
       } else if (key !== 'route_plot') {
-        console.log(key)
         newTimeInfo[key] = 0
 
         timeDataList.insertAdjacentHTML(`beforeend`, `
@@ -81,9 +77,6 @@ export const timeReportsHandlerModal = (e, timeInfo) => {
       }
     }
   }
-
-  console.log(timeInfo)
-
 
   const data = {
     labels: [

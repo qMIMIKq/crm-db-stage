@@ -6536,7 +6536,7 @@ const triggerRoutesModal = function (e) {
       (0,_planModal__WEBPACK_IMPORTED_MODULE_11__.planDateHandler)(addedDates, routePlot.value, '0', plannedObj, planDateInput, shifts.value);
     }
   });
-  if (operStatus || manStatus || checkPlan) {
+  if (operStatus || manStatus) {
     disableBtn('route__select--plot');
     disableBtn('report-route__btn');
     disableBtn('section-finish__delete');
@@ -7308,23 +7308,20 @@ const timeReportsHandlerModal = (e, timeInfo) => {
           return item.length === 1 ? `0${item}` : item;
         });
         newValue = parseFloat(newValue.join('.')).toFixed(2);
-        timeInfo[key] = newValue.replace('.', 'ч') + 'м';
         newTimeInfo[key] = newValue;
         timeDataList.insertAdjacentHTML(`beforeend`, `
-          <li class="time-data__item ${bolder}">${prefix}: ${timeInfo[key]}</li>
+          <li class="time-data__item ${bolder}">${prefix}: ${newValue.replace('.', 'ч') + 'м'}</li>
         `);
       } else if (value.includes("m")) {
         const arrValue = value.split('m')[0];
         let newValue = arrValue.replaceAll('h', '.').replaceAll('m', '');
         if (newValue.length === 1) newValue = `0${newValue}`;
         newValue = parseFloat(`0.${newValue}`).toFixed(2);
-        timeInfo[key] = newValue.replace('.', 'ч') + 'м';
         newTimeInfo[key] = newValue;
         timeDataList.insertAdjacentHTML(`beforeend`, `
-          <li class="time-data__item ${bolder}">${prefix}: ${timeInfo[key]}</li>
+          <li class="time-data__item ${bolder}">${prefix}: ${newValue.replace('.', 'ч') + 'м'}</li>
         `);
       } else if (key !== 'route_plot') {
-        console.log(key);
         newTimeInfo[key] = 0;
         timeDataList.insertAdjacentHTML(`beforeend`, `
           <li class="time-data__item ${bolder}">${prefix}: 0ч00мин</li>
@@ -7332,7 +7329,6 @@ const timeReportsHandlerModal = (e, timeInfo) => {
       }
     }
   }
-  console.log(timeInfo);
   const data = {
     labels: ['До Начал', 'От Начал до Сдал', 'Паузы', 'Ошибки'],
     datasets: [{
