@@ -1263,7 +1263,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
     }
   })
 
-  if (operStatus || manStatus || checkPlan) {
+  if (operStatus || manStatus) {
     disableBtn('route__select--plot')
     disableBtn('report-route__btn')
     disableBtn('section-finish__delete')
