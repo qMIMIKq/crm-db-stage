@@ -2,7 +2,6 @@ package crm
 
 import (
 	"context"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"time"
@@ -10,7 +9,6 @@ import (
 
 type Server struct {
 	httpServer *http.Server
-	log        *zerolog.Logger
 }
 
 func (s *Server) Run() error {

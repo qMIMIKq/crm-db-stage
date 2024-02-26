@@ -60,8 +60,7 @@ func main() {
 	mainHandler := transport.NewMainHandler(service)
 
 	log.Info().Caller().Msg("starting app...")
-	srv := crm.NewServer(cfg.AppPort, mainHandler.InitAllRoutes())
-	if err := srv.Run(); err != nil {
+	if err := crm.NewServer(cfg.AppPort, mainHandler.InitAllRoutes()).Run(); err != nil {
 		log.Fatal().Err(err).Msg("error starting server")
 	}
 }

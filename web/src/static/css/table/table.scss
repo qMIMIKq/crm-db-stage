@@ -147,6 +147,11 @@ input.tr {
   &__timestamp {
     min-width: 110px;
     max-width: 110px;
+
+    &--time {
+      min-width: 150px;
+      max-width: 150px;
+    }
   }
 
   &__files {

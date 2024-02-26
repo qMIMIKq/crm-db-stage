@@ -349,7 +349,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						} else {
 							totalForPlan = ""
 						}
-						log.Info().Msgf("total %v", totalForPlan)
+						//log.Info().Msgf("total %v", totalForPlan)
 
 						if report.CurrentShift == 1 && !checkTheor {
 							theorAdjustment = strconv.Itoa(route.Adjustment)
@@ -413,18 +413,18 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 
 				dateReportInfo := &DateTimeInfo{}
-				resultReportTimeInfo := &TimeReportInfo{
-					RouteID: routeID,
-				}
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
-						o.timeReportsPG.CalcTimeDataForReports(dateReportInfo, resultReportTimeInfo, comment)
-						_, err = o.db.Exec(routeCommentsQuery, dbRoutePos[0].RouteID, comment.Date, comment.Value)
+						o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
+						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 					}
 				}
+
+				resultReportTimeInfo := o.timeReportsPG.CalcTimeDataForReports(dateReportInfo)
+				resultReportTimeInfo.RouteID = routeID
+				resultReportTimeInfo.RoutePlot = route.Plot
 				resultReportTimeInfo.FullTime = resultReportTimeInfo.BeforeStart + resultReportTimeInfo.FromStartToEnd + resultReportTimeInfo.ErrorsTime + resultReportTimeInfo.PausesTime
-				//log.Info().Interface("result time", resultReportTimeInfo).Msg("result")
 
 				if _, err := o.db.Exec("DELETE FROM time_reports WHERE route_id = $1", routeID); err != nil {
 					log.Err(err).Caller().Msg("error is")
@@ -439,6 +439,10 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					resultReportTimeInfo.BeforeStart.String(), resultReportTimeInfo.FromStartToEnd.String(),
 					resultReportTimeInfo.ErrorsTime.String(), resultReportTimeInfo.PausesTime.String(), resultReportTimeInfo.FullTime.String()); err != nil {
 					log.Err(err).Caller().Msg("error is")
+				}
+
+				if route.StartTime != "" || route.EndTime != "" {
+					o.timeReportsPG.CreateTimeReportsPlotReport(route)
 				}
 
 			} else {
@@ -726,19 +730,33 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 
 				dateReportInfo := &DateTimeInfo{}
-				resultReportTimeInfo := &TimeReportInfo{
-					RouteID: routeID,
-				}
+				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
-						o.timeReportsPG.CalcTimeDataForReports(dateReportInfo, resultReportTimeInfo, comment)
-						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
-						if err != nil {
-							log.Err(err).Caller().Msg("ERROR")
-						}
+						o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
+						_, err = o.db.Exec(routeCommentsQuery, dbRoutePos[0].RouteID, comment.Date, comment.Value)
 					}
 				}
-				log.Info().Interface("result time", resultReportTimeInfo).Msg("result")
+
+				resultReportTimeInfo := o.timeReportsPG.CalcTimeDataForReports(dateReportInfo)
+				resultReportTimeInfo.RouteID = routeID
+				resultReportTimeInfo.RoutePlot = route.Plot
+				resultReportTimeInfo.FullTime = resultReportTimeInfo.BeforeStart + resultReportTimeInfo.FromStartToEnd + resultReportTimeInfo.ErrorsTime + resultReportTimeInfo.PausesTime
+
+				if _, err := o.db.Exec("DELETE FROM time_reports WHERE route_id = $1", routeID); err != nil {
+					log.Err(err).Caller().Msg("error is")
+				}
+
+				reportTimeQuery := fmt.Sprintf(`
+					INSERT INTO time_reports (route_id, route_plot, before_start, from_start_to_end, error, paused, full_time)
+					     VALUES ($1, $2, $3, $4, $5, $6, $7)
+				`)
+
+				if _, err := o.db.Exec(reportTimeQuery, routeID, route.Plot,
+					resultReportTimeInfo.BeforeStart.String(), resultReportTimeInfo.FromStartToEnd.String(),
+					resultReportTimeInfo.ErrorsTime.String(), resultReportTimeInfo.PausesTime.String(), resultReportTimeInfo.FullTime.String()); err != nil {
+					log.Err(err).Caller().Msg("error is")
+				}
 			}
 		}
 
@@ -1067,15 +1085,33 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			}
 
 			dateReportInfo := &DateTimeInfo{}
-			resultReportTimeInfo := &TimeReportInfo{}
+			_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", routeID)
 			for _, comment := range route.Comments {
 				if len(comment.Date) > 0 {
-					o.timeReportsPG.CalcTimeDataForReports(dateReportInfo, resultReportTimeInfo, comment)
+					o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
 					_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 				}
 			}
 
-			log.Info().Interface("result time", resultReportTimeInfo).Msg("result")
+			resultReportTimeInfo := o.timeReportsPG.CalcTimeDataForReports(dateReportInfo)
+			resultReportTimeInfo.RouteID = routeID
+			resultReportTimeInfo.RoutePlot = route.Plot
+			resultReportTimeInfo.FullTime = resultReportTimeInfo.BeforeStart + resultReportTimeInfo.FromStartToEnd + resultReportTimeInfo.ErrorsTime + resultReportTimeInfo.PausesTime
+
+			if _, err := o.db.Exec("DELETE FROM time_reports WHERE route_id = $1", routeID); err != nil {
+				log.Err(err).Caller().Msg("error is")
+			}
+
+			reportTimeQuery := fmt.Sprintf(`
+					INSERT INTO time_reports (route_id, route_plot, before_start, from_start_to_end, error, paused, full_time)
+					     VALUES ($1, $2, $3, $4, $5, $6, $7)
+				`)
+
+			if _, err := o.db.Exec(reportTimeQuery, routeID, route.Plot,
+				resultReportTimeInfo.BeforeStart.String(), resultReportTimeInfo.FromStartToEnd.String(),
+				resultReportTimeInfo.ErrorsTime.String(), resultReportTimeInfo.PausesTime.String(), resultReportTimeInfo.FullTime.String()); err != nil {
+				log.Err(err).Caller().Msg("error is")
+			}
 		}
 
 		_, err = o.db.Exec("UPDATE orders SET can_remove = $1 WHERE order_id = $2", order.CanRemove, id)

@@ -85,6 +85,10 @@ type Planning interface {
 	GetAllPlanning(planningRange *domain.PlanningRange) ([]*domain.Planning, error)
 }
 
+type TimeReports interface {
+	GetTimeReports() []domain.TimeReportPlot
+}
+
 type Services struct {
 	Groups
 	Plans
@@ -98,6 +102,7 @@ type Services struct {
 	Time
 	Reports
 	Planning
+	TimeReports
 }
 
 func NewService(repos *repository.Repository) *Services {
@@ -114,5 +119,6 @@ func NewService(repos *repository.Repository) *Services {
 		Reports:       NewReportsService(repos.Reports),
 		Plans:         NewPlansService(repos.Plans),
 		Planning:      NewPlanningService(repos.Planning),
+		TimeReports:   NewTimeReportsService(repos.TimeReports),
 	}
 }

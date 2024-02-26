@@ -86,6 +86,12 @@ func (h *Handler) InitRoutes(router *gin.Engine) {
 			time.POST("/dynamic", h.dynamicTime)
 		}
 
+		timeReports := api.Group("/time-reports")
+		{
+			timeReports.POST("/get-all", h.getTimeReports)
+			//time.POST("/dynamic", h.dynamicTime)
+		}
+
 		report := api.Group("/reports")
 		{
 			report.POST("/get-all", h.getReports)

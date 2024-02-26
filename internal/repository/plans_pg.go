@@ -380,7 +380,7 @@ func (p *PlansPG) ShiftPlanAfterEnd(route *domain.Route) error {
 	dateForStart := ""
 	counter := 0
 	for _, info := range route.AddedDates {
-		log.Info().Caller().Msgf("info date %v", info.Date)
+		//log.Info().Caller().Msgf("info date %v", info.Date)
 
 		if len(info.Date) > 5 {
 			planDate, err := time.Parse(layout, strings.Split(info.Date, "T")[0])

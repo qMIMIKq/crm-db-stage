@@ -78,6 +78,11 @@ ul {
     }
   }
 
+  &--treports {
+    margin: 0 auto;
+    width: 1000px;
+  }
+
   &__button {
     display: flex;
     justify-content: center;
