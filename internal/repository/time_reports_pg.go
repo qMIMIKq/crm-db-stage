@@ -158,7 +158,7 @@ func (t *TimeReportsPG) CalcTimeDataForReports(dateReportInfo *DateTimeInfo) *Re
 	if dateReportInfo.TimeOfStart != "" {
 		beforeStart = t.CalcTimeDifference(dateReportInfo.TimeOfCreation, dateReportInfo.TimeOfStart, dateReportInfo)
 		resultReportTimeInfo.BeforeStart = beforeStart
-		//log.Info().Caller().Msgf("before start %s", beforeStart.String())
+		log.Info().Caller().Msgf("before start %s", beforeStart.String())
 	}
 
 	var fromStartToEnd time.Duration
@@ -166,7 +166,7 @@ func (t *TimeReportsPG) CalcTimeDataForReports(dateReportInfo *DateTimeInfo) *Re
 		//log.Info().Msgf("calc end")
 		fromStartToEnd = t.CalcTimeDifference(dateReportInfo.TimeOfStart, dateReportInfo.TimeOfEnd, dateReportInfo)
 		resultReportTimeInfo.FromStartToEnd = fromStartToEnd
-		//log.Info().Caller().Msgf("from start to end %s", fromStartToEnd)
+		log.Info().Caller().Msgf("from start to end %s", fromStartToEnd)
 	}
 
 	var pausesTime time.Duration
@@ -217,15 +217,15 @@ func (t *TimeReportsPG) CalcTimeDifference(startTimeStr string, endTimeStr strin
 	lastShiftStartStr := strings.Split(endTimeStr, " ")[0]
 
 	if firstShiftEndStr != lastShiftStartStr {
-		//log.Info().Msgf("no one day shift work")
+		log.Info().Msgf("no one day shift work")
 		checkShifts += 2
 	}
 
 	firstShiftEndStr += fmt.Sprintf(" %v", calc.ShiftEnd)
 	lastShiftStartStr += fmt.Sprintf(" %v", calc.ShiftStart)
 
-	//log.Info().Msgf("start time str %v", startTimeStr)
-	//log.Info().Msgf("end time str %v", endTimeStr)
+	log.Info().Msgf("start time str %v", startTimeStr)
+	log.Info().Msgf("end time str %v", endTimeStr)
 
 	firstShiftTime, err := time.Parse(t.layout, firstShiftEndStr)
 	if err != nil {
@@ -248,7 +248,7 @@ func (t *TimeReportsPG) CalcTimeDifference(startTimeStr string, endTimeStr strin
 
 	var result time.Duration
 	if dateInfo.CheckShifts == 2 {
-		//log.Info().Msgf("first shift %v / last shift %v", dateInfo.FirstDayTime.String(), dateInfo.LastDayTime.String())
+		log.Info().Msgf("first shift %v / last shift %v", dateInfo.FirstDayTime.String(), dateInfo.LastDayTime.String())
 		if dateInfo.FirstDayTime > 0 {
 			result += dateInfo.FirstDayTime
 		}
