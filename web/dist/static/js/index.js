@@ -6023,6 +6023,7 @@ const triggerRoutesModal = function (e) {
   };
   const routeUser = document.querySelector('.route__select--user');
   if (info) {
+    console.log(routeInfo.time_of_creation);
     if (page === 'report') {
       const routeID = e.target.parentNode.parentNode.querySelector('#route_id').value;
       (0,_sendData__WEBPACK_IMPORTED_MODULE_4__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_10__.appAddr}/api/routes/get-route`, 'POST', Number(routeID)).then(resp => {

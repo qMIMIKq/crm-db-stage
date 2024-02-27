@@ -37,6 +37,7 @@ type Route struct {
 	NeedShifts      int              `json:"need_shifts" db:"need_shifts"`
 	AlertColor      string           `json:"alert_color" db:"alert_color"`
 	TimeReportsInfo TimeReportInfoDB `json:"time_reports_info"`
+	TimeOfCreation  interface{}      `json:"time_of_creation" db:"time_of_creation"`
 }
 
 type DbPlanInfo struct {

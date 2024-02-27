@@ -643,6 +643,8 @@ export const triggerRoutesModal = (e, page = 'main') => {
   const routeUser = document.querySelector('.route__select--user')
 
   if (info) {
+    console.log(routeInfo.time_of_creation)
+
     if (page === 'report') {
       const routeID = e.target.parentNode.parentNode.querySelector('#route_id').value
       sendData(`${appAddr}/api/routes/get-route`, 'POST', Number(routeID))

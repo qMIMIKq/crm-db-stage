@@ -91,8 +91,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 													issued, start_time, end_time, pause_time, error_time, 
 													error_value, day_quantity, theor_end, dyn_end, plan_date, 
  												  plan_start, plan_faster, plan_exclude_days, last_comment, 
-			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shift, alert_color)
-						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
+			                    plan_dates, planned, issued_plan, time, up, adjustment, need_shifts, shift, alert_color, time_of_creation)
+						 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29)
 			RETURNING route_id
 		`)
 
@@ -456,7 +456,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					route.Quantity, route.Issued, route.StartTime, route.EndTime, route.PauseTime, route.ErrorTime,
 					route.ErrorMsg, route.DayQuantity, route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart,
 					route.PlanFaster, route.PlanExcludeDays, route.LastComment, strings.Join(planDates, ", "),
-					route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor).Scan(&routeID)
+					route.Planned, route.IssuedToday, route.Time, route.Up, route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor, timeOfModify).Scan(&routeID)
 				route.RouteID = strconv.Itoa(routeID)
 				if err != nil {
 					log.Err(err).Caller().Msg("ERROR")
@@ -730,11 +730,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 
 				dateReportInfo := &DateTimeInfo{}
-				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", dbRoutePos[0].RouteID)
+				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", routeID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
 						o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
-						_, err = o.db.Exec(routeCommentsQuery, dbRoutePos[0].RouteID, comment.Date, comment.Value)
+						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 					}
 				}
 
