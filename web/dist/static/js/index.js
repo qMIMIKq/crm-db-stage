@@ -6400,7 +6400,6 @@ const triggerRoutesModal = function (e) {
                 let nextElem = infoParent.nextElementSibling;
                 while (nextElem.tagName !== 'BUTTON') {
                   // console.log(nextElem)
-                  console.log(nextElem);
                   const nextInput = nextElem.querySelector('.hidden__input');
                   nextInput.setAttribute('name', `route-${pos}`);
                   pos++;
@@ -8103,6 +8102,7 @@ const drawReport = async d => {
   if (d.plan && d.issued_plan) {
     percents = d.issued_plan / center * 100;
   }
+  percents = percents >= 0 ? percents : 0;
   let timestamp;
   if (d.timestamp) {
     if (d.timestamp.includes('T')) {

@@ -71,6 +71,8 @@ export const drawReport = async (d) => {
     percents = (d.issued_plan / center) * 100
   }
 
+  percents = percents >= 0 ? percents : 0
+
   let timestamp
   if (d.timestamp) {
     if (d.timestamp.includes('T')) {
