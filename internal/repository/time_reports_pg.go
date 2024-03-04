@@ -387,7 +387,57 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 	//log.Info().Msgf("route start %v / route end %v", route.StartTime, route.EndTime)
 }
 
-func (t *TimeReportsPG) GetTimeReports() []domain.TimeReportPlot {
+func (t *TimeReportsPG) GetTimeReports(datesRange *domain.ReportTime) []domain.TimeReportPlot {
+	log.Info().Interface("range is", datesRange).Msg("show range")
+
+	var routes []*domain.Route
+
+	queryRoutes := fmt.Sprintf(`
+		SELECT * FROM routes
+			WHERE time_of_creation >= $1 AND time_of_creation <= $2
+		ORDER BY start_time
+	`)
+
+	queryRouteTimeReports := fmt.Sprintf(`
+		SELECT * FROM time_reports WHERE route_id = $1
+	`)
+
+	if err := t.db.Select(&routes, queryRoutes, datesRange.From, datesRange.To); err != nil {
+		log.Err(err).Caller().Msg("error is")
+	}
+
+	plots := map[string]string{}
+
+	for _, route := range routes {
+		//log.Info().Interface("route", route).Msg("route is")
+		if err := t.db.Get(&route.TimeReportsInfo, queryRouteTimeReports, route.RouteID); err != nil {
+			//log.Err(err).Caller().Msg("error is")
+		}
+
+		plots[route.Plot] = ""
+
+		log.Info().Msgf("plot is %v / created in %v / start time %v", route.Plot, route.TimeOfCreation, route.StartTime)
+	}
+
+	//queryPrevRoute := fmt.Sprintf(`
+	//	SELECT * FROM routes
+	//		WHERE time_of_creation < $1
+	//		  AND plot_id = $2
+	//			AND end_time != ''
+	//   ORDER BY end_time
+	//		LIMIT 1
+	//`)
+
+	//for plot := range plots {
+	//	log.Info().Msgf("plot %v", plot)
+	//
+	//	var route domain.Route
+	//	if err := t.db.Get(&route, queryPrevRoute, datesRange.From, plot); err != nil {
+	//		log.Err(err).Caller().Msg("error is")
+	//	}
+	//	log.Info().Interface("route", route).Msg("prev route")
+	//}
+
 	var data []domain.TimeReportPlot
 	if err := t.db.Select(&data, `SELECT * FROM time_reports_plots`); err != nil {
 		log.Err(err).Caller().Msg("error")

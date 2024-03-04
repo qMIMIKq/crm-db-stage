@@ -1,5 +1,6 @@
 import {getTime} from "../getTime";
 import {state} from "../state";
+import {triggerRoutesModal} from "../modals/routesModal";
 
 export const colorRoutes = (routes, parent) => {
   const routesWrapper = parent.querySelector(".table-routes__wrapper")
@@ -14,7 +15,27 @@ export const colorRoutes = (routes, parent) => {
   }
 
   routes.forEach(route => {
-    const dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
+    let dataInput
+
+    if (Number(route.route_position) > 10) {
+      console.log(route.route_position)
+      dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
+      if (!dataInput) {
+        const lastRoute = routesWrapper.querySelector('.table__route:last-of-type')
+        const lastPos = Number(lastRoute.querySelector('.hidden__input').name.split('-')[1]) + 1
+        lastRoute.insertAdjacentHTML('afterend', `
+          <li class="table-body_cell table-body__helper table__route">
+              <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+              <input readonly class="hidden__input table__data" name="route-${route.route_position}" type="text" value="" tabindex="-1" autocomplete="off">
+          </li>
+        `)
+
+        // let newRoute = routesWrapper.querySelector('.table__route:last-of-type')
+        // newRoute.addEventListener('click', e => triggerRoutesModal(e))
+      }
+    }
+
+    dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
     const dataIssuedInput = routesIssuedWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
 
     if (dataInput) {
@@ -61,7 +82,6 @@ export const colorRoutes = (routes, parent) => {
         routeInfo.classList.remove('route--completed')
         infoParent.setAttribute('data-title', `${route.last_comment}/-_/${route.error_msg}`)
       }
-
 
       if (route.pause_time) {
         routeInfo.classList.add('route')

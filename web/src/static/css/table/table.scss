@@ -276,10 +276,26 @@ input.tr {
 
   &-routes {
     &__wrapper {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 28px;
+
+      //&-top {
+      //  overflow-x: scroll;
+      //}
+      //
+      //&-bot {
+      //  overflow-x: scroll;
+      //}
+    }
+
+    &__add {
+      position: absolute;
+      right: -13px;
+      top: 0;
+      z-index: 100;
     }
   }
 }

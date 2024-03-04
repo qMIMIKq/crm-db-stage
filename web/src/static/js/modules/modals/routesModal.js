@@ -977,7 +977,9 @@ export const triggerRoutesModal = (e, page = 'main') => {
             msgText = 'Завершён!'
           }
 
-          // let alertContent
+          console.log(routeInfo.route_position)
+
+          let alertContent
 
           confirmChangeTimeHandler(e, () => {
             sendData(`${appAddr}/api/routes/delete/${routeInfo['route_id']}`, 'POST', null)
@@ -985,11 +987,28 @@ export const triggerRoutesModal = (e, page = 'main') => {
                 if (resp.ok) showResult(true)
                 routeInput.value = ""
                 const infoParent = routeInput.parentNode
-                const routeInfo = infoParent.querySelector(`.click-chose`)
-                routeInfo.value = '-'
-                routeInfo.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
+                const routeInfoElem = infoParent.querySelector(`.click-chose`)
+                routeInfoElem.value = '-'
+                routeInfoElem.classList.remove('route', 'route--started', 'route--completed', 'route--error', 'route--paused', 'route--planned')
                 modalElem.remove()
                 const parent = routeInput.closest('.table-form--old')
+
+                let pos = routeInfo.route_position
+                if (pos > 10) {
+                  let nextElem = infoParent.nextElementSibling
+
+                  while (nextElem.tagName !== 'BUTTON') {
+                    // console.log(nextElem)
+                    const nextInput = nextElem.querySelector('.hidden__input')
+                    nextInput.setAttribute('name', `route-${pos}`)
+                    pos++
+
+                    nextElem = nextElem.nextElementSibling
+                  }
+
+                  infoParent.remove()
+                }
+
                 if (!(parent === null)) {
                   parent.classList.remove('table-form--old')
                   parent.classList.add('table-form--upd')

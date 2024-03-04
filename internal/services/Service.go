@@ -86,7 +86,7 @@ type Planning interface {
 }
 
 type TimeReports interface {
-	GetTimeReports() []domain.TimeReportPlot
+	GetTimeReports(*domain.ReportTime) []domain.TimeReportPlot
 }
 
 type Services struct {

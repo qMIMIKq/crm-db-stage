@@ -75,9 +75,20 @@ const changeElemHandler = e => {
 
 let label, listener, action, cls
 
+const doubler = e => {
+  if (e.target.classList.contains('table__data--current')) {
+    // console.log('has current', 'click')
+    e.target.removeAttribute('readonly')
+  }
+}
+
 export const bindOrdersListeners = (currentElem) => {
   document.querySelectorAll('.table__data').forEach(innerLabel => {
     label = innerLabel
+
+    // if (label.classList.contains('dblclck')) {
+    //   setChooseListeners(innerLabel, 'click', 'input', '')
+    // }
 
     if (!innerLabel.classList.contains('click-chose') && !innerLabel.classList.contains('click-select')) {
       listener = 'focus'
@@ -90,10 +101,10 @@ export const bindOrdersListeners = (currentElem) => {
       cls = 'table__data--chosen'
       setChooseListeners(innerLabel, 'blur', 'remove', 'table__data--chosen')
 
-      listener = 'focus'
-      action = 'show-current'
-      cls = 'table__data--current'
-      setChooseListeners(innerLabel, 'focus', 'show-current', 'table__data--current')
+      // listener = 'focus'
+      // action = 'show-current'
+      // cls = 'table__data--current'
+      // setChooseListeners(innerLabel, 'focus', 'show-current', 'table__data--current')
 
       listener = 'blur'
       action = 'remove'
@@ -146,13 +157,30 @@ const chooseHandler = e => {
     }
   })
 
+  // console.log(e.type, e.target.classList)
+
+  e.target.classList.remove('table__data--current')
   parent.querySelectorAll('.table__data').forEach(item => {
     // console.log('bind listener to item!')
-
     // item.classList.remove('table__data--current')
+   try {
+     if (e.type === 'blur') {
+       if (item.classList.contains('dblclck')) {
+         item.removeEventListener('dblclick', doubler)
+         item.setAttribute('readonly', 'true')
+       }
+     }
+   } catch (e) {
+
+   }
+
     switch (action) {
       case 'add':
+        if (e.target.classList.contains('dblclck')) {
+          e.target.addEventListener('dblclick', doubler)
+        }
         e.target.classList.add('table__data--current')
+
         if (!label.classList.contains('table__data--opened')) {
           // state['inWork'] = true
           item.classList.add(cls)
@@ -171,11 +199,22 @@ const chooseHandler = e => {
         break
 
       case 'show-current':
+        if (e.target.classList.contains('dblclck')) {
+          console.log('has current', action)
+        }
         // state['inWork'] = true
         e.target.classList.add(cls)
         break
 
       case 'toggle':
+        if (e.target.classList.contains('dblclck')) {
+          if (e.target.classList.contains('table__data--current')) {
+            // console.log('has current', action)
+            e.target.removeAttribute('readonly')
+          }
+
+        }
+
         // item.classList.remove('table__data--current')
         // state['inWork'] = true
         if (!e.target.classList.contains('table__data--opened')) {
@@ -185,7 +224,11 @@ const chooseHandler = e => {
         }
         break
 
+      case 'input':
+
+
       default:
+        console.log('blur?!')
         item.classList.remove('table__data--current')
         if (cls === 'table__data--current') {
           // state['inWork'] = false

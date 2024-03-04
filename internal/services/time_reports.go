@@ -9,8 +9,8 @@ type TimeReportsService struct {
 	repo repository.TimeReports
 }
 
-func (t *TimeReportsService) GetTimeReports() []domain.TimeReportPlot {
-	return t.repo.GetTimeReports()
+func (t *TimeReportsService) GetTimeReports(datesRange *domain.ReportTime) []domain.TimeReportPlot {
+	return t.repo.GetTimeReports(datesRange)
 }
 
 func NewTimeReportsService(repo repository.TimeReports) *TimeReportsService {

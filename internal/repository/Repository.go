@@ -90,7 +90,7 @@ type Planning interface {
 
 type TimeReports interface {
 	CreateTimeData(dateReportInfo *DateTimeInfo, comment domain.Comment) string
-	GetTimeReports() []domain.TimeReportPlot
+	GetTimeReports(datesRange *domain.ReportTime) []domain.TimeReportPlot
 }
 
 type Repository struct {

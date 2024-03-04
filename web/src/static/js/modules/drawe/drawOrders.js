@@ -86,29 +86,29 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
             <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
                 <input 
                 ${state['inputAdmManGroupper']}
-                id='number' class='table__data ' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
+                id='number' class='table__data dblclck' name='number' readonly type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table-body__helper table__sample'>
                 <input class='table__data   table__data--ro' name='sample' type='text' value='' readonly tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
-                <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+                <input ${state['inputAdmManGroupper']} readonly class='table__data dblclck' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
-                <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+                <input ${state['inputAdmManGroupper']} readonly class='table__data dblclck' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.material ? "table-body__attr" : ""} table__material'>
-                <input ${state['inputAdmManGroupper']} class='table__data ' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
+                <input ${state['inputAdmManGroupper']} readonly class='table__data dblclck' type='text' name='material' value='${d.material}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__quantity'>
-                <input ${state['inputAdmManGroupper']} class='table__data ' type='number' name='quantity' required value='${d.quantity}' tabindex='-1' autocomplete='off'>
+                <input ${state['inputAdmManGroupper']} readonly class='table__data dblclck' type='number' name='quantity' value='${d.quantity}' tabindex='-1' autocomplete='off'>
             </li>
             <ul class="table__issueds">
                 <li class="table-body_cell table__issued">
-                    <input ${state["inputAdmTechGroupper"]} class="table__data ${orderCompleted && !state["isArchive"] ? "table__issued--done tr" : ""}" tabindex="-1"
+                    <input ${state["inputAdmTechGroupper"]} readonly class="table__data ${orderCompleted && !state["isArchive"] ? "table__issued--done tr" : ""} dblclck" tabindex="-1"
                     type="number" 
                     name="issued" 
-                    required  autocomplete="off"
+                    autocomplete="off"
                     value="${d.issued}">
                 </li>
             </ul>
@@ -116,15 +116,16 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
                 <input type="text" class="table__data hidden__input" value=${d.completed} id="completed" name="completed">
             </li>
             <li class="table-body_cell table-body__helper ${d.m ? "table-body__attr" : ""}  table__m">
-                <select ${state['adminCheck'] || state['manCheck'] ? "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button" name="m" id="">
+                <select ${state['adminCheck'] || state['manCheck'] ? "" : 'style="pointer-events : none"'} class="table__data table-m-select main__button dblclck" name="m" id="">
                 </select>
             </li>
             <li class="table-body_cell table__endtime">
-                <input class="main__button table__data ${alertDeadline ? 'table__endtime--dead' : ''}"
-                ${state["inputAdmManTechGroupper"]} 
+                <input class="main__button table__data dblclck ${alertDeadline ? 'table__endtime--dead' : ''}"
+                ${state["inputAdmManTechGroupper"]}
                 name="end_time" 
                 type="text"
                 placeholder=" " 
+                readonly
                 value="${d.end_time ? d.end_time.split("T")[0] : ''}" 
                 onfocus="this.type='date'"
                 onblur="(this.type='text')"
@@ -133,7 +134,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
             </li>
             <li class="table__routes table-routes">
                 <input readonly type="text" class="hidden__input" name="routes_json">
-                <ul class="table-routes__wrapper">
+                <ul class="table-routes__wrapper table-routes__wrapper-top">
                     <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
@@ -174,8 +175,9 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
+                    <button type="button" class="main__button--click hidden__input main-header__button table-routes__add">+</button>
                 </ul>
-                <ul class="table-routes__wrapper hidden__input table-routes__issued">
+                <ul class="table-routes__wrapper table-routes__wrapper-bot hidden__input table-routes__issued">
                     <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
@@ -323,6 +325,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
     deleteOrdersHandler(currentOrder, d.issued, routes, d.id)
   }
 
+
   addTriggers(currentOrder, "#db_id", showRoutesIssued)
   addTriggers(currentOrder, '.table__files', triggerFilesModal)
   addTriggers(currentOrder, '.table__route', e => triggerRoutesModal(e))
@@ -335,6 +338,35 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
   } else {
     document.querySelectorAll('#order__copy').forEach(copy => copy.remove())
   }
+
+  const routesWrapper = currentOrder.querySelector('.table-routes__wrapper-top')
+  const routesIssuedWrapper = currentOrder.querySelector('.table-routes__wrapper-bot')
+  const addRouteBtn = currentOrder.querySelector('.table-routes__add')
+  addRouteBtn.addEventListener('click', () => {
+    console.log('hello')
+    const lastRoute = routesWrapper.querySelector('.table__route:last-of-type')
+    const lastIssuedRoute = routesIssuedWrapper.querySelector('.table__route--issued:last-of-type').querySelector('input')
+    // console.log(lastRoute.name, lastIssuedRoute.name)
+    const lastPos = Number(lastRoute.querySelector('.hidden__input').name.split('-')[1]) + 1
+
+    lastRoute.insertAdjacentHTML('afterend', `
+      <li class="table-body_cell table-body__helper table__route">
+          <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
+          <input readonly class="hidden__input table__data" name="route-${lastPos}" type="text" value="" tabindex="-1" autocomplete="off">
+      </li>
+    `)
+
+    let newRoute = routesWrapper.querySelector('.table__route:last-of-type')
+    newRoute.addEventListener('click', e => triggerRoutesModal(e))
+  })
+
+  routesWrapper.addEventListener('mouseenter', () => {
+    addRouteBtn.classList.remove('hidden__input')
+  })
+
+  routesWrapper.addEventListener('mouseleave', () => {
+    addRouteBtn.classList.add('hidden__input')
+  })
 
   // console.timeEnd(`draw order ${d.id}`)
 }
@@ -372,13 +404,13 @@ export const orderHTML = `
                         <input class="table__data " type="text" name="material" value="" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__quantity">
-                        <input class="table__data " type="number" name="quantity" required value="" tabindex="-1" autocomplete="off">
+                        <input class="table__data " type="number" name="quantity" value="" tabindex="-1" autocomplete="off">
                     </li>
                     <li class="table-body_cell table-body__helper table__issued">
                         <input class="table__data" tabindex="-1"
                         type="number" 
                         name="issued" 
-                        required  autocomplete="off"
+                        autocomplete="off"
                         value="">
                     </li>
                     <li class="table-body_cell table-body__helper table__m">
@@ -398,7 +430,7 @@ export const orderHTML = `
                     </li>
                     <li class="table__routes table-routes">
                         <input readonly type="text" class="hidden__input" name="routes_json">
-                        <ul class="table-routes__wrapper">
+                        <ul class="table-routes__wrapper table-routes__wrapper-top">
                             <li class="table-body_cell table-body__helper table__route">
                                 <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                                 <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
@@ -440,7 +472,7 @@ export const orderHTML = `
                                 <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
                         </ul>
-                        <ul class="table-routes__wrapper hidden__input table-routes__issued">
+                        <ul class="table-routes__wrapper table-routes__wrapper-bot hidden__input table-routes__issued">
                             <li class="table-body_cell table-body__helper table__route--issued">
                                 <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
                             </li>
