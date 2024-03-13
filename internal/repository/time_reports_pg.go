@@ -224,8 +224,8 @@ func (t *TimeReportsPG) CalcTimeDifference(startTimeStr string, endTimeStr strin
 	firstShiftEndStr += fmt.Sprintf(" %v", calc.ShiftEnd)
 	lastShiftStartStr += fmt.Sprintf(" %v", calc.ShiftStart)
 
-	log.Info().Msgf("start time str %v", startTimeStr)
-	log.Info().Msgf("end time str %v", endTimeStr)
+	//log.Info().Msgf("start time str %v", startTimeStr)
+	//log.Info().Msgf("end time str %v", endTimeStr)
 
 	firstShiftTime, err := time.Parse(t.layout, firstShiftEndStr)
 	if err != nil {
@@ -407,7 +407,6 @@ func (t *TimeReportsPG) GetTimeReports(datesRange *domain.ReportTime) []domain.T
 	}
 
 	plots := map[string]string{}
-
 	for _, route := range routes {
 		//log.Info().Interface("route", route).Msg("route is")
 		if err := t.db.Get(&route.TimeReportsInfo, queryRouteTimeReports, route.RouteID); err != nil {
@@ -415,6 +414,8 @@ func (t *TimeReportsPG) GetTimeReports(datesRange *domain.ReportTime) []domain.T
 		}
 
 		plots[route.Plot] = ""
+
+		//t.getPlots(route, plots)
 
 		log.Info().Msgf("plot is %v / created in %v / start time %v", route.Plot, route.TimeOfCreation, route.StartTime)
 	}
@@ -428,15 +429,15 @@ func (t *TimeReportsPG) GetTimeReports(datesRange *domain.ReportTime) []domain.T
 	//		LIMIT 1
 	//`)
 
-	//for plot := range plots {
-	//	log.Info().Msgf("plot %v", plot)
-	//
-	//	var route domain.Route
-	//	if err := t.db.Get(&route, queryPrevRoute, datesRange.From, plot); err != nil {
-	//		log.Err(err).Caller().Msg("error is")
-	//	}
-	//	log.Info().Interface("route", route).Msg("prev route")
-	//}
+	for plot := range plots {
+		log.Info().Msgf("plot %v", plot)
+
+		//var route domain.Route
+		//if err := t.db.Get(&route, queryPrevRoute, datesRange.From, plot); err != nil {
+		//	log.Err(err).Caller().Msg("error is")
+		//}
+		//log.Info().Interface("route", route).Msg("prev route")
+	}
 
 	var data []domain.TimeReportPlot
 	if err := t.db.Select(&data, `SELECT * FROM time_reports_plots`); err != nil {
@@ -445,6 +446,20 @@ func (t *TimeReportsPG) GetTimeReports(datesRange *domain.ReportTime) []domain.T
 
 	return data
 }
+
+//func (t *TimeReportsPG) getPlots(route *domain.Route, plots map[string]string) {
+//	queryRouteTimeReports := fmt.Sprintf(`
+//		SELECT * FROM time_reports WHERE route_id = $1
+//	`)
+//
+//	if err := t.db.Get(&route.TimeReportsInfo, queryRouteTimeReports, route.RouteID); err != nil {
+//		//log.Err(err).Caller().Msg("error is")
+//	}
+//
+//	plots[route.Plot] = ""
+//
+//	//plotChan <- ""
+//}
 
 func NewTimeReportsPG(db *sqlx.DB) *TimeReportsPG {
 	return &TimeReportsPG{db: db, layout: "2006.01.02 15:04"}

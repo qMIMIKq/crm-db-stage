@@ -17,6 +17,6 @@ func (h *Handler) getTimeReports(c *gin.Context) {
 	log.Info().Msgf("get reports")
 	res := h.services.TimeReports.GetTimeReports(reportTime)
 
-	//log.Info().Interface("info is", timeInfo).Msg("Time info")
+	log.Info().Interface("res is", res).Msg("Time info")
 	newDataResponse(c, http.StatusOK, res)
 }

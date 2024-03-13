@@ -643,7 +643,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
   const routeUser = document.querySelector('.route__select--user')
 
   if (info) {
-    console.log(routeInfo.time_of_creation)
 
     if (page === 'report') {
       const routeID = e.target.parentNode.parentNode.querySelector('#route_id').value
@@ -897,6 +896,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
           }
         })
     } else {
+      console.log(routeInfo['time_of_creation'])
       planDateInput.removeAttribute('disabled')
       let comments = routeInfo['comments']
       if (routeInfo['last_comment']) {
