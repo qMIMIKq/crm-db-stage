@@ -34,6 +34,14 @@ export const topPlansFilters = () => {
     }
   })
 
+  const exitBtn = navControl.querySelector('.admin-form__exit')
+  const exitURL = exitBtn.querySelector('span')
+  exitURL.textContent = `/login`
+  exitBtn.addEventListener('click', () => {
+    localStorage.setItem("user", JSON.stringify("0"))
+    window.location.replace(exitURL.textContent)
+  })
+
   const searchBtn = document.querySelector('.nav-control__search-btn')
   searchBtn.addEventListener('click', () => {
     searchPlansHandler()

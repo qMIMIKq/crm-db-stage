@@ -40,7 +40,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
 
     archiveLink.classList.add('nav-control__route-link--current')
   } else {
-    document.title = 'Заказы'
+    document.title = 'Журнал'
     links.forEach(link => {
       link.classList.remove('nav-control__route-link--current')
     })

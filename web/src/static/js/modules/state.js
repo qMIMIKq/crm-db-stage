@@ -1,3 +1,5 @@
+import {appAddr} from "../../../../../appAddr";
+
 export const userInf = JSON.parse(localStorage.getItem('user'))
 
 let state = {

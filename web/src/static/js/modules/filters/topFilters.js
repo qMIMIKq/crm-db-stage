@@ -16,6 +16,14 @@ export const topFiltersHandler = () => {
   const nav = document.querySelector('.nav-filters')
   const extensions = ['все']
 
+  const exitBtn = navControl.querySelector('.admin-form__exit')
+  const exitURL = exitBtn.querySelector('span')
+  exitURL.textContent = `/login`
+  exitBtn.addEventListener('click', () => {
+    localStorage.setItem("user", JSON.stringify("0"))
+    window.location.replace(exitURL.textContent)
+  })
+
   plotFilters.querySelectorAll('li').forEach(filter => filter.remove())
   filterFilters.querySelectorAll('li').forEach(filter => filter.remove())
   burgerMenu.remove()

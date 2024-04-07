@@ -1,6 +1,7 @@
 const enterHelper = e => {
   const elem = e.target
-
+  const table = document.querySelector('.main-table')
+  const distance = Math.abs(elem.offsetTop - table.offsetTop - table.offsetHeight)
   const valElem = e.target.querySelector('.table__data')
   const value = valElem.value
 
@@ -12,10 +13,12 @@ const enterHelper = e => {
     const helper = elem.querySelector('.check-helper')
     if (helper) {
       const helperHeight = helper.clientHeight
+      let symbol = distance < 270 ? '' : '-'
+
       if (helperHeight > 23) {
-        helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px'
+        helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`
       } else {
-        helper.style.bottom = '-35px'
+        helper.style.bottom = `${symbol}35px`
       }
     }
   }
@@ -29,35 +32,40 @@ const leaveHelper = e => {
 }
 
 const enterHelperRoute = e => {
-  const cell = e.target
+  const elem = e.target
+  const parentForDist = elem.parentNode
   let value = e.target.getAttribute('data-title')
+  const table = document.querySelector('.main-table')
+  const distance = Math.abs(parentForDist.offsetTop - table.offsetTop - table.offsetHeight)
 
   if (value) {
     const check = value.split('/-_/')
-    cell.insertAdjacentHTML('beforeend', `
+    elem.insertAdjacentHTML('beforeend', `
       <div class="check-helper check-helper--long">
       </div>
     `)
 
     if (check[0]) {
-      cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+      elem.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
         <div>${check[0]}</div>
       `)
     }
 
     if (check[1]) {
-      cell.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+      elem.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
           <div style="color: red;" >${check[1].split('--').join(' ')}</div>
       `)
     }
 
-    const helper = cell.querySelector('.check-helper')
+    const helper = elem.querySelector('.check-helper')
     if (helper) {
       const helperHeight = helper.clientHeight
+      let symbol = distance < 270 ? '' : '-'
+
       if (helperHeight > 23) {
-        helper.style.bottom = '-' + String(helperHeight - 23 + 35) + 'px'
+        helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`
       } else {
-        helper.style.bottom = '-35px'
+        helper.style.bottom = `${symbol}35px`
       }
     }
   }

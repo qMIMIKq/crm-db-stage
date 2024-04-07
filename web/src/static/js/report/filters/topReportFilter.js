@@ -1,10 +1,10 @@
 import {state, userInf} from "../../modules/state";
-import {getOrders, hideOrders} from "../../modules/getOrders";
+import {getOrders} from "../../modules/getOrders";
 import {getData} from "../../modules/getData";
-import {globalFilterReports} from "./globalFilterReports";
 import {ucFirst} from "../../ucFirst";
 import {newAllReportFilter} from "./newAllReportFilter";
 import {searchReportsHandler} from "./serchReportsHandler";
+import {appAddr} from "../../../../../../appAddr";
 
 export const topReportFilter = () => {
   let filtered
@@ -32,6 +32,14 @@ export const topReportFilter = () => {
     } else {
       navRoutes.style.paddingBottom = '6px'
     }
+  })
+
+  const exitBtn = navControl.querySelector('.admin-form__exit')
+  const exitURL = exitBtn.querySelector('span')
+  exitURL.textContent = `/login`
+  exitBtn.addEventListener('click', () => {
+    localStorage.setItem("user", JSON.stringify("0"))
+    window.location.replace(exitURL.textContent)
   })
 
   const searchBtn = document.querySelector('.nav-control__search-btn')

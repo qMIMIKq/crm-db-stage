@@ -67,6 +67,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "state": () => (/* binding */ state),
 /* harmony export */   "userInf": () => (/* binding */ userInf)
 /* harmony export */ });
+/* harmony import */ var _appAddr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../appAddr */ "./appAddr.js");
+
 const userInf = JSON.parse(localStorage.getItem('user'));
 let state = {
   'systemWords': ['Начал', 'Установил', 'Назначил', 'Выбрал', 'Закончил', 'Прошел', 'Сбросил', 'За смену', 'Просмотрел', 'Поставил маршрут', 'Нажал паузу'],

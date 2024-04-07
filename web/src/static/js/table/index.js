@@ -1,13 +1,14 @@
 import "../../css/table/table.scss"
 import {getOrders} from "../modules/getOrders";
 import {topFiltersHandler} from "../modules/filters/topFilters";
-import {state} from "../modules/state";
+import {state, userInf} from "../modules/state";
 import {tableRoutesFiltersHandler} from "../modules/filters/tableRoutesFilters";
 import {adminHandler} from "../modules/admin/adminHandler";
 import {getData} from "../modules/getData";
+import {appAddr} from "../../../../../appAddr";
 
 export const user = JSON.parse(localStorage.getItem("user"))
-if (!user) {
+if (user === '0') {
   window.location.href = '/login'
 }
 
