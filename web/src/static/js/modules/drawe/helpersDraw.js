@@ -13,12 +13,19 @@ const enterHelper = e => {
     const helper = elem.querySelector('.check-helper')
     if (helper) {
       const helperHeight = helper.clientHeight
-      let symbol = distance < 270 ? '' : '-'
 
       if (helperHeight > 23) {
-        helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`
+        if (distance < 270) {
+          helper.style.top = `-${String(helperHeight - 23 + 35)}px`
+        } else {
+          helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`
+        }
+
+        // let check = `${symbol}${String(helperHeight - 23 + 35)}px`
+        // console.log(check)
+        // helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`
       } else {
-        helper.style.bottom = `${symbol}35px`
+        helper.style.bottom = `-35px`
       }
     }
   }
@@ -60,12 +67,19 @@ const enterHelperRoute = e => {
     const helper = elem.querySelector('.check-helper')
     if (helper) {
       const helperHeight = helper.clientHeight
-      let symbol = distance < 270 ? '' : '-'
 
       if (helperHeight > 23) {
-        helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`
+        if (distance < 270) {
+          helper.style.top = `-${String(helperHeight - 23 + 35)}px`
+        } else {
+          helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`
+        }
       } else {
-        helper.style.bottom = `${symbol}35px`
+        if (distance < 270) {
+          helper.style.top = `-35px`
+        } else {
+          helper.style.bottom = `-35px`
+        }
       }
     }
   }

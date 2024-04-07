@@ -2717,8 +2717,6 @@ const enterHelper = e => {
   const distance = Math.abs(elem.offsetTop - table.offsetTop - table.offsetHeight);
   const valElem = e.target.querySelector('.table__data');
   const value = valElem.value;
-  console.log(elem);
-  console.log(distance);
   if (value && (valElem.classList.contains('table-m-select') || valElem.scrollWidth > valElem.offsetWidth)) {
     elem.insertAdjacentHTML('beforeend', `
         <div class="check-helper">${value}</div>
@@ -2726,11 +2724,18 @@ const enterHelper = e => {
     const helper = elem.querySelector('.check-helper');
     if (helper) {
       const helperHeight = helper.clientHeight;
-      let symbol = distance < 270 ? '' : '-';
       if (helperHeight > 23) {
-        helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`;
+        if (distance < 270) {
+          helper.style.top = `-${String(helperHeight - 23 + 35)}px`;
+        } else {
+          helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`;
+        }
+
+        // let check = `${symbol}${String(helperHeight - 23 + 35)}px`
+        // console.log(check)
+        // helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`
       } else {
-        helper.style.bottom = `${symbol}35px`;
+        helper.style.bottom = `-35px`;
       }
     }
   }
@@ -2746,8 +2751,6 @@ const enterHelperRoute = e => {
   let value = e.target.getAttribute('data-title');
   const table = document.querySelector('.main-table');
   const distance = Math.abs(parentForDist.offsetTop - table.offsetTop - table.offsetHeight);
-  console.log(elem);
-  console.log(distance);
   if (value) {
     const check = value.split('/-_/');
     elem.insertAdjacentHTML('beforeend', `
@@ -2767,11 +2770,18 @@ const enterHelperRoute = e => {
     const helper = elem.querySelector('.check-helper');
     if (helper) {
       const helperHeight = helper.clientHeight;
-      let symbol = distance < 270 ? '' : '-';
       if (helperHeight > 23) {
-        helper.style.bottom = `${symbol}${String(helperHeight - 23 + 35)}px`;
+        if (distance < 270) {
+          helper.style.top = `-${String(helperHeight - 23 + 35)}px`;
+        } else {
+          helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`;
+        }
       } else {
-        helper.style.bottom = `${symbol}35px`;
+        if (distance < 270) {
+          helper.style.top = `-35px`;
+        } else {
+          helper.style.bottom = `-35px`;
+        }
       }
     }
   }
