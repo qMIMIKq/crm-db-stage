@@ -115,6 +115,18 @@ export function triggerFilesModal(e) {
       })
     })
 
+    downloadTrigger.addEventListener('dragenter', e => {
+      e.preventDefault()
+      e.stopPropagation()
+      downloadTrigger.classList.add('drag-check')
+    })
+
+    downloadTrigger.addEventListener('dragleave', e => {
+      e.preventDefault()
+      e.stopPropagation()
+      downloadTrigger.classList.remove('drag-check')
+    })
+
     downloadTrigger.addEventListener('drop', e => {
       let dt = e.dataTransfer
       let files = dt.files
