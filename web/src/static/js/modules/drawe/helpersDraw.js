@@ -1,3 +1,5 @@
+import {log10} from "chart.js/helpers";
+
 const enterHelper = e => {
   const elem = e.target
   const table = document.querySelector('.main-table')
@@ -44,42 +46,60 @@ const enterHelperRoute = e => {
   let value = e.target.getAttribute('data-title')
   const table = document.querySelector('.main-table')
   const distance = Math.abs(parentForDist.offsetTop - table.offsetTop - table.offsetHeight)
+  const posElem = elem.querySelector('.hidden__input')
+  const pos = posElem.name.split('-')[1]
 
-  if (value) {
-    const check = value.split('/-_/')
+  // console.log(elem)
+  if (elem.querySelector('.click-chose').value !== '-') {
     elem.insertAdjacentHTML('beforeend', `
       <div class="check-helper check-helper--long">
       </div>
     `)
 
+    elem.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+    <div>Позиция ${pos}</div>
+    `)
+  }
+
+  let helper = elem.querySelector('.check-helper')
+  if (value) {
+    const check = value.split('/-_/')
+
+    if (!helper) {
+      elem.insertAdjacentHTML('beforeend', `
+      <div class="check-helper check-helper--long">
+      </div>
+    `)
+    }
+    helper = elem.querySelector('.check-helper')
+
     if (check[0]) {
-      elem.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+      helper.insertAdjacentHTML('beforeend', `
         <div>${check[0]}</div>
       `)
     }
 
     if (check[1]) {
-      elem.querySelector('.check-helper').insertAdjacentHTML('beforeend', `
+      helper.insertAdjacentHTML('beforeend', `
           <div style="color: red;" >${check[1].split('--').join(' ')}</div>
       `)
     }
+  }
 
-    const helper = elem.querySelector('.check-helper')
-    if (helper) {
-      const helperHeight = helper.clientHeight
+  if (helper) {
+    const helperHeight = helper.clientHeight
 
-      if (helperHeight > 23) {
-        if (distance < 270) {
-          helper.style.top = `-${String(helperHeight - 23 + 35)}px`
-        } else {
-          helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`
-        }
+    if (helperHeight > 23) {
+      if (distance < 270) {
+        helper.style.top = `-${String(helperHeight - 23 + 35)}px`
       } else {
-        if (distance < 270) {
-          helper.style.top = `-35px`
-        } else {
-          helper.style.bottom = `-35px`
-        }
+        helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`
+      }
+    } else {
+      if (distance < 270) {
+        helper.style.top = `-35px`
+      } else {
+        helper.style.bottom = `-35px`
       }
     }
   }

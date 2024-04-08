@@ -233,7 +233,8 @@ input.tr {
     align-items: center;
     justify-content: center;
     height: 29px;
-    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
 
     &:last-child {
       border-right: $btn_border !important;
@@ -241,8 +242,12 @@ input.tr {
   }
 
   &__routes {
-    min-width: 500px;
-    max-width: 500px;
+    min-width: 534px;
+    max-width: 534px;
+    position: relative;
+    display: flex;
+    align-items: center
+    //overflow: hidden;
   }
 
   &-routes__issued {
@@ -279,9 +284,10 @@ input.tr {
       position: relative;
       display: flex;
       align-items: center;
-      justify-content: center;
+      //justify-content: center;
       height: 28px;
-
+      //overflow: hidden;
+      //
       //&-top {
       //  overflow-x: scroll;
       //}
@@ -293,9 +299,9 @@ input.tr {
 
     &__add {
       position: absolute;
-      right: -13px;
+      right: -25px;
       top: 0;
-      z-index: 100;
+      z-index: 10;
     }
   }
 }
@@ -350,6 +356,7 @@ input.tr {
 
   &_cell {
     max-height: 56px;
+    //min-height: 56px;
     font-size: 16px;
     border-right: $btn_border;
     border-bottom: $btn_border;
@@ -416,7 +423,7 @@ input.tr {
 }
 
 .route {
-  color: rgb(107, 102, 102);;
+  color: rgb(107, 102, 102);
   height: 24px;
   width: 48px;
   border-radius: 15px;
@@ -582,6 +589,8 @@ input.route__input--top:focus:not(:read-only),
 button.main__button--click:focus:not(:read-only),
 button.main__button--click:focus:not(:disabled),
 button.main__button:focus:not(:read-only),
+button.main__button:focus:not(:disabled),
+button.send__comment:focus:not(:disabled),
 button.route__btn:focus:not(:disabled),
 button.section-finish__btn:focus:not(:disabled),
 button.logs-filter__button:focus:not(:disabled) {
@@ -593,3 +602,39 @@ button.logs-filter__button:focus:not(:disabled) {
   box-shadow: 0px 5px 10px 0px $main_green;
   color: green;
 }
+
+.routes-btn {
+  border-bottom: 1px solid rgb(203, 203, 203);
+  border-right: 1px solid rgb(203, 203, 203);
+  height: 29px;
+  width: 17px;
+  transition: color 0.3s;
+  outline: none;
+  font-size: 17px;
+  font-weight: bold;
+  color: rgb(107, 102, 102);
+
+  &--active {
+    cursor: pointer;
+    transition: color 0.3s;
+    color: green;
+
+    &:hover {
+      color: rgb(137, 175, 137);
+    }
+  }
+
+  &:disabled {
+    //background: gray;
+
+    &:hover {
+      cursor: default;
+      color: rgb(107, 102, 102);
+      //transition: color 0.3s;
+      //color: black;
+    }
+  }
+}
+
+
+

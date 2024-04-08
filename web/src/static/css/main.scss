@@ -58,6 +58,21 @@ ul {
 .hidden-input {
   display: none !important;
   visibility: hidden !important;
+
+  &--route {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  &--route-prev {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  //&--route-next {
+  //  display: none !important;
+  //  visibility: hidden !important;
+  //}
 }
 
 .hidden__input {

@@ -1012,6 +1012,21 @@ export const triggerRoutesModal = (e, page = 'main') => {
                 if (!(parent === null)) {
                   parent.classList.remove('table-form--old')
                   parent.classList.add('table-form--upd')
+                  let lastRoute = parent.querySelectorAll('.hidden-input--route-prev')
+                  lastRoute = lastRoute[lastRoute.length - 1]
+
+                  // const prevBtn = parent.querySelector('.routes-btn__prev')
+                  // const nextBtn = parent.querySelector('.routes-btn__next')
+                  // if (lastRoute && lastRoute.length <= 1) {
+                  //   prevBtn.setAttribute('disabled', true)
+                  //   prevBtn.classList.remove('routes-btn--active')
+                  // }
+                  try {
+                    lastRoute.classList.remove('hidden-input--route-prev')
+                    // lastRoute.classList.add('hidden-input--route')
+                  } catch {
+                  }
+                  // parent.querySelector('.routes-btn__prev').click()
                   submitData()
                 }
 

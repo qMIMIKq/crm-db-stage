@@ -112,19 +112,17 @@ export function triggerFilesModal(e) {
       downloadTrigger.addEventListener(eventName, e => {
         e.preventDefault()
         e.stopPropagation()
+
+        switch (eventName) {
+          case 'dragenter':
+          case 'dragover':
+            downloadTrigger.classList.add('drag-check')
+            break
+          case 'dragleave':
+          case 'drop':
+            downloadTrigger.classList.remove('drag-check')
+        }
       })
-    })
-
-    downloadTrigger.addEventListener('dragenter', e => {
-      e.preventDefault()
-      e.stopPropagation()
-      downloadTrigger.classList.add('drag-check')
-    })
-
-    downloadTrigger.addEventListener('dragleave', e => {
-      e.preventDefault()
-      e.stopPropagation()
-      downloadTrigger.classList.remove('drag-check')
     })
 
     downloadTrigger.addEventListener('drop', e => {
