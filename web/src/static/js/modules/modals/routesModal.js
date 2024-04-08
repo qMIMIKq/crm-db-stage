@@ -670,6 +670,11 @@ export const triggerRoutesModal = (e, page = 'main') => {
           //   planDateInput.value = 'В планировании'
           // }
 
+          const timeReportsBtn = document.querySelector('.report__time-route__btn')
+          timeReportsBtn.addEventListener('click', e => {
+            timeReportsHandlerModal(e, routeInfo.time_reports_info)
+          })
+
           if (routeInfo['db_plan']) {
             let today = getTime()
             today = today.substring(0, today.length - 5).trim()
@@ -905,6 +910,11 @@ export const triggerRoutesModal = (e, page = 'main') => {
       if (routeInfo.issued_today) {
         issuedTodayStart.value = Number(issuedTodayStart.value) + Number(routeInfo.issued_today)
       }
+
+      const timeReportsBtn = document.querySelector('.report__time-route__btn')
+      timeReportsBtn.addEventListener('click', e => {
+        timeReportsHandlerModal(e, routeInfo.time_reports_info)
+      })
 
       // console.log(routeInfo.time_reports_info)
 
@@ -1215,11 +1225,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
         alertColor.value = ''
       }
     })
-  })
-
-  const timeReportsBtn = document.querySelector('.report__time-route__btn')
-  timeReportsBtn.addEventListener('click', e => {
-    timeReportsHandlerModal(e, routeInfo.time_reports_info)
   })
 
   const dayQuantity = document.querySelector('#day_quantity')
