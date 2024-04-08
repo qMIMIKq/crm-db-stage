@@ -135,7 +135,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
             <li class="table__routes table-routes">
                 <input readonly type="text" class="hidden__input" name="routes_json">
                 <ul class="table-routes__wrapper table-routes__wrapper-top">
-                    <button type="button" class="routes-btn routes-btn__prev"><</button>
+                    <button type="button" class="routes-btn table__data routes-btn__prev"><</button>
                     <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
@@ -176,7 +176,7 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <button type="button" class="routes-btn routes-btn__next">></button>
+                    <button type="button" class="routes-btn table__data routes-btn__next">></button>
                     <button type="button" class="main__button--click hidden__input main-header__button table-routes__add">+</button>
                 </ul>
                 <ul class="table-routes__wrapper table-routes__wrapper-bot hidden__input table-routes__issued">

@@ -613,6 +613,7 @@ button.logs-filter__button:focus:not(:disabled) {
   font-size: 17px;
   font-weight: bold;
   color: rgb(107, 102, 102);
+  //background: transparent;
 
   &--active {
     cursor: pointer;
