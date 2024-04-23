@@ -134,8 +134,9 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
             </li>
             <li class="table__routes table-routes">
                 <input readonly type="text" class="hidden__input" name="routes_json">
+                
+                <button type="button" class="routes-btn routes-btn--left table__data routes-btn__prev"><</button>
                 <ul class="table-routes__wrapper table-routes__wrapper-top">
-                    <button type="button" class="routes-btn table__data routes-btn__prev"><</button>
                     <li class="table-body_cell table-body__helper table__route">
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-1" type="text" value="" tabindex="-1" autocomplete="off">
@@ -176,9 +177,10 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
                         <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
                         <input readonly class="hidden__input table__data" name="route-10" type="text" value="" tabindex="-1" autocomplete="off">
                     </li>
-                    <button type="button" class="routes-btn table__data routes-btn__next">></button>
                     <button type="button" class="main__button--click hidden__input main-header__button table-routes__add">+</button>
                 </ul>
+                <button type="button" class="routes-btn routes-btn--right table__data routes-btn__next">></button>
+                
                 <ul class="table-routes__wrapper table-routes__wrapper-bot hidden__input table-routes__issued">
                     <li class="table-body_cell table-body__helper table__route--issued">
                         <input readonly class="table__data table__data--ro tr click-chose" name="route-1-issued" type="text" value="" tabindex="-1" autocomplete="off">
@@ -376,38 +378,48 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
   scrollNext.addEventListener('click', () => {
     let firstRoute = routesWrapper.querySelectorAll('.table__route:not(.hidden-input--route-prev)')
     firstRoute = firstRoute[0]
+
+    let checkName = firstRoute.querySelector('.hidden__input').name
+    let checkElem = routesIssuedWrapper.querySelectorAll(`input[name=${checkName}-issued]:not(.hidden-input--route-prev)`)
+    let firstCheckElem = checkElem[0].parentNode
+
     firstRoute.classList.add('hidden-input--route-prev')
+    firstCheckElem.classList.add('hidden-input--route-prev')
 
     let lastRoute = routesWrapper.querySelectorAll('.hidden-input--route:not(.hidden-input--route-next)')
-    if (lastRoute.length <= 1) {
-      scrollNext.setAttribute('disabled', true)
-      scrollNext.classList.remove('routes-btn--active')
-    }
-
-    lastRoute = lastRoute[0]
-    lastRoute.classList.remove('hidden-input--route')
-    lastRoute.classList.add('hidden-input--route-next')
-
-    scrollPrev.removeAttribute('disabled')
-    scrollPrev.classList.add('routes-btn--active')
+    let lastRouteIssued = routesIssuedWrapper.querySelectorAll('.hidden-input--route:not(.hidden-input--route-next)')
+    routesSrollNext(lastRoute, scrollNext, scrollPrev)
+    routesSrollNext(lastRouteIssued, scrollNext, scrollPrev)
   })
 
   scrollPrev.addEventListener('click', () => {
     let lastRoute = routesWrapper.querySelectorAll('.hidden-input--route-next')
     lastRoute = lastRoute[lastRoute.length - 1]
+
+    let checkName = lastRoute.querySelector('.hidden__input').name
+    let checkElem = routesIssuedWrapper.querySelectorAll(`input[name=${checkName}-issued]:not(.hidden-input--route-prev)`)
+    let firstCheckElem = checkElem[0].parentNode
+
     try {
       lastRoute.classList.remove('hidden-input--route-next')
       lastRoute.classList.add('hidden-input--route')
-    } catch {}
+
+      firstCheckElem.classList.remove('hidden-input--route-next')
+      firstCheckElem.classList.add('hidden-input--route')
+    } catch {
+    }
 
     let firstRoute = routesWrapper.querySelectorAll('.hidden-input--route-prev')
+    let firstRouteIssued = routesIssuedWrapper.querySelectorAll('.hidden-input--route-prev')
     if (firstRoute.length <= 1) {
       scrollPrev.setAttribute('disabled', true)
       scrollPrev.classList.remove('routes-btn--active')
     }
 
     firstRoute = firstRoute[firstRoute.length - 1]
+    firstRouteIssued = firstRouteIssued[firstRouteIssued.length - 1]
     firstRoute.classList.remove('hidden-input--route-prev')
+    firstRouteIssued.classList.remove('hidden-input--route-prev')
 
     scrollNext.removeAttribute('disabled')
     scrollNext.classList.add('routes-btn--active')
@@ -423,15 +435,45 @@ export const drawOrders = (insertPlace, position, d, data, users) => {
   //   addRouteBtn.classList.add('hidden__input')
   // })
 
-  routesWrapper.addEventListener('mouseenter', () => {
+  const routesMain = currentOrder.querySelector('.table-routes')
+  routesMain.addEventListener('mouseenter', () => {
     addRouteBtn.classList.remove('hidden__input')
   })
 
-  routesWrapper.addEventListener('mouseleave', () => {
+  routesMain.addEventListener('mouseleave', () => {
     addRouteBtn.classList.add('hidden__input')
   })
 
   // console.timeEnd(`draw order ${d.id}`)
+}
+
+const routesSrollNext = (lastRoute, scrollNext, scrollPrev) => {
+  if (lastRoute.length <= 1) {
+    scrollNext.setAttribute('disabled', true)
+    scrollNext.classList.remove('routes-btn--active')
+  }
+
+  lastRoute = lastRoute[0]
+  lastRoute.classList.remove('hidden-input--route')
+  lastRoute.classList.add('hidden-input--route-next')
+
+  scrollPrev.removeAttribute('disabled')
+  scrollPrev.classList.add('routes-btn--active')
+}
+
+const routesScrollBack = (firstRoute, scrollPrev, scrollNext) => {
+  console.log(firstRoute)
+
+  if (firstRoute.length <= 1) {
+    scrollPrev.setAttribute('disabled', true)
+    scrollPrev.classList.remove('routes-btn--active')
+  }
+
+  firstRoute = firstRoute[firstRoute.length - 1]
+  firstRoute.classList.remove('hidden-input--route-prev')
+
+  scrollNext.removeAttribute('disabled')
+  scrollNext.classList.add('routes-btn--active')
 }
 
 export const orderHTML = `

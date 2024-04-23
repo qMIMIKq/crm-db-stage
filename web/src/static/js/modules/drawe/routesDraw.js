@@ -25,18 +25,25 @@ export const colorRoutes = (routes, parent) => {
     if (pos > 10) {
       checkScroll = true
       dataInput = routesWrapper.querySelector(`input[name=route-${route.route_position}]`)
+
       if (!dataInput) {
         const lastRoute = routesWrapper.querySelector('.table__route:last-of-type')
-        const lastPos = Number(lastRoute.querySelector('.hidden__input').name.split('-')[1]) + 1
         lastRoute.insertAdjacentHTML('afterend', `
           <li class="table-body_cell more-them-ten hidden-input--route table-body__helper table__route">
               <input readonly class="table__data tr click-chose" type="text" value="-" tabindex="-1" autocomplete="off">
               <input readonly class="hidden__input table__data" name="route-${route.route_position}" type="text" value="" tabindex="-1" autocomplete="off">
           </li>
         `)
+      }
 
-        // let newRoute = routesWrapper.querySelector('.table__route:last-of-type')
-        // newRoute.addEventListener('click', e => triggerRoutesModal(e))
+      const dataInputIssued = routesWrapper.querySelector(`input[name=route-${route.route_position}-issued]`)
+      if (!dataInputIssued) {
+        const lastRoute = routesIssuedWrapper.querySelector('.table__route--issued:last-of-type')
+        lastRoute.insertAdjacentHTML('afterend', `
+           <li class="table-body_cell more-them-ten hidden-input--route table-body__helper table__route--issued">
+              <input readonly class="table__data table__data--ro tr click-chose" name="route-${route.route_position}-issued" type="text" value="" tabindex="-1" autocomplete="off">
+           </li>
+        `)
       }
     }
 

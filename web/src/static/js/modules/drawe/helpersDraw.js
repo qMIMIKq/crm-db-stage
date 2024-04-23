@@ -6,7 +6,7 @@ const enterHelper = e => {
   const distance = Math.abs(elem.offsetTop - table.offsetTop - table.offsetHeight)
   const valElem = e.target.querySelector('.table__data')
   const value = valElem.value
-  console.log(distance)
+  // console.log(distance)
 
   if (value && (valElem.classList.contains('table-m-select') || valElem.scrollWidth > valElem.offsetWidth)) {
     elem.insertAdjacentHTML('beforeend', `
@@ -44,13 +44,13 @@ const leaveHelper = e => {
 const enterHelperRoute = e => {
   const elem = e.target
   const parentForDist = elem.parentNode.parentNode
-  console.log(parentForDist)
+  // console.log(parentForDist)
   let value = e.target.getAttribute('data-title')
   const table = document.querySelector('.main-table')
   const distance = Math.abs(parentForDist.offsetTop - table.offsetTop - table.offsetHeight)
   const posElem = elem.querySelector('.hidden__input')
   const pos = posElem.name.split('-')[1]
-  console.log(distance)
+  // console.log(distance)
 
   // console.log(elem)
   if (elem.querySelector('.click-chose').value !== '-') {

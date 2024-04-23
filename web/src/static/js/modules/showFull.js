@@ -18,10 +18,19 @@ export const showRoutesIssued = e => {
     }
   })
 
+  const scrollRoutesBtns =  parent.querySelectorAll('.routes-btn')
+  scrollRoutesBtns.forEach(btn => {
+    btn.classList.toggle('routes-btn--opened')
+  })
+
+  const addRouteBtn = parent.querySelector('.table-routes__add ')
+  addRouteBtn.classList.toggle('table-routes__add--opened')
+
   const issued = parent.querySelector('.table-routes__issued')
   if (issued) {
     issued.classList.toggle('hidden__input')
   }
+
 
   const complete = parent.querySelector('.table__complete')
   console.log(complete)
