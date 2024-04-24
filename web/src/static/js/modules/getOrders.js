@@ -112,7 +112,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           data.data.forEach(d => {
             drawUpdatedData(d, state.orders, filtered)
           })
-          newAllFilter()git
+          newAllFilter()
         } else {
           state['orders'] = data.data
           newAllFilter(true)

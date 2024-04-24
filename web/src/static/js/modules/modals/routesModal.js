@@ -467,6 +467,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
   let routeInfo
 
   let routeInput
+  let currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
   if (page === 'main') {
     routeInfo = e.target.parentNode.querySelector('.hidden__input').value
     routeInput = e.target.parentNode.querySelector('.hidden__input')
@@ -476,10 +477,12 @@ export const triggerRoutesModal = (e, page = 'main') => {
       routeInfo = JSON.parse(routeInfo)
     }
   } else {
+    currentOrder = e.target.parentNode.parentNode.parentNode
+    console.log(currentOrder)
+
     info = true
   }
 
-  const currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
   const routeQuantity = modalElem.querySelector('#quantity')
   const routeDayQuantity = modalElem.querySelector('#day_quantity')
   let checkPlan = false
