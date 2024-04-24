@@ -44,7 +44,7 @@ func buildFrontend(addr string) {
 func main() {
 	cfg := config.GetConfig()
 
-	buildFrontend(cfg.AppAddressJs)
+	//buildFrontend(cfg.AppAddressJs)
 
 	pgDb, err := database.NewPostgresDB(cfg.CrmDB)
 	if err != nil {

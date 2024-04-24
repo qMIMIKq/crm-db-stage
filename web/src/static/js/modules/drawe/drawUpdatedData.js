@@ -9,6 +9,7 @@ import {drawManagers} from "./drawManagers";
 import {colorRoutes} from "./routesDraw";
 import {cleanSelect} from "../getOrders";
 import {drawHelpers} from "./helpersDraw";
+import {bindOrdersListeners} from "../bindOrdersListeners";
 
 export const drawUpdatedData = (d, data, filtered) => {
   let uniqueFileNames = []
@@ -235,4 +236,6 @@ export const drawUpdatedData = (d, data, filtered) => {
     document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove())
     drawOrders(table, 'afterbegin', d, state.orders, state.managers)
   }
+
+  bindOrdersListeners(currentOrder)
 }

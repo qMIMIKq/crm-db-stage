@@ -94,64 +94,64 @@ export const drawReport = async (d) => {
     <form id="form-${d.report_id}" class='table-form table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
            <li class='table-body_cell hidden__input table__db'>
-              <input id='route_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.route_id}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" id='route_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.route_id}' tabindex='-1' autocomplete='off'>
           </li>
       
           <li class='table-body_cell table__db'>
-              <input id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" id='db_id' class='table__data table__data--ro' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data  ${d.not_planned ? 'table__endtime--dead' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" class='table__data  ${d.not_planned ? 'table__endtime--dead' : ''}' name='id' type='text' readonly value='${d.report_date.split('T')[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input class='table__data table__data--ro' name='id' type='text' readonly value='${timestamp}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" class='table__data table__data--ro' name='id' type='text' readonly value='${timestamp}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table-body__helper ${d.order_number ? "table-body__attr" : ""}  table__number'>
-              <input 
+              <input tabindex="-1" 
               readonly
               id='number' class='table__data table__data--ro' name='number' type='text' value='${d.order_number}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper ${d.order_client ? "table-body__attr" : ""} table__client'>
-              <input readonly class='table__data table__data--ro' type='text' name='client' value='${d.order_client}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='text' name='client' value='${d.order_client}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper ${d.order_name ? "table-body__attr" : ""} table__name'>
-              <input readonly class='table__data table__data--ro' type='text' name='name' value='${d.order_name}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='text' name='name' value='${d.order_name}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__quantity'>
-              <input readonly class='table__data table__data--ro' type='number' name='quantity' required value='${d.quantity}' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='number' name='quantity' required value='${d.quantity}' autocomplete='off'>
           </li>
           <li class="table-body_cell table__issued--report">
-              <input readonly class="table__data table__data--ro" tabindex="-1"
+              <input tabindex="-1" readonly class="table__data table__data--ro" tabindex="-1"
               type="number" 
               name="issued" 
               required  autocomplete="off"
               value="${d.prev_total}">
           </li>
           <li class="table-body_cell table__issued--report">
-              <input readonly class="table__data table__data--ro ${last ? 'report-complete' : ''}" tabindex="-1"
+              <input tabindex="-1" readonly class="table__data table__data--ro ${last ? 'report-complete' : ''}" tabindex="-1"
               type="number" 
               name="issued" 
               required  autocomplete="off"
               value="${d.issued}">
           </li>
           <li class="table-body_cell table__route--report">
-              <input readonly type="text" class="table__data order__plot-report" value="${d.order_plot}">
+              <input tabindex="-1" readonly type="text" class="table__data order__plot-report" value="${d.order_plot}">
           </li>
            <li class="table-body_cell table__route--report">
-              <input id="route_position" readonly type="text" class="table__data" value="${d.route_position}">
+              <input tabindex="-1" id="route_position" readonly type="text" class="table__data" value="${d.route_position}">
           </li>
           <li class="table-body_cell table__operator--report">
-            <input readonly type="text" class="table__data" value="${d.operator}">
+            <input tabindex="-1" readonly type="text" class="table__data" value="${d.operator}">
           </li>
           <li class='table-body_cell table-body__helper ${d.shift ? "table-body__attr" : ""} table__plan--shift'>
-              <input readonly class='table__data table__data--ro ${burning ? 'bg-red' : ''} ${last ? 'report-complete' : ''}' type='text' name='shift' value='${d.current_shift || ""}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro ${burning ? 'bg-red' : ''} ${last ? 'report-complete' : ''}' type='text' name='shift' value='${d.current_shift || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper ${d.need_shifts ? "table-body__attr" : ""} table__plan--need-shift'>
-              <input readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='text' name='material' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
          
           <li class="table-body_cell table__use table__plan--theoradj">
-             <input readonly class="table__data" tabindex="-1"
+             <input tabindex="-1" readonly class="table__data" tabindex="-1"
               type="number" 
               name="issued" 
               required  autocomplete="off"
@@ -159,24 +159,24 @@ export const drawReport = async (d) => {
           </li>
           
           <li class="table-body_cell table__use table__plan--adj">
-             <input readonly class="table__data" tabindex="-1"
+             <input tabindex="-1" readonly class="table__data" tabindex="-1"
               type="number" 
               name="issued" 
               required  autocomplete="off"
               value="${d.adjustment && d.adjustment != '-1' ? d.adjustment : ''}">
           </li>
            <li class="table-body_cell table__use table__plan--report">
-             <input readonly class="table__data" tabindex="-1"
+             <input tabindex="-1" readonly class="table__data" tabindex="-1"
               type="text" 
               name="issued" 
               required  autocomplete="off"
               value="${center}">
           </li>
           <li class="table-body_cell table__issued-plan--report">
-            <input readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
+            <input tabindex="-1" readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
           </li>
           <li class="table-body_cell table__plan--percent">
-            <input readonly type="number" class="table__data" value=${percents.toFixed(0)}>
+            <input tabindex="-1" readonly type="number" class="table__data" value=${percents.toFixed(0)}>
           </li>
         </ul>
     </form>

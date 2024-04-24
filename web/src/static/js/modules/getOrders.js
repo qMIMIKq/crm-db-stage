@@ -13,7 +13,6 @@ import {sendData} from "./sendData";
 import {appAddr} from "../../../../../appAddr";
 import {newAllFilter} from "./filters/newAllFilter";
 import {drawUpdatedData} from "./drawe/drawUpdatedData";
-import {bindOrdersListeners} from "./bindListeners";
 
 
 export const isEmptyData = checkThis => {
@@ -21,6 +20,8 @@ export const isEmptyData = checkThis => {
 }
 
 export const getOrders = (postfix = 'get-all', updateOnly = false) => {
+  console.time('get orders')
+
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
   const loader = document.querySelector('.spinner-loader')
@@ -68,6 +69,8 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
+      console.timeEnd('get orders')
+
       const title = document.querySelector('.main-header__title')
       if (!data.data) {
         if (!updateOnly) {
@@ -79,6 +82,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
       }
 
       if (data.data) {
+        console.time('draw orders')
         deleteTableFilters()
         // console.log('we have data')
 
@@ -102,19 +106,13 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         })
 
         if (updateOnly) {
-          // console.log('update only')
           const routesStatusFilter = document.querySelector('.route__filter--chosen')
           let filtered = state.filtered || !!state.currentTopFilters.length || routesStatusFilter || state.searched
-          // console.log('filtered', filtered)
-          if (filtered) {
-            newAllFilter()
-          } else {
-            bindOrdersListeners()
-          }
 
           data.data.forEach(d => {
             drawUpdatedData(d, state.orders, filtered)
           })
+          newAllFilter()git
         } else {
           state['orders'] = data.data
           newAllFilter(true)
@@ -131,8 +129,10 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         drawTableFilter(state.names, namesFilter)
 
         bindTableFilters()
+        console.timeEnd('draw orders')
       }
 
+      console.log(state.orders.length)
       loader.classList.add('hidden__input')
       if (state['isArchive']) {
         document.querySelectorAll('.table__data').forEach(field => {

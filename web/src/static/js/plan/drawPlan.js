@@ -25,7 +25,7 @@ const planDateModalAdd = `
         <div class="modal-plan__section">
             <div class="modal-plan__data">
                 <label class="modal-plan__label">Несколько</label>
-                <input class="" type="checkbox" name="some" id="modal-some">
+                <input tabindex="-1" class="" type="checkbox" name="some" id="modal-some">
             </div>
         </div> 
         
@@ -130,60 +130,60 @@ export const drawPlan = (d, data) => {
     <form id="form-${d.id}" class='table-form table-form--plan table-form--old showed-order' method='POST'>
       <ul class='main-table__item'>
           <li class='table-body_cell table__db'>
-              <input id='db_id' class='table__data ${checkForPlanning ? 'bg-red' : ''} main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" id='db_id' class='table__data ${checkForPlanning ? 'bg-red' : ''} main__button' name='id' type='number' readonly value='${d.order_id}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__timestamp'>
-              <input id="timestamp" class='table__data table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" id="timestamp" class='table__data table__data--ro' name='timestamp' type='text' readonly value='${d.timestamp.split("T")[0].replaceAll("-", ".")}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell hidden-input'>
-              <input id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" id='files' class='table__data  table__data--ro hidden-input' name='files' type='text' value='${d.files ? d.files.join(', ') : ''}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__files'>
-              <input id="total_files" class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" id="total_files" class='main__button table__data  click-chose table__data--ro' type='text' readonly value='${uniqueFileNames.length}' tabindex='-1' autocomplete='off'>
           </li>   
           <li class='table-body_cell table-body__helper ${d.number ? "table-body__attr" : ""}  table__number'>
-              <input 
+              <input tabindex="-1" 
               readonly
               id='number' class='table__data table__data--ro' name='number' type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
-              <input readonly class='table__data table__data--ro' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='text' name='client' value='${d.client}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper ${d.name ? "table-body__attr" : ""} table__name'>
-              <input readonly class='table__data table__data--ro' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='text' name='name' value='${d.name}' tabindex='-1' autocomplete='off'>
           </li>
           <li class='table-body_cell table__quantity'>
-              <input readonly class='table__data table__data--ro' type='number' name='quantity' required value='${d.quantity}' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='number' name='quantity' required value='${d.quantity}' autocomplete='off'>
           </li>
           <li class="table-body_cell table__issued--report">
-              <input readonly class="table__data table__data--ro" tabindex="-1"
+              <input tabindex="-1" readonly class="table__data table__data--ro" tabindex="-1"
               type="number" 
               name="issued" 
               required  autocomplete="off"
               value="${d.issued}">
           </li>
            <li class="table-body_cell table__route--report">
-              <input readonly type="text" class="table__data table__data--ro" value="${d.position}">
+              <input tabindex="-1" readonly type="text" class="table__data table__data--ro" value="${d.position}">
           </li>
           <li class="table-body_cell table__route--report">
-              <input readonly type="text" name="route_plot" class="table__data table__data--ro" value="${d.route_plot}">
+              <input tabindex="-1" readonly type="text" name="route_plot" class="table__data table__data--ro" value="${d.route_plot}">
           </li>
           <li  class='table-body_cell table-body__helper table__shift--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='shifts' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='text' name='shifts' value='${d.shift || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body__helper table__plan--report'>
-              <input readonly class='table__data table__data--ro' type='text' name='need_shifts' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
+              <input tabindex="-1" readonly class='table__data table__data--ro' type='text' name='need_shifts' value='${d.need_shifts || ""}' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
-<!--              <input readonly class='table__data shift__prev main__button click-chose table__data--ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
-              <input readonly class='table__data shift__auto main__button click-chose table__data--ro' type='text' name='material' value='Авто' tabindex='-1' autocomplete='off'>
+<!--              <input tabindex="-1" readonly class='table__data shift__prev main__button click-chose table__data--ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
+              <input tabindex="-1" readonly class='table__data shift__auto main__button click-chose table__data--ro' type='text' name='material' value='Авто' tabindex='-1' autocomplete='off'>
           </li>
           <li  class='table-body_cell table-body_cell--flex table-body__helper table__plan--shift'>
-<!--              <input readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
-              <input readonly class='table__data shift__forw main__button click-chose table__data--ro' type='text' name='material' value='>' tabindex='-1' autocomplete='off'>
+<!--              <input tabindex="-1" readonly class='table__data shift__prev main__button click-chose table__data&#45;&#45;ro' type='text' name='material' value='<' tabindex='-1' autocomplete='off'>-->
+              <input tabindex="-1" readonly class='table__data shift__forw main__button click-chose table__data--ro' type='text' name='material' value='>' tabindex='-1' autocomplete='off'>
           </li>
           <li class="table-body_cell hidden__input table__route--report">
-              <input readonly type="text" name="route_id" class="table__data" value="${d.route_id}">
+              <input tabindex="-1" readonly type="text" name="route_id" class="table__data" value="${d.route_id}">
           </li>
           
           <li class="table-body_cell table__route--date">
@@ -439,9 +439,9 @@ const planningHandler = (currentOrder, d, addedDates) => {
                   datesList.insertAdjacentHTML('afterbegin', `
                   <li class="plan-dates__item plan-dates__item--small route__btn plan-dates__item--inplan">
                     ${showDate}
-                    <input type="text" class="hidden__input date" value="${date}">
-                    <input type="number" class="hidden__input queue" value="${j}">
-                    <input type="number" class="hidden__input divider" value="${entry.divider}">
+                    <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                    <input tabindex="-1" type="number" class="hidden__input queue" value="${j}">
+                    <input tabindex="-1" type="number" class="hidden__input divider" value="${entry.divider}">
                   </li>  
                 `)
                 } else {
@@ -449,18 +449,18 @@ const planningHandler = (currentOrder, d, addedDates) => {
                     datesList.insertAdjacentHTML('afterbegin', `
                       <li class="plan-dates__item plan-dates__item--small route__btn plan-dates__item--busy">
                         ${showDate}
-                        <input type="text" class="hidden__input date" value="${date}">
-                        <input type="number" class="hidden__input queue" value="${j}">
-                        <input type="number" class="hidden__input divider" value="${entry.divider}">
+                        <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                        <input tabindex="-1" type="number" class="hidden__input queue" value="${j}">
+                        <input tabindex="-1" type="number" class="hidden__input divider" value="${entry.divider}">
                       </li>
                     `)
                   } else {
                     datesList.insertAdjacentHTML('afterbegin', `
                       <li class="plan-dates__item plan-dates__item--small route__btn">
                         ${showDate}
-                        <input type="text" class="hidden__input date" value="${date}">
-                        <input type="number" class="hidden__input queue" value="${j}">
-                        <input type="number" class="hidden__input divider" value="${entry.divider}">
+                        <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                        <input tabindex="-1" type="number" class="hidden__input queue" value="${j}">
+                        <input tabindex="-1" type="number" class="hidden__input divider" value="${entry.divider}">
                       </li>
                     `)
                   }
@@ -479,18 +479,18 @@ const planningHandler = (currentOrder, d, addedDates) => {
                         datesList.insertAdjacentHTML('afterbegin', `
                           <li class="plan-dates__item plan-dates__item--small route__btn plan-dates__item--busy">
                             ${showDate}
-                            <input type="text" class="hidden__input date" value="${date}">
-                            <input type="number" class="hidden__input queue" value="${j}">
-                            <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                            <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                            <input tabindex="-1" type="number" class="hidden__input queue" value="${j}">
+                            <input tabindex="-1" type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
                           </li>  
                         `)
                       } else {
                         datesList.insertAdjacentHTML('afterbegin', `
                           <li class="plan-dates__item plan-dates__item--small route__btn">
                             ${showDate}
-                            <input type="text" class="hidden__input date" value="${date}">
-                            <input type="number" class="hidden__input queue" value="${j}">
-                            <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                            <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                            <input tabindex="-1" type="number" class="hidden__input queue" value="${j}">
+                            <input tabindex="-1" type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
                           </li>  
                         `)
                       }
@@ -501,9 +501,9 @@ const planningHandler = (currentOrder, d, addedDates) => {
                 datesList.insertAdjacentHTML('afterbegin', `
                   <li class="plan-dates__item plan-dates__item--small route__btn">
                     ${showDate}
-                    <input type="text" class="hidden__input date" value="${date}">
-                    <input type="number" class="hidden__input queue" value="1">
-                    <input type="number" class="hidden__input divider" value="1">
+                    <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                    <input tabindex="-1" type="number" class="hidden__input queue" value="1">
+                    <input tabindex="-1" type="number" class="hidden__input divider" value="1">
                   </li>  
                 `)
               }
@@ -518,18 +518,18 @@ const planningHandler = (currentOrder, d, addedDates) => {
                     datesList.insertAdjacentHTML('afterbegin', `
                       <li class="plan-dates__item plan-dates__item--small route__btn plan-dates__item--busy">
                         ${showDate}
-                        <input type="text" class="hidden__input date" value="${date}">
-                        <input type="number" class="hidden__input queue" value="${j}">
-                        <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                        <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                        <input tabindex="-1" type="number" class="hidden__input queue" value="${j}">
+                        <input tabindex="-1" type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
                       </li>  
                     `)
                   } else {
                     datesList.insertAdjacentHTML('afterbegin', `
                       <li class="plan-dates__item plan-dates__item--small route__btn">
                         ${showDate}
-                        <input type="text" class="hidden__input date" value="${date}">
-                        <input type="number" class="hidden__input queue" value="${j}">
-                        <input type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
+                        <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                        <input tabindex="-1" type="number" class="hidden__input queue" value="${j}">
+                        <input tabindex="-1" type="number" class="hidden__input divider" value="${busyDateInfo.divider}">
                       </li>  
                     `)
                   }
@@ -540,9 +540,9 @@ const planningHandler = (currentOrder, d, addedDates) => {
             datesList.insertAdjacentHTML('afterbegin', `
               <li class="plan-dates__item plan-dates__item--small route__btn">
                 ${showDate}
-                <input type="text" class="hidden__input date" value="${date}">
-                <input type="number" class="hidden__input queue" value="1">
-                <input type="number" class="hidden__input divider" value="1">
+                <input tabindex="-1" type="text" class="hidden__input date" value="${date}">
+                <input tabindex="-1" type="number" class="hidden__input queue" value="1">
+                <input tabindex="-1" type="number" class="hidden__input divider" value="1">
               </li>  
             `)
           }

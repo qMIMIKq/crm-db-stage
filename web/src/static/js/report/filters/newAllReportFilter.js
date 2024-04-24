@@ -5,7 +5,7 @@ import {controlReportsFiltersReset} from "./reportFilters";
 import {filterRoutesState} from "../../modules/filters/filterRoutesState";
 import {colorRoutes} from "../../modules/drawe/routesDraw";
 import {drawOrders, table} from "../../modules/drawe/drawOrders";
-import {bindOrdersListeners} from "../../modules/bindListeners";
+import {bindOrdersListeners} from "../../modules/bindOrdersListeners";
 import {bindReportsListeners} from "../bindReportListener";
 import {planShowCurrentLine} from "../../plan/planShowCurrentLine";
 import {reportShowCurrentLine} from "../reportShowCurrentLine";

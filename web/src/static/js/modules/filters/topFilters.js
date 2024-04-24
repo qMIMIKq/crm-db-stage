@@ -108,15 +108,15 @@ export const topFiltersHandler = () => {
           if (!d.disable) {
             block.insertAdjacentHTML('beforeend', `
               <li class='nav-filters__item'>
-                  <button class='nav-filters__button main__button--click'>${d.short_name}</button>
-                  <input class='hidden__input' value="${d.name}"/>
+                  <button tabindex="-1" class='nav-filters__button main__button--click'>${d.short_name}</button>
+                  <input tabindex="-1" class='hidden__input' value="${d.name}"/>
                </li>
           `)
           }
         } else {
           block.insertAdjacentHTML('beforeend', `
             <li class='nav-filters__item'>
-                <button class='nav-filters__button main__button--click'>${d.name}</button>
+                <button tabindex="-1" class='nav-filters__button main__button--click'>${d.name}</button>
              </li>
           `)
         }

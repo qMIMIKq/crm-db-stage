@@ -89,14 +89,14 @@ export const topPlansFilters = () => {
         if (short) {
           block.insertAdjacentHTML('beforeend', `
             <li class='nav-filters__item'>
-                <button class='nav-filters__button main__button--click'>${d.short_name}</button>
-                <input class='hidden__input' value="${d.name}"/>
+                <button tabindex="-1" class='nav-filters__button main__button--click'>${d.short_name}</button>
+                <input tabindex="-1" class='hidden__input' value="${d.name}"/>
              </li>
           `)
         } else {
           block.insertAdjacentHTML('beforeend', `
             <li class='nav-filters__item'>
-                <button class='nav-filters__button main__button--click'>${d.name}</button>
+                <button tabindex="-1" class='nav-filters__button main__button--click'>${d.name}</button>
              </li>
           `)
         }
@@ -220,7 +220,7 @@ export const topPlansFilters = () => {
     if (filtered) {
       if (!resetBtn) {
         nav.insertAdjacentHTML('beforeend', `
-            <button class='main__button--click main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
+            <button tabindex="-1" class='main__button--click main-header__button nav-filters__reset' tabindex='-1'>Сбросить фильтры</button>
         `)
 
         document.querySelector('.nav-filters__reset').addEventListener('click', () => {

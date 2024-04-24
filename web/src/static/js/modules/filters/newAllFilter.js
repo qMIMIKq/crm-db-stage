@@ -2,7 +2,7 @@ import {state} from "../state";
 import {deleteOrders, hideOrders} from "../getOrders";
 import {filterRoutesState} from "./filterRoutesState";
 import {drawOrders, table} from "../drawe/drawOrders";
-import {bindOrdersListeners} from "../bindListeners";
+import {bindOrdersListeners} from "../bindOrdersListeners";
 import {controlFiltersReset} from "./tableFilters";
 import {colorRoutes} from "../drawe/routesDraw";
 

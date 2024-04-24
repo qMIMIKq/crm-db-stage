@@ -18,7 +18,7 @@
         <nav class="header__nav nav">
             <div class="nav__filters nav-filters">
                 {{/* {{if eq .GroupID "5"}}*/}}
-                {{/* <select name="user" class="select-user main__button--select main__select">*/}}
+                {{/* <select tabindex="-1" name="user" class="select-user main__button--select main__select">*/}}
 
                 {{/* </select>*/}}
                 {{/* {{end}}*/}}
@@ -35,7 +35,7 @@
                         <div class="nav-control__user">
                             <div class="nav-control__name">SuperAdmin</div>
                             <div class="nav-control__exit">
-                                <button class="admin-form__exit">
+                                <button tabindex="-1" class="admin-form__exit">
                                     Выход
                                     <span class="hidden__input"></span>
                                 </button>
@@ -51,27 +51,27 @@
 
                 <ul class="nav-control__routes hidden__input">
                     <li class="nav-control__route">
-                        <button class="nav-control__route-link link__main">
+                        <button tabindex="-1" class="nav-control__route-link link__main">
                             Главная
-                            <input class="hidden__input" value="/main/table"/>
+                            <input tabindex="-1" class="hidden__input" value="/main/table"/>
                         </button>
                     </li>
                     <li class="nav-control__route">
-                        <button class="nav-control__route-link link__archive">
+                        <button tabindex="-1" class="nav-control__route-link link__archive">
                             Архив
-                            <input class="hidden__input" value="/main/table"/>
+                            <input tabindex="-1" class="hidden__input" value="/main/table"/>
                         </button>
                     </li>
                     <li class="nav-control__route">
-                        <button class="nav-control__route-link link__plan">
+                        <button tabindex="-1" class="nav-control__route-link link__plan">
                             Планирование
-                            <input class="hidden__input" value="/main/plan"/>
+                            <input tabindex="-1" class="hidden__input" value="/main/plan"/>
                         </button>
                     </li>
                     <li class="nav-control__route">
-                        <button class="nav-control__route-link link__report">
+                        <button tabindex="-1" class="nav-control__route-link link__report">
                             План/Факт
-                            <input class="hidden__input" value="/main/report"/>
+                            <input tabindex="-1" class="hidden__input" value="/main/report"/>
                         </button>
                     </li>
                     <li class="nav-control__route nav-control__admin hidden-input">
@@ -93,7 +93,7 @@
         <header class="main__header main-header">
             <div class="main-header__nav">
                 <h3 class="main-header__title main-header__title--plan">Планирование</h3>
-                <button class="main-header__button nav-control__search-btn main__button--click">
+                <button tabindex="-1" class="main-header__button nav-control__search-btn main__button--click">
                     <svg class="loupe" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
                          enable-background="new 0 0 512 512">
                         <g>
@@ -103,7 +103,7 @@
                         </g>
                     </svg>
                 </button>
-                <button class="main__button--click hidden__input main-header__button header-button__add">+</button>
+                <button tabindex="-1" class="main__button--click hidden__input main-header__button header-button__add">+</button>
                 <svg class="spinner-loader hidden__input" xmlns="http://www.w3.org/2000/svg"
                      style="margin: auto; background: none; display: block; shape-rendering: auto;"
                      width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
@@ -118,32 +118,32 @@
             </div>
 
             <div class="main-header__routes header-routes">
-                <button class="main__button hidden__input route__btn plan-period__btn plan-period__today">
-                    <input type="number" class="hidden__input" value="1">
+                <button tabindex="-1" class="main__button hidden__input route__btn plan-period__btn plan-period__today">
+                    <input tabindex="-1" type="number" class="hidden__input" value="1">
                     1 день
                 </button>
-                <button class="main__button hidden__input route__btn plan-period__btn plan-period__week">
-                    <input type="number" class="hidden__input" value="7">
+                <button tabindex="-1" class="main__button hidden__input route__btn plan-period__btn plan-period__week">
+                    <input tabindex="-1" type="number" class="hidden__input" value="7">
                     7 дней
                 </button>
-                <button class="main__button hidden__input route__btn plan-period__btn plan-period__month">
-                    <input type="number" class="hidden__input" value="30">
+                <button tabindex="-1" class="main__button hidden__input route__btn plan-period__btn plan-period__month">
+                    <input tabindex="-1" type="number" class="hidden__input" value="30">
                     30 дней
                 </button>
 
-                <button class="main__button--click plan-divider">Делитель смены</button>
-                <button class="main__button--click plan-hider">Показать невключенное</button>
+                <button tabindex="-1" class="main__button--click plan-divider">Делитель смены</button>
+                <button tabindex="-1" class="main__button--click plan-hider">Показать невключенное</button>
 
-                <button class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В
+                <button tabindex="-1" class="main__button--click hidden__input header-routes__filter header-routes__planned--report">В
                     плане
                 </button>
 
-                <button class="main__button--click report-refresh">Обновить</button>
+                <button tabindex="-1" class="main__button--click report-refresh">Обновить</button>
                 <label class="planned__label">От</label>
-                <input type="date"
+                <input tabindex="-1" type="date"
                        class="main__button--click  header-routes__filter header-routes__planned-date--report__from">
                 <label class="planned__label">До</label>
-                <input type="date"
+                <input tabindex="-1" type="date"
                        class="main__button--click  header-routes__filter header-routes__planned-date--report__to">
             </div>
         </header>
@@ -152,15 +152,15 @@
             <ul class="main-table__header">
                 <li class="table__cell table__cell--top table__db">
                     <label for="numbers">№</label>
-                    <input class="hidden__input filter__type" value="order_id" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="все" id="id">
+                    <input tabindex="-1" class="hidden__input filter__type" value="order_id" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="все" id="id">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__timestamp">
                     <label for="numbers">Вход</label>
-                    <input class="hidden__input filter__type" value="timestamp" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
+                    <input tabindex="-1" class="hidden__input filter__type" value="timestamp" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="все" id="timestamp">
                         <option value="все">Все</option>
                     </select>
                 </li>
@@ -173,85 +173,85 @@
                 </li>
                 <li class="table__cell table__cell--top table__number">
                     <label for="numbers">№ заказа</label>
-                    <input class="hidden__input filter__type" value="order_number" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="все" id="numbers">
+                    <input tabindex="-1" class="hidden__input filter__type" value="order_number" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="все" id="numbers">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__client">
                     <label for="clients">Клиент</label>
-                    <input class="hidden__input filter__type" value="client" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="clients" id="clients">
+                    <input tabindex="-1" class="hidden__input filter__type" value="client" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="clients" id="clients">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__name">
                     <label for="name">Наименование</label>
-                    <input class="hidden__input filter__type" value="name" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="name" id="name">
+                    <input tabindex="-1" class="hidden__input filter__type" value="name" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="name" id="name">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__quantity">
                     <label for="quantity">Тираж</label>
-                    <input class="hidden__input filter__type" value="quantity" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="quantity"
+                    <input tabindex="-1" class="hidden__input filter__type" value="quantity" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="quantity"
                             id="quantity">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__issued--report">
                     <label for="issued">Выдано до</label>
-                    <input class="hidden__input filter__type" value="issued" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                    <input tabindex="-1" class="hidden__input filter__type" value="issued" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="issued"
                             id="issued">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__route--report">
                     <label for="order_plot">Позиция</label>
-                    <input class="hidden__input filter__type" value="order_plot" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                    <input tabindex="-1" class="hidden__input filter__type" value="order_plot" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="issued"
                             id="order_plot">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__route--report">
                     <label for="order_plot">Станок</label>
-                    <input class="hidden__input filter__type" value="order_plot" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                    <input tabindex="-1" class="hidden__input filter__type" value="order_plot" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="issued"
                             id="">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__shift--report">
                     <label for="order_operator">Смен до</label>
-                    <input class="hidden__input filter__type" value="plan" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                    <input tabindex="-1" class="hidden__input filter__type" value="plan" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="issued"
                             id="shift_before">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__plan--report">
                     <label for="order_operator">Нужно смен</label>
-                    <input class="hidden__input filter__type" value="plan" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                    <input tabindex="-1" class="hidden__input filter__type" value="plan" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="issued"
                             id="shift_need">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__plan--shift">
                     <label for="order_operator">Авто</label>
-                    <input class="hidden__input filter__type" value="plan" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                    <input tabindex="-1" class="hidden__input filter__type" value="plan" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="issued"
                             id="auto-shifting">
                         <option value="все">Все</option>
                     </select>
                 </li>
                 <li class="table__cell table__cell--top table__plan--shift">
                     <label for="order_operator">Сдвиг</label>
-                    <input class="hidden__input filter__type" value="plan" type="text">
-                    <select class="table__filter main__button main__select hidden__input" name="issued"
+                    <input tabindex="-1" class="hidden__input filter__type" value="plan" type="text">
+                    <select tabindex="-1" class="table__filter main__button main__select hidden__input" name="issued"
                             id="order_operator">
                         <option value="все">Все</option>
                     </select>

@@ -63,19 +63,19 @@ export const bindReportsListeners = (currentElem) => {
     label.addEventListener('change', changeElemHandler)
   })
 
-  document.querySelectorAll('input').forEach(el => {
-    el.tabIndex = -1
-    el.autocomplete = 'off'
-  })
-  document.querySelectorAll('button').forEach(el => {
-    el.tabIndex = -1
-  })
-  document.querySelectorAll('a').forEach(el => {
-    el.tabIndex = -1
-  })
-  document.querySelectorAll('select').forEach(el => {
-    el.tabIndex = -1
-  })
+  // document.querySelectorAll('input').forEach(el => {
+  //   el.tabIndex = -1
+  //   el.autocomplete = 'off'
+  // })
+  // document.querySelectorAll('button').forEach(el => {
+  //   el.tabIndex = -1
+  // })
+  // document.querySelectorAll('a').forEach(el => {
+  //   el.tabIndex = -1
+  // })
+  // document.querySelectorAll('select').forEach(el => {
+  //   el.tabIndex = -1
+  // })
 }
 
 const chooseHandler = e => {

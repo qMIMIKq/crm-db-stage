@@ -83,13 +83,15 @@ const doubler = e => {
 }
 
 export const bindOrdersListeners = (currentElem) => {
-  document.querySelectorAll('.table__data').forEach(innerLabel => {
+  const mainElem = currentElem ? currentElem : document
+  console.log(mainElem)
+
+  mainElem.querySelectorAll('.table__data').forEach(innerLabel => {
     label = innerLabel
 
     // if (label.classList.contains('dblclck')) {
     //   setChooseListeners(innerLabel, 'click', 'input', '')
     // }
-
     if (!innerLabel.classList.contains('click-chose') && !innerLabel.classList.contains('click-select')) {
       listener = 'focus'
       action = 'add'
@@ -128,19 +130,19 @@ export const bindOrdersListeners = (currentElem) => {
     label.addEventListener('change', changeElemHandler)
   })
 
-  document.querySelectorAll('input').forEach(el => {
-    el.tabIndex = -1
-    el.autocomplete = 'off'
-  })
-  document.querySelectorAll('button').forEach(el => {
-    el.tabIndex = -1
-  })
-  document.querySelectorAll('a').forEach(el => {
-    el.tabIndex = -1
-  })
-  document.querySelectorAll('select').forEach(el => {
-    el.tabIndex = -1
-  })
+  // document.querySelectorAll('input').forEach(el => {
+  //   el.tabIndex = -1
+  //   el.autocomplete = 'off'
+  // })
+  // document.querySelectorAll('button').forEach(el => {
+  //   el.tabIndex = -1
+  // })
+  // document.querySelectorAll('a').forEach(el => {
+  //   el.tabIndex = -1
+  // })
+  // document.querySelectorAll('select').forEach(el => {
+  //   el.tabIndex = -1
+  // })
 }
 
 const chooseHandler = e => {
