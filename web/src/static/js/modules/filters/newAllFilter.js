@@ -18,7 +18,7 @@ export const newAllFilter = (init) => {
   const tableRouteStatusFilters = state.routesFilters
   const tableFilters = state.tableFilters
 
-  const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted || tableRouteStatusFilters.alert
+  const isRouteStatusFiltered = !!Object.keys(tableRouteStatusFilters).length
   const isTopRoutesFiltered = !!topRouteFilters.length
 
   controlFiltersReset()

@@ -51,7 +51,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "appAddr": () => (/* binding */ appAddr)
 /* harmony export */ });
-const appAddr = 'http://172.20.10.7:8182';
+const appAddr = 'http://172.20.10.2:8182';
 
 /***/ }),
 
@@ -3102,6 +3102,10 @@ const filterRoutesState = route => {
     if (!route.start_time) {
       flag = true;
     }
+  } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.paused) {
+    if (!route.error_msg && route.pause_time) {
+      flag = true;
+    }
   } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned) {
     const date = document.querySelector('.header-routes__planned-date');
     if (route.plan_dates) {
@@ -3154,7 +3158,7 @@ const newAllFilter = init => {
   const topRouteFilters = _state__WEBPACK_IMPORTED_MODULE_0__.state.currentTopFilters.map(filter => filter.name);
   const tableRouteStatusFilters = _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters;
   const tableFilters = _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters;
-  const isRouteStatusFiltered = tableRouteStatusFilters.completed || tableRouteStatusFilters.error || tableRouteStatusFilters.planned || tableRouteStatusFilters.started || tableRouteStatusFilters.unstarted || tableRouteStatusFilters.alert;
+  const isRouteStatusFiltered = !!Object.keys(tableRouteStatusFilters).length;
   const isTopRoutesFiltered = !!topRouteFilters.length;
   (0,_tableFilters__WEBPACK_IMPORTED_MODULE_5__.controlFiltersReset)();
   if (searched) {
@@ -3606,12 +3610,31 @@ const alertFilter = color => {
   });
 };
 const tableRoutesFiltersHandler = () => {
-  const inWorkBtn = document.querySelector(".header-routes__work");
-  const notWorkBtn = document.querySelector(".header-routes__unwork");
-  const inErrorBtn = document.querySelector(".header-routes__error");
-  const completedBtn = document.querySelector(".header-routes__completed");
   const inPlanBtn = document.querySelector(".header-routes__planned");
   const alertStatusBtn = document.querySelector('.header-routes__alert');
+  const routesStatusBtn = document.querySelector('.header-routes__filter-status');
+  routesStatusBtn.addEventListener('change', e => {
+    const value = e.target.value.split('-');
+    console.log(value);
+    if (value !== '') {
+      // document.querySelector(`.${e.target.value}`).click()
+      routesStatusBtn.style.cssText = `
+        border: 2px solid ${value[1]};
+        color: ${value[1]};
+      `;
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters[value[0]] = true;
+      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
+    } else {
+      // document.querySelector('.route__filter--chosen').click()
+      routesStatusBtn.style.cssText = `
+        border: none;
+        color: rgb(66, 66, 66);
+      `;
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
+      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
+    }
+  });
   alertStatusBtn.addEventListener('change', e => {
     const value = e.target.value;
     alertStatusBtn.style.color = value;
@@ -3654,94 +3677,6 @@ const tableRoutesFiltersHandler = () => {
     console.log('hi');
     (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-old');
   });
-  inWorkBtn.addEventListener('click', e => {
-    if (inWorkBtn.classList.contains('route__filter--chosen')) {
-      inWorkBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-      // getOrders('get-all', true)
-      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-      return;
-    }
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-      alertStatusBtn.style.color = '';
-      alertStatusBtn.value = '';
-    } catch {}
-    inWorkBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert = false;
-
-    // getOrders('get-all', true)
-    (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-  });
-  notWorkBtn.addEventListener('click', () => {
-    if (notWorkBtn.classList.contains('route__filter--chosen')) {
-      notWorkBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-      // getOrders('get-all', true)
-      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-      return;
-    }
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-      alertStatusBtn.style.color = '';
-      alertStatusBtn.value = '';
-    } catch {}
-    notWorkBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert = false;
-    (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-  });
-  inErrorBtn.addEventListener('click', e => {
-    if (inErrorBtn.classList.contains('route__filter--chosen')) {
-      inErrorBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-      // getOrders('get-all', true)
-      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-      return;
-    }
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert = false;
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-      alertStatusBtn.style.color = '';
-      alertStatusBtn.value = '';
-    } catch {}
-    inErrorBtn.classList.add('route__filter--chosen');
-    (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-  });
-  completedBtn.addEventListener('click', e => {
-    if (completedBtn.classList.contains('route__filter--chosen')) {
-      completedBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-      // getOrders('get-all', true)
-      (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-      return;
-    }
-    try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-    } catch {}
-    completedBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert = false;
-    (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
-  });
   inPlanDate.addEventListener('change', () => {
     _state__WEBPACK_IMPORTED_MODULE_0__.state.inPlanDate = inPlanDate.value;
     if (inPlanBtn.classList.contains('route__filter--chosen')) {
@@ -3751,12 +3686,8 @@ const tableRoutesFiltersHandler = () => {
         alertStatusBtn.value = '';
       } catch {}
       inPlanBtn.classList.add('route__filter--chosen');
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = true;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert = false;
       (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
     }
   });
@@ -3780,12 +3711,8 @@ const tableRoutesFiltersHandler = () => {
       alertStatusBtn.value = '';
     } catch {}
     inPlanBtn.classList.add('route__filter--chosen');
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
     _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = true;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed = false;
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert = false;
     (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
   });
 };

@@ -19,6 +19,10 @@ export const filterRoutesState = route => {
     if (!route.start_time) {
       flag = true
     }
+  } else if (state['routesFilters'].paused) {
+    if (!route.error_msg && route.pause_time) {
+      flag = true
+    }
   } else if (state['routesFilters'].planned) {
     const date = document.querySelector('.header-routes__planned-date')
 

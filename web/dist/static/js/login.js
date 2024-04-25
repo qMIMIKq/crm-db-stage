@@ -51,7 +51,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "appAddr": () => (/* binding */ appAddr)
 /* harmony export */ });
-const appAddr = 'http://172.20.10.7:8182';
+const appAddr = 'http://172.20.10.2:8182';
 
 /***/ }),
 
