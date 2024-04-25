@@ -257,7 +257,7 @@ export const newAllFilter = (init) => {
 
   if (!searched && !filtered) {
     if (isRouteStatusFiltered || isTopRoutesFiltered) {
-      console.log('filter by routes status')
+      // console.log('filter by routes status')
 
       state.orders.forEach(order => {
         if (!order.db_routes) {
@@ -289,7 +289,6 @@ export const newAllFilter = (init) => {
                   colorRoutes(order.db_routes, hiddenOrder)
                 }
               } else {
-                console.log('drawed')
                 drawOrders(table, `afterbegin`, order, state.orders, state.managers)
               }
               break

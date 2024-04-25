@@ -11,10 +11,10 @@ import {addTriggers} from "../addTriggers";
 import {triggerFilesModal} from "../modals/downloadFilesModal";
 import {triggerRoutesModal} from "../modals/routesModal";
 import {triggerCommentsModal} from "../modals/commentsModal";
-import {copyOrderHandler} from "../copyOrderHandler";
 import {cleanSelect} from "../getOrders";
 import {drawHelpers} from "./helpersDraw";
 import {showRoutesIssued} from "../showFull";
+import {copyOrderHandler} from "../copyOrderHandler";
 
 export const table = document.querySelector('.main-table')
 
@@ -340,7 +340,7 @@ export const drawOrders = (insertPlace, position, d,) => {
   drawHelpers(currentOrder)
 
   if (state.adminCheck || state.manCheck) {
-    addTriggers(currentOrder, ".order__copy", copyOrderHandler)
+    // addTriggers(currentOrder, ".order__copy", copyOrderHandler)
   } else {
     document.querySelectorAll('#order__copy').forEach(copy => copy.remove())
   }
@@ -482,7 +482,7 @@ export const orderHTML = `
 <form class="table-form table-form--new" method="POST">
             <ul class="main-table__item">            
                     <li class="table-body_cell table-body__helper table__db">
-                        <input  tabindex="-1" id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove" value="yes">
+                        <input tabindex="-1" id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove" value="yes">
                         <input tabindex="-1"  class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
                         <input tabindex="-1" id="db_id" class="main__button table__data  click-select table__data--ro" name="id" type="number" readonly value=""  autocomplete="off">
                     </li>

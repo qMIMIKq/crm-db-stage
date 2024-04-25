@@ -132,7 +132,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         console.timeEnd('draw orders')
       }
 
-      console.log(state.orders.length)
+      // console.log(state.orders.length)
       loader.classList.add('hidden__input')
       if (state['isArchive']) {
         document.querySelectorAll('.table__data').forEach(field => {

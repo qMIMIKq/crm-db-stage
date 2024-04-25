@@ -10,6 +10,9 @@ import {triggerCommentsModal} from "./modals/commentsModal";
 import {drawSubmit} from "./submitControl";
 import {getTime} from "./getTime";
 
+// export const copyOrderHandler = parent => {
+//   const formData = new FormData(parent)
+
 export const copyOrderHandler = e => {
   const parentForm = e.target.closest('form')
   const formData = new FormData(parentForm)

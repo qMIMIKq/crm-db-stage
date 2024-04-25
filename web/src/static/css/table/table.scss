@@ -142,8 +142,8 @@ input.tr {
 
   &__db {
     display: flex;
-    min-width: 70px;
-    max-width: 70px;
+    min-width: 80px;
+    max-width: 80px;
   }
 
   &__timestamp {
@@ -492,7 +492,7 @@ input.tr {
 }
 
 .order__copy {
-  width: 10px;
+  width: 14px;
   border: none;
   color: $text_black;
   background: rgb(156, 156, 156) !important;
@@ -506,7 +506,7 @@ input.tr {
 }
 
 .order__delete {
-  width: 20px;
+  width: 16px;
   border: none;
   background: red;
   transition: color .3s;

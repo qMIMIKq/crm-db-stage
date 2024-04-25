@@ -33,6 +33,11 @@ export const tableRoutesFiltersHandler = () => {
     const value = e.target.value.split('-')
     console.log(value)
     if (value !== '') {
+      try {
+        document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+        alertStatusBtn.style.color = ''
+        alertStatusBtn.value = ''
+      } catch {}
 
 
       // document.querySelector(`.${e.target.value}`).click()
@@ -64,19 +69,19 @@ export const tableRoutesFiltersHandler = () => {
       alertStatusBtn.classList.remove('route__filter--chosen')
       state['routesFilters'].alert = false
     } else {
+      routesStatusBtn.value = ''
+      routesStatusBtn.style.cssText = `
+          border: none;
+          color: rgb(66, 66, 66);
+        `
       try {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
       } catch {
       }
 
       alertStatusBtn.classList.add('route__filter--chosen')
-
+      state['routesFilters'] = {}
       state['routesFilters'].alert = true
-      state['routesFilters'].planned = false
-      state['routesFilters'].started = false
-      state['routesFilters'].unstarted = false
-      state['routesFilters'].error = false
-      state['routesFilters'].completed = false
     }
 
     newAllFilter()
@@ -118,6 +123,11 @@ export const tableRoutesFiltersHandler = () => {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
         alertStatusBtn.style.color = ''
         alertStatusBtn.value = ''
+        routesStatusBtn.value = ''
+        routesStatusBtn.style.cssText = `
+          border: none;
+          color: rgb(66, 66, 66);
+        `
       } catch {
       }
       inPlanBtn.classList.add('route__filter--chosen')
@@ -149,6 +159,11 @@ export const tableRoutesFiltersHandler = () => {
       document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
       alertStatusBtn.style.color = ''
       alertStatusBtn.value = ''
+      routesStatusBtn.value = ''
+      routesStatusBtn.style.cssText = `
+        border: none;
+        color: rgb(66, 66, 66);
+      `
     } catch {
     }
     inPlanBtn.classList.add('route__filter--chosen')

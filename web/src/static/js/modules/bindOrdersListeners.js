@@ -84,7 +84,7 @@ const doubler = e => {
 
 export const bindOrdersListeners = (currentElem) => {
   const mainElem = currentElem ? currentElem : document
-  console.log(mainElem)
+  // console.log(mainElem)
 
   mainElem.querySelectorAll('.table__data').forEach(innerLabel => {
     label = innerLabel
@@ -202,7 +202,7 @@ const chooseHandler = e => {
 
       case 'show-current':
         if (e.target.classList.contains('dblclck')) {
-          console.log('has current', action)
+          // console.log('has current', action)
         }
         // state['inWork'] = true
         e.target.classList.add(cls)
