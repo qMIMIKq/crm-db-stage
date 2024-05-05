@@ -217,7 +217,7 @@ func (t *TimeReportsPG) CalcTimeDifference(startTimeStr string, endTimeStr strin
 	lastShiftStartStr := strings.Split(endTimeStr, " ")[0]
 
 	if firstShiftEndStr != lastShiftStartStr {
-		log.Info().Msgf("no one day shift work")
+		log.Info().Caller().Msgf("no one day shift work")
 		checkShifts += 2
 	}
 
@@ -248,7 +248,7 @@ func (t *TimeReportsPG) CalcTimeDifference(startTimeStr string, endTimeStr strin
 
 	var result time.Duration
 	if dateInfo.CheckShifts == 2 {
-		log.Info().Msgf("first shift %v / last shift %v", dateInfo.FirstDayTime.String(), dateInfo.LastDayTime.String())
+		log.Info().Caller().Msgf("first shift %v / last shift %v", dateInfo.FirstDayTime.String(), dateInfo.LastDayTime.String())
 		if dateInfo.FirstDayTime > 0 {
 			result += dateInfo.FirstDayTime
 		}
@@ -340,15 +340,15 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 			log.Info().Msg("check end")
 
 			if currentEnd.Unix() > prevEnd.Unix() {
-				log.Info().Msgf("current end is bigger")
+				log.Info().Caller().Msgf("current end is bigger")
 
 				endString = route.EndTime
 			} else {
-				log.Info().Msgf("current end is smaller")
+				log.Info().Caller().Msgf("current end is smaller")
 				endString = timeReportPlot.LastEnd
 			}
 		} else {
-			log.Info().Msg("no end")
+			log.Info().Caller().Msg("no end")
 
 			endString = route.StartTime
 		}
@@ -356,7 +356,7 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 		var dateInfo DateTimeInfo
 		if currentStart.Unix() > prevEnd.Unix() {
 			res := t.CalcTimeDifference(fixEndString, route.StartTime, &dateInfo)
-			log.Info().Msgf("res is %v", res.String())
+			log.Info().Caller().Msgf("res is %v", res.String())
 
 			var newTotal time.Duration
 			if timeReportPlot.TotalExpectation != "" {
@@ -430,7 +430,7 @@ func (t *TimeReportsPG) GetTimeReports(datesRange *domain.ReportTime) []domain.T
 	//`)
 
 	for plot := range plots {
-		log.Info().Msgf("plot %v", plot)
+		log.Info().Caller().Msgf("plot %v", plot)
 
 		//var route domain.Route
 		//if err := t.db.Get(&route, queryPrevRoute, datesRange.From, plot); err != nil {

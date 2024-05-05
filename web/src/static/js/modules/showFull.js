@@ -6,35 +6,35 @@ export const showRoutesIssued = e => {
   parent.classList.toggle('opened-order')
   // console.log(parent)
 
-  // if (state.adminCheck || state.manCheck) {
-  //   let insertPlace = document.querySelector('.main-header__nav')
-  //   let copyBtn = document.querySelector('.header-button__copy')
-  //   let deleteBtn = document.querySelector('.header-button__delete')
-  //
-  //   if (parent.classList.contains('opened-order')) {
-  //     console.log('opened')
-  //   } else {
-  //     console.log('doesnt opened')
-  //   }
-  //
-  //   if (!copyBtn) {
-  //     insertPlace.insertAdjacentHTML('beforeend', `
-  //       <button class='main-header__button main__button--click header-button__copy'>Дубль</button>
-  //     `)
-  //
-  //     insertPlace.insertAdjacentHTML('beforeend', `
-  //       <button class='main-header__button main__button--click header-button__delete'>Удалить</button>
-  //     `)
-  //
-  //     copyBtn = document.querySelector('.header-button__copy')
-  //     copyBtn.addEventListener('click', () => copyOrderHandler(parent))
-  //
-  //     deleteBtn = document.querySelector('.header-button__delete')
-  //   } else {
-  //     copyBtn.remove()
-  //     deleteBtn.remove()
-  //   }
-  // }
+  if (state.adminCheck || state.manCheck) {
+    let insertPlace = document.querySelector('.main-header__nav')
+    let copyBtn = document.querySelector('.header-button__copy')
+    let deleteBtn = document.querySelector('.header-button__delete')
+
+    if (parent.classList.contains('opened-order')) {
+      console.log('opened')
+    } else {
+      console.log('doesnt opened')
+    }
+
+    if (!copyBtn) {
+      insertPlace.insertAdjacentHTML('beforeend', `
+        <button class='main-header__button main__button--click header-button__copy'>Дубль</button>
+      `)
+
+      insertPlace.insertAdjacentHTML('beforeend', `
+        <button class='main-header__button main__button--click header-button__delete'>Удалить</button>
+      `)
+
+      copyBtn = document.querySelector('.header-button__copy')
+      copyBtn.addEventListener('click', () => copyOrderHandler(parent))
+
+      deleteBtn = document.querySelector('.header-button__delete')
+    } else {
+      copyBtn.remove()
+      deleteBtn.remove()
+    }
+  }
 
 
   parent.querySelectorAll('.table__data').forEach(label => {
