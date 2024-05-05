@@ -9374,19 +9374,20 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-  let updateInterval = setInterval(() => {
-    if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
-      (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
-    }
-  }, 6000);
-  setInterval(() => {
-    clearInterval(updateInterval);
-    updateInterval = setInterval(() => {
-      if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
-        (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
-      }
-    }, 6000);
-  }, 100000);
+  // let updateInterval = setInterval(() => {
+  //   if (!state.isArchive) {
+  //     getOrders('get-all', true)
+  //   }
+  // }, 6000)
+  //
+  // setInterval(() => {
+  //   clearInterval(updateInterval)
+  //   updateInterval = setInterval(() => {
+  //     if (!state.isArchive) {
+  //       getOrders('get-all', true)
+  //     }
+  //   }, 6000)
+  // }, 100000)
 }
 
 /***/ }),
