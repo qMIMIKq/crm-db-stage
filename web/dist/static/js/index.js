@@ -1737,12 +1737,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// export const copyOrderHandler = e => {
-//   const parentForm = e.target.closest('form')
+// export const copyOrderHandler = parent => {
+//   const formData = new FormData(parent)
 
-const copyOrderHandler = parent => {
-  const formData = new FormData(parent);
-  // const formData = new FormData(parentForm)
+const copyOrderHandler = e => {
+  const parentForm = e.target.closest('form');
+  const formData = new FormData(parentForm);
   const obj = {};
   formData.forEach((value, key) => {
     switch (key) {
@@ -2011,6 +2011,7 @@ __webpack_require__.r(__webpack_exports__);
 const table = document.querySelector('.main-table');
 const drawOrders = (insertPlace, position, d) => {
   // console.time(`draw order ${d.id}`)
+  // console.log(d)
 
   // console.log('can remove ', d.can_remove)
   (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.controlFiltersReset)();
@@ -3422,9 +3423,11 @@ const newAllFilter = init => {
     }
   }
   if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
+    console.log('not filtered');
     if (init) {
       (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
       _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+        // console.log(order)
         (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
         // console.log(order.id)
         // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
@@ -3643,8 +3646,7 @@ const tableRoutesFiltersHandler = () => {
   const routesStatusBtn = document.querySelector('.header-routes__filter-status');
   routesStatusBtn.addEventListener('change', e => {
     const value = e.target.value.split('-');
-    console.log(value);
-    if (value !== '') {
+    if (value[0] !== '') {
       try {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
         alertStatusBtn.style.color = '';
@@ -4171,6 +4173,7 @@ const getOrders = function () {
       // console.log('we have data')
 
       data.data.forEach(d => {
+        // console.log(d)
         if (_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime) {
           if (d.time_of_modify) {
             let maxGetTime = new Date(_state__WEBPACK_IMPORTED_MODULE_1__.state.maxTime).getTime();
@@ -4195,7 +4198,9 @@ const getOrders = function () {
         });
         (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)();
       } else {
+        // console.log(data.data)
         _state__WEBPACK_IMPORTED_MODULE_1__.state.orders = data.data;
+        // console.log(state.orders)
         (0,_filters_newAllFilter__WEBPACK_IMPORTED_MODULE_5__.newAllFilter)(true);
       }
       _state__WEBPACK_IMPORTED_MODULE_1__.state.nums = [...new Set(_state__WEBPACK_IMPORTED_MODULE_1__.state.nums)].sort();
@@ -7777,12 +7782,12 @@ let state = {
     // 'timestamp': '',
   },
   'routesFilters': {
-    'started': false,
-    'error': false,
-    'completed': false,
-    'unstarted': false,
-    'planned': false,
-    'alert': false
+    // 'started': false,
+    // 'error': false,
+    // 'completed': false,
+    // 'unstarted': false,
+    // 'planned': false,
+    // 'alert': false
   },
   'reports': [],
   'reportFilters': {
@@ -7828,39 +7833,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "showResult": () => (/* binding */ showResult)
 /* harmony export */ });
 /* harmony import */ var _getOrders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getOrders */ "./web/src/static/js/modules/getOrders.js");
-/* harmony import */ var _bindOrdersListeners__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bindOrdersListeners */ "./web/src/static/js/modules/bindOrdersListeners.js");
-/* harmony import */ var _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
-/* harmony import */ var _addTriggers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./addTriggers */ "./web/src/static/js/modules/addTriggers.js");
-/* harmony import */ var _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
-/* harmony import */ var _modals_routesModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modals/routesModal */ "./web/src/static/js/modules/modals/routesModal.js");
-/* harmony import */ var _modals_commentsModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modals/commentsModal */ "./web/src/static/js/modules/modals/commentsModal.js");
-/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
-/* harmony import */ var _drawe_drawManagers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./drawe/drawManagers */ "./web/src/static/js/modules/drawe/drawManagers.js");
-/* harmony import */ var _drawe_drawDeadlineP__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./drawe/drawDeadlineP */ "./web/src/static/js/modules/drawe/drawDeadlineP.js");
-/* harmony import */ var _copyOrderHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./copyOrderHandler */ "./web/src/static/js/modules/copyOrderHandler.js");
-
-
-
-
-
-
-
-
+/* harmony import */ var _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawe/drawOrders */ "./web/src/static/js/modules/drawe/drawOrders.js");
+/* harmony import */ var _submitOrdersData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./submitOrdersData */ "./web/src/static/js/modules/submitOrdersData.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state */ "./web/src/static/js/modules/state.js");
 
 
 
 
 const submitButtonHTML = `
-    <button class='main-header__button main__button--click header-button__submit'>=></button>
+    <button class='main-header__button hidden-input main__button--click header-button__submit'>=></button>
 `;
 const cancelButtonHTML = `
-    <button class='main-header__button main__button--click header-button__cancel'>X</button>
+    <button class='main-header__button hidden-input main__button--click header-button__cancel'>X</button>
 `;
 const addOrder = document.querySelector('.header-button__add');
 const drawSubmit = () => {
-  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = true;
-  if (_state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders) {
+  _state__WEBPACK_IMPORTED_MODULE_3__.state.newOrders = true;
+  if (_state__WEBPACK_IMPORTED_MODULE_3__.state.newOrders) {
     const sub = document.querySelector('.header-button__submit');
     const cancel = document.querySelector('.header-button__cancel');
     if (cancel === null) {
@@ -7869,7 +7858,7 @@ const drawSubmit = () => {
     }
     if (sub === null) {
       addOrder.insertAdjacentHTML(`afterend`, submitButtonHTML);
-      document.querySelector('.header-button__submit').addEventListener('click', _submitOrdersData__WEBPACK_IMPORTED_MODULE_7__.submitData);
+      document.querySelector('.header-button__submit').addEventListener('click', _submitOrdersData__WEBPACK_IMPORTED_MODULE_2__.submitData);
     }
   }
 };
@@ -7878,10 +7867,10 @@ const deleteSubmitBtn = () => {
   if (btn !== null) {
     btn.remove();
   }
-  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
+  _state__WEBPACK_IMPORTED_MODULE_3__.state.newOrders = false;
 };
 const cancelChange = e => {
-  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
+  _state__WEBPACK_IMPORTED_MODULE_3__.state.newOrders = false;
   document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove());
   finallyForOrders(true);
 };
@@ -7890,7 +7879,7 @@ const deleteCancelBtn = () => {
   if (btn !== null) {
     btn.remove();
   }
-  _state__WEBPACK_IMPORTED_MODULE_8__.state.newOrders = false;
+  _state__WEBPACK_IMPORTED_MODULE_3__.state.newOrders = false;
 };
 const showResult = status => {
   // const nav = document.querySelector(".main-header__title")
@@ -7911,17 +7900,20 @@ const showResult = status => {
 };
 addOrder.addEventListener('click', e => {
   drawSubmit();
-  _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_2__.table.insertAdjacentHTML('afterbegin', _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_2__.orderHTML);
-  const currElem = document.querySelector('.table-form--new');
-  // (currElem)
-  (0,_drawe_drawManagers__WEBPACK_IMPORTED_MODULE_9__.drawManagers)(currElem, '.table-m-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.managers, 'adfasdfsdfsdada');
-  (0,_drawe_drawDeadlineP__WEBPACK_IMPORTED_MODULE_10__.drawDeadlineP)(currElem, '.table-p-select', _state__WEBPACK_IMPORTED_MODULE_8__.state.deadlinesP, 'adfasdfsdfsdada');
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_4__.triggerFilesModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, '.table__route', e => (0,_modals_routesModal__WEBPACK_IMPORTED_MODULE_5__.triggerRoutesModal)(e));
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_6__.triggerCommentsModal);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_3__.addTriggers)(currElem, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_11__.copyOrderHandler);
-  (0,_bindOrdersListeners__WEBPACK_IMPORTED_MODULE_1__.bindOrdersListeners)(currElem);
+  _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_1__.table.insertAdjacentHTML('afterbegin', _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_1__.orderHTML);
+  // const currElem = document.querySelector('.table-form--new')
+  document.querySelector('.header-button__submit').click();
+  //
+  // // // (currElem)
+  // drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
+  // drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
+  // addTriggers(currElem, '.table__files', triggerFilesModal)
+  // addTriggers(currElem, '.table__route', e => triggerRoutesModal(e))
+  // addTriggers(currElem, '.table__comment', triggerCommentsModal)
+  // addTriggers(currElem, ".order__copy", copyOrderHandler)
+  // bindOrdersListeners(currElem)
 });
+
 const finallyForOrders = success => {
   deleteSubmitBtn();
   deleteCancelBtn();
@@ -8937,20 +8929,19 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-  // let updateInterval = setInterval(() => {
-  //   if (!state.isArchive) {
-  //     getOrders('get-all', true)
-  //   }
-  // }, 6000)
-  //
-  // setInterval(() => {
-  //   clearInterval(updateInterval)
-  //   updateInterval = setInterval(() => {
-  //     if (!state.isArchive) {
-  //       getOrders('get-all', true)
-  //     }
-  //   }, 6000)
-  // }, 100000)
+  let updateInterval = setInterval(() => {
+    if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
+      (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
+    }
+  }, 6000);
+  setInterval(() => {
+    clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
+        (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
+      }
+    }, 6000);
+  }, 100000);
 }
 
 /***/ }),

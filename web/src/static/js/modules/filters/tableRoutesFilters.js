@@ -31,8 +31,7 @@ export const tableRoutesFiltersHandler = () => {
 
   routesStatusBtn.addEventListener('change', e => {
     const value = e.target.value.split('-')
-    console.log(value)
-    if (value !== '') {
+    if (value[0] !== '') {
       try {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
         alertStatusBtn.style.color = ''

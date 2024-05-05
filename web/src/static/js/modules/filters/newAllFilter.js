@@ -300,10 +300,12 @@ export const newAllFilter = (init) => {
   }
 
   if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
+    console.log('not filtered')
     if (init) {
       deleteOrders()
 
       state.orders.forEach(order => {
+        // console.log(order)
         drawOrders(table, `afterbegin`, order, state.orders, state.managers)
         // console.log(order.id)
         // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')

@@ -845,14 +845,14 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 		onlyOneFlag := false
 		for name, route := range order.Routes {
 			routePos := strings.Split(name, "-")[1]
-			log.Info().Msgf("route %v / theor end %v", route.Plot, route.TheorEnd)
+			//log.Info().Msgf("route %v / theor end %v", route.Plot, route.TheorEnd)
 
 			var planDates []string
 			for _, info := range route.AddedDates {
 				planDates = append(planDates, info.Date)
 			}
 
-			log.Info().Interface("route", route).Msgf("route is")
+			//log.Info().Interface("route", route).Msgf("route is")
 
 			err = o.db.QueryRow(routesQuery, id,
 				routePos, route.User, route.Plot,

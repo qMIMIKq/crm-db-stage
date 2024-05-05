@@ -11,14 +11,12 @@ import {drawSubmit} from "./submitControl";
 import {getTime} from "./getTime";
 
 
+// export const copyOrderHandler = parent => {
+//   const formData = new FormData(parent)
 
-// export const copyOrderHandler = e => {
-//   const parentForm = e.target.closest('form')
-
-
-export const copyOrderHandler = parent => {
-  const formData = new FormData(parent)
-  // const formData = new FormData(parentForm)
+export const copyOrderHandler = e => {
+  const parentForm = e.target.closest('form')
+  const formData = new FormData(parentForm)
   const obj = {}
 
   formData.forEach((value, key) => {

@@ -87,6 +87,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         // console.log('we have data')
 
         data.data.forEach(d => {
+          // console.log(d)
           if (state['maxTime']) {
             if (d.time_of_modify) {
               let maxGetTime = new Date(state['maxTime']).getTime()
@@ -114,7 +115,9 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
           })
           newAllFilter()
         } else {
+          // console.log(data.data)
           state['orders'] = data.data
+          // console.log(state.orders)
           newAllFilter(true)
         }
 

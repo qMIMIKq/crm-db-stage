@@ -18,8 +18,9 @@ import {copyOrderHandler} from "../copyOrderHandler";
 
 export const table = document.querySelector('.main-table')
 
-export const drawOrders = (insertPlace, position, d,) => {
+export const drawOrders = (insertPlace, position, d) => {
   // console.time(`draw order ${d.id}`)
+  // console.log(d)
 
   // console.log('can remove ', d.can_remove)
   controlFiltersReset()

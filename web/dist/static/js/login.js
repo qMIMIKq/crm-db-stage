@@ -116,12 +116,12 @@ let state = {
     // 'timestamp': '',
   },
   'routesFilters': {
-    'started': false,
-    'error': false,
-    'completed': false,
-    'unstarted': false,
-    'planned': false,
-    'alert': false
+    // 'started': false,
+    // 'error': false,
+    // 'completed': false,
+    // 'unstarted': false,
+    // 'planned': false,
+    // 'alert': false
   },
   'reports': [],
   'reportFilters': {

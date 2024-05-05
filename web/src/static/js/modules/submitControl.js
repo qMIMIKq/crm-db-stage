@@ -1,21 +1,13 @@
 import {getOrders} from './getOrders';
-import {bindOrdersListeners} from './bindOrdersListeners';
 import {orderHTML, table} from './drawe/drawOrders';
-import {addTriggers} from './addTriggers';
-import {triggerFilesModal} from './modals/downloadFilesModal';
-import {triggerRoutesModal} from './modals/routesModal';
-import {triggerCommentsModal} from './modals/commentsModal';
 import {submitData} from './submitOrdersData';
 import {state} from './state';
-import {drawManagers} from "./drawe/drawManagers";
-import {drawDeadlineP} from "./drawe/drawDeadlineP";
-import {copyOrderHandler} from "./copyOrderHandler";
 
 const submitButtonHTML = `
-    <button class='main-header__button main__button--click header-button__submit'>=></button>
+    <button class='main-header__button hidden-input main__button--click header-button__submit'>=></button>
 `
 const cancelButtonHTML = `
-    <button class='main-header__button main__button--click header-button__cancel'>X</button>
+    <button class='main-header__button hidden-input main__button--click header-button__cancel'>X</button>
 `
 
 const addOrder = document.querySelector('.header-button__add')
@@ -80,15 +72,17 @@ export const showResult = status => {
 addOrder.addEventListener('click', e => {
   drawSubmit()
   table.insertAdjacentHTML('afterbegin', orderHTML)
-  const currElem = document.querySelector('.table-form--new')
-  // (currElem)
-  drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
-  drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
-  addTriggers(currElem, '.table__files', triggerFilesModal)
-  addTriggers(currElem, '.table__route', e => triggerRoutesModal(e))
-  addTriggers(currElem, '.table__comment', triggerCommentsModal)
-  addTriggers(currElem, ".order__copy", copyOrderHandler)
-  bindOrdersListeners(currElem)
+  // const currElem = document.querySelector('.table-form--new')
+  document.querySelector('.header-button__submit').click()
+  //
+  // // // (currElem)
+  // drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
+  // drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
+  // addTriggers(currElem, '.table__files', triggerFilesModal)
+  // addTriggers(currElem, '.table__route', e => triggerRoutesModal(e))
+  // addTriggers(currElem, '.table__comment', triggerCommentsModal)
+  // addTriggers(currElem, ".order__copy", copyOrderHandler)
+  // bindOrdersListeners(currElem)
 })
 
 export const finallyForOrders = success => {
