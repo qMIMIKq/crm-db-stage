@@ -28,6 +28,73 @@ export const tableRoutesFiltersHandler = () => {
   const inPlanBtn = document.querySelector(".header-routes__planned")
   const alertStatusBtn = document.querySelector('.header-routes__alert')
   const routesStatusBtn = document.querySelector('.header-routes__filter-status')
+  const headerControl = document.querySelector('.header-button__control')
+  const headerControlContent = document.querySelector('.header-control__content')
+
+  const check = () => {
+    headerControlContent.classList.remove('header-control__content--active')
+  }
+
+  headerControl.addEventListener('mouseenter', e => {
+    headerControlContent.classList.add('header-control__content--active')
+  })
+  headerControl.addEventListener('mouseleave', check)
+
+  let action
+  const controlChoseMap = {
+    'Копировать': '#order__copy'
+  }
+
+  const controlTableListener = e => {
+    e.stopPropagation()
+    const target = e.target
+
+    if (target.classList.contains('click-chose') || target.classList.contains('tr')) {
+
+    } else {
+      const parent = target.closest('form')
+      parent.querySelector(`${controlChoseMap[action]}`).click()
+      console.log(target)
+    }
+
+
+    // if (cell.classList.contains('table__route') || cell.classList.contains('click-chose') || cell.classList.contains('table__comment')) {
+    // } else {
+    //
+    //
+    //   console.log(cell)
+    // }
+  }
+
+  const btnClass = 'header-control__content-btn--active'
+  const controlBtns = document.querySelectorAll('.header-control__content-btn')
+  controlBtns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      if (btn.classList.contains(btnClass)) {
+        btn.classList.remove(btnClass)
+        headerControl.addEventListener('mouseleave', check)
+        document.querySelectorAll('.table-body_cell').forEach(cell => {
+          cell.removeEventListener('click', controlTableListener)
+        })
+        action = ''
+      } else {
+        controlBtns.forEach(b => b.classList.remove(btnClass))
+        btn.classList.add(btnClass)
+        headerControl.removeEventListener('mouseleave', check)
+        action = btn.textContent
+
+        document.querySelectorAll('.table-body_cell').forEach(cell => {
+          cell.addEventListener('click', controlTableListener)
+        })
+      }
+    })
+  })
+
+  if (state.adminCheck || state.manCheck) {
+  } else {
+    headerControl.remove()
+  }
+
 
   routesStatusBtn.addEventListener('change', e => {
     const value = e.target.value.split('-')
@@ -36,7 +103,8 @@ export const tableRoutesFiltersHandler = () => {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
         alertStatusBtn.style.color = ''
         alertStatusBtn.value = ''
-      } catch {}
+      } catch {
+      }
 
 
       // document.querySelector(`.${e.target.value}`).click()

@@ -488,3 +488,45 @@ input:disabled {
     transition: color .3s linear;
   }
 }
+
+.header-control {
+  position: relative;
+
+  //&:hover .header-control__content {
+  //
+  //}
+
+  &__content {
+    position: absolute;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    visibility: hidden;
+    z-index: 10;
+    width: 350px;
+    height: 49px;
+    padding: 0 15px;
+    top: -12px;
+    left: 106px;
+    color: black;
+    border-radius: 5px;
+    background: rgba(236, 236, 236, 0.8);
+
+    &--active {
+      display: flex;
+      visibility: visible;
+    }
+
+    &-btn {
+      &:hover {
+        color: green;
+      }
+
+      &--active {
+        //border: 3px solid rgb(137, 175, 137);
+        background: rgb(137, 175, 137);
+        color: white;
+      }
+    }
+  }
+}

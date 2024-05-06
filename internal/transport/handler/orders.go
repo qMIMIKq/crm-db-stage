@@ -3,7 +3,6 @@ package handler
 import (
 	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,7 +16,7 @@ func (h *Handler) addOrders(c *gin.Context) {
 		return
 	}
 
-	log.Info().Interface("order", orders).Msg("orders is")
+	//log.Info().Interface("order", orders).Msg("orders is")
 	//fmt.Println("ADD ORDER")
 
 	err := h.services.Orders.AddOrders(orders)

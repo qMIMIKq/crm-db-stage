@@ -9,6 +9,7 @@ import {triggerRoutesModal} from "./modals/routesModal";
 import {triggerCommentsModal} from "./modals/commentsModal";
 import {drawSubmit} from "./submitControl";
 import {getTime} from "./getTime";
+import {submitData} from "./submitOrdersData";
 
 
 // export const copyOrderHandler = parent => {
@@ -64,16 +65,16 @@ export const copyOrderHandler = e => {
   // console.log(currElem.querySelector('select[name="m"]'))
 
   drawSubmit()
-  drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
-  drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
-  // currElem.querySelector('select[name="m"]').value = obj.m
-
-  bindOrdersListeners(currElem)
-  // reportShowCurrentLine()
-  addTriggers(currElem, '.table__files', triggerFilesModal)
-  addTriggers(currElem, '.table__route', e => triggerRoutesModal(e))
-  addTriggers(currElem, '.table__comment', triggerCommentsModal)
-  addTriggers(currElem, ".order__copy", copyOrderHandler)
+  // drawManagers(currElem, '.table-m-select', state['managers'], 'adfasdfsdfsdada')
+  // drawDeadlineP(currElem, '.table-p-select', state['deadlinesP'], 'adfasdfsdfsdada')
+  // // currElem.querySelector('select[name="m"]').value = obj.m
+  //
+  // bindOrdersListeners(currElem)
+  // // reportShowCurrentLine()
+  // addTriggers(currElem, '.table__files', triggerFilesModal)
+  // addTriggers(currElem, '.table__route', e => triggerRoutesModal(e))
+  // addTriggers(currElem, '.table__comment', triggerCommentsModal)
+  // addTriggers(currElem, ".order__copy", copyOrderHandler)
 
   const routesWrapper = currElem.querySelector(".table-routes__wrapper")
   for (let key of Object.keys(obj)) {
@@ -85,4 +86,6 @@ export const copyOrderHandler = e => {
       dataInput.value = JSON.stringify(obj[key])
     }
   }
+
+  submitData()
 }
