@@ -41,6 +41,20 @@
 
   &__button {
     transition: color .3s;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid rgb(203, 203, 203);
+    box-shadow: none;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //padding: 7px 3px;
+    background-color: rgba(255, 255, 255, 0.9);
+
+    &:last-child {
+      border-right: 1px solid rgb(203, 203, 203);
+    }
 
     &:hover {
       transition: color .3s;
@@ -48,20 +62,35 @@
     }
 
     &:not(:last-child) {
-      margin-right: 10px;
+      //margin-right: 10px;
     }
   }
 }
 
 .header-routes {
   &__filter {
-    &:not(:last-child) {
-      margin-right: 10px;
+    height: 48px;
+    border: none;
+    border-right: 0;
+    box-shadow: none;
+    border-radius: 0;
+    background-color: transparent;
+    border-right: 1px solid rgb(203, 203, 203);
+    transition: all .3s linear;
+    //
+    //&:not(:last-child) {
+    //  margin-right: 10px;
+    //}
+
+
+    &:hover {
+      color: white !important;
+      transition: all .3s linear;
     }
 
     &--select {
       margin-bottom: 0;
-      height: 27px;
+      //height: 27px;
       padding: 0;
     }
   }
@@ -87,4 +116,63 @@
   border: 1px solid $text_white;
   color: $text_white;
   background: $main_green;
+}
+
+.header-button__add {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  height: 48px;
+  background-color: transparent;
+  transition: color, background-color 0.3s;
+  //border-right: 1px solid rgb(203, 203, 203);
+  //border-left: 1px solid rgb(203, 203, 203);
+  font-weight: bold;
+  font-size: 21px;
+  line-height: 19px;
+
+  &:hover {
+    color: white;
+    transition: color, background-color 0.3s;
+    //background-color: $main_green;
+  }
+}
+//
+//#header-control__btn-archive {
+//  width: 70px;
+//}
+
+//header-control__btn-delete
+
+#header-control__btn {
+  &-copy {
+    .copy {
+      width: 22px;
+      height: 24px;
+      transform: translateY(1px);
+      fill: rgb(66, 66, 66);
+      transition: background-color, fill .3s linear;
+    }
+
+    &:hover  {
+      background-color: gray;
+
+      .copy {
+        transition: background-color, color .3s linear;
+        fill: white;
+      }
+    }
+  }
+
+  &-delete{
+    &:hover  {
+      background-color: red;
+    }
+  }
+
+  &-archive {
+    &:hover  {
+      background-color: green;
+    }
+  }
 }

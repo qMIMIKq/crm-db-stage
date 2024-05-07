@@ -66,17 +66,17 @@ export const showRoutesIssued = e => {
   }
 
 
-  const complete = parent.querySelector('.table__complete')
-  // console.log(complete)
-  if (complete) {
-    complete.classList.toggle('hidden__input')
-  }
-
-  const delBtn = parent.querySelector('.order__delete')
-  if (delBtn) {
-    delBtn.classList.toggle('hidden__input')
-    delBtn.addEventListener('click', e => {
-      // console.log(e.target.parentNode.querySelector('#db_id').value)
-    })
-  }
+  // const complete = parent.querySelector('.table__complete')
+  // // console.log(complete)
+  // if (complete) {
+  //   complete.classList.toggle('hidden__input')
+  // }
+  //
+  // const delBtn = parent.querySelector('.order__delete')
+  // if (delBtn) {
+  //   delBtn.classList.toggle('hidden__input')
+  //   delBtn.addEventListener('click', e => {
+  //     // console.log(e.target.parentNode.querySelector('#db_id').value)
+  //   })
+  // }
 }

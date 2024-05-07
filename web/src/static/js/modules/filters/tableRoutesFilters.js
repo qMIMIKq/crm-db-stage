@@ -33,68 +33,78 @@ export const tableRoutesFiltersHandler = () => {
 
   const check = () => {
     headerControlContent.classList.remove('header-control__content--active')
+    headerControl.querySelectorAll('.header-control__content-btn').forEach(btn => btn.classList.add('hidden-input'))
   }
-
-  headerControl.addEventListener('mouseenter', e => {
-    headerControlContent.classList.add('header-control__content--active')
-  })
-  headerControl.addEventListener('mouseleave', check)
 
   let action
   const controlChoseMap = {
-    'Копировать': '#order__copy'
+    'Копировать': '#order__copy',
+    'Удалить': ''
   }
 
-  const controlTableListener = e => {
-    e.stopPropagation()
-    const target = e.target
+  let currentForm = null,
+    orderCopyBtn = null,
+    orderDelBtn = null,
+    orderArchiveBtn = null
 
-    if (target.classList.contains('click-chose') || target.classList.contains('tr')) {
+  const copyBtn = headerControlContent.querySelector('#header-control__btn-copy')
+  const deleteBtn = headerControlContent.querySelector('#header-control__btn-delete')
+  const archiveBtn = headerControlContent.querySelector('#header-control__btn-archive')
 
-    } else {
-      const parent = target.closest('form')
-      parent.querySelector(`${controlChoseMap[action]}`).click()
-      console.log(target)
-    }
+  copyBtn.addEventListener('click', () => orderCopyBtn.click())
+  deleteBtn.addEventListener('click', () => orderDelBtn.click())
+  archiveBtn.addEventListener('click', () => orderArchiveBtn.click())
 
+  headerControl.addEventListener('mouseenter', e => {
+    headerControlContent.classList.add('header-control__content--active')
 
-    // if (cell.classList.contains('table__route') || cell.classList.contains('click-chose') || cell.classList.contains('table__comment')) {
-    // } else {
-    //
-    //
-    //   console.log(cell)
-    // }
-  }
+    if (state.currentOrder) {
+      currentForm = document.querySelector(`#form-${state.currentOrder}`)
+      orderCopyBtn = currentForm.querySelector('#order__copy')
+      orderDelBtn = currentForm.querySelector('#order__delete')
+      orderArchiveBtn = currentForm.querySelector('.table__complete')
 
-  const btnClass = 'header-control__content-btn--active'
-  const controlBtns = document.querySelectorAll('.header-control__content-btn')
-  controlBtns.forEach(btn => {
-    btn.addEventListener('click', e => {
-      if (btn.classList.contains(btnClass)) {
-        btn.classList.remove(btnClass)
-        headerControl.addEventListener('mouseleave', check)
-        document.querySelectorAll('.table-body_cell').forEach(cell => {
-          cell.removeEventListener('click', controlTableListener)
-        })
-        action = ''
-      } else {
-        controlBtns.forEach(b => b.classList.remove(btnClass))
-        btn.classList.add(btnClass)
-        headerControl.removeEventListener('mouseleave', check)
-        action = btn.textContent
+      copyBtn.classList.remove('hidden-input')
 
-        document.querySelectorAll('.table-body_cell').forEach(cell => {
-          cell.addEventListener('click', controlTableListener)
-        })
+      if (orderDelBtn) {
+        deleteBtn.classList.remove('hidden-input')
       }
-    })
-  })
 
+      if (orderArchiveBtn) {
+        archiveBtn.classList.remove('hidden-input')
+      }
+
+      console.log(currentForm)
+    }
+  })
+  headerControl.addEventListener('mouseleave', check)
   if (state.adminCheck || state.manCheck) {
   } else {
     headerControl.remove()
   }
 
+  const headerFilters = document.querySelector('.header-filters')
+  const headerFiltersContent = document.querySelector('.header-filters__content')
+  const planDatesInput = document.querySelector('.header-routes__planned-date')
+
+  const checkFilters = () => {
+    headerFiltersContent.classList.add('hidden-input')
+  }
+
+  planDatesInput.addEventListener('focus', () => {
+    console.log('hi')
+    headerFilters.removeEventListener('mouseleave', checkFilters)
+  })
+
+  planDatesInput.addEventListener('blur', () => {
+    console.log('not hi')
+    headerFilters.addEventListener('mouseleave', checkFilters)
+  })
+
+  headerFilters.addEventListener('mouseenter', () => {
+    headerFiltersContent.classList.remove('hidden-input')
+  })
+  headerFilters.addEventListener('mouseleave', checkFilters)
 
   routesStatusBtn.addEventListener('change', e => {
     const value = e.target.value.split('-')
@@ -134,7 +144,7 @@ export const tableRoutesFiltersHandler = () => {
 
     if (value === '') {
       alertStatusBtn.classList.remove('route__filter--chosen')
-      state['routesFilters'].alert = false
+      state['routesFilters'] = {}
     } else {
       routesStatusBtn.value = ''
       routesStatusBtn.style.cssText = `
@@ -216,7 +226,7 @@ export const tableRoutesFiltersHandler = () => {
       inPlanBtn.classList.remove('route__filter--chosen')
       inPlanDate.value = today
       state.inPlanDate = today
-      state['routesFilters'].planned = false
+      state['routesFilters'] = {}
       // getOrders('get-all', true)
       newAllFilter()
       return

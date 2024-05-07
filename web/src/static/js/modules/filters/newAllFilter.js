@@ -21,6 +21,15 @@ export const newAllFilter = (init) => {
   const isRouteStatusFiltered = !!Object.keys(tableRouteStatusFilters).length
   const isTopRoutesFiltered = !!topRouteFilters.length
 
+  const filtersBtn = document.querySelector('.header-filters')
+
+  if (isRouteStatusFiltered) {
+    console.log(tableRouteStatusFilters)
+    filtersBtn.style.cssText = `border: 2px solid green`
+  } else {
+    filtersBtn.style.cssText = `border: none`
+  }
+
   controlFiltersReset()
 
   if (searched) {

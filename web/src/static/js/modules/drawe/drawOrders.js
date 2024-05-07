@@ -72,7 +72,7 @@ export const drawOrders = (insertPlace, position, d) => {
             <input tabindex="-1" tabindex="-1" id="can-remove" type="text" name="can_remove" class="hidden__input table-form__can-remove can-remove" value="${d.can_remove}">
         
             <li class='table-body_cell table__db'>
-                <input tabindex="-1" tabindex="-1" class="order__copy table__data--ro" id='order__copy' type="button" value="+" readonly>
+                <input tabindex="-1" tabindex="-1" class="order__copy hidden-input table__data--ro" id='order__copy' type="button" value="+" readonly>
                 <input tabindex="-1" id='db_id' class='main__button table__data click-select table__data--ro' name='id' type='number' readonly value='${d.id}' tabindex='-1' autocomplete='off'>
             </li>
             <li class='table-body_cell table__timestamp'>
@@ -107,7 +107,7 @@ export const drawOrders = (insertPlace, position, d) => {
             </li>
             <ul class="table__issueds">
                 <li class="table-body_cell table__issued">
-                    <input tabindex="-1" ${state["inputAdmTechGroupper"]} readonly class="table__data ${orderCompleted && !state["isArchive"] ? "table__issued--done tr" : ""} dblclck" tabindex="-1"
+                    <input tabindex="-1" ${state["inputAdmTechGroupper"]} readonly class="table__data ${orderCompleted && !state["isArchive"] ? "table__issued--done" : ""} dblclck" tabindex="-1"
                     tabindex="-1"
                     type="number" 
                     name="issued" 
@@ -273,6 +273,7 @@ export const drawOrders = (insertPlace, position, d) => {
       const parent = e.target.closest('.table-form--old')
       let today = getTime()
       today = today.substring(0, today.length - 5).trim()
+      state.currentOrder = null
 
       if (parent !== null) {
         parent.classList.remove('table-form--old')
