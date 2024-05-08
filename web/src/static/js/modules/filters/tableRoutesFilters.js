@@ -83,28 +83,28 @@ export const tableRoutesFiltersHandler = () => {
     headerControl.remove()
   }
 
-  const headerFilters = document.querySelector('.header-filters')
-  const headerFiltersContent = document.querySelector('.header-filters__content')
-  const planDatesInput = document.querySelector('.header-routes__planned-date')
-
-  const checkFilters = () => {
-    headerFiltersContent.classList.add('hidden-input')
-  }
-
-  planDatesInput.addEventListener('focus', () => {
-    console.log('hi')
-    headerFilters.removeEventListener('mouseleave', checkFilters)
-  })
-
-  planDatesInput.addEventListener('blur', () => {
-    console.log('not hi')
-    headerFilters.addEventListener('mouseleave', checkFilters)
-  })
-
-  headerFilters.addEventListener('mouseenter', () => {
-    headerFiltersContent.classList.remove('hidden-input')
-  })
-  headerFilters.addEventListener('mouseleave', checkFilters)
+  // const headerFilters = document.querySelector('.header-filters')
+  // const headerFiltersContent = document.querySelector('.header-filters__content')
+  // const planDatesInput = document.querySelector('.header-routes__planned-date')
+  //
+  // const checkFilters = () => {
+  //   headerFiltersContent.classList.add('hidden-input')
+  // }
+  //
+  // planDatesInput.addEventListener('focus', () => {
+  //   console.log('hi')
+  //   headerFilters.removeEventListener('mouseleave', checkFilters)
+  // })
+  //
+  // planDatesInput.addEventListener('blur', () => {
+  //   console.log('not hi')
+  //   headerFilters.addEventListener('mouseleave', checkFilters)
+  // })
+  //
+  // headerFilters.addEventListener('mouseenter', () => {
+  //   headerFiltersContent.classList.remove('hidden-input')
+  // })
+  // headerFilters.addEventListener('mouseleave', checkFilters)
 
   routesStatusBtn.addEventListener('change', e => {
     const value = e.target.value.split('-')
@@ -128,7 +128,7 @@ export const tableRoutesFiltersHandler = () => {
     } else {
       // document.querySelector('.route__filter--chosen').click()
       routesStatusBtn.style.cssText = `
-        border: none;
+        border: 1px solid rgb(203, 203, 203);
         color: rgb(66, 66, 66);
       `
 

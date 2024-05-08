@@ -23,12 +23,12 @@ export const newAllFilter = (init) => {
 
   const filtersBtn = document.querySelector('.header-filters')
 
-  if (isRouteStatusFiltered) {
-    console.log(tableRouteStatusFilters)
-    filtersBtn.style.cssText = `border: 2px solid green`
-  } else {
-    filtersBtn.style.cssText = `border: none`
-  }
+  // if (isRouteStatusFiltered) {
+  //   console.log(tableRouteStatusFilters)
+  //   filtersBtn.style.cssText = `border: 2px solid green`
+  // } else {
+  //   filtersBtn.style.cssText = `border: none`
+  // }
 
   controlFiltersReset()
 
