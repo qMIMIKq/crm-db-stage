@@ -129,7 +129,7 @@
                 </div>
 
                 <div class="main__button--click main-header__button header-button__control header-control hidden-input">
-<!--                    Управление-->
+                    <!--                    Управление-->
                 </div>
                 <svg class="spinner-loader hidden__input" xmlns="http://www.w3.org/2000/svg"
                      style="margin: auto; background: none; display: block; shape-rendering: auto;"
@@ -147,7 +147,6 @@
             <div class="main-header__routes header-routes">
 <!--                <div class="main__button&#45;&#45;click main-header__button header-button__filters header-filters">-->
 <!--                    Фильтры-->
-<!--&lt;!&ndash;hidden-input&ndash;&gt;-->
 <!--                    <div class="header-filters__content hidden-input">-->
 <!--                        <select tabindex="-1"-->
 <!--                                class="clickable header-routes__filter&#45;&#45;select header-routes__filter header-routes__filter-status main__button&#45;&#45;click"-->
@@ -193,7 +192,7 @@
                         Сдал
                     </button>
                     <!--                    <select tabindex="-1"-->
-                    <!--                            class="clickable header-routes__filter&#45;&#45;select header-routes__filter header-routes__filter-status main__button&#45;&#45;click"-->
+                    <!--                            class="clickable header-routes__filter--select header-routes__filter header-routes__filter-status main__button--click"-->
                     <!--                            name="chose-status">-->
                     <!--                        <option selected value="">Статус</option>-->
                     <!--                        <option style="color: red" value="header-routes__work">В работе</option>-->
@@ -202,157 +201,198 @@
                     <!--                        <option style="color: #e5e516" value="header-routes__completed">Сдал</option>-->
                     <!--                    </select>-->
 
-                    <div tabindex="-1" class="main__button--click header-routes__filter  class="route-status__btn" ">
-                        Статус
-                        <div class="route-status__content">
-                            <div class="">В работе</div>
-                            <div class="">Не в работе</div>
-                            <div class="">Ошибка</div>
-                            <div class="">Пауза</div>
-                            <div class="">Сдал</div>
+                    <div tabindex="-1" class="main__button--click header-routes__filter route-status">
+                    Статус
+                    <div class="route-status__content">
+                        <div class="route-status__btn">
+                            Статус
+                            <span class="hidden-input"></span>
+                        </div>
+                        <div style="color: #e06c00" class="route-status__btn">
+                            В работе
+                            <span class="hidden-input">started-#e06c00</span>
+                        </div>
+                        <div style="color: #6b6666" class="route-status__btn">
+                            Не в работе
+                            <span class="hidden-input">unstarted-#6b6666</span>
+                        </div>
+                        <div style="color: #d24242" class="route-status__btn">
+                            Ошибка
+                            <span class="hidden-input">error-#d24242</span>
+                        </div>
+                        <div style="color: #51a5e3" class="route-status__btn">
+                            Пауза
+                            <span class="hidden-input">paused-#51a5e3</span>
+                        </div>
+                        <div style="color: #00821d" class="route-status__btn">
+                            Сдал
+                            <span class="hidden-input">completed-#00821d</span>
+                        </div>
+                    </div>
+                </div>
+
+                    <div tabindex="-1" class="main__button--click header-routes__filter route-warning">
+                        Внимание!
+                        <div class="route-warning__content">
+                            <div class="route-warning__btn">
+                                Внимание!
+                                <span class="hidden-input"></span>
+                            </div>
+                            <div style="color: red" class="route-warning__btn">
+                                Красный
+                                <span class="hidden-input">red</span>
+                            </div>
+                            <div style="color: blue" class="route-warning__btn">
+                                Синий
+                                <span class="hidden-input">blue</span>
+                            </div>
+                            <div style="color: #e5e516" class="route-warning__btn">
+                                Желтый
+                                <span class="hidden-input">#e5e516</span>
+                            </div>
                         </div>
                     </div>
 
-                    <select tabindex="-1"
-                            class="clickable header-routes__filter--select header-routes__filter header-routes__filter-status main__button--click"
-                            name="chose-status">
-                        <option selected value="">Статус</option>
-                        <option value="started-#e06c00">В работе</option>
-                        <option value="unstarted-#6b6666">Не в работе</option>
-                        <option value="error-#d24242">Ошибка</option>
-                        <option value="paused-#51a5e3">Пауза</option>
-                        <option value="completed-#00821d">Сдал</option>
-                    </select>
-                    <select tabindex="-1"
-                            class="clickable header-routes__filter--select header-routes__filter header-routes__alert main__button--click"
-                            name="chose-color">
-                        <option selected value="">Внимание!</option>
-                        <option style="color: red" value="red">Красный</option>
-                        <option style="color: blue;" value="blue">Синий</option>
-                        <option style="color: #e5e516" value="#e5e516">Желтый</option>
-                    </select>
-                    <button tabindex="-1" class="main__button--click header-routes__filter header-routes__planned">В
-                        плане
-                    </button>
-                    <input tabindex="-1" type="date"
-                           class="main__button--click header-routes__filter header-routes__planned-date">
-                </div>
-
-                <div class="archive-block">
-                    <button tabindex="-1" class="main__button--click header-routes__filter header-routes__archived">В
-                        архиве
-                    </button>
-                    <label class="planned__label">От</label>
-                    <input tabindex="-1" type="date"
-                           class="main__button--click header-routes__filter header-routes__planned-date__from"
-                           name="archive_from">
-                    <label class="planned__label">До</label>
-                    <input tabindex="-1" type="date"
-                           class="main__button--click header-routes__filter header-routes__planned-date__to"
-                           name="archive_to">
-                </div>
+                <select tabindex="-1"
+                        class="clickable hidden-input header-routes__filter--select header-routes__filter header-routes__filter-status main__button--click"
+                        name="chose-status">
+                    <option selected value="">Статус</option>
+                    <option value="started-#e06c00">В работе</option>
+                    <option value="unstarted-#6b6666">Не в работе</option>
+                    <option value="error-#d24242">Ошибка</option>
+                    <option value="paused-#51a5e3">Пауза</option>
+                    <option value="completed-#00821d">Сдал</option>
+                </select>
+                <select tabindex="-1"
+                        class="clickable hidden-input header-routes__filter--select header-routes__filter header-routes__alert main__button--click"
+                        name="chose-color">
+                    <option selected value="">Внимание!</option>
+                    <option style="color: red" value="red">Красный</option>
+                    <option style="color: blue;" value="blue">Синий</option>
+                    <option style="color: #e5e516" value="#e5e516">Желтый</option>
+                </select>
+                <button tabindex="-1" class="main__button--click header-routes__filter header-routes__planned">В
+                    плане
+                </button>
+                <input tabindex="-1" type="date"
+                       class="main__button--click header-routes__filter header-routes__planned-date">
             </div>
-        </header>
 
-        <div class="main-table__data">
-            <ul class="main-table__header">
-                <li class="table__cell table__cell--top table__db">№</li>
-                <li class="table__cell table__cell--top table__timestamp">
-                    <label for="timestamp">Вход</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="timestamp" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="все"
-                            id="timestamp">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__files">
-                    <svg data-v-fa445770="" xmlns="http://www.w3.org/2000/svg" class="files__ico h-5 w-5 mx-auto"
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path data-v-fa445770="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </li>
-                <li class="table__cell table__cell--top table__use table__number">
-                    <label for="numbers">№ заказа</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="number" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="все"
-                            id="numbers">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__sample">Шаблон</li>
-                <li class="table__cell table__cell--top table__use table__client">
-                    <label for="clients">Клиент</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="client" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="clients"
-                            id="clients">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__use table__name">
-                    <label for="name">Наименование</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="name" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="name" id="name">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__use table__material">
-                    <label for="materials">Материалы</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="material" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="materials"
-                            id="materials">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__quantity">
-                    <label for="quantity">Тираж</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="quantity" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="quantity"
-                            id="quantity">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__issued">
-                    <label for="issued">Выдано</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="issued" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="issued"
-                            id="issued">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__m">
-                    <label for="m">М</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="m" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input" name="m"
-                            id="m">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__endtime">
-                    <label for="end_time">Дата сдачи</label>
-                    <input tabindex="-1" class="hidden__input filter__type" value="end_time" type="text">
-                    <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
-                            name="end_time"
-                            id="end_time">
-                        <option value="все">Все</option>
-                    </select>
-                </li>
-                <li class="table__cell table__cell--top table__routes">Маршруты</li>
-                <li class="table__cell table__cell--top table__p">П</li>
-                <li class="table__cell table__cell--top table__comment--top">Коммент</li>
-            </ul>
-
-            <div class="main__table main-table">
+            <div class="archive-block">
+                <button tabindex="-1" class="main__button--click header-routes__filter header-routes__archived">В
+                    архиве
+                </button>
+                <label class="planned__label">От</label>
+                <input tabindex="-1" type="date"
+                       class="main__button--click header-routes__filter header-routes__planned-date__from"
+                       name="archive_from">
+                <label class="planned__label">До</label>
+                <input tabindex="-1" type="date"
+                       class="main__button--click header-routes__filter header-routes__planned-date__to"
+                       name="archive_to">
             </div>
-        </div>
-    </main>
+</div>
+</header>
+
+<div class="main-table__data">
+    <ul class="main-table__header">
+        <li class="table__cell table__cell--top table__db">№</li>
+        <li class="table__cell table__cell--top table__timestamp">
+            <label for="timestamp">Вход</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="timestamp" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="все"
+                    id="timestamp">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__files">
+            <svg data-v-fa445770="" xmlns="http://www.w3.org/2000/svg" class="files__ico h-5 w-5 mx-auto"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path data-v-fa445770="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+        </li>
+        <li class="table__cell table__cell--top table__use table__number">
+            <label for="numbers">№ заказа</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="number" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="все"
+                    id="numbers">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__sample">Шаблон</li>
+        <li class="table__cell table__cell--top table__use table__client">
+            <label for="clients">Клиент</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="client" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="clients"
+                    id="clients">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__use table__name">
+            <label for="name">Наименование</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="name" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="name" id="name">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__use table__material">
+            <label for="materials">Материалы</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="material" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="materials"
+                    id="materials">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__quantity">
+            <label for="quantity">Тираж</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="quantity" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="quantity"
+                    id="quantity">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__issued">
+            <label for="issued">Выдано</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="issued" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="issued"
+                    id="issued">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__m">
+            <label for="m">М</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="m" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input" name="m"
+                    id="m">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__endtime">
+            <label for="end_time">Дата сдачи</label>
+            <input tabindex="-1" class="hidden__input filter__type" value="end_time" type="text">
+            <select tabindex="-1" class="table__filter main__button--select main__select hidden__input"
+                    name="end_time"
+                    id="end_time">
+                <option value="все">Все</option>
+            </select>
+        </li>
+        <li class="table__cell table__cell--top table__routes">Маршруты</li>
+        <li class="table__cell table__cell--top table__p">П</li>
+        <li class="table__cell table__cell--top table__comment--top">Коммент</li>
+    </ul>
+
+    <div class="main__table main-table">
+    </div>
+</div>
+</main>
 </div>
 
 

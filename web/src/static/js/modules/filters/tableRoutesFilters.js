@@ -55,6 +55,7 @@ export const tableRoutesFiltersHandler = () => {
   deleteBtn.addEventListener('click', () => orderDelBtn.click())
   archiveBtn.addEventListener('click', () => orderArchiveBtn.click())
 
+  // console.log(headerControlContent)
   headerControl.addEventListener('click', e => {
     headerControlContent.classList.add('header-control__content--active')
     headerControlContent.querySelectorAll('.header-control__content-btn').forEach(btn => btn.classList.add('hidden-input'))
@@ -107,6 +108,7 @@ export const tableRoutesFiltersHandler = () => {
   // })
   // headerFilters.addEventListener('mouseleave', checkFilters)
 
+  // console.log(routesStatusBtn)
   routesStatusBtn.addEventListener('change', e => {
     const value = e.target.value.split('-')
     if (value[0] !== '') {
@@ -139,6 +141,7 @@ export const tableRoutesFiltersHandler = () => {
   })
 
 
+  // console.log(alertStatusBtn)
   alertStatusBtn.addEventListener('change', e => {
     const value = e.target.value
     alertStatusBtn.style.color = value
@@ -193,6 +196,7 @@ export const tableRoutesFiltersHandler = () => {
     getOrders('get-old')
   })
 
+  // console.log(inPlanDate)
   inPlanDate.addEventListener('change', () => {
     state.inPlanDate = inPlanDate.value
 
@@ -255,8 +259,106 @@ export const tableRoutesFiltersHandler = () => {
   const routeStatus = document.querySelector('.route-status')
   const routeStatusContent = document.querySelector('.route-status__content')
 
+  routeStatusContent.querySelectorAll('.route-status__btn').forEach(btn => {
+    let data = btn.querySelector('.hidden-input').textContent
+    data = data.split('-')
+    // console.log(data)
+
+    btn.addEventListener('click', () => {
+      routesStatusBtn.querySelectorAll('option').forEach(opt => {
+        if (opt.value === data.join('-')) {
+          opt.setAttribute('selected', true)
+        } else {
+          opt.removeAttribute('selected')
+        }
+      })
+
+      routesStatusBtn.dispatchEvent(new Event('change'))
+
+      if (data[0] !== '') {
+          // border: 2px solid ${value[1]};
+        routeStatus.style.cssText = `
+          color: ${data[1]};
+        `
+      } else {
+        routeStatus.style.cssText = `
+          color: rgb(66, 66, 66);
+        `
+      }
+    })
+
+    btn.addEventListener('mouseenter', () => {
+
+      btn.style.cssText = `
+         background-color: ${data[1]};
+         color: white;
+      `
+    })
+
+    btn.addEventListener('mouseleave', () => {
+      btn.style.cssText = `
+         background-color: transparent;
+         color: ${data[1]};
+      `
+      // console.log(getComputedStyle(btn))
+    })
+  })
+
   routeStatus.addEventListener('click', e => {
-    console.log(routeStatusContent)
+    routeStatusContent.classList.toggle('route-status__content--active')
+    // console.log(routeStatusContent)
+  })
+
+
+  const routeWarning = document.querySelector('.route-warning')
+  const routeWarningContent = document.querySelector('.route-warning__content')
+
+  routeWarningContent.querySelectorAll('.route-warning__btn').forEach(btn => {
+    let data = btn.querySelector('.hidden-input').textContent
+
+    btn.addEventListener('click', () => {
+      alertStatusBtn.querySelectorAll('option').forEach(opt => {
+        if (opt.value === data) {
+          opt.setAttribute('selected', true)
+        } else {
+          opt.removeAttribute('selected')
+        }
+      })
+
+      alertStatusBtn.dispatchEvent(new Event('change'))
+
+      if (data !== '') {
+        // border: 2px solid ${value[1]};
+        routeWarning.style.cssText = `
+          color: ${data};
+        `
+      } else {
+        routeWarning.style.cssText = `
+          color: rgb(66, 66, 66);
+        `
+      }
+    })
+
+    btn.addEventListener('mouseenter', () => {
+
+      btn.style.cssText = `
+         background-color: ${data};
+         color: white;
+      `
+    })
+
+    btn.addEventListener('mouseleave', () => {
+      btn.style.cssText = `
+         background-color: transparent;
+         color: ${data};
+      `
+      // console.log(getComputedStyle(btn))
+    })
+  })
+
+  routeWarning.addEventListener('click', e => {
+    routeWarningContent.classList.toggle('route-warning__content--active')
+    // console.log(routeStatusContent)
   })
 }
 
