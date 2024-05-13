@@ -165,17 +165,18 @@ const chooseHandler = e => {
   parent.querySelectorAll('.table__data').forEach(item => {
     // console.log('bind listener to item!')
     // item.classList.remove('table__data--current')
-   try {
-     if (e.type === 'blur') {
-       if (item.classList.contains('dblclck')) {
-         item.removeEventListener('dblclick', doubler)
-         item.setAttribute('readonly', 'true')
-       }
-     }
-   } catch (e) {
+    try {
+      if (e.type === 'blur') {
+        if (item.classList.contains('dblclck')) {
+          item.removeEventListener('dblclick', doubler)
+          item.setAttribute('readonly', 'true')
+        }
+      }
+    } catch (e) {
 
-   }
+    }
 
+    let flag
     switch (action) {
       case 'add':
         if (e.target.classList.contains('dblclck')) {
@@ -197,6 +198,11 @@ const chooseHandler = e => {
           // }
 
           state['currentOrder'] = parent.querySelector('#db_id').value
+          if (!flag) {
+            const headerControl = document.querySelector('.header-button__control')
+            headerControl.click()
+            flag = true
+          }
         }
         break
 

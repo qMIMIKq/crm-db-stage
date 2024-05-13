@@ -132,12 +132,12 @@ export const drawUpdatedData = (d, data, filtered) => {
 
     const completedBlock = currentOrder.querySelector('.table__issued--done')
     if (completedBlock && !state['isArchive']) {
-      completedBlock.classList.add('tr')
-      completedBlock.classList.remove('table__data--opened')
+      // completedBlock.classList.add('tr')
+      // completedBlock.classList.remove('table__data--opened')
 
       completedBlock.insertAdjacentHTML(`afterend`, `
         <li class="table-body_cell table-body__helper hidden__input table__complete">
-            <input class="table__data table__issued--done main__button tr" tabindex="-1"
+            <input class="table__data table__issued--done main__button" tabindex="-1"
             readonly
             type="text"
             autocomplete="off"
@@ -150,6 +150,9 @@ export const drawUpdatedData = (d, data, filtered) => {
         const parent = e.target.closest('.table-form--old')
         let today = getTime()
         today = today.substring(0, today.length - 5).trim()
+        state['currentOrder'] = null
+        const headerControl = document.querySelector('.header-button__control')
+        headerControl.click()
 
         if (parent !== null) {
           parent.classList.remove('table-form--old')

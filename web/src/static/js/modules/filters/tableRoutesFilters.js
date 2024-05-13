@@ -55,8 +55,9 @@ export const tableRoutesFiltersHandler = () => {
   deleteBtn.addEventListener('click', () => orderDelBtn.click())
   archiveBtn.addEventListener('click', () => orderArchiveBtn.click())
 
-  headerControl.addEventListener('mouseenter', e => {
+  headerControl.addEventListener('click', e => {
     headerControlContent.classList.add('header-control__content--active')
+    headerControlContent.querySelectorAll('.header-control__content-btn').forEach(btn => btn.classList.add('hidden-input'))
 
     if (state.currentOrder) {
       currentForm = document.querySelector(`#form-${state.currentOrder}`)
@@ -74,10 +75,10 @@ export const tableRoutesFiltersHandler = () => {
         archiveBtn.classList.remove('hidden-input')
       }
 
-      console.log(currentForm)
+      // console.log(currentForm)
     }
   })
-  headerControl.addEventListener('mouseleave', check)
+  // headerControl.addEventListener('mouseleave', check)
   if (state.adminCheck || state.manCheck) {
   } else {
     headerControl.remove()
@@ -249,6 +250,13 @@ export const tableRoutesFiltersHandler = () => {
     state['routesFilters'].planned = true
 
     newAllFilter()
+  })
+
+  const routeStatus = document.querySelector('.route-status')
+  const routeStatusContent = document.querySelector('.route-status__content')
+
+  routeStatus.addEventListener('click', e => {
+    console.log(routeStatusContent)
   })
 }
 
