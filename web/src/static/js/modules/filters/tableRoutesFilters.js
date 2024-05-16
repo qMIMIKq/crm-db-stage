@@ -260,11 +260,17 @@ export const tableRoutesFiltersHandler = () => {
   const routeStatusContent = document.querySelector('.route-status__content')
 
   routeStatusContent.querySelectorAll('.route-status__btn').forEach(btn => {
-    let data = btn.querySelector('.hidden-input').textContent
+    let data = btn.querySelector('.route-status__btn--value').textContent
+    const dataText = btn.querySelector('.route-status__btn--text').textContent
+    const statusTextElem = routeStatus.querySelector('.route-status-text')
     data = data.split('-')
-    // console.log(data)
 
+    console.log(statusTextElem)
     btn.addEventListener('click', () => {
+      // console.log(btn.textContent.trim().trim().split(' '))
+      routeWarningContent.querySelector('.route-warning__btn--default').click()
+      routeStatusContent.classList.remove('route-status__content--active')
+      statusTextElem.textContent = dataText
       routesStatusBtn.querySelectorAll('option').forEach(opt => {
         if (opt.value === data.join('-')) {
           opt.setAttribute('selected', true)
@@ -304,8 +310,14 @@ export const tableRoutesFiltersHandler = () => {
     })
   })
 
-  routeStatus.addEventListener('click', e => {
-    routeStatusContent.classList.toggle('route-status__content--active')
+  routeStatus.addEventListener('mouseenter', e => {
+    routeStatusContent.classList.add('route-status__content--active')
+    routeWarningContent.classList.remove('route-warning__content--active')
+    // console.log(routeStatusContent)
+  })
+
+  routeStatus.addEventListener('mouseleave', e => {
+    routeStatusContent.classList.remove('route-status__content--active')
     // console.log(routeStatusContent)
   })
 
@@ -314,9 +326,14 @@ export const tableRoutesFiltersHandler = () => {
   const routeWarningContent = document.querySelector('.route-warning__content')
 
   routeWarningContent.querySelectorAll('.route-warning__btn').forEach(btn => {
-    let data = btn.querySelector('.hidden-input').textContent
+    let data = btn.querySelector('.route-warning__btn--value').textContent
+    const dataText = btn.querySelector('.route-warning__btn--text').textContent
+    const warningTextElem = routeWarning.querySelector('.route-warning-text')
 
     btn.addEventListener('click', () => {
+      routeStatusContent.querySelector('.route-status__btn--default').click()
+      routeWarningContent.classList.remove('route-warning__content--active')
+      warningTextElem.textContent = dataText
       alertStatusBtn.querySelectorAll('option').forEach(opt => {
         if (opt.value === data) {
           opt.setAttribute('selected', true)
@@ -356,8 +373,14 @@ export const tableRoutesFiltersHandler = () => {
     })
   })
 
-  routeWarning.addEventListener('click', e => {
-    routeWarningContent.classList.toggle('route-warning__content--active')
+  routeWarning.addEventListener('mouseenter', e => {
+    routeStatusContent.classList.remove('route-status__content--active')
+    routeWarningContent.classList.add('route-warning__content--active')
+    // console.log(routeStatusContent)
+  })
+
+  routeWarning.addEventListener('mouseleave', e => {
+    routeWarningContent.classList.remove('route-warning__content--active')
     // console.log(routeStatusContent)
   })
 }

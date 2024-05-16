@@ -151,8 +151,11 @@ export const drawUpdatedData = (d, data, filtered) => {
         let today = getTime()
         today = today.substring(0, today.length - 5).trim()
         state['currentOrder'] = null
-        const headerControl = document.querySelector('.header-button__control')
-        headerControl.click()
+        // const headerControl = document.querySelector('.header-button__control')
+        // headerControl.click()
+        document.querySelectorAll('.header-control__content-btn').forEach(btn => {
+          btn.classList.add('hidden-input')
+        })
 
         if (parent !== null) {
           parent.classList.remove('table-form--old')

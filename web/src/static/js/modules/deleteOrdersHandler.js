@@ -3,6 +3,7 @@ import {sendData} from "./sendData";
 import {getOrders} from "./getOrders";
 import {showModal} from "./modals/showModal";
 import {appAddr} from "../../../../../appAddr";
+import {newAllFilter} from "./filters/newAllFilter";
 
 const confirmDeleteOrderModal = `
     <div id='modal' style='z-index: 10000' class='modal modal--confirm bounceIn'>
@@ -83,6 +84,7 @@ export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = t
           const headerControl = document.querySelector('.header-button__control')
           headerControl.click()
           getOrders('get-all', true)
+          newAllFilter()
         })
       }, `Подвтердить удаление заказа №${id}?`)
     })

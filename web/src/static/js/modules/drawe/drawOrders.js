@@ -274,6 +274,9 @@ export const drawOrders = (insertPlace, position, d) => {
       let today = getTime()
       today = today.substring(0, today.length - 5).trim()
       state.currentOrder = null
+      document.querySelectorAll('.header-control__content-btn').forEach(btn => {
+        btn.classList.add('hidden-input')
+      })
 
       if (parent !== null) {
         parent.classList.remove('table-form--old')
