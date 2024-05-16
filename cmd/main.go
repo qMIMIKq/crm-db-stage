@@ -35,8 +35,8 @@ func buildFrontend(addr string) {
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
+
+	if err = cmd.Run(); err != nil {
 		log.Fatal().Err(err).Msg("error build web interface")
 	}
 }
