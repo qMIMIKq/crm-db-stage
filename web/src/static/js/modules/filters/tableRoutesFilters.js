@@ -265,7 +265,7 @@ export const tableRoutesFiltersHandler = () => {
     const statusTextElem = routeStatus.querySelector('.route-status-text')
     data = data.split('-')
 
-    console.log(statusTextElem)
+    // console.log(statusTextElem)
     btn.addEventListener('click', () => {
       // console.log(btn.textContent.trim().trim().split(' '))
       routeWarningContent.querySelector('.route-warning__btn--default').click()
