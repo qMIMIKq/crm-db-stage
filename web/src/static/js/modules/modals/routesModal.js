@@ -277,6 +277,7 @@ const issuedModal = `
 `
 
 const drawLogs = (data) => {
+  console.log('draw logs')
   const logsList = document.querySelector('.section-logs__list')
   const logsItems = logsList.querySelectorAll('.section-logs__item')
   if (logsItems !== null) {
@@ -904,9 +905,60 @@ export const triggerRoutesModal = (e, page = 'main') => {
           }
         })
     } else {
+      sendData(`${appAddr}/api/routes/get-route`, 'POST', Number(routeInfo.route_id))
+        .then(resp => {
+          return resp.json()
+        })
+        .then(data => {
+          let comments = data.data['comments']
+          console.log(comments)
+          if (comments) {
+            comments = comments.map(c => `${c['date']}    ${c['value']}`)
+            routeInfo['comments'] = data.data.comments
+            comments = comments.join('---')
+            visibleLogs.value = comments
+
+            comments = comments.split('---')
+            comments = comments.filter(c => c.includes('REPORTMSG'))
+            modalElem.querySelector('#issued__all').value = comments.join('---')
+            drawLogs(visibleLogs)
+          }
+
+          let plans = data.data['db_plan']
+          if (plans) {
+            let today = getTime()
+            today = today.substring(0, today.length - 5).trim()
+            const todayDate = new Date(today)
+
+            dbAddedDates = plans
+            planDateInput.value = 'В плане'
+
+            dbAddedDates.map(dateInfo => {
+              dateInfo['queues'] = dateInfo['queues'].split(', ')
+              dateInfo['date'] = dateInfo['date'].split('T')[0]
+
+              if (today === dateInfo['date']) {
+                planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
+              }
+
+              const dateInfoDate = new Date(dateInfo['date'])
+              if (dateInfoDate.getTime() >= todayDate.getTime()) {
+                checkPlan = true
+              }
+
+              addedDates[dateInfo['date']] = {
+                'divider': dateInfo.divider,
+                'queues': dateInfo.queues
+              }
+            })
+          }
+
+          console.log(data)
+        })
+
       console.log(routeInfo['time_of_creation'])
       planDateInput.removeAttribute('disabled')
-      let comments = routeInfo['comments']
+      // let comments = routeInfo['comments']
       if (routeInfo['last_comment']) {
         document.querySelector('#last_comment').value = routeInfo['last_comment']
       }
@@ -929,34 +981,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
       // if (planned) {
       //   planDateInput.value = 'В планировании'
       // }
-
-      if (routeInfo['db_plan']) {
-        let today = getTime()
-        today = today.substring(0, today.length - 5).trim()
-        const todayDate = new Date(today)
-
-        dbAddedDates = routeInfo['db_plan']
-        planDateInput.value = 'В плане'
-
-        dbAddedDates.map(dateInfo => {
-          dateInfo['queues'] = dateInfo['queues'].split(', ')
-          dateInfo['date'] = dateInfo['date'].split('T')[0]
-
-          if (today === dateInfo['date']) {
-            planDateInput.style.border = '2px solid rgba(0, 130, 29, 1)'
-          }
-
-          const dateInfoDate = new Date(dateInfo['date'])
-          if (dateInfoDate.getTime() >= todayDate.getTime()) {
-            checkPlan = true
-          }
-
-          addedDates[dateInfo['date']] = {
-            'divider': dateInfo.divider,
-            'queues': dateInfo.queues
-          }
-        })
-      }
 
       console.log(checkPlan)
 
@@ -1101,16 +1125,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
         planDateInput.classList.add('route-type__finish')
       } else {
         planDateInput.classList.remove('route-type__finish')
-      }
-
-      if (comments) {
-        comments = comments.map(c => `${c['date']}    ${c['value']}`)
-        comments = comments.join('---')
-        visibleLogs.value = comments
-
-        comments = comments.split('---')
-        comments = comments.filter(c => c.includes('REPORTMSG'))
-        modalElem.querySelector('#issued__all').value = comments.join('---')
       }
 
       activateNextStage('section-finish__sub')
@@ -1364,7 +1378,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
     }
   })
 
-  drawLogs(visibleLogs)
   startBtn.addEventListener('click', () => {
     setDateToInput('start-route__time')
     if (!pauseTimeInput.value) {
@@ -1465,6 +1478,8 @@ export const triggerRoutesModal = (e, page = 'main') => {
       })
     }
 
+    // console.log(obj)
+
     obj['plot'] = routeForm.querySelector('#route__plot').value
     obj['comments'] = createReportObj(obj['comments'])
     obj['error_msg'] = errInput.value
@@ -1483,6 +1498,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
     obj['adjustment'] = dayQuantityInfo.adjustment
     obj['need_shifts'] = Number(shifts.value)
     obj['alert_color'] = alertColor.value
+    obj['is_updated'] = true
     // console.log(alertColor.value)
     // obj['planned'] = !!(dbID && planned)
 

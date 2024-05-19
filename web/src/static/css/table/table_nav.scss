@@ -279,6 +279,7 @@
 
 .nav-control__search-btn {
   margin-right: 10px;
+  width: 105px;
 }
 
 .header-control__btn-delete-center {
@@ -289,9 +290,38 @@
 .header-control__btn-archive-center {
   transform: translateY(0.6px);
 }
+
 //
 .header-button__add-center {
   transition: color 0.3s linear;
   //position: relative;
   //transform: translateY(0);
+}
+
+.route-plan__block {
+  display: flex;
+  align-items: center;
+  background: white;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+}
+
+.header-routes__planned {
+  width: 80px;
+  box-shadow: none;
+  margin-right: 0 !important;
+
+  &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  &-date {
+    box-shadow: none;
+
+    &:focus {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  }
 }

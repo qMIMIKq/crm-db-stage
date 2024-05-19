@@ -113,7 +113,7 @@
                         <!--                            Копировать-->
                     </button>
                     <button data-title='Удалить' id="header-control__btn-delete" tabindex="-1"
-                                class="main__button--click hidden-input header-control__content-btn">
+                            class="main__button--click hidden-input header-control__content-btn">
                         <div class="header-control__btn-delete-center">&#x2715</div>
                     </button>
                     <button data-title='Сдать' id="header-control__btn-archive" tabindex="-1"
@@ -284,11 +284,15 @@
                         <option style="color: blue;" value="blue">Синий</option>
                         <option style="color: #e5e516" value="#e5e516">Жёлтый</option>
                     </select>
-                    <button tabindex="-1" class="main__button--click header-routes__filter header-routes__planned">В
-                        плане
-                    </button>
-                    <input tabindex="-1" type="date"
-                           class="main__button--click header-routes__filter header-routes__planned-date">
+
+                    <div class="route-plan__block">
+                        <button tabindex="-1" class="main__button--click header-routes__filter header-routes__planned">В
+                            плане
+                        </button>
+                        <input tabindex="-1" type="date"
+                               class="main__button--click header-routes__filter header-routes__planned-date">
+                    </div>
+
                 </div>
 
                 <div class="archive-block">

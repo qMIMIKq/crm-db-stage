@@ -158,7 +158,7 @@ func (t *TimeReportsPG) CalcTimeDataForReports(dateReportInfo *DateTimeInfo) *Re
 	if dateReportInfo.TimeOfStart != "" {
 		beforeStart = t.CalcTimeDifference(dateReportInfo.TimeOfCreation, dateReportInfo.TimeOfStart, dateReportInfo)
 		resultReportTimeInfo.BeforeStart = beforeStart
-		log.Info().Caller().Msgf("before start %s", beforeStart.String())
+		//log.Info().Caller().Msgf("before start %s", beforeStart.String())
 	}
 
 	var fromStartToEnd time.Duration
@@ -166,7 +166,7 @@ func (t *TimeReportsPG) CalcTimeDataForReports(dateReportInfo *DateTimeInfo) *Re
 		//log.Info().Msgf("calc end")
 		fromStartToEnd = t.CalcTimeDifference(dateReportInfo.TimeOfStart, dateReportInfo.TimeOfEnd, dateReportInfo)
 		resultReportTimeInfo.FromStartToEnd = fromStartToEnd
-		log.Info().Caller().Msgf("from start to end %s", fromStartToEnd)
+		//log.Info().Caller().Msgf("from start to end %s", fromStartToEnd)
 	}
 
 	var pausesTime time.Duration
@@ -217,7 +217,7 @@ func (t *TimeReportsPG) CalcTimeDifference(startTimeStr string, endTimeStr strin
 	lastShiftStartStr := strings.Split(endTimeStr, " ")[0]
 
 	if firstShiftEndStr != lastShiftStartStr {
-		log.Info().Caller().Msgf("no one day shift work")
+		//log.Info().Caller().Msgf("no one day shift work")
 		checkShifts += 2
 	}
 
@@ -248,7 +248,7 @@ func (t *TimeReportsPG) CalcTimeDifference(startTimeStr string, endTimeStr strin
 
 	var result time.Duration
 	if dateInfo.CheckShifts == 2 {
-		log.Info().Caller().Msgf("first shift %v / last shift %v", dateInfo.FirstDayTime.String(), dateInfo.LastDayTime.String())
+		//log.Info().Caller().Msgf("first shift %v / last shift %v", dateInfo.FirstDayTime.String(), dateInfo.LastDayTime.String())
 		if dateInfo.FirstDayTime > 0 {
 			result += dateInfo.FirstDayTime
 		}
@@ -277,7 +277,7 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 	if err := t.db.Get(&timeReportPlot, reportTimePlotsGetQuery, route.Plot); err != nil {
 		log.Err(err).Caller().Msg("error is")
 	}
-	log.Info().Interface("time report plot", timeReportPlot).Msg("report is")
+	//log.Info().Interface("time report plot", timeReportPlot).Msg("report is")
 
 	t.db.Exec(`DELETE FROM time_reports_plots WHERE route_plot = $1`, route.Plot)
 
@@ -297,8 +297,8 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 		checkStringArr := strings.Split(fixStartString, " ")
 		check := strings.Split(checkStringArr[1], ":")
 		fixStartString = fmt.Sprintf(`%v %v:%v`, checkStringArr[0], check[0], check[1])
-		log.Info().Msgf("fix string %v", fixStartString)
-		prevStart, err := time.Parse(t.layout, fixStartString)
+		//log.Info().Msgf("fix string %v", fixStartString)
+		_, err := time.Parse(t.layout, fixStartString)
 		if err != nil {
 			log.Err(err).Caller().Msg("error")
 		}
@@ -307,11 +307,11 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 		fixEndString = strings.ReplaceAll(fixEndString, "-", ".")
 
 		checkStringArr = strings.Split(fixEndString, " ")
-		log.Info().Interface("?", checkStringArr).Msg("check string")
+		//log.Info().Interface("?", checkStringArr).Msg("check string")
 		check = strings.Split(checkStringArr[1], ":")
 		fixEndString = fmt.Sprintf(`%v %v:%v`, checkStringArr[0], check[0], check[1])
 
-		log.Info().Msgf("fix string end %v", fixEndString)
+		//log.Info().Msgf("fix string end %v", fixEndString)
 
 		prevEnd, err := time.Parse(t.layout, fixEndString)
 		if err != nil {
@@ -326,29 +326,29 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 		checkEnd := false
 		currentEnd, err := time.Parse(t.layout, strings.ReplaceAll(route.EndTime, "-", "."))
 		if err != nil {
-			log.Err(err).Caller().Msg("error is")
+			//log.Err(err).Caller().Msg("error is")
 			checkEnd = false
 		} else {
 			checkEnd = true
 		}
 
-		log.Info().Msgf("prev start %v / prev end %v", prevStart, prevEnd)
-		log.Info().Msgf("current start %v / current end %v", currentStart, currentEnd)
+		//log.Info().Msgf("prev start %v / prev end %v", prevStart, prevEnd)
+		//log.Info().Msgf("current start %v / current end %v", currentStart, currentEnd)
 
 		var endString string
 		if checkEnd {
-			log.Info().Msg("check end")
+			//log.Info().Msg("check end")
 
 			if currentEnd.Unix() > prevEnd.Unix() {
-				log.Info().Caller().Msgf("current end is bigger")
+				//log.Info().Caller().Msgf("current end is bigger")
 
 				endString = route.EndTime
 			} else {
-				log.Info().Caller().Msgf("current end is smaller")
+				//log.Info().Caller().Msgf("current end is smaller")
 				endString = timeReportPlot.LastEnd
 			}
 		} else {
-			log.Info().Caller().Msg("no end")
+			//log.Info().Caller().Msg("no end")
 
 			endString = route.StartTime
 		}
@@ -356,7 +356,7 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 		var dateInfo DateTimeInfo
 		if currentStart.Unix() > prevEnd.Unix() {
 			res := t.CalcTimeDifference(fixEndString, route.StartTime, &dateInfo)
-			log.Info().Caller().Msgf("res is %v", res.String())
+			//log.Info().Caller().Msgf("res is %v", res.String())
 
 			var newTotal time.Duration
 			if timeReportPlot.TotalExpectation != "" {
@@ -370,13 +370,13 @@ func (t *TimeReportsPG) CreateTimeReportsPlotReport(route *domain.Route) {
 				newTotal = res
 			}
 
-			log.Info().Msgf("i am in if %v", endString)
+			//log.Info().Msgf("i am in if %v", endString)
 			if _, err := t.db.Exec(reportTimePlotsQuery, route.Plot, route.StartTime, endString, "", res.String(), newTotal.String(), ""); err != nil {
 				log.Err(err).Caller().Msg("error")
 			}
 		} else {
 
-			log.Info().Msgf("i am in else %v", endString)
+			//log.Info().Msgf("i am in else %v", endString)
 
 			if _, err := t.db.Exec(reportTimePlotsQuery, route.Plot, timeReportPlot.LastStart, endString, "", timeReportPlot.CurrentExpectation, timeReportPlot.TotalExpectation, ""); err != nil {
 				log.Err(err).Caller().Msg("error")
@@ -429,15 +429,15 @@ func (t *TimeReportsPG) GetTimeReports(datesRange *domain.ReportTime) []domain.T
 	//		LIMIT 1
 	//`)
 
-	for plot := range plots {
-		log.Info().Caller().Msgf("plot %v", plot)
-
-		//var route domain.Route
-		//if err := t.db.Get(&route, queryPrevRoute, datesRange.From, plot); err != nil {
-		//	log.Err(err).Caller().Msg("error is")
-		//}
-		//log.Info().Interface("route", route).Msg("prev route")
-	}
+	//for plot := range plots {
+	//	//log.Info().Caller().Msgf("plot %v", plot)
+	//
+	//	//var route domain.Route
+	//	//if err := t.db.Get(&route, queryPrevRoute, datesRange.From, plot); err != nil {
+	//	//	log.Err(err).Caller().Msg("error is")
+	//	//}
+	//	//log.Info().Interface("route", route).Msg("prev route")
+	//}
 
 	var data []domain.TimeReportPlot
 	if err := t.db.Select(&data, `SELECT * FROM time_reports_plots`); err != nil {

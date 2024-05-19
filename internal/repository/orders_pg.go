@@ -123,7 +123,15 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 		onlyOneFlag := false
 		err = o.reportsPG.RemoveForUpdateReports(order.ID)
+
+	routesLoop:
 		for name, route := range order.Routes {
+			if !route.IsUpdated {
+				//log.Info().Msgf("not updated route %v", route.RoutePosition)
+				continue routesLoop
+			}
+			log.Info().Caller().Msgf("updated route %v", route.RoutePosition)
+
 			var routeID int
 			routePos := strings.Split(name, "-")[1]
 
@@ -135,6 +143,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 			if check {
 				var planDates []string
 				for _, info := range route.AddedDates {
+					//log.Info().Msgf("added date is %v", info.Date)
 					planDates = append(planDates, info.Date)
 				}
 
@@ -843,7 +852,12 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 
 		var routeID int
 		onlyOneFlag := false
+		//routesLoop:
 		for name, route := range order.Routes {
+			//if !route.IsUpdated {
+			//	continue routesLoop
+			//}
+
 			routePos := strings.Split(name, "-")[1]
 			//log.Info().Msgf("route %v / theor end %v", route.Plot, route.TheorEnd)
 
@@ -1342,43 +1356,43 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	}
 
 	queryFiles := fmt.Sprintf(`
-		SELECT file_name FROM files WHERE order_id = $1
-	`)
-
+			SELECT file_name FROM files WHERE order_id = $1
+		`)
+	//
 	queryComments := fmt.Sprintf(`
-		SELECT comment_text FROM comments WHERE order_id = $1
-	`)
-
+			SELECT comment_text FROM comments WHERE order_id = $1
+		`)
+	//
 	queryRoutes := fmt.Sprintf(`
-		SELECT *
-	   FROM routes
-	  WHERE order_id = $1
-	`)
-
-	queryRouteComments := fmt.Sprintf(`
-		SELECT date, value
-		  FROM route_comments
-		 WHERE route_id = $1
-    ORDER BY comment_id
-	`)
-
-	queryRouteIssuedToday := fmt.Sprintf(`
-		SELECT issued_plan
-	   FROM reports
-	  WHERE route_id = $1 AND report_date = $2
-	`)
-
-	queryRoutePlan := fmt.Sprintf(`
-		SELECT plan_date, divider, queues
-		  FROM plans
-    WHERE route_id = $1
---      AND plan_date >= $2
-		 ORDER BY plan_date
-	`)
-
-	queryRouteTimeReports := fmt.Sprintf(`
-		SELECT * FROM time_reports WHERE route_id = $1
-	`)
+			SELECT *
+		   FROM routes
+		  WHERE order_id = $1
+		`)
+	//
+	//	queryRouteComments := fmt.Sprintf(`
+	//		SELECT date, value
+	//		  FROM route_comments
+	//		 WHERE route_id = $1
+	//    ORDER BY comment_id
+	//	`)
+	//
+	//	queryRouteIssuedToday := fmt.Sprintf(`
+	//		SELECT issued_plan
+	//	   FROM reports
+	//	  WHERE route_id = $1 AND report_date = $2
+	//	`)
+	//
+	//	queryRoutePlan := fmt.Sprintf(`
+	//		SELECT plan_date, divider, queues
+	//		  FROM plans
+	//    WHERE route_id = $1
+	//--      AND plan_date >= $2
+	//		 ORDER BY plan_date
+	//	`)
+	//
+	//	queryRouteTimeReports := fmt.Sprintf(`
+	//		SELECT * FROM time_reports WHERE route_id = $1
+	//	`)
 
 	//queryRouteBusyPlan := fmt.Sprintf(`
 	//	SELECT plan_date, divider, queues
@@ -1417,7 +1431,7 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 		}
 	}
 
-	today := time.Now().Format("2006-01-02")
+	//today := time.Now().Format("2006-01-02")
 	//check := make(chan bool)
 	for _, order := range orders {
 		//go o.getOrderSubInfo(order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued, &err, check)
@@ -1436,39 +1450,41 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 			log.Err(err).Caller().Msg("error is")
 		}
 
-		for _, route := range order.DbRoutes {
-			err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
-			if err != nil {
-				log.Err(err).Caller().Msg("error is")
-			}
-
-			o.db.Get(&route.IssuedToday, queryRouteIssuedToday, route.RouteID, today)
-
-			err = o.db.Select(&route.DBPlanDates, queryRoutePlan, route.RouteID)
-			if err != nil {
-				log.Err(err).Caller().Msg("error is")
-			}
-
-			for _, dateInfo := range route.DBPlanDates {
-				var newAdded domain.DateInfo
-
-				newAdded.Date = dateInfo.PlanDate
-				newAdded.DateInfo.Divider = dateInfo.Divider
-				newAdded.DateInfo.Queues = strings.Split(dateInfo.Queues, ", ")
-
-				route.AddedDates = append(route.AddedDates, newAdded)
-			}
-
-			if err := o.db.Get(&route.TimeReportsInfo, queryRouteTimeReports, route.RouteID); err != nil {
-				//log.Err(err).Caller().Msg("error is")
-			}
-
-			//err = o.db.Select(&route.BusyDates, queryRouteBusyPlan, route.Plot, today, route.RouteID)
-			//if err != nil {
-			//	log.Err(err).Caller().Msg("error is")
-			//}
-		}
+		//log.Info().Msgf("getting routes")
+		//for _, route := range order.DbRoutes {
+		//	err = o.db.Select(&route.Comments, queryRouteComments, route.RouteID)
+		//	if err != nil {
+		//		log.Err(err).Caller().Msg("error is")
+		//	}
+		//
+		//	o.db.Get(&route.IssuedToday, queryRouteIssuedToday, route.RouteID, today)
+		//
+		//	err = o.db.Select(&route.DBPlanDates, queryRoutePlan, route.RouteID)
+		//	if err != nil {
+		//		log.Err(err).Caller().Msg("error is")
+		//	}
+		//
+		//	for _, dateInfo := range route.DBPlanDates {
+		//		var newAdded domain.DateInfo
+		//
+		//		newAdded.Date = dateInfo.PlanDate
+		//		newAdded.DateInfo.Divider = dateInfo.Divider
+		//		newAdded.DateInfo.Queues = strings.Split(dateInfo.Queues, ", ")
+		//
+		//		route.AddedDates = append(route.AddedDates, newAdded)
+		//	}
+		//
+		//	if err := o.db.Get(&route.TimeReportsInfo, queryRouteTimeReports, route.RouteID); err != nil {
+		//		//log.Err(err).Caller().Msg("error is")
+		//	}
+		//
+		//	//err = o.db.Select(&route.BusyDates, queryRouteBusyPlan, route.Plot, today, route.RouteID)
+		//	//if err != nil {
+		//	//	log.Err(err).Caller().Msg("error is")
+		//	//}
+		//}
 	}
+	//log.Info().Msgf("returning routes")
 
 	//log.Info().Msg("RETURNING orders")
 	return orders, err

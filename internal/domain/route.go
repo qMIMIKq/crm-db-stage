@@ -38,6 +38,7 @@ type Route struct {
 	AlertColor      string           `json:"alert_color" db:"alert_color"`
 	TimeReportsInfo TimeReportInfoDB `json:"time_reports_info"`
 	TimeOfCreation  interface{}      `json:"time_of_creation" db:"time_of_creation"`
+	IsUpdated       bool             `json:"is_updated" db:"is_updated"`
 }
 
 type DbPlanInfo struct {

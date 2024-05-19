@@ -78,7 +78,7 @@ func (p *PlanningPG) CreatePlanningObject(route *domain.Route, order *domain.Ord
 	var planningID int
 	err := p.db.Get(&planningID, checkQuery, id, routeID)
 	if err != nil {
-		log.Err(err).Msg("error getting old plan")
+		//log.Err(err).Msg("error getting old plan")
 	}
 
 	layout := "2006-01-02"
