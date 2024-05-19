@@ -363,11 +363,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						//log.Info().Msgf("total %v", totalForPlan)
 
 						if report.CurrentShift == 1 && !checkTheor {
-							theorAdjustment = strconv.Itoa(route.Adjustment)
+							theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 							checkTheor = true
 						}
 					} else if !checkTheor {
-						theorAdjustment = strconv.Itoa(route.Adjustment)
+						theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 						//checkTheor = true
 					}
 
@@ -680,11 +680,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						//log.Info().Msgf("total %v", totalForPlan)
 
 						if report.CurrentShift == 1 && !checkTheor {
-							theorAdjustment = strconv.Itoa(route.Adjustment)
+							theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 							checkTheor = true
 						}
 					} else if !checkTheor {
-						theorAdjustment = strconv.Itoa(route.Adjustment)
+						theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 						//checkTheor = true
 					}
 
@@ -1033,11 +1033,11 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 					//log.Info().Msgf("total %v", totalForPlan)
 
 					if report.CurrentShift == 1 && !checkTheor {
-						theorAdjustment = strconv.Itoa(route.Adjustment)
+						theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 						checkTheor = true
 					}
 				} else if !checkTheor {
-					theorAdjustment = strconv.Itoa(route.Adjustment)
+					theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 					//checkTheor = true
 				}
 

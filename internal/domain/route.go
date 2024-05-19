@@ -30,9 +30,9 @@ type Route struct {
 	PlanDates       string           `db:"plan_dates" json:"plan_dates"`
 	DBPlanDates     []DbPlanInfo     `json:"db_plan"`
 	BusyDates       []DbPlanInfo     `json:"busy_dates"`
-	Up              int              `json:"up" db:"up"`
+	Up              float64          `json:"up" db:"up"`
 	Time            float64          `json:"time" db:"time"`
-	Adjustment      int              `json:"adjustment" db:"adjustment"`
+	Adjustment      float64          `json:"adjustment" db:"adjustment"`
 	Shift           string           `json:"shift" db:"shift"`
 	NeedShifts      int              `json:"need_shifts" db:"need_shifts"`
 	AlertColor      string           `json:"alert_color" db:"alert_color"`

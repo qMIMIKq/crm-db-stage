@@ -6,7 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -333,11 +332,11 @@ func (p *PlansPG) AutoShiftPlan(shift *domain.PlanShift) error {
 				log.Info().Msgf("total %v", totalForPlan)
 
 				if report.CurrentShift == 1 && !checkTheor {
-					theorAdjustment = strconv.Itoa(route.Adjustment)
+					theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 					checkTheor = true
 				}
 			} else if !checkTheor {
-				theorAdjustment = strconv.Itoa(route.Adjustment)
+				theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 				//checkTheor = true
 			}
 
@@ -691,11 +690,11 @@ func (p *PlansPG) ShiftPlanAfterEnd(route *domain.Route) error {
 				log.Info().Msgf("total %v", totalForPlan)
 
 				if report.CurrentShift == 1 && !checkTheor {
-					theorAdjustment = strconv.Itoa(route.Adjustment)
+					theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 					checkTheor = true
 				}
 			} else if !checkTheor {
-				theorAdjustment = strconv.Itoa(route.Adjustment)
+				theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 				//checkTheor = true
 			}
 
@@ -1032,11 +1031,11 @@ func (p *PlansPG) ShiftPlan(shift *domain.PlanShift) error {
 				log.Info().Msgf("total %v", totalForPlan)
 
 				if report.CurrentShift == 1 && !checkTheor {
-					theorAdjustment = strconv.Itoa(route.Adjustment)
+					theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 					checkTheor = true
 				}
 			} else if !checkTheor {
-				theorAdjustment = strconv.Itoa(route.Adjustment)
+				theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 				//checkTheor = true
 			}
 
@@ -1312,11 +1311,11 @@ func (p *PlansPG) UpdatePlan(data *domain.PlanData) error {
 			log.Info().Msgf("total %v", totalForPlan)
 
 			if report.CurrentShift == 1 && !checkTheor {
-				theorAdjustment = strconv.Itoa(route.Adjustment)
+				theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 				checkTheor = true
 			}
 		} else if !checkTheor {
-			theorAdjustment = strconv.Itoa(route.Adjustment)
+			theorAdjustment = fmt.Sprintf("%v", route.Adjustment)
 			//checkTheor = true
 		}
 

@@ -12,7 +12,7 @@ const shiftsModal = `
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">УП</label>
           <input 
-            placeholder="УП"
+            placeholder="0"
             type='number'
             class='route__input search-orders__input main__input'
             name='up' 
@@ -22,7 +22,7 @@ const shiftsModal = `
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">Наладка</label>
           <input 
-            placeholder="Наладка"
+            placeholder="0"
             type='number'
             class='route__input search-orders__input main__input'
             name='adjustment' 
@@ -32,7 +32,7 @@ const shiftsModal = `
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">На одну деталь</label>
           <input 
-            placeholder="На одну деталь"
+            placeholder="0"
             type='number'
             class='route__input search-orders__input main__input'
             name='time' 
@@ -55,9 +55,9 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
 
   up.focus()
 
-  up.value = dayQuantityInfo.up
-  adjustment.value = dayQuantityInfo.adjustment
-  time.value = dayQuantityInfo.time
+  up.value = dayQuantityInfo.up || ''
+  adjustment.value = dayQuantityInfo.adjustment || ''
+  time.value = dayQuantityInfo.time || ''
 
   let checkChange = false
 

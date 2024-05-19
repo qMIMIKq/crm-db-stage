@@ -3857,7 +3857,8 @@ const tableRoutesFiltersHandler = () => {
     const dataText = btn.querySelector('.route-status__btn--text').textContent;
     const statusTextElem = routeStatus.querySelector('.route-status-text');
     data = data.split('-');
-    console.log(statusTextElem);
+
+    // console.log(statusTextElem)
     btn.addEventListener('click', () => {
       // console.log(btn.textContent.trim().trim().split(' '))
       routeWarningContent.querySelector('.route-warning__btn--default').click();
@@ -4496,7 +4497,7 @@ const shiftsModal = `
         <div class="modal_content-block">
           <label class="search-orders__label" for="search-orders__client">УП</label>
           <input 
-            placeholder="УП"
+            placeholder="0"
             type='number'
             class='route__input search-orders__input main__input'
             name='up' 
@@ -4506,7 +4507,7 @@ const shiftsModal = `
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">Наладка</label>
           <input 
-            placeholder="Наладка"
+            placeholder="0"
             type='number'
             class='route__input search-orders__input main__input'
             name='adjustment' 
@@ -4516,7 +4517,7 @@ const shiftsModal = `
         <div class="modal_content-block">
         <label class="search-orders__label" for="search-orders__client">На одну деталь</label>
           <input 
-            placeholder="На одну деталь"
+            placeholder="0"
             type='number'
             class='route__input search-orders__input main__input'
             name='time' 
@@ -4536,9 +4537,9 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
   const time = modal.querySelector('#time');
   const okBtn = modal.querySelector('.confirm__button--search');
   up.focus();
-  up.value = dayQuantityInfo.up;
-  adjustment.value = dayQuantityInfo.adjustment;
-  time.value = dayQuantityInfo.time;
+  up.value = dayQuantityInfo.up || '';
+  adjustment.value = dayQuantityInfo.adjustment || '';
+  time.value = dayQuantityInfo.time || '';
   let checkChange = false;
   [up, adjustment, time].forEach(input => input.addEventListener('change', () => {
     checkChange = true;
