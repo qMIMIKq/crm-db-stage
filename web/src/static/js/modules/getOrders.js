@@ -57,13 +57,17 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     routesBlock.classList.remove('hidden__input')
   }
 
+  console.log(state.clientCheck)
+
   const params = {
     'order_old': state.isArchive,
     'archive_from': archiveFrom.value,
     'archive_to': archiveTo.value,
     'update_only': updateOnly,
     'update_time': state['maxTime'],
-    'start_time': state['startTime']
+    'start_time': state['startTime'],
+    'is_client': state.clientCheck,
+    'client_name': state.clientName,
   }
 
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))

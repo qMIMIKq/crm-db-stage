@@ -133,6 +133,9 @@ if (userInf) {
   state['techCheck'] = userInf.groupId === '3';
   state['operCheck'] = userInf.groupId === '5';
   state['manCheck'] = userInf.groupId === '4';
+  state['clientCheck'] = userInf.groupId === '6';
+  state['clientName'] = userInf.name;
+  console.log(userInf);
   const admManCheck = state['adminCheck'] || state['manCheck'];
   const admTechCheck = state['adminCheck'] || state['techCheck'];
   const admManTechCheck = admManCheck || state['techCheck'];

@@ -1339,9 +1339,15 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	} else if params.Planning {
 
 	} else {
+		var clientName string
+		if params.IsClient {
+			clientName = fmt.Sprintf(`AND order_client = '%s'`, params.ClientName)
+		}
+
 		query = fmt.Sprintf(`
-			SELECT * FROM orders WHERE completed = false ORDER BY order_id ASC;
-		`)
+			SELECT * FROM orders WHERE completed = false %s ORDER BY order_id ASC;
+		`, clientName)
+
 	}
 
 	if params.UpdateOnly {

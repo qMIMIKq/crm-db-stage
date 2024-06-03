@@ -33,6 +33,8 @@ type GetOrder struct {
 	UpdateOnly  bool   `json:"update_only"`
 	UpdateTime  string `json:"update_time"`
 	StartTime   string `json:"start_time"`
+	IsClient    bool   `json:"is_client"`
+	ClientName  string `json:"client_name"`
 }
 
 func (o *Order) SetFiles(file string) {

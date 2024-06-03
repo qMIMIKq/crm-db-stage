@@ -1,5 +1,3 @@
-import {log10} from "chart.js/helpers";
-
 const enterHelper = e => {
   const elem = e.target
   const table = document.querySelector('.main-table')
