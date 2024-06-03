@@ -149,6 +149,7 @@ export const tableRoutesFiltersHandler = () => {
     if (value === '') {
       alertStatusBtn.classList.remove('route__filter--chosen')
       state['routesFilters'] = {}
+      state.routesStatusFilter = false
     } else {
       routesStatusBtn.value = ''
       routesStatusBtn.style.cssText = `
@@ -163,6 +164,7 @@ export const tableRoutesFiltersHandler = () => {
       alertStatusBtn.classList.add('route__filter--chosen')
       state['routesFilters'] = {}
       state['routesFilters'].alert = true
+      state.routesStatusFilter = true
     }
 
     newAllFilter()
@@ -282,7 +284,7 @@ export const tableRoutesFiltersHandler = () => {
       routesStatusBtn.dispatchEvent(new Event('change'))
 
       if (data[0] !== '') {
-          // border: 2px solid ${value[1]};
+        // border: 2px solid ${value[1]};
         routeStatus.style.cssText = `
           color: ${data[1]};
         `

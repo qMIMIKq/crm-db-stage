@@ -1,5 +1,3 @@
-import {appAddr} from "../../../../../appAddr";
-
 export const userInf = JSON.parse(localStorage.getItem('user'))
 
 let state = {
@@ -55,6 +53,7 @@ let state = {
     // 'planned': false,
     // 'alert': false
   },
+  'routesStatusFilter': false,
   'reports': [],
   'reportFilters': {
     'order_id': '',

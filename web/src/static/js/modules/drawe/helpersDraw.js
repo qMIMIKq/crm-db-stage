@@ -6,6 +6,9 @@ const enterHelper = e => {
   const distance = Math.abs(elem.offsetTop - table.offsetTop - table.offsetHeight)
   const valElem = e.target.querySelector('.table__data')
   const value = valElem.value
+  let dataLength = document.querySelector('.main-header__title').textContent.replaceAll('(', '').replaceAll(')', '').split(' ')[2]
+  // console.log(dataLength)
+
   // console.log(distance)
 
   if (value && (valElem.classList.contains('table-m-select') || valElem.scrollWidth > valElem.offsetWidth)) {
@@ -18,7 +21,7 @@ const enterHelper = e => {
       const helperHeight = helper.clientHeight
 
       if (helperHeight > 23) {
-        if (distance < 270) {
+        if (distance < 270 && dataLength >= 10) {
           helper.style.top = `-${String(helperHeight - 23 + 35)}px`
         } else {
           helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`

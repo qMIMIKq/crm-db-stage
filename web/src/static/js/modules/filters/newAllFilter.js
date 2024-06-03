@@ -30,6 +30,8 @@ export const newAllFilter = (init) => {
   //   filtersBtn.style.cssText = `border: none`
   // }
 
+  console.log(`Status filtered ${state.routesStatusFilter}`)
+
   controlFiltersReset()
 
   if (searched) {
