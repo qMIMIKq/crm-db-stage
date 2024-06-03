@@ -467,6 +467,10 @@ export const triggerRoutesModal = (e, page = 'main') => {
   let info = false
   let routeInfo
 
+  if (adminStatus || manStatus) {
+
+  }
+
   let routeInput
   let currentOrder = e.target.parentNode.parentNode.parentNode.parentNode
   if (page === 'main') {
@@ -486,8 +490,12 @@ export const triggerRoutesModal = (e, page = 'main') => {
 
   const routeQuantity = modalElem.querySelector('#quantity')
   const routeDayQuantity = modalElem.querySelector('#day_quantity')
+  if (!(manStatus || adminStatus)) {
+    routeDayQuantity.setAttribute('disabled', true)
+  }
+
   let checkPlan = false
-  controlQuantityAccess(routeQuantity)
+  controlQuantityAccess(routeDayQuantity)
   // controlQuantityAccess(routeDayQuantity)
   // const canRemove = currentOrder.querySelector('#can-remove')
   // console.log(canRemove)
@@ -1134,8 +1142,7 @@ export const triggerRoutesModal = (e, page = 'main') => {
         // dayQuantityInfo['quantity'] = routeInfo['quantity']
         // controlQuantityAccess(routeDayQuantity)
       } else {
-        const quant = currentOrder.querySelector('input[name="quantity"]').value
-        routeQuantity.value = quant
+        routeQuantity.value = currentOrder.querySelector('input[name="quantity"]').value
         // dayQuantityInfo['quantity'] = quant
       }
 

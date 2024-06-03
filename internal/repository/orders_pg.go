@@ -713,32 +713,32 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					log.Err(err).Caller().Msg("error is")
 				}
 
-				if !onlyOneFlag {
-					if len(keys) > 0 {
-						order.CanRemove = "no"
-						onlyOneFlag = true
-					}
-
-					if len(route.StartTime) > 0 {
-						order.CanRemove = "no"
-						onlyOneFlag = true
-					}
-
-					if len(route.AddedDates) > 0 {
-						order.CanRemove = "no"
-						onlyOneFlag = true
-					}
-
-					if len(route.ErrorTime) > 0 {
-						order.CanRemove = "no"
-						onlyOneFlag = true
-					}
-
-					if len(route.PauseTime) > 0 {
-						order.CanRemove = "no"
-						onlyOneFlag = true
-					}
-				}
+				//if !onlyOneFlag {
+				//	if len(keys) > 0 {
+				//		order.CanRemove = "no"
+				//		onlyOneFlag = true
+				//	}
+				//
+				//	if len(route.StartTime) > 0 {
+				//		order.CanRemove = "no"
+				//		onlyOneFlag = true
+				//	}
+				//
+				//	if len(route.AddedDates) > 0 {
+				//		order.CanRemove = "no"
+				//		onlyOneFlag = true
+				//	}
+				//
+				//	if len(route.ErrorTime) > 0 {
+				//		order.CanRemove = "no"
+				//		onlyOneFlag = true
+				//	}
+				//
+				//	if len(route.PauseTime) > 0 {
+				//		order.CanRemove = "no"
+				//		onlyOneFlag = true
+				//	}
+				//}
 
 				dateReportInfo := &DateTimeInfo{}
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", routeID)

@@ -250,11 +250,11 @@ button:disabled {
 }
 
 input:disabled {
-  cursor: default;
-  color: gray;
+  cursor: default !important;
+  color: gray !important;
 
   &:hover {
-    color: gray;
+    color: gray !important;
   }
 }
 

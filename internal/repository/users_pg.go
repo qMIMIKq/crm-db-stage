@@ -208,7 +208,7 @@ func (u *UsersPG) EditUser(user domain.UserInfo) error {
 	}
 
 	checkQuery := fmt.Sprintf(`
-		SELECT order_id FROM routes WHERE worker = $1 
+		SELECT order_id FROM routes WHERE worker = $1
 	`)
 
 	var ordersID []int
@@ -220,6 +220,13 @@ func (u *UsersPG) EditUser(user domain.UserInfo) error {
 
 	loc, _ := time.LoadLocation("Europe/Moscow")
 	timeOfModify := time.Now().In(loc).Format("2006-01-02 15:04:05")
+
+	if user.GroupID == "4" {
+		if _, err := u.db.Exec("UPDATE orders SET time_of_modify = $1, order_m = $2 WHERE order_m = $3", timeOfModify, user.Nickname, oldNickname); err != nil {
+			log.Err(err).Caller().Msg("error is")
+		}
+	}
+
 	for _, orderID := range ordersID {
 		updateOrderQuery := fmt.Sprintf(`
 			UPDATE orders SET time_of_modify = $1 WHERE order_id = $2 AND completed = false

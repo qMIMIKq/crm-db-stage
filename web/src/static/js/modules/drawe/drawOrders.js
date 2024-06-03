@@ -442,14 +442,16 @@ export const drawOrders = (insertPlace, position, d) => {
   //   addRouteBtn.classList.add('hidden__input')
   // })
 
-  const routesMain = currentOrder.querySelector('.table-routes')
-  routesMain.addEventListener('mouseenter', () => {
-    addRouteBtn.classList.remove('hidden__input')
-  })
+  if (state.adminCheck || state.manCheck) {
+    const routesMain = currentOrder.querySelector('.table-routes')
+    routesMain.addEventListener('mouseenter', () => {
+      addRouteBtn.classList.remove('hidden__input')
+    })
 
-  routesMain.addEventListener('mouseleave', () => {
-    addRouteBtn.classList.add('hidden__input')
-  })
+    routesMain.addEventListener('mouseleave', () => {
+      addRouteBtn.classList.add('hidden__input')
+    })
+  }
 
   // console.timeEnd(`draw order ${d.id}`)
 }

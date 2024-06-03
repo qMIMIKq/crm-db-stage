@@ -36,15 +36,25 @@ const confirmDeleteHandler = (e, operation, titleText) => {
 
 export const deleteOrdersHandler = (currentOrder, issued, routes, id, hidden = true) => {
   const checkBtn = currentOrder.querySelector('#order__delete')
-
   if (!state.adminCheck) {
     return
   }
 
+  let canRemove = true
+  if (routes) {
+    for (let i = 0; i < routes.length; i++) {
+      let currentRoute = routes[i]
 
-  let canRemove = currentOrder.querySelector('#can-remove')
+      if (currentRoute.start_time || currentRoute.end_time || currentRoute.plan_dates || currentRoute.pause_time || currentRoute.error_time) {
+        canRemove = false
+        break
+      }
+    }
+  }
+
+  // let canRemove = currentOrder.querySelector('#can-remove')
   // console.log(canRemove)
-  canRemove = canRemove.value === 'yes'
+  // canRemove = canRemove.value === 'yes'
 
   // if (routes) {
   //   canRemoveLoop:

@@ -199,9 +199,13 @@ const chooseHandler = e => {
 
           state['currentOrder'] = parent.querySelector('#db_id').value
           if (!flag) {
-            const headerControl = document.querySelector('.header-button__control')
-            headerControl.click()
-            flag = true
+            try {
+              const headerControl = document.querySelector('.header-button__control')
+              headerControl.click()
+              flag = true
+            } catch  {
+
+            }
           }
         }
         break
