@@ -1,5 +1,6 @@
 appAddr.js
 assets/uploads
-web/dist
+web/dist/static
+web/dist/templates
 .idea
 qodana.yaml
