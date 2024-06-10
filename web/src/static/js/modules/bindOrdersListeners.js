@@ -180,7 +180,9 @@ const chooseHandler = e => {
     switch (action) {
       case 'add':
         if (e.target.classList.contains('dblclck')) {
-          e.target.addEventListener('dblclick', doubler)
+          if (state.adminCheck || state.manCheck) {
+            e.target.addEventListener('dblclick', doubler)
+          }
         }
         e.target.classList.add('table__data--current')
 
@@ -203,7 +205,7 @@ const chooseHandler = e => {
               const headerControl = document.querySelector('.header-button__control')
               headerControl.click()
               flag = true
-            } catch  {
+            } catch {
 
             }
           }

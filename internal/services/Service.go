@@ -64,7 +64,7 @@ type Time interface {
 }
 
 type Reports interface {
-	GetAll(from, to string) ([]domain.Report, error)
+	GetAll(reportParams domain.ReportTime) ([]domain.Report, error)
 	UpdateReports(report domain.Route) error
 }
 

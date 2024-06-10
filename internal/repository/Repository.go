@@ -64,7 +64,7 @@ type Routes interface {
 }
 
 type Reports interface {
-	GetAll(from, to string) ([]domain.Report, error)
+	GetAll(reportParams domain.ReportTime) ([]domain.Report, error)
 	UpdateReports(report domain.Route) error
 	AddReports(route *domain.Route, order *domain.Order, id, routePos string, routeID int, new bool) error
 }

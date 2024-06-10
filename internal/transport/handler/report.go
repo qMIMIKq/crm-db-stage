@@ -7,13 +7,13 @@ import (
 )
 
 func (h *Handler) getReports(c *gin.Context) {
-	var reportTime domain.ReportTime
-	if err := c.BindJSON(&reportTime); err != nil {
+	var reportParams domain.ReportTime
+	if err := c.BindJSON(&reportParams); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	res, err := h.services.Reports.GetAll(reportTime.From, reportTime.To)
+	res, err := h.services.Reports.GetAll(reportParams)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err)
 		return

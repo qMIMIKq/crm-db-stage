@@ -1317,6 +1317,19 @@ export const triggerRoutesModal = (e, page = 'main') => {
     issuedHandlerModal(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime)
   })
 
+  console.log(!state.adminCheck, !state.manCheck, !state.techCheck)
+
+  if (!state.adminCheck && !state.manCheck && !state.techCheck) {
+    planDateInput.setAttribute('disabled', true)
+    console.log('has no rights for planning')
+  }
+
+  if (state.clientCheck) {
+    modalElem.querySelectorAll('button').forEach(btn => btn.setAttribute('disabled', true))
+    modalElem.querySelectorAll('input').forEach(btn => btn.setAttribute('disabled', true))
+    modalElem.querySelectorAll('select').forEach(btn => btn.setAttribute('disabled', true))
+  }
+
   planDateInput.addEventListener('click', e => {
     // planned = true
     // planDateInput.value = 'В планировании'

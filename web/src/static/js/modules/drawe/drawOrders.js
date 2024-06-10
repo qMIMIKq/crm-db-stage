@@ -338,11 +338,14 @@ export const drawOrders = (insertPlace, position, d) => {
 
 
   addTriggers(currentOrder, "#db_id", showRoutesIssued)
-  addTriggers(currentOrder, '.table__files', triggerFilesModal)
   addTriggers(currentOrder, '.table__route', e => triggerRoutesModal(e))
-  addTriggers(currentOrder, '.table__comment', triggerCommentsModal)
   addTriggers(currentOrder, ".order__copy", copyOrderHandler)
   drawHelpers(currentOrder)
+
+  if (!state.clientCheck) {
+    addTriggers(currentOrder, '.table__comment', triggerCommentsModal)
+    addTriggers(currentOrder, '.table__files', triggerFilesModal)
+  }
 
   if (state.adminCheck || state.manCheck) {
     // addTriggers(currentOrder, ".order__copy", copyOrderHandler)

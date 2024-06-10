@@ -13,13 +13,26 @@ type ReportsPG struct {
 	db *sqlx.DB
 }
 
-func (r ReportsPG) GetAll(from, to string) ([]domain.Report, error) {
+func (r ReportsPG) GetAll(reportParams domain.ReportTime) ([]domain.Report, error) {
+	var clientName string
+
+	log.Info().Interface("params", reportParams).Msg("params is")
+	if reportParams.IsClient {
+		clientName = fmt.Sprintf(`AND order_client = '%s'`, reportParams.ClientName)
+	}
+
 	query := fmt.Sprintf(`
-		SELECT * FROM reports WHERE report_date >= $1 AND report_date <= $2 ORDER BY order_id, report_date
-	`)
+		SELECT * FROM reports WHERE report_date >= $1 AND report_date <= $2 %s ORDER BY order_id, report_date
+	`, clientName)
+
+	fmt.Println(query)
 
 	var reports []domain.Report
-	err := r.db.Select(&reports, query, from, to)
+	err := r.db.Select(&reports, query, reportParams.From, reportParams.To)
+	if err != nil {
+		log.Err(err).Caller().Msg("error is")
+	}
+
 	//log.Info().Caller().Interface("reports", reports).Msg("REPORTS")
 
 	return reports, err

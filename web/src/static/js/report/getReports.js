@@ -7,7 +7,8 @@ import {
   drawReportsFilter,
   idReportFilter,
   numsReportFilter,
-  operatorReportFilter, positionReportFilter
+  operatorReportFilter,
+  positionReportFilter
 } from "./filters/reportFilters";
 import {appAddr} from "../../../../../appAddr";
 import {newAllReportFilter} from "./filters/newAllReportFilter";
@@ -29,7 +30,9 @@ export const getReports = () => {
 
   let reportTime = {
     "from": from,
-    "to": to
+    "to": to,
+    'is_client': state.clientCheck,
+    'client_name': state.clientName,
   }
 
   const total = document.querySelector('.main-header__title')

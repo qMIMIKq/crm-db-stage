@@ -9,8 +9,8 @@ type ReportsService struct {
 	repo repository.Reports
 }
 
-func (r ReportsService) GetAll(from, to string) ([]domain.Report, error) {
-	return r.repo.GetAll(from, to)
+func (r ReportsService) GetAll(reportParams domain.ReportTime) ([]domain.Report, error) {
+	return r.repo.GetAll(reportParams)
 }
 
 func (r ReportsService) UpdateReports(route domain.Route) error {

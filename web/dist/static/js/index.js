@@ -1637,7 +1637,9 @@ const chooseHandler = e => {
     switch (action) {
       case 'add':
         if (e.target.classList.contains('dblclck')) {
-          e.target.addEventListener('dblclick', doubler);
+          if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck) {
+            e.target.addEventListener('dblclick', doubler);
+          }
         }
         e.target.classList.add('table__data--current');
         if (!label.classList.contains('table__data--opened')) {
@@ -2335,11 +2337,13 @@ const drawOrders = (insertPlace, position, d) => {
     (0,_deleteOrdersHandler__WEBPACK_IMPORTED_MODULE_5__.deleteOrdersHandler)(currentOrder, d.issued, routes, d.id);
   }
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, "#db_id", _showFull__WEBPACK_IMPORTED_MODULE_15__.showRoutesIssued);
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_10__.triggerFilesModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__route', e => (0,_modals_routesModal__WEBPACK_IMPORTED_MODULE_11__.triggerRoutesModal)(e));
-  (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_12__.triggerCommentsModal);
   (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, ".order__copy", _copyOrderHandler__WEBPACK_IMPORTED_MODULE_16__.copyOrderHandler);
   (0,_helpersDraw__WEBPACK_IMPORTED_MODULE_14__.drawHelpers)(currentOrder);
+  if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.clientCheck) {
+    (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__comment', _modals_commentsModal__WEBPACK_IMPORTED_MODULE_12__.triggerCommentsModal);
+    (0,_addTriggers__WEBPACK_IMPORTED_MODULE_9__.addTriggers)(currentOrder, '.table__files', _modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_10__.triggerFilesModal);
+  }
   if (_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck) {
     // addTriggers(currentOrder, ".order__copy", copyOrderHandler)
   } else {
@@ -6971,6 +6975,16 @@ const triggerRoutesModal = function (e) {
   issuedBtn.addEventListener('click', e => {
     (0,_issuedModal__WEBPACK_IMPORTED_MODULE_8__.issuedHandlerModal)(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime);
   });
+  console.log(!_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck, !_state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck, !_state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck);
+  if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck && !_state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck && !_state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
+    planDateInput.setAttribute('disabled', true);
+    console.log('has no rights for planning');
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_2__.state.clientCheck) {
+    modalElem.querySelectorAll('button').forEach(btn => btn.setAttribute('disabled', true));
+    modalElem.querySelectorAll('input').forEach(btn => btn.setAttribute('disabled', true));
+    modalElem.querySelectorAll('select').forEach(btn => btn.setAttribute('disabled', true));
+  }
   planDateInput.addEventListener('click', e => {
     // planned = true
     // planDateInput.value = 'В планировании'
@@ -8994,9 +9008,12 @@ const getReports = () => {
     link.classList.remove('nav-control__route-link--current');
   });
   reportLink.classList.add('nav-control__route-link--current');
+  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.clientName);
   let reportTime = {
     "from": from,
-    "to": to
+    "to": to,
+    'is_client': _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.clientCheck,
+    'client_name': _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.clientName
   };
   const total = document.querySelector('.main-header__title');
   const loader = document.querySelector('.spinner-loader');
