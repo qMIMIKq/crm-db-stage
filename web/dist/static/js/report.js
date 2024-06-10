@@ -3155,20 +3155,25 @@ const filterRoutesState = route => {
     if (!route.error_msg && route.pause_time) {
       flag = true;
     }
-  } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned) {
-    const date = document.querySelector('.header-routes__planned-date');
-    if (route.plan_dates) {
-      if (route.plan_dates.includes(date.value)) {
-        flag = true;
-      }
-    }
-  } else if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert) {
-    if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
-      flag = true;
-    }
   } else {
     flag = true;
   }
+
+  // else if (state['routesFilters'].planned) {
+  //     const date = document.querySelector('.header-routes__planned-date')
+  //
+  //     if (route.plan_dates) {
+  //       if (route.plan_dates.includes(date.value)) {
+  //         flag = true
+  //       }
+  //     }
+  //
+  //   } else if (state['routesFilters'].alert) {
+  //     if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
+  //       flag = true
+  //     }
+  //   }
+
   return flag;
 };
 
@@ -3199,6 +3204,52 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const searchedFilter = (order, tableFilters) => {
+  let flag = false;
+  for (let type in tableFilters) {
+    if (type === 'every') continue;
+    const orderData = order[type];
+    let filter = tableFilters[type];
+    if (tableFilters.every) {
+      filter = tableFilters.every;
+    }
+    if (orderData.trim().toLowerCase().includes(filter.trim().toLowerCase())) {
+      // console.log('find this')
+      flag = true;
+      break;
+    }
+  }
+  return flag;
+};
+const tableClickFilter = (order, tableFilters) => {
+  let flag = true;
+  for (let type in tableFilters) {
+    const filter = tableFilters[type];
+    const orderData = order[type];
+    if (filter === 'все') {} else if (filter === 'Не заполнено') {
+      if (orderData) {
+        flag = false;
+        break;
+      }
+    } else if (filter) {
+      if (type === 'end_time') {
+        if (!(orderData && orderData.split('T')[0] === filter)) {
+          flag = false;
+          break;
+        }
+      } else if (type === 'timestamp') {
+        if (!(orderData.split('T')[0] === filter)) {
+          flag = false;
+          break;
+        }
+      } else if (!(orderData.trim() === filter.trim())) {
+        flag = false;
+        break;
+      }
+    }
+  }
+  return flag;
+};
 const newAllFilter = init => {
   (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.hideOrders)();
   let flag = true;
@@ -3218,270 +3269,108 @@ const newAllFilter = init => {
   //   filtersBtn.style.cssText = `border: none`
   // }
 
-  console.log(`Status filtered ${_state__WEBPACK_IMPORTED_MODULE_0__.state.routesStatusFilter}`);
-  (0,_tableFilters__WEBPACK_IMPORTED_MODULE_5__.controlFiltersReset)();
-  if (searched) {
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-      if (tableFilters['every']) {
-        flag = false;
-        for (let type in tableFilters) {
-          if (type === 'every') {
-            continue;
-          }
-          let filter = tableFilters['every'];
-          const orderData = order[type];
-
-          // console.log(order.id, type, orderData, filter)
-          if (orderData.trim().toLowerCase().includes(filter.trim().toLowerCase())) {
-            console.log('find this');
-            flag = true;
-            break;
-          }
-        }
-        if (flag) {
-          if (isRouteStatusFiltered || isTopRoutesFiltered) {
-            if (order.db_routes) {
-              const routes = order.db_routes;
-              for (let i = 0; i < routes.length; i++) {
-                let statusFlag = true;
-                let plotFlag = true;
-                const route = routes[i];
-                if (isRouteStatusFiltered) {
-                  statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
-                }
-                if (isTopRoutesFiltered) {
-                  plotFlag = topRouteFilters.includes(route.plot);
-                }
-                flag = statusFlag && plotFlag;
-                if (flag) break;
-              }
-            } else {
-              console.log('no routes');
-              flag = false;
-            }
-          }
-        } else {
-          flag = false;
-        }
-        if (flag) {
-          // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-          const hiddenOrder = document.querySelector(`#form-${order.id}`);
-          if (hiddenOrder !== null) {
-            hiddenOrder.classList.remove('hidden__input');
-            hiddenOrder.classList.add('showed-order');
-            if (order.db_routes && order.db_routeslength) {
-              (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(order.db_routes, hiddenOrder);
-            }
-          } else {
-            (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-          }
-        }
-        flag = false;
-      } else {
-        for (let type in tableFilters) {
-          let filter = tableFilters[type];
-          const orderData = order[type];
-          if (filter === 'все') {} else if (filter === 'Не заполнено') {
-            if (orderData) {
-              flag = false;
-              break;
-            }
-          } else if (filter) {
-            if (type === 'end_time') {
-              if (!(orderData && orderData.split('T')[0] === filter)) {
-                console.log('??');
-                flag = false;
-                break;
-              }
-            } else if (type === 'timestamp') {
-              const deadline = orderData.split('T')[0];
-              if (!(deadline === _state__WEBPACK_IMPORTED_MODULE_0__.state.tableFilters[type])) {
-                flag = false;
-                break;
-              }
-            } else if (!orderData.trim().toLowerCase().includes(filter.trim().toLowerCase())) {
-              flag = false;
-              break;
-            }
-          }
-        }
-      }
-      if (flag) {
-        if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          if (order.db_routes) {
-            const routes = order.db_routes;
-            for (let i = 0; i < routes.length; i++) {
-              let statusFlag = true;
-              let plotFlag = true;
-              const route = routes[i];
-              if (isRouteStatusFiltered) {
-                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
-              }
-              if (isTopRoutesFiltered) {
-                plotFlag = topRouteFilters.includes(route.plot);
-              }
-              flag = statusFlag && plotFlag;
-              if (flag) break;
-            }
-          } else {
-            flag = false;
-          }
-        }
-      } else {
-        flag = false;
-      }
-      if (flag) {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`);
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input');
-          hiddenOrder.classList.add('showed-order');
-          if (order.db_routes && order.db_routes.length) {
-            (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(order.db_routes, hiddenOrder);
-          }
-        } else {
-          (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-        }
-      }
-      flag = true;
-    });
-  } else if (filtered) {
-    console.log('filtered', filtered);
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-      for (let type in tableFilters) {
-        const filter = tableFilters[type];
-        const orderData = order[type];
-        if (filter === 'все') {} else if (filter === 'Не заполнено') {
-          if (orderData) {
-            flag = false;
-            break;
-          }
-        } else if (filter) {
-          if (type === 'end_time') {
-            if (!(orderData && orderData.split('T')[0] === filter)) {
-              flag = false;
-              break;
-            }
-          } else if (type === 'timestamp') {
-            if (!(orderData.split('T')[0] === filter)) {
-              flag = false;
-              break;
-            }
-          } else if (!(orderData.trim() === filter.trim())) {
-            flag = false;
-            break;
-          }
-        }
-      }
-      if (flag) {
-        if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          if (order.db_routes) {
-            const routes = order.db_routes;
-            for (let i = 0; i < routes.length; i++) {
-              let statusFlag = true;
-              let plotFlag = true;
-              const route = routes[i];
-              if (isRouteStatusFiltered) {
-                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
-              }
-              if (isTopRoutesFiltered) {
-                plotFlag = topRouteFilters.includes(route.plot);
-              }
-              flag = statusFlag && plotFlag;
-              if (flag) break;
-            }
-          } else {
-            flag = false;
-          }
-        }
-      } else {
-        flag = false;
-      }
-      if (flag) {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`);
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input');
-          hiddenOrder.classList.add('showed-order');
-          if (order.db_routes && order.db_routes.length) {
-            (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(order.db_routes, hiddenOrder);
-          }
-        } else {
-          (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-        }
-      }
-      flag = true;
-    });
+  console.log(`Alert filtered ${_state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter}`);
+  console.log(`Plan filtered ${_state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter}`);
+  console.log(`Status filtered ${isRouteStatusFiltered}`);
+  let needRoutesFilters = false;
+  if (isTopRoutesFiltered || isRouteStatusFiltered || _state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter || _state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter) {
+    needRoutesFilters = true;
   }
-  if (!searched && !filtered) {
-    if (isRouteStatusFiltered || isTopRoutesFiltered) {
-      // console.log('filter by routes status')
-
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+  console.log(`Need routes filter ${needRoutesFilters}`);
+  (0,_tableFilters__WEBPACK_IMPORTED_MODULE_5__.controlFiltersReset)();
+  console.log(`---------------------`);
+  for (let i = 0; i < _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.length; i++) {
+    const order = _state__WEBPACK_IMPORTED_MODULE_0__.state.orders[i];
+    if (init) {
+      // deleteOrders()
+      (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+    }
+    let globalFilterFlag = false;
+    if (searched) {
+      globalFilterFlag = searchedFilter(order, tableFilters);
+      if (!globalFilterFlag) {
+        continue;
+      }
+    } else if (filtered) {
+      globalFilterFlag = tableClickFilter(order, tableFilters);
+      if (!globalFilterFlag) {
+        continue;
+      }
+    } else {
+      globalFilterFlag = true;
+    }
+    let globalRouteFlag = false;
+    if (globalFilterFlag) {
+      if (!needRoutesFilters) {
+        globalRouteFlag = true;
+      } else {
         if (!order.db_routes) {
-          flag = false;
+          globalRouteFlag = false;
         } else {
-          const routes = order.db_routes;
-          for (let i = 0; i < routes.length; i++) {
-            let statusFlag = true;
-            let plotFlag = true;
-            const route = routes[i];
+          for (let j = 0; j < order.db_routes.length; j++) {
+            let routeFlag = false;
+            let route = order.db_routes[j];
+            let statusFlag = false;
+            let alertFlag = false;
+            let planFlag = false;
+            let routeFilterFlag = flag;
+            if (isTopRoutesFiltered) {
+              routeFilterFlag = topRouteFilters.includes(route.plot);
+              console.log(`route name ${route.plot} plot flag ${routeFilterFlag}`);
+            } else {
+              routeFilterFlag = true;
+            }
             if (isRouteStatusFiltered) {
               statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
+              console.log(`route name ${route.plot} status flag ${statusFlag}`);
+            } else {
+              statusFlag = true;
             }
-            if (isTopRoutesFiltered) {
-              plotFlag = topRouteFilters.includes(route.plot);
-            }
-            flag = statusFlag && plotFlag;
-            if (flag) {
-              // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-              const hiddenOrder = document.querySelector(`#form-${order.id}`);
-              if (hiddenOrder !== null) {
-                hiddenOrder.classList.remove('hidden__input');
-                hiddenOrder.classList.add('showed-order');
-                if (order.db_routes && order.db_routes.length) {
-                  (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(order.db_routes, hiddenOrder);
-                }
-              } else {
-                (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
+            if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter) {
+              console.log(route.alert_color, document.querySelector('.header-routes__alert').value);
+              if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
+                alertFlag = true;
               }
+              console.log(`route name ${route.plot} alert flag ${alertFlag}`);
+            } else {
+              alertFlag = true;
+            }
+            if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter) {
+              const date = document.querySelector('.header-routes__planned-date');
+              if (route.plan_dates.includes(date.value)) {
+                planFlag = true;
+              }
+              console.log(`route name ${route.plot} plan flag ${planFlag}`);
+            } else {
+              planFlag = true;
+            }
+            routeFlag = statusFlag && alertFlag && planFlag && routeFilterFlag;
+            if (routeFlag) {
+              globalRouteFlag = true;
               break;
             }
+            console.log(`result route ${route.plot} flag ${routeFlag}`);
+            console.log(`---------------------`);
           }
         }
-      });
+      }
+      if (globalRouteFlag) {
+        console.log(`good routes for order ${order.id}`, globalRouteFlag);
+      }
     }
-  }
-  if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
-    console.log('not filtered');
-    if (init) {
-      (0,_getOrders__WEBPACK_IMPORTED_MODULE_1__.deleteOrders)();
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-        // console.log(order)
+    if (globalFilterFlag && globalRouteFlag) {
+      const hiddenOrder = document.querySelector(`#form-${order.id}`);
+      if (hiddenOrder !== null) {
+        hiddenOrder.classList.remove('hidden__input');
+        hiddenOrder.classList.add('showed-order');
+        if (order.db_routes && order.db_routes.length) {
+          (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(order.db_routes, hiddenOrder);
+        }
+      } else {
         (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-        // console.log(order.id)
-        // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
-        // order.classList.remove('hidden__input')
-      });
-    } else {
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        // console.log(order.id)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`);
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input');
-          hiddenOrder.classList.add('showed-order');
-          if (order.db_routes && order.db_routes.length) {
-            (0,_drawe_routesDraw__WEBPACK_IMPORTED_MODULE_6__.colorRoutes)(order.db_routes, hiddenOrder);
-          }
-        } else {
-          (0,_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.drawOrders)(_drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table, `afterbegin`, order, _state__WEBPACK_IMPORTED_MODULE_0__.state.orders, _state__WEBPACK_IMPORTED_MODULE_0__.state.managers);
-        }
-        // order.classList.remove('hidden__input')
-      });
+      }
     }
   }
-  // ?  : `Журнал заказов (${state.orders.length})
   const dataLength = _drawe_drawOrders__WEBPACK_IMPORTED_MODULE_3__.table.querySelectorAll('.showed-order').length;
   document.querySelector('.main-header__title').textContent = _state__WEBPACK_IMPORTED_MODULE_0__.state.isArchive ? `Архив заказов (${dataLength})` : `Журнал заказов (${dataLength})`;
   (0,_bindOrdersListeners__WEBPACK_IMPORTED_MODULE_4__.bindOrdersListeners)();
@@ -3779,8 +3668,8 @@ const tableRoutesFiltersHandler = () => {
     alertStatusBtn.style.color = value;
     if (value === '') {
       alertStatusBtn.classList.remove('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesStatusFilter = false;
+      // state['routesFilters'] = {}
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter = false;
     } else {
       routesStatusBtn.value = '';
       routesStatusBtn.style.cssText = `
@@ -3791,9 +3680,9 @@ const tableRoutesFiltersHandler = () => {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
       } catch {}
       alertStatusBtn.classList.add('route__filter--chosen');
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.alert = true;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesStatusFilter = true;
+      // state['routesFilters'] = {}
+      // state['routesFilters'].alert = true
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter = true;
     }
     (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
     // alertFilter(value)
@@ -3837,6 +3726,7 @@ const tableRoutesFiltersHandler = () => {
       inPlanBtn.classList.add('route__filter--chosen');
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = true;
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter = true;
       (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
     }
   });
@@ -3849,24 +3739,27 @@ const tableRoutesFiltersHandler = () => {
       inPlanBtn.classList.remove('route__filter--chosen');
       inPlanDate.value = today;
       _state__WEBPACK_IMPORTED_MODULE_0__.state.inPlanDate = today;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
+      // state['routesFilters'] = {}
+      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter = false;
       // getOrders('get-all', true)
       (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
       return;
     }
     try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen');
-      alertStatusBtn.style.color = '';
-      alertStatusBtn.value = '';
-      routesStatusBtn.value = '';
-      routesStatusBtn.style.cssText = `
-        border: none;
-        color: rgb(66, 66, 66);
-      `;
+      // document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      // alertStatusBtn.style.color = ''
+      // alertStatusBtn.value = ''
+      // routesStatusBtn.value = ''
+      // routesStatusBtn.style.cssText = `
+      //   border: none;
+      //   color: rgb(66, 66, 66);
+      // `
     } catch {}
     inPlanBtn.classList.add('route__filter--chosen');
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
-    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.planned = true;
+
+    // state.routesFilters = {}
+    // state['routesFilters'].planned = true
+    _state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter = true;
     (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
   });
   const routeStatus = document.querySelector('.route-status');
@@ -3880,7 +3773,7 @@ const tableRoutesFiltersHandler = () => {
     // console.log(statusTextElem)
     btn.addEventListener('click', () => {
       // console.log(btn.textContent.trim().trim().split(' '))
-      routeWarningContent.querySelector('.route-warning__btn--default').click();
+      // routeWarningContent.querySelector('.route-warning__btn--default').click()
       routeStatusContent.classList.remove('route-status__content--active');
       statusTextElem.textContent = dataText;
       routesStatusBtn.querySelectorAll('option').forEach(opt => {
@@ -3935,7 +3828,7 @@ const tableRoutesFiltersHandler = () => {
     const dataText = btn.querySelector('.route-warning__btn--text').textContent;
     const warningTextElem = routeWarning.querySelector('.route-warning-text');
     btn.addEventListener('click', () => {
-      routeStatusContent.querySelector('.route-status__btn--default').click();
+      // routeStatusContent.querySelector('.route-status__btn--default').click()
       routeWarningContent.classList.remove('route-warning__content--active');
       warningTextElem.textContent = dataText;
       alertStatusBtn.querySelectorAll('option').forEach(opt => {
@@ -8035,7 +7928,8 @@ let state = {
     // 'planned': false,
     // 'alert': false
   },
-  'routesStatusFilter': false,
+  'routesAlertFilter': false,
+  'routesPlannedFilter': false,
   'reports': [],
   'reportFilters': {
     'order_id': '',
@@ -8049,7 +7943,9 @@ if (userInf) {
   state['manCheck'] = userInf.groupId === '4';
   state['clientCheck'] = userInf.groupId === '6';
   state['clientName'] = userInf.name;
-  console.log(userInf);
+
+  // console.log(userInf)
+
   const admManCheck = state['adminCheck'] || state['manCheck'];
   const admTechCheck = state['adminCheck'] || state['techCheck'];
   const admManTechCheck = admManCheck || state['techCheck'];
@@ -9639,19 +9535,20 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-  let updateInterval = setInterval(() => {
-    if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
-      (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
-    }
-  }, 6000);
-  setInterval(() => {
-    clearInterval(updateInterval);
-    updateInterval = setInterval(() => {
-      if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
-        (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
-      }
-    }, 6000);
-  }, 100000);
+  // let updateInterval = setInterval(() => {
+  //   if (!state.isArchive) {
+  //     getOrders('get-all', true)
+  //   }
+  // }, 6000)
+  //
+  // setInterval(() => {
+  //   clearInterval(updateInterval)
+  //   updateInterval = setInterval(() => {
+  //     if (!state.isArchive) {
+  //       getOrders('get-all', true)
+  //     }
+  //   }, 6000)
+  // }, 100000)
 }
 
 /***/ }),

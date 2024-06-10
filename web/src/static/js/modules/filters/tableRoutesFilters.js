@@ -148,8 +148,8 @@ export const tableRoutesFiltersHandler = () => {
 
     if (value === '') {
       alertStatusBtn.classList.remove('route__filter--chosen')
-      state['routesFilters'] = {}
-      state.routesStatusFilter = false
+      // state['routesFilters'] = {}
+      state.routesAlertFilter = false
     } else {
       routesStatusBtn.value = ''
       routesStatusBtn.style.cssText = `
@@ -162,9 +162,9 @@ export const tableRoutesFiltersHandler = () => {
       }
 
       alertStatusBtn.classList.add('route__filter--chosen')
-      state['routesFilters'] = {}
-      state['routesFilters'].alert = true
-      state.routesStatusFilter = true
+      // state['routesFilters'] = {}
+      // state['routesFilters'].alert = true
+      state.routesAlertFilter = true
     }
 
     newAllFilter()
@@ -218,6 +218,7 @@ export const tableRoutesFiltersHandler = () => {
 
       state.routesFilters = {}
       state['routesFilters'].planned = true
+      state.routesPlannedFilter = true
 
       newAllFilter()
     }
@@ -233,27 +234,29 @@ export const tableRoutesFiltersHandler = () => {
       inPlanBtn.classList.remove('route__filter--chosen')
       inPlanDate.value = today
       state.inPlanDate = today
-      state['routesFilters'] = {}
+      // state['routesFilters'] = {}
+      state.routesPlannedFilter = false
       // getOrders('get-all', true)
       newAllFilter()
       return
     }
 
     try {
-      document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
-      alertStatusBtn.style.color = ''
-      alertStatusBtn.value = ''
-      routesStatusBtn.value = ''
-      routesStatusBtn.style.cssText = `
-        border: none;
-        color: rgb(66, 66, 66);
-      `
+      // document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
+      // alertStatusBtn.style.color = ''
+      // alertStatusBtn.value = ''
+      // routesStatusBtn.value = ''
+      // routesStatusBtn.style.cssText = `
+      //   border: none;
+      //   color: rgb(66, 66, 66);
+      // `
     } catch {
     }
     inPlanBtn.classList.add('route__filter--chosen')
 
-    state.routesFilters = {}
-    state['routesFilters'].planned = true
+    // state.routesFilters = {}
+    // state['routesFilters'].planned = true
+    state.routesPlannedFilter = true
 
     newAllFilter()
   })
@@ -270,7 +273,7 @@ export const tableRoutesFiltersHandler = () => {
     // console.log(statusTextElem)
     btn.addEventListener('click', () => {
       // console.log(btn.textContent.trim().trim().split(' '))
-      routeWarningContent.querySelector('.route-warning__btn--default').click()
+      // routeWarningContent.querySelector('.route-warning__btn--default').click()
       routeStatusContent.classList.remove('route-status__content--active')
       statusTextElem.textContent = dataText
       routesStatusBtn.querySelectorAll('option').forEach(opt => {
@@ -333,7 +336,7 @@ export const tableRoutesFiltersHandler = () => {
     const warningTextElem = routeWarning.querySelector('.route-warning-text')
 
     btn.addEventListener('click', () => {
-      routeStatusContent.querySelector('.route-status__btn--default').click()
+      // routeStatusContent.querySelector('.route-status__btn--default').click()
       routeWarningContent.classList.remove('route-warning__content--active')
       warningTextElem.textContent = dataText
       alertStatusBtn.querySelectorAll('option').forEach(opt => {
@@ -359,7 +362,6 @@ export const tableRoutesFiltersHandler = () => {
     })
 
     btn.addEventListener('mouseenter', () => {
-
       btn.style.cssText = `
          background-color: ${data};
          color: white;

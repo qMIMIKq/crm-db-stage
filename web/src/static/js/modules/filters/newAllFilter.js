@@ -6,6 +6,61 @@ import {bindOrdersListeners} from "../bindOrdersListeners";
 import {controlFiltersReset} from "./tableFilters";
 import {colorRoutes} from "../drawe/routesDraw";
 
+const searchedFilter = (order, tableFilters) => {
+  let flag = false
+  for (let type in tableFilters) {
+    if (type === 'every') continue
+
+    const orderData = order[type]
+    let filter = tableFilters[type]
+    if (tableFilters.every) {
+      filter = tableFilters.every
+    }
+
+    if ((orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
+      // console.log('find this')
+      flag = true
+      break
+    }
+  }
+
+  return flag
+}
+
+const tableClickFilter = (order, tableFilters) => {
+  let flag = true
+
+  for (let type in tableFilters) {
+    const filter = tableFilters[type]
+    const orderData = order[type]
+
+    if (filter === 'все') {
+    } else if (filter === 'Не заполнено') {
+      if (orderData) {
+        flag = false
+        break
+      }
+    } else if (filter) {
+      if (type === 'end_time') {
+        if (!(orderData && orderData.split('T')[0] === filter)) {
+          flag = false
+          break
+        }
+      } else if (type === 'timestamp') {
+        if (!(orderData.split('T')[0] === filter)) {
+          flag = false
+          break
+        }
+      } else if (!(orderData.trim() === filter.trim())) {
+        flag = false
+        break
+      }
+    }
+  }
+
+  return flag
+}
+
 export const newAllFilter = (init) => {
   hideOrders()
 
@@ -30,318 +85,128 @@ export const newAllFilter = (init) => {
   //   filtersBtn.style.cssText = `border: none`
   // }
 
-  console.log(`Status filtered ${state.routesStatusFilter}`)
+
+  console.log(`Alert filtered ${state.routesAlertFilter}`)
+  console.log(`Plan filtered ${state.routesPlannedFilter}`)
+  console.log(`Status filtered ${isRouteStatusFiltered}`)
+  let needRoutesFilters = false
+  if ((isTopRoutesFiltered || isRouteStatusFiltered || state.routesAlertFilter || state.routesPlannedFilter)) {
+    needRoutesFilters = true
+  }
+  console.log(`Need routes filter ${needRoutesFilters}`)
 
   controlFiltersReset()
 
-  if (searched) {
-    state.orders.forEach(order => {
-      if (tableFilters['every']) {
-        flag = false
 
-        for (let type in tableFilters) {
-          if (type === 'every') {
-            continue
-          }
+  console.log(`---------------------`)
+  for (let i = 0; i < state.orders.length; i++) {
+    const order = state.orders[i]
+    if (init) {
+      // deleteOrders()
+      drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+    }
 
-          let filter = tableFilters['every']
-          const orderData = order[type]
+    let globalFilterFlag = false
 
-          // console.log(order.id, type, orderData, filter)
-          if ((orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
-            console.log('find this')
-            flag = true
-            break
-          }
-        }
+    if (searched) {
+      globalFilterFlag = searchedFilter(order, tableFilters)
+      if (!globalFilterFlag) {
+        continue
+      }
+    } else if (filtered) {
+      globalFilterFlag = tableClickFilter(order, tableFilters)
+      if (!globalFilterFlag) {
+        continue
+      }
+    } else {
+      globalFilterFlag = true
+    }
 
-        if (flag) {
-          if (isRouteStatusFiltered || isTopRoutesFiltered) {
-            if (order.db_routes) {
-              const routes = order.db_routes
-
-              for (let i = 0; i < routes.length; i++) {
-                let statusFlag = true
-                let plotFlag = true
-
-                const route = routes[i]
-                if (isRouteStatusFiltered) {
-                  statusFlag = filterRoutesState(route)
-                }
-
-                if (isTopRoutesFiltered) {
-                  plotFlag = topRouteFilters.includes(route.plot)
-                }
-
-                flag = statusFlag && plotFlag
-                if (flag) break
-              }
-
-            } else {
-              console.log('no routes')
-              flag = false
-            }
-          }
-        } else {
-          flag = false
-        }
-
-        if (flag) {
-          // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-          const hiddenOrder = document.querySelector(`#form-${order.id}`)
-          if (hiddenOrder !== null) {
-            hiddenOrder.classList.remove('hidden__input')
-            hiddenOrder.classList.add('showed-order')
-            if (order.db_routes && order.db_routeslength) {
-
-              colorRoutes(order.db_routes, hiddenOrder)
-            }
-
-          } else {
-            drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-          }
-        }
-
-
-        flag = false
+    let globalRouteFlag = false
+    if (globalFilterFlag) {
+      if (!needRoutesFilters) {
+        globalRouteFlag = true
       } else {
-        for (let type in tableFilters) {
-          let filter = tableFilters[type]
-          const orderData = order[type]
-
-          if (filter === 'все') {
-          } else if (filter === 'Не заполнено') {
-            if (orderData) {
-              flag = false
-              break
-            }
-          } else if (filter) {
-            if (type === 'end_time') {
-              if (!(orderData && orderData.split('T')[0] === filter)) {
-                console.log('??')
-                flag = false
-                break
-              }
-            } else if (type === 'timestamp') {
-              const deadline = orderData.split('T')[0]
-              if (!(deadline === state['tableFilters'][type])) {
-                flag = false
-                break
-              }
-
-            } else if (!(orderData.trim().toLowerCase().includes(filter.trim().toLowerCase()))) {
-              flag = false
-              break
-            }
-          }
-        }
-      }
-
-      if (flag) {
-        if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          if (order.db_routes) {
-            const routes = order.db_routes
-
-            for (let i = 0; i < routes.length; i++) {
-              let statusFlag = true
-              let plotFlag = true
-
-              const route = routes[i]
-              if (isRouteStatusFiltered) {
-                statusFlag = filterRoutesState(route)
-              }
-
-              if (isTopRoutesFiltered) {
-                plotFlag = topRouteFilters.includes(route.plot)
-              }
-
-              flag = statusFlag && plotFlag
-              if (flag) break
-            }
-
-          } else {
-            flag = false
-          }
-        }
-      } else {
-        flag = false
-      }
-
-      if (flag) {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`)
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input')
-          hiddenOrder.classList.add('showed-order')
-          if (order.db_routes && order.db_routes.length) {
-            colorRoutes(order.db_routes, hiddenOrder)
-          }
-
-        } else {
-          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        }
-      }
-
-      flag = true
-    })
-
-  } else if (filtered) {
-    console.log('filtered', filtered)
-
-    state.orders.forEach(order => {
-      for (let type in tableFilters) {
-        const filter = tableFilters[type]
-        const orderData = order[type]
-
-        if (filter === 'все') {
-        } else if (filter === 'Не заполнено') {
-          if (orderData) {
-            flag = false
-            break
-          }
-        } else if (filter) {
-          if (type === 'end_time') {
-            if (!(orderData && orderData.split('T')[0] === filter)) {
-              flag = false
-              break
-            }
-          } else if (type === 'timestamp') {
-            if (!(orderData.split('T')[0] === filter)) {
-              flag = false
-              break
-            }
-          } else if (!(orderData.trim() === filter.trim())) {
-            flag = false
-            break
-          }
-        }
-      }
-
-      if (flag) {
-        if (isRouteStatusFiltered || isTopRoutesFiltered) {
-          if (order.db_routes) {
-            const routes = order.db_routes
-
-            for (let i = 0; i < routes.length; i++) {
-              let statusFlag = true
-              let plotFlag = true
-
-              const route = routes[i]
-              if (isRouteStatusFiltered) {
-                statusFlag = filterRoutesState(route)
-              }
-
-              if (isTopRoutesFiltered) {
-                plotFlag = topRouteFilters.includes(route.plot)
-              }
-
-              flag = statusFlag && plotFlag
-              if (flag) break
-            }
-
-          } else {
-            flag = false
-          }
-        }
-      } else {
-        flag = false
-      }
-
-      if (flag) {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`)
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input')
-          hiddenOrder.classList.add('showed-order')
-          if (order.db_routes && order.db_routes.length) {
-            colorRoutes(order.db_routes, hiddenOrder)
-          }
-
-        } else {
-          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        }
-      }
-
-      flag = true
-    })
-  }
-
-  if (!searched && !filtered) {
-    if (isRouteStatusFiltered || isTopRoutesFiltered) {
-      // console.log('filter by routes status')
-
-      state.orders.forEach(order => {
         if (!order.db_routes) {
-          flag = false
+          globalRouteFlag = false
         } else {
-          const routes = order.db_routes
+          for (let j = 0; j < order.db_routes.length; j++) {
+            let routeFlag = false
 
-          for (let i = 0; i < routes.length; i++) {
-            let statusFlag = true
-            let plotFlag = true
-
-            const route = routes[i]
-            if (isRouteStatusFiltered) {
-              statusFlag = filterRoutesState(route)
-            }
+            let route = order.db_routes[j]
+            let statusFlag = false
+            let alertFlag = false
+            let planFlag = false
+            let routeFilterFlag = flag
 
             if (isTopRoutesFiltered) {
-              plotFlag = topRouteFilters.includes(route.plot)
+              routeFilterFlag = topRouteFilters.includes(route.plot)
+              console.log(`route name ${route.plot} plot flag ${routeFilterFlag}`)
+            } else {
+              routeFilterFlag = true
             }
 
-            flag = statusFlag && plotFlag
-            if (flag) {
-              // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-              const hiddenOrder = document.querySelector(`#form-${order.id}`)
-              if (hiddenOrder !== null) {
-                hiddenOrder.classList.remove('hidden__input')
-                hiddenOrder.classList.add('showed-order')
-                if (order.db_routes && order.db_routes.length) {
-                  colorRoutes(order.db_routes, hiddenOrder)
-                }
-              } else {
-                drawOrders(table, `afterbegin`, order, state.orders, state.managers)
+            if (isRouteStatusFiltered) {
+              statusFlag = filterRoutesState(route)
+              console.log(`route name ${route.plot} status flag ${statusFlag}`)
+            } else {
+              statusFlag = true
+            }
+
+            if (state.routesAlertFilter) {
+              console.log(route.alert_color, document.querySelector('.header-routes__alert').value)
+
+              if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
+                alertFlag = true
               }
+              console.log(`route name ${route.plot} alert flag ${alertFlag}`)
+            } else {
+              alertFlag = true
+            }
+
+            if (state.routesPlannedFilter) {
+              const date = document.querySelector('.header-routes__planned-date')
+              if (route.plan_dates.includes(date.value)) {
+                planFlag = true
+              }
+              console.log(`route name ${route.plot} plan flag ${planFlag}`)
+            } else {
+              planFlag = true
+            }
+
+            routeFlag = statusFlag && alertFlag && planFlag && routeFilterFlag
+            if (routeFlag) {
+              globalRouteFlag = true
               break
             }
+
+            console.log(`result route ${route.plot} flag ${routeFlag}`)
+            console.log(`---------------------`)
           }
         }
-      })
+      }
+
+
+      if (globalRouteFlag) {
+        console.log(`good routes for order ${order.id}`, globalRouteFlag)
+      }
     }
-  }
 
-  if (!searched && !filtered && !isTopRoutesFiltered && !isRouteStatusFiltered) {
-    console.log('not filtered')
-    if (init) {
-      deleteOrders()
+    if (globalFilterFlag && globalRouteFlag) {
+      const hiddenOrder = document.querySelector(`#form-${order.id}`)
+      if (hiddenOrder !== null) {
+        hiddenOrder.classList.remove('hidden__input')
+        hiddenOrder.classList.add('showed-order')
+        if (order.db_routes && order.db_routes.length) {
+          colorRoutes(order.db_routes, hiddenOrder)
+        }
 
-      state.orders.forEach(order => {
-        // console.log(order)
+      } else {
         drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        // console.log(order.id)
-        // document.querySelector(`#form-${order.id}`).classList.remove('hidden__input')
-        // order.classList.remove('hidden__input')
-      })
-    } else {
-      state.orders.forEach(order => {
-        // drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        // console.log(order.id)
-        const hiddenOrder = document.querySelector(`#form-${order.id}`)
-        if (hiddenOrder !== null) {
-          hiddenOrder.classList.remove('hidden__input')
-          hiddenOrder.classList.add('showed-order')
-
-          if (order.db_routes && order.db_routes.length) {
-            colorRoutes(order.db_routes, hiddenOrder)
-          }
-        } else {
-          drawOrders(table, `afterbegin`, order, state.orders, state.managers)
-        }
-        // order.classList.remove('hidden__input')
-      })
+      }
     }
   }
-  // ?  : `Журнал заказов (${state.orders.length})
+
   const dataLength = table.querySelectorAll('.showed-order').length
   document.querySelector('.main-header__title').textContent = state.isArchive ? `Архив заказов (${dataLength})` : `Журнал заказов (${dataLength})`
   bindOrdersListeners()

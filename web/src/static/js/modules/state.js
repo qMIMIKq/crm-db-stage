@@ -53,7 +53,8 @@ let state = {
     // 'planned': false,
     // 'alert': false
   },
-  'routesStatusFilter': false,
+  'routesAlertFilter': false,
+  'routesPlannedFilter': false,
   'reports': [],
   'reportFilters': {
     'order_id': '',
@@ -69,7 +70,7 @@ if (userInf) {
   state['clientCheck'] = userInf.groupId === '6'
   state['clientName'] = userInf.name
 
-  console.log(userInf)
+  // console.log(userInf)
 
   const admManCheck = state['adminCheck'] || state['manCheck']
   const admTechCheck = state['adminCheck'] || state['techCheck']

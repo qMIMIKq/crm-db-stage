@@ -23,22 +23,25 @@ export const filterRoutesState = route => {
     if (!route.error_msg && route.pause_time) {
       flag = true
     }
-  } else if (state['routesFilters'].planned) {
-    const date = document.querySelector('.header-routes__planned-date')
-
-    if (route.plan_dates) {
-      if (route.plan_dates.includes(date.value)) {
-        flag = true
-      }
-    }
-
-  } else if (state['routesFilters'].alert) {
-    if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
-      flag = true
-    }
   } else {
     flag = true
   }
+
+
+// else if (state['routesFilters'].planned) {
+//     const date = document.querySelector('.header-routes__planned-date')
+//
+//     if (route.plan_dates) {
+//       if (route.plan_dates.includes(date.value)) {
+//         flag = true
+//       }
+//     }
+//
+//   } else if (state['routesFilters'].alert) {
+//     if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
+//       flag = true
+//     }
+//   }
 
   return flag
 }
