@@ -3,6 +3,7 @@ import {getReports} from "./getReports"
 import {reportRoutesDatesFilter} from "./filters/reportRoutesDatesFilter"
 import {topReportFilter} from "./filters/topReportFilter"
 import {adminHandler} from "../modules/admin/adminHandler";
+import {timeSortingFilter} from "./filters/reportFilters";
 
 export const user = JSON.parse(localStorage.getItem("user"))
 if (!user) {
@@ -14,4 +15,5 @@ if (window.location.href.endsWith('main/report')) {
   topReportFilter()
   reportRoutesDatesFilter()
   getReports()
+  timeSortingFilter()
 }

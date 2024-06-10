@@ -13,8 +13,6 @@ export const positionReportFilter = document.querySelector('#route_position')
 
 
 export const timeSortingFilter = () => {
-  const sortBtn = document.querySelector('.table__timestamp--btn')
-  console.log(sortBtn)
   const check = (a, b) => {
     let flag
 
@@ -29,7 +27,7 @@ export const timeSortingFilter = () => {
     return flag
   }
 
-  sortBtn.addEventListener('click', () => {
+  const sortHandler = () => {
     if (state.reportFiltersDate === '') {
       state.reportFiltersDate = 'down'
     } else if (state.reportFiltersDate === 'down') {
@@ -42,7 +40,6 @@ export const timeSortingFilter = () => {
     }
 
     console.log(state.reportFiltersDate)
-    console.log(state.orders)
     state.orders = state.orders.sort((a, b) => {
       let aDate = a.report_date.split('T')[0]
       let bDate = b.report_date.split('T')[0]
@@ -56,20 +53,12 @@ export const timeSortingFilter = () => {
       drawReport(order)
     })
     newAllReportFilter()
-    // state.orders.forEach((order, i) => {
-    //   const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
-    //   if (hiddenOrder !== null) {
-    //     hiddenOrder.classList.remove('hidden__input')
-    //     hiddenOrder.classList.add('showed-order')
-    //   } else {
-    //     drawReport(order)
-    //   }
-    // })
+  }
 
-    // state.orders.forEach(order => {
-    //   console.log(order.report_date)
-    // })
-  })
+  const sortBtn = document.querySelector('.table__timestamp--btn')
+
+  sortBtn.removeEventListener('click', sortHandler)
+  sortBtn.addEventListener('click', sortHandler)
 }
 
 export const deleteReportsFilters = () => {
@@ -88,8 +77,6 @@ export const drawReportsFilter = (data, target) => {
 }
 
 export const bindReportsFilters = () => {
-  timeSortingFilter()
-
   const tableFilters = document.querySelectorAll('.table__filter')
   const filterWrappers = document.querySelectorAll('.table__use label')
 

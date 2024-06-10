@@ -13,7 +13,7 @@ export const drawReport = async (d) => {
   // if (d.prev_total) {
   //   console.log(d.order_id, d.report_date.split('T')[0].replaceAll("-", "."), d.prev_total)
   // }
-  console.log(d.order_id, d)
+  // console.log(d.order_id, d)
 
   // if (d.hidden_shift) {
   //   console.log(d.hidden_shift)
@@ -46,7 +46,7 @@ export const drawReport = async (d) => {
     }
   }
 
-  console.log(percents)
+  // console.log(percents)
 
   if (d.current_shift) {
     if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {

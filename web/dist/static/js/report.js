@@ -8417,7 +8417,7 @@ const drawReport = async d => {
   // if (d.prev_total) {
   //   console.log(d.order_id, d.report_date.split('T')[0].replaceAll("-", "."), d.prev_total)
   // }
-  console.log(d.order_id, d);
+  // console.log(d.order_id, d)
 
   // if (d.hidden_shift) {
   //   console.log(d.hidden_shift)
@@ -8447,7 +8447,9 @@ const drawReport = async d => {
       center = d.plan;
     }
   }
-  console.log(percents);
+
+  // console.log(percents)
+
   if (d.current_shift) {
     if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {
       center = d.quantity - d.prev_total;
@@ -8854,8 +8856,6 @@ const numsReportFilter = document.querySelector('#numbers');
 const operatorReportFilter = document.querySelector('#operator');
 const positionReportFilter = document.querySelector('#route_position');
 const timeSortingFilter = () => {
-  const sortBtn = document.querySelector('.table__timestamp--btn');
-  console.log(sortBtn);
   const check = (a, b) => {
     let flag;
     if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === '') {} else if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === 'down') {
@@ -8865,7 +8865,7 @@ const timeSortingFilter = () => {
     }
     return flag;
   };
-  sortBtn.addEventListener('click', () => {
+  const sortHandler = () => {
     if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === '') {
       _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate = 'down';
     } else if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === 'down') {
@@ -8877,7 +8877,6 @@ const timeSortingFilter = () => {
       return;
     }
     console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate);
-    console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders);
     _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.sort((a, b) => {
       let aDate = a.report_date.split('T')[0];
       let bDate = b.report_date.split('T')[0];
@@ -8889,22 +8888,11 @@ const timeSortingFilter = () => {
       (0,_drawReport__WEBPACK_IMPORTED_MODULE_4__.drawReport)(order);
     });
     (0,_newAllReportFilter__WEBPACK_IMPORTED_MODULE_1__.newAllReportFilter)();
-    // state.orders.forEach((order, i) => {
-    //   const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
-    //   if (hiddenOrder !== null) {
-    //     hiddenOrder.classList.remove('hidden__input')
-    //     hiddenOrder.classList.add('showed-order')
-    //   } else {
-    //     drawReport(order)
-    //   }
-    // })
-
-    // state.orders.forEach(order => {
-    //   console.log(order.report_date)
-    // })
-  });
+  };
+  const sortBtn = document.querySelector('.table__timestamp--btn');
+  sortBtn.removeEventListener('click', sortHandler);
+  sortBtn.addEventListener('click', sortHandler);
 };
-
 const deleteReportsFilters = () => {
   const filters = document.querySelectorAll('.table__filter--new');
   if (filters[0] !== null) {
@@ -8919,7 +8907,6 @@ const drawReportsFilter = (data, target) => {
   });
 };
 const bindReportsFilters = () => {
-  timeSortingFilter();
   const tableFilters = document.querySelectorAll('.table__filter');
   const filterWrappers = document.querySelectorAll('.table__use label');
   filterWrappers.forEach(wrapper => {
@@ -35170,6 +35157,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_reportRoutesDatesFilter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./filters/reportRoutesDatesFilter */ "./web/src/static/js/report/filters/reportRoutesDatesFilter.js");
 /* harmony import */ var _filters_topReportFilter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters/topReportFilter */ "./web/src/static/js/report/filters/topReportFilter.js");
 /* harmony import */ var _modules_admin_adminHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modules/admin/adminHandler */ "./web/src/static/js/modules/admin/adminHandler.js");
+/* harmony import */ var _filters_reportFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./filters/reportFilters */ "./web/src/static/js/report/filters/reportFilters.js");
+
 
 
 
@@ -35184,6 +35173,7 @@ if (window.location.href.endsWith('main/report')) {
   (0,_filters_topReportFilter__WEBPACK_IMPORTED_MODULE_3__.topReportFilter)();
   (0,_filters_reportRoutesDatesFilter__WEBPACK_IMPORTED_MODULE_2__.reportRoutesDatesFilter)();
   (0,_getReports__WEBPACK_IMPORTED_MODULE_1__.getReports)();
+  (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_5__.timeSortingFilter)();
 }
 })();
 

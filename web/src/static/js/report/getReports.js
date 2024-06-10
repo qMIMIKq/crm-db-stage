@@ -8,7 +8,7 @@ import {
   idReportFilter,
   numsReportFilter,
   operatorReportFilter,
-  positionReportFilter
+  positionReportFilter, timeSortingFilter
 } from "./filters/reportFilters";
 import {appAddr} from "../../../../../appAddr";
 import {newAllReportFilter} from "./filters/newAllReportFilter";

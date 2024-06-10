@@ -10263,7 +10263,7 @@ const drawReport = async d => {
   // if (d.prev_total) {
   //   console.log(d.order_id, d.report_date.split('T')[0].replaceAll("-", "."), d.prev_total)
   // }
-  console.log(d.order_id, d);
+  // console.log(d.order_id, d)
 
   // if (d.hidden_shift) {
   //   console.log(d.hidden_shift)
@@ -10293,7 +10293,9 @@ const drawReport = async d => {
       center = d.plan;
     }
   }
-  console.log(percents);
+
+  // console.log(percents)
+
   if (d.current_shift) {
     if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {
       center = d.quantity - d.prev_total;
@@ -10700,8 +10702,6 @@ const numsReportFilter = document.querySelector('#numbers');
 const operatorReportFilter = document.querySelector('#operator');
 const positionReportFilter = document.querySelector('#route_position');
 const timeSortingFilter = () => {
-  const sortBtn = document.querySelector('.table__timestamp--btn');
-  console.log(sortBtn);
   const check = (a, b) => {
     let flag;
     if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === '') {} else if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === 'down') {
@@ -10711,7 +10711,7 @@ const timeSortingFilter = () => {
     }
     return flag;
   };
-  sortBtn.addEventListener('click', () => {
+  const sortHandler = () => {
     if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === '') {
       _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate = 'down';
     } else if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === 'down') {
@@ -10723,7 +10723,6 @@ const timeSortingFilter = () => {
       return;
     }
     console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate);
-    console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders);
     _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.sort((a, b) => {
       let aDate = a.report_date.split('T')[0];
       let bDate = b.report_date.split('T')[0];
@@ -10735,22 +10734,11 @@ const timeSortingFilter = () => {
       (0,_drawReport__WEBPACK_IMPORTED_MODULE_4__.drawReport)(order);
     });
     (0,_newAllReportFilter__WEBPACK_IMPORTED_MODULE_1__.newAllReportFilter)();
-    // state.orders.forEach((order, i) => {
-    //   const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
-    //   if (hiddenOrder !== null) {
-    //     hiddenOrder.classList.remove('hidden__input')
-    //     hiddenOrder.classList.add('showed-order')
-    //   } else {
-    //     drawReport(order)
-    //   }
-    // })
-
-    // state.orders.forEach(order => {
-    //   console.log(order.report_date)
-    // })
-  });
+  };
+  const sortBtn = document.querySelector('.table__timestamp--btn');
+  sortBtn.removeEventListener('click', sortHandler);
+  sortBtn.addEventListener('click', sortHandler);
 };
-
 const deleteReportsFilters = () => {
   const filters = document.querySelectorAll('.table__filter--new');
   if (filters[0] !== null) {
@@ -10765,7 +10753,6 @@ const drawReportsFilter = (data, target) => {
   });
 };
 const bindReportsFilters = () => {
-  timeSortingFilter();
   const tableFilters = document.querySelectorAll('.table__filter');
   const filterWrappers = document.querySelectorAll('.table__use label');
   filterWrappers.forEach(wrapper => {
