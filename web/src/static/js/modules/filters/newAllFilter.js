@@ -86,19 +86,13 @@ export const newAllFilter = (init) => {
   // }
 
 
-  console.log(`Alert filtered ${state.routesAlertFilter}`)
-  console.log(`Plan filtered ${state.routesPlannedFilter}`)
-  console.log(`Status filtered ${isRouteStatusFiltered}`)
   let needRoutesFilters = false
   if ((isTopRoutesFiltered || isRouteStatusFiltered || state.routesAlertFilter || state.routesPlannedFilter)) {
     needRoutesFilters = true
   }
-  console.log(`Need routes filter ${needRoutesFilters}`)
-
   controlFiltersReset()
 
 
-  console.log(`---------------------`)
   for (let i = 0; i < state.orders.length; i++) {
     const order = state.orders[i]
     if (init) {
@@ -141,25 +135,20 @@ export const newAllFilter = (init) => {
 
             if (isTopRoutesFiltered) {
               routeFilterFlag = topRouteFilters.includes(route.plot)
-              console.log(`route name ${route.plot} plot flag ${routeFilterFlag}`)
             } else {
               routeFilterFlag = true
             }
 
             if (isRouteStatusFiltered) {
               statusFlag = filterRoutesState(route)
-              console.log(`route name ${route.plot} status flag ${statusFlag}`)
             } else {
               statusFlag = true
             }
 
             if (state.routesAlertFilter) {
-              console.log(route.alert_color, document.querySelector('.header-routes__alert').value)
-
               if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
                 alertFlag = true
               }
-              console.log(`route name ${route.plot} alert flag ${alertFlag}`)
             } else {
               alertFlag = true
             }
@@ -169,7 +158,6 @@ export const newAllFilter = (init) => {
               if (route.plan_dates.includes(date.value)) {
                 planFlag = true
               }
-              console.log(`route name ${route.plot} plan flag ${planFlag}`)
             } else {
               planFlag = true
             }
@@ -180,15 +168,8 @@ export const newAllFilter = (init) => {
               break
             }
 
-            console.log(`result route ${route.plot} flag ${routeFlag}`)
-            console.log(`---------------------`)
           }
         }
-      }
-
-
-      if (globalRouteFlag) {
-        console.log(`good routes for order ${order.id}`, globalRouteFlag)
       }
     }
 

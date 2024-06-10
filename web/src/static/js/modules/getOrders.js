@@ -20,7 +20,7 @@ export const isEmptyData = checkThis => {
 }
 
 export const getOrders = (postfix = 'get-all', updateOnly = false) => {
-  console.time('get orders')
+  // console.time('get orders')
 
   const archiveBlock = document.querySelector('.archive-block')
   const routesBlock = document.querySelector('.routes-block')
@@ -57,7 +57,6 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
     routesBlock.classList.remove('hidden__input')
   }
 
-  console.log(state.clientCheck)
 
   const params = {
     'order_old': state.isArchive,
@@ -73,7 +72,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
   sendData(`${appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params))
     .then(res => res.json())
     .then(data => {
-      console.timeEnd('get orders')
+      // console.timeEnd('get orders')
 
       const title = document.querySelector('.main-header__title')
       if (!data.data) {
@@ -86,7 +85,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
       }
 
       if (data.data) {
-        console.time('draw orders')
+        // console.time('draw orders')
         deleteTableFilters()
         // console.log('we have data')
 
@@ -136,7 +135,7 @@ export const getOrders = (postfix = 'get-all', updateOnly = false) => {
         drawTableFilter(state.names, namesFilter)
 
         bindTableFilters()
-        console.timeEnd('draw orders')
+        // console.timeEnd('draw orders')
       }
 
       // console.log(state.orders.length)

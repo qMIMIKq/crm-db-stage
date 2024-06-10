@@ -3273,16 +3273,11 @@ const newAllFilter = init => {
   //   filtersBtn.style.cssText = `border: none`
   // }
 
-  console.log(`Alert filtered ${_state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter}`);
-  console.log(`Plan filtered ${_state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter}`);
-  console.log(`Status filtered ${isRouteStatusFiltered}`);
   let needRoutesFilters = false;
   if (isTopRoutesFiltered || isRouteStatusFiltered || _state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter || _state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter) {
     needRoutesFilters = true;
   }
-  console.log(`Need routes filter ${needRoutesFilters}`);
   (0,_tableFilters__WEBPACK_IMPORTED_MODULE_5__.controlFiltersReset)();
-  console.log(`---------------------`);
   for (let i = 0; i < _state__WEBPACK_IMPORTED_MODULE_0__.state.orders.length; i++) {
     const order = _state__WEBPACK_IMPORTED_MODULE_0__.state.orders[i];
     if (init) {
@@ -3320,22 +3315,18 @@ const newAllFilter = init => {
             let routeFilterFlag = flag;
             if (isTopRoutesFiltered) {
               routeFilterFlag = topRouteFilters.includes(route.plot);
-              console.log(`route name ${route.plot} plot flag ${routeFilterFlag}`);
             } else {
               routeFilterFlag = true;
             }
             if (isRouteStatusFiltered) {
               statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
-              console.log(`route name ${route.plot} status flag ${statusFlag}`);
             } else {
               statusFlag = true;
             }
             if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter) {
-              console.log(route.alert_color, document.querySelector('.header-routes__alert').value);
               if (route.alert_color && route.alert_color === document.querySelector('.header-routes__alert').value) {
                 alertFlag = true;
               }
-              console.log(`route name ${route.plot} alert flag ${alertFlag}`);
             } else {
               alertFlag = true;
             }
@@ -3344,7 +3335,6 @@ const newAllFilter = init => {
               if (route.plan_dates.includes(date.value)) {
                 planFlag = true;
               }
-              console.log(`route name ${route.plot} plan flag ${planFlag}`);
             } else {
               planFlag = true;
             }
@@ -3353,13 +3343,8 @@ const newAllFilter = init => {
               globalRouteFlag = true;
               break;
             }
-            console.log(`result route ${route.plot} flag ${routeFlag}`);
-            console.log(`---------------------`);
           }
         }
-      }
-      if (globalRouteFlag) {
-        console.log(`good routes for order ${order.id}`, globalRouteFlag);
       }
     }
     if (globalFilterFlag && globalRouteFlag) {
@@ -4236,7 +4221,8 @@ const isEmptyData = checkThis => {
 const getOrders = function () {
   let postfix = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'get-all';
   let updateOnly = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  console.time('get orders');
+  // console.time('get orders')
+
   const archiveBlock = document.querySelector('.archive-block');
   const routesBlock = document.querySelector('.routes-block');
   const loader = document.querySelector('.spinner-loader');
@@ -4265,7 +4251,6 @@ const getOrders = function () {
     archiveBlock.classList.add('hidden__input');
     routesBlock.classList.remove('hidden__input');
   }
-  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.clientCheck);
   const params = {
     'order_old': _state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive,
     'archive_from': _filters_tableRoutesFilters__WEBPACK_IMPORTED_MODULE_2__.archiveFrom.value,
@@ -4277,7 +4262,8 @@ const getOrders = function () {
     'client_name': _state__WEBPACK_IMPORTED_MODULE_1__.state.clientName
   };
   (0,_sendData__WEBPACK_IMPORTED_MODULE_3__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/orders/get-all`, 'POST', JSON.stringify(params)).then(res => res.json()).then(data => {
-    console.timeEnd('get orders');
+    // console.timeEnd('get orders')
+
     const title = document.querySelector('.main-header__title');
     if (!data.data) {
       if (!updateOnly) {
@@ -4288,7 +4274,7 @@ const getOrders = function () {
       }
     }
     if (data.data) {
-      console.time('draw orders');
+      // console.time('draw orders')
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.deleteTableFilters)();
       // console.log('we have data')
 
@@ -4332,7 +4318,7 @@ const getOrders = function () {
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.materials, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.materialsFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.drawTableFilter)(_state__WEBPACK_IMPORTED_MODULE_1__.state.names, _filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.namesFilter);
       (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.bindTableFilters)();
-      console.timeEnd('draw orders');
+      // console.timeEnd('draw orders')
     }
 
     // console.log(state.orders.length)
@@ -9445,7 +9431,6 @@ const getReports = () => {
     link.classList.remove('nav-control__route-link--current');
   });
   reportLink.classList.add('nav-control__route-link--current');
-  console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.clientName);
   let reportTime = {
     "from": from,
     "to": to,
@@ -9581,20 +9566,19 @@ if (window.location.href.endsWith('main/table')) {
     // plotsFilters.classList.add("hidden__input")
   }
 
-  // let updateInterval = setInterval(() => {
-  //   if (!state.isArchive) {
-  //     getOrders('get-all', true)
-  //   }
-  // }, 6000)
-  //
-  // setInterval(() => {
-  //   clearInterval(updateInterval)
-  //   updateInterval = setInterval(() => {
-  //     if (!state.isArchive) {
-  //       getOrders('get-all', true)
-  //     }
-  //   }, 6000)
-  // }, 100000)
+  let updateInterval = setInterval(() => {
+    if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
+      (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
+    }
+  }, 6000);
+  setInterval(() => {
+    clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      if (!_modules_state__WEBPACK_IMPORTED_MODULE_3__.state.isArchive) {
+        (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_1__.getOrders)('get-all', true);
+      }
+    }, 6000);
+  }, 100000);
 }
 
 /***/ }),
