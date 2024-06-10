@@ -1,5 +1,8 @@
 import {state} from "../../modules/state";
 import {newAllReportFilter} from "./newAllReportFilter";
+import {deleteOrders} from "../../modules/getOrders";
+import {getReports} from "../getReports";
+import {drawReport} from "../drawReport";
 
 export const reportFiltersWrapper = document.querySelector('.main-table__header')
 export const idReportFilter = document.querySelector('#id')
@@ -8,6 +11,66 @@ export const numsReportFilter = document.querySelector('#numbers')
 export const operatorReportFilter = document.querySelector('#operator')
 export const positionReportFilter = document.querySelector('#route_position')
 
+
+export const timeSortingFilter = () => {
+  const sortBtn = document.querySelector('.table__timestamp--btn')
+  console.log(sortBtn)
+  const check = (a, b) => {
+    let flag
+
+    if (state.reportFiltersDate === '') {
+
+    } else if (state.reportFiltersDate === 'down') {
+      flag = a > b ? 1 : -1
+    } else if (state.reportFiltersDate === 'up') {
+      flag = a < b ? 1 : -1
+    }
+
+    return flag
+  }
+
+  sortBtn.addEventListener('click', () => {
+    if (state.reportFiltersDate === '') {
+      state.reportFiltersDate = 'down'
+    } else if (state.reportFiltersDate === 'down') {
+      state.reportFiltersDate = 'up'
+    } else {
+      state.reportFiltersDate = ''
+      deleteOrders()
+      getReports()
+      return
+    }
+
+    console.log(state.reportFiltersDate)
+    console.log(state.orders)
+    state.orders = state.orders.sort((a, b) => {
+      let aDate = a.report_date.split('T')[0]
+      let bDate = b.report_date.split('T')[0]
+      let flag = check(aDate, bDate)
+
+      return flag
+    })
+
+    deleteOrders()
+    state.orders.forEach(order => {
+      drawReport(order)
+    })
+    newAllReportFilter()
+    // state.orders.forEach((order, i) => {
+    //   const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
+    //   if (hiddenOrder !== null) {
+    //     hiddenOrder.classList.remove('hidden__input')
+    //     hiddenOrder.classList.add('showed-order')
+    //   } else {
+    //     drawReport(order)
+    //   }
+    // })
+
+    // state.orders.forEach(order => {
+    //   console.log(order.report_date)
+    // })
+  })
+}
 
 export const deleteReportsFilters = () => {
   const filters = document.querySelectorAll('.table__filter--new')
@@ -25,6 +88,8 @@ export const drawReportsFilter = (data, target) => {
 }
 
 export const bindReportsFilters = () => {
+  timeSortingFilter()
+
   const tableFilters = document.querySelectorAll('.table__filter')
   const filterWrappers = document.querySelectorAll('.table__use label')
 

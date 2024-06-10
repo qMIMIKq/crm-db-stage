@@ -16,7 +16,6 @@ type ReportsPG struct {
 func (r ReportsPG) GetAll(reportParams domain.ReportTime) ([]domain.Report, error) {
 	var clientName string
 
-	log.Info().Interface("params", reportParams).Msg("params is")
 	if reportParams.IsClient {
 		clientName = fmt.Sprintf(`AND order_client = '%s'`, reportParams.ClientName)
 	}
@@ -24,8 +23,6 @@ func (r ReportsPG) GetAll(reportParams domain.ReportTime) ([]domain.Report, erro
 	query := fmt.Sprintf(`
 		SELECT * FROM reports WHERE report_date >= $1 AND report_date <= $2 %s ORDER BY order_id, report_date
 	`, clientName)
-
-	fmt.Println(query)
 
 	var reports []domain.Report
 	err := r.db.Select(&reports, query, reportParams.From, reportParams.To)

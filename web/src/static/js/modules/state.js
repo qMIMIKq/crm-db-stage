@@ -55,6 +55,7 @@ let state = {
   },
   'routesAlertFilter': false,
   'routesPlannedFilter': false,
+  'reportFiltersDate': '',
   'reports': [],
   'reportFilters': {
     'order_id': '',

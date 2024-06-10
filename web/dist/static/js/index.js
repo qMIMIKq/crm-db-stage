@@ -7977,6 +7977,7 @@ let state = {
   },
   'routesAlertFilter': false,
   'routesPlannedFilter': false,
+  'reportFiltersDate': '',
   'reports': [],
   'reportFilters': {
     'order_id': '',
@@ -8856,10 +8857,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "numsReportFilter": () => (/* binding */ numsReportFilter),
 /* harmony export */   "operatorReportFilter": () => (/* binding */ operatorReportFilter),
 /* harmony export */   "positionReportFilter": () => (/* binding */ positionReportFilter),
-/* harmony export */   "reportFiltersWrapper": () => (/* binding */ reportFiltersWrapper)
+/* harmony export */   "reportFiltersWrapper": () => (/* binding */ reportFiltersWrapper),
+/* harmony export */   "timeSortingFilter": () => (/* binding */ timeSortingFilter)
 /* harmony export */ });
 /* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../modules/state */ "./web/src/static/js/modules/state.js");
 /* harmony import */ var _newAllReportFilter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./newAllReportFilter */ "./web/src/static/js/report/filters/newAllReportFilter.js");
+/* harmony import */ var _modules_getOrders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../modules/getOrders */ "./web/src/static/js/modules/getOrders.js");
+/* harmony import */ var _getReports__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../getReports */ "./web/src/static/js/report/getReports.js");
+/* harmony import */ var _drawReport__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../drawReport */ "./web/src/static/js/report/drawReport.js");
+
+
+
 
 
 const reportFiltersWrapper = document.querySelector('.main-table__header');
@@ -8868,6 +8876,58 @@ const numsReportFilter = document.querySelector('#numbers');
 // export const plotsReportFilter = document.querySelector('#order_plot')
 const operatorReportFilter = document.querySelector('#operator');
 const positionReportFilter = document.querySelector('#route_position');
+const timeSortingFilter = () => {
+  const sortBtn = document.querySelector('.table__timestamp--btn');
+  console.log(sortBtn);
+  const check = (a, b) => {
+    let flag;
+    if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === '') {} else if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === 'down') {
+      flag = a > b ? 1 : -1;
+    } else if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === 'up') {
+      flag = a < b ? 1 : -1;
+    }
+    return flag;
+  };
+  sortBtn.addEventListener('click', () => {
+    if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === '') {
+      _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate = 'down';
+    } else if (_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate === 'down') {
+      _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate = 'up';
+    } else {
+      _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate = '';
+      (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.deleteOrders)();
+      (0,_getReports__WEBPACK_IMPORTED_MODULE_3__.getReports)();
+      return;
+    }
+    console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.reportFiltersDate);
+    console.log(_modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders);
+    _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders = _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.sort((a, b) => {
+      let aDate = a.report_date.split('T')[0];
+      let bDate = b.report_date.split('T')[0];
+      let flag = check(aDate, bDate);
+      return flag;
+    });
+    (0,_modules_getOrders__WEBPACK_IMPORTED_MODULE_2__.deleteOrders)();
+    _modules_state__WEBPACK_IMPORTED_MODULE_0__.state.orders.forEach(order => {
+      (0,_drawReport__WEBPACK_IMPORTED_MODULE_4__.drawReport)(order);
+    });
+    (0,_newAllReportFilter__WEBPACK_IMPORTED_MODULE_1__.newAllReportFilter)();
+    // state.orders.forEach((order, i) => {
+    //   const hiddenOrder = document.querySelector(`#form-${order.report_id}`)
+    //   if (hiddenOrder !== null) {
+    //     hiddenOrder.classList.remove('hidden__input')
+    //     hiddenOrder.classList.add('showed-order')
+    //   } else {
+    //     drawReport(order)
+    //   }
+    // })
+
+    // state.orders.forEach(order => {
+    //   console.log(order.report_date)
+    // })
+  });
+};
+
 const deleteReportsFilters = () => {
   const filters = document.querySelectorAll('.table__filter--new');
   if (filters[0] !== null) {
@@ -8882,6 +8942,7 @@ const drawReportsFilter = (data, target) => {
   });
 };
 const bindReportsFilters = () => {
+  timeSortingFilter();
   const tableFilters = document.querySelectorAll('.table__filter');
   const filterWrappers = document.querySelectorAll('.table__use label');
   filterWrappers.forEach(wrapper => {
