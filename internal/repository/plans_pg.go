@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -1137,8 +1138,9 @@ func (p *PlansPG) UpdatePlan(data *domain.PlanData) error {
 	log.Info().Interface("report info", info).Msg("REPORT INFO")
 
 	//intId, _ := strconv.Atoi(data.RouteID)
+	routeID, _ := strconv.Atoi(data.RouteID)
 
-	p.reportsPG.RemoveForUpdateReports(data.OrderID)
+	p.reportsPG.RemoveForUpdateReports(routeID)
 	for _, dateInfo := range data.AddedDates {
 		checkPlanDate, _ := time.Parse(layout, dateInfo.Date)
 		checkToday, _ := time.Parse(layout, today)

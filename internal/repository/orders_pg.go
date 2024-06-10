@@ -122,7 +122,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 		//`)
 
 		onlyOneFlag := false
-		err = o.reportsPG.RemoveForUpdateReports(order.ID)
 
 	routesLoop:
 		for name, route := range order.Routes {
@@ -155,9 +154,14 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					route.Planned, route.IssuedToday, route.Time, route.Up,
 					route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor,
 					routePos, route.RouteID).Scan(&routeID)
+				log.Info().Msgf("route id is %v", routeID)
 
 				if err != nil {
 					log.Err(err).Caller().Msg("Error")
+				}
+
+				if err = o.reportsPG.RemoveForUpdateReports(routeID); err != nil {
+					log.Err(err).Caller().Msg("error is")
 				}
 
 				if len(route.AddedDates) > 0 {

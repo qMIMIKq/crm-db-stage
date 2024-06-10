@@ -78,7 +78,6 @@ func (r *RoutesPG) UpdateRoute(route *domain.Route) error {
 	canRemove := "yes"
 
 	onlyOneFlag := false
-	err := r.reportsPG.RemoveForUpdateReports(route.OrderID)
 
 	routesUpdateQuery := fmt.Sprintf(`
 		UPDATE routes SET worker = $1, plot_id = $2, quantity = $3,
@@ -98,7 +97,7 @@ func (r *RoutesPG) UpdateRoute(route *domain.Route) error {
 	}
 
 	var routeID int
-	err = r.db.QueryRow(routesUpdateQuery, route.User, route.Plot,
+	err := r.db.QueryRow(routesUpdateQuery, route.User, route.Plot,
 		route.Quantity, route.Issued, route.StartTime, route.EndTime,
 		route.PauseTime, route.PauseMsg, route.ErrorTime, route.ErrorMsg, route.DayQuantity,
 		route.TheorEnd, route.DynEnd, route.PlanDate, route.PlanStart, route.PlanFaster,
@@ -106,6 +105,8 @@ func (r *RoutesPG) UpdateRoute(route *domain.Route) error {
 		route.Planned, route.IssuedToday, route.Time, route.Up,
 		route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor,
 		route.RouteID).Scan(&routeID)
+
+	err = r.reportsPG.RemoveForUpdateReports(routeID)
 
 	if err != nil {
 		log.Err(err).Caller().Msg("Error")
