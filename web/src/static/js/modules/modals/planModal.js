@@ -28,11 +28,22 @@ const planDateModal = `
          
          <button class="main__button--click plan-divider--modal">Делитель смены</button>
          <button disabled class="main__button--click plan-auto--modal">Авто</button>
+         <button disabled class="main__button--click plan-history--modal">История</button>
         
         <div class='confirm__section'>
             <button class='main__button route__btn confirm__button confirm__button--ok'>ОК</button>
             <button class='main__button route__btn confirm__button confirm__button--cncl'>Отмена</button>
         </div>
+      </div>
+   </div>
+`
+
+const planHistoryModal = `
+  <div id='modal' style='z-index: 10001' class='modal modal-plan__date--history bounceIn'>
+      <div class='modal_content modal-plan modal_content--confirm' style='width: 400px;height: 400px;'>
+        <h2 class='confirm__title confirm__title--plan'>История</h2>
+         <ul class="modal-plan__dates plan-dates">
+         </ul>
       </div>
    </div>
 `
@@ -105,12 +116,28 @@ export const planDateHandler = (addedDates, plot, routeID, planned, planDateInpu
   const planToday = modal.querySelector('.plan-period__today')
   const planWeek = modal.querySelector('.plan-period__week')
   const planMonth = modal.querySelector('.plan-period__month')
+  const planHistory = modal.querySelector('.plan-history--modal')
 
   const planDivider = modal.querySelector('.plan-divider--modal')
   planDivider.addEventListener('click', () => {
     planDivider.classList.toggle('route__filter--chosen')
   })
-  console.log(needShifts)
+
+  if (addedDates) {
+    planHistory.removeAttribute('disabled')
+    planHistory.addEventListener('click', () => {
+      const historyModal = showModal(planHistoryModal)
+      const historyList = historyModal.querySelector('.plan-dates')
+
+      Object.keys(addedDates).forEach(date => {
+        historyList.insertAdjacentHTML('afterbegin', `
+          <li class="plan-dates__item plan-dates__item--history route__btn">
+            ${date.replaceAll('-', '.')}
+          </li>
+         `)
+      })
+    })
+  }
 
   const autoBtn = modal.querySelector('.plan-auto--modal')
   autoBtn.removeAttribute('disabled')

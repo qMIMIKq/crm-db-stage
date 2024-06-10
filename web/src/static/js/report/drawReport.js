@@ -33,11 +33,12 @@ export const drawReport = async (d) => {
     if (d.plan.includes('/')) {
       if (d.current_shift == 1) {
         center = d.plan.split('/')[0]
-      }
-        // else if (Number(d.current_shift) >= Number(d.need_shifts)) {
-        //     center = d.plan.split('/')[2]
-      // }
-      else {
+        if (center == 0) {
+          percents = 100
+        }
+
+        // console.log(center)
+      } else {
         center = d.plan.split('/')[1]
       }
     } else {
@@ -45,9 +46,12 @@ export const drawReport = async (d) => {
     }
   }
 
+  console.log(percents)
+
   if (d.current_shift) {
     if (d.current_shift && d.need_shifts && Number(d.current_shift) >= Number(d.need_shifts)) {
       center = d.quantity - d.prev_total
+      percents = 0
       if (center < 0) center = 0
     }
 
@@ -68,7 +72,9 @@ export const drawReport = async (d) => {
   // console.log(d.current_shift, d.need_shifts)
 
   if (d.plan && d.issued_plan) {
-    percents = (d.issued_plan / center) * 100
+    if (center != 0) {
+      percents = (d.issued_plan / center) * 100
+    }
   }
 
   percents = percents >= 0 ? percents : 0
