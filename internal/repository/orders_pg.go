@@ -1330,6 +1330,10 @@ func (o *OrdersPG) getRouteSubInfo(route domain.Route) {
 
 func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	//log.Info().Msgf("Getting orders, %v", params.Old)
+	var clientName string
+	if params.IsClient {
+		clientName = fmt.Sprintf(`AND order_client = '%s'`, params.ClientName)
+	}
 
 	var query string
 	if params.Old {
@@ -1343,11 +1347,6 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	} else if params.Planning {
 
 	} else {
-		var clientName string
-		if params.IsClient {
-			clientName = fmt.Sprintf(`AND order_client = '%s'`, params.ClientName)
-		}
-
 		query = fmt.Sprintf(`
 			SELECT * FROM orders WHERE completed = false %s ORDER BY order_id ASC;
 		`, clientName)
@@ -1361,23 +1360,24 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 -- 			 WHERE completed = false
 			 	 WHERE time_of_modify > $1
 			   AND time_of_modify >= $2
+			 	 %s
 		   ORDER BY order_id ASC;
-		`)
+		`, clientName)
 	}
 
 	queryFiles := fmt.Sprintf(`
-			SELECT file_name FROM files WHERE order_id = $1
-		`)
+		SELECT file_name FROM files WHERE order_id = $1
+	`)
 	//
 	queryComments := fmt.Sprintf(`
-			SELECT comment_text FROM comments WHERE order_id = $1
-		`)
+		SELECT comment_text FROM comments WHERE order_id = $1
+	`)
 	//
 	queryRoutes := fmt.Sprintf(`
-			SELECT *
-		   FROM routes
-		  WHERE order_id = $1
-		`)
+		SELECT *
+		 FROM routes
+		WHERE order_id = $1
+	`)
 	//
 	//	queryRouteComments := fmt.Sprintf(`
 	//		SELECT date, value

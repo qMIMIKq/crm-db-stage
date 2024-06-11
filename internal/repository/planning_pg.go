@@ -19,9 +19,14 @@ func (p *PlanningPG) GetAllPlanning(planningRange *domain.PlanningRange) ([]*dom
 	from, _ := time.Parse(layout, planningRange.From)
 	minDate := from.Add(-24 * time.Hour).Format(layout)
 
+	var clientName string
+	if planningRange.IsClient {
+		clientName = fmt.Sprintf(`WHERE order_client = '%s'`, planningRange.ClientName)
+	}
+
 	planningQuery := fmt.Sprintf(`
-		SELECT * FROM planning ORDER BY order_id
- `)
+		SELECT * FROM planning %s ORDER BY order_id
+ `, clientName)
 
 	var planning []*domain.Planning
 	err := p.db.Select(&planning, planningQuery)

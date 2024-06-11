@@ -2909,6 +2909,7 @@ const enterHelperRoute = e => {
   const distance = Math.abs(parentForDist.offsetTop - table.offsetTop - table.offsetHeight);
   const posElem = elem.querySelector('.hidden__input');
   const pos = posElem.name.split('-')[1];
+  let dataLength = document.querySelector('.main-header__title').textContent.replaceAll('(', '').replaceAll(')', '').split(' ')[2];
   // console.log(distance)
 
   // console.log(elem)
@@ -2945,7 +2946,7 @@ const enterHelperRoute = e => {
   if (helper) {
     const helperHeight = helper.clientHeight;
     if (helperHeight > 23) {
-      if (distance < 270) {
+      if (distance < 270 && dataLength >= 10) {
         helper.style.top = `-${String(helperHeight - 23 + 35)}px`;
       } else {
         helper.style.bottom = `-${String(helperHeight - 23 + 35)}px`;

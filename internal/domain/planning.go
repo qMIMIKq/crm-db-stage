@@ -21,6 +21,8 @@ type Planning struct {
 }
 
 type PlanningRange struct {
-	From string `json:"from"`
-	To   string `json:"to"`
+	From       string `json:"from"`
+	To         string `json:"to"`
+	IsClient   bool   `json:"is_client"`
+	ClientName string `json:"client_name"`
 }

@@ -25,7 +25,9 @@ export const getPlans = (updateOnly) => {
   // console.log('start time', state.maxTime)
   const params = {
     'from': from,
-    'to': to
+    'to': to,
+    'is_client': state.clientCheck,
+    'client_name': state.clientName,
   }
 
   sendData(`${appAddr}/api/planning/get-all`, 'POST', JSON.stringify(params))
