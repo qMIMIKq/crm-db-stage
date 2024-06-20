@@ -7,6 +7,7 @@ import {addTriggers} from "../modules/addTriggers";
 import {triggerFilesModal} from "../modules/modals/downloadFilesModal";
 import {shiftHandler} from "./shiftHandler";
 import {autoShiftHandler} from "./autoShiftHandler";
+import {state} from "../modules/state";
 
 export const table = document.querySelector('.main-table')
 
@@ -569,7 +570,9 @@ const planningHandler = (currentOrder, d, addedDates) => {
           }
         }
       })
-      addHandlers()
+      if (!state.clientCheck) {
+        addHandlers()
+      }
     }
     drawData()
 
@@ -590,17 +593,19 @@ const planningHandler = (currentOrder, d, addedDates) => {
     //   shiftHandler(shifter, 'prev', modalAddedDates)
     // })
 
-    const shiftAuto = currentOrder.querySelector('.shift__auto')
-    shiftAuto.addEventListener('click', () => {
-      // console.log(modalAddedDates)
-      autoShiftHandler(shifter, '', modalAddedDates, currentOrder)
-    })
+    if (!state.clientCheck) {
+      const shiftAuto = currentOrder.querySelector('.shift__auto')
+      shiftAuto.addEventListener('click', () => {
+        // console.log(modalAddedDates)
+        autoShiftHandler(shifter, '', modalAddedDates, currentOrder)
+      })
 
-    const shiftForw = currentOrder.querySelector('.shift__forw')
-    shiftForw.addEventListener('click', () => {
-      // console.log(modalAddedDates)
-      shiftHandler(shifter, 'forw', modalAddedDates, currentOrder)
-    })
+      const shiftForw = currentOrder.querySelector('.shift__forw')
+      shiftForw.addEventListener('click', () => {
+        // console.log(modalAddedDates)
+        shiftHandler(shifter, 'forw', modalAddedDates, currentOrder)
+      })
+    }
 
 
     const planToday = document.querySelector('.plan-period__today')

@@ -34,7 +34,7 @@ func (r *RoutesPG) GetRouteByID(id int) *domain.Route {
 	`)
 
 	commentQuery := fmt.Sprintf(`
-		SELECT date, value FROM route_comments WHERE route_id = $1
+		SELECT date, value FROM route_comments WHERE route_id = $1 ORDER BY date
 	`)
 
 	queryRoutePlan := fmt.Sprintf(`

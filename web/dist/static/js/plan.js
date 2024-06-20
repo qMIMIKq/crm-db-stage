@@ -8366,6 +8366,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modals_downloadFilesModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modules/modals/downloadFilesModal */ "./web/src/static/js/modules/modals/downloadFilesModal.js");
 /* harmony import */ var _shiftHandler__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./shiftHandler */ "./web/src/static/js/plan/shiftHandler.js");
 /* harmony import */ var _autoShiftHandler__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./autoShiftHandler */ "./web/src/static/js/plan/autoShiftHandler.js");
+/* harmony import */ var _modules_state__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../modules/state */ "./web/src/static/js/modules/state.js");
+
 
 
 
@@ -8881,7 +8883,9 @@ const planningHandler = (currentOrder, d, addedDates) => {
           }
         }
       });
-      addHandlers();
+      if (!_modules_state__WEBPACK_IMPORTED_MODULE_9__.state.clientCheck) {
+        addHandlers();
+      }
     };
     drawData();
 
@@ -8902,16 +8906,18 @@ const planningHandler = (currentOrder, d, addedDates) => {
     //   shiftHandler(shifter, 'prev', modalAddedDates)
     // })
 
-    const shiftAuto = currentOrder.querySelector('.shift__auto');
-    shiftAuto.addEventListener('click', () => {
-      // console.log(modalAddedDates)
-      (0,_autoShiftHandler__WEBPACK_IMPORTED_MODULE_8__.autoShiftHandler)(shifter, '', modalAddedDates, currentOrder);
-    });
-    const shiftForw = currentOrder.querySelector('.shift__forw');
-    shiftForw.addEventListener('click', () => {
-      // console.log(modalAddedDates)
-      (0,_shiftHandler__WEBPACK_IMPORTED_MODULE_7__.shiftHandler)(shifter, 'forw', modalAddedDates, currentOrder);
-    });
+    if (!_modules_state__WEBPACK_IMPORTED_MODULE_9__.state.clientCheck) {
+      const shiftAuto = currentOrder.querySelector('.shift__auto');
+      shiftAuto.addEventListener('click', () => {
+        // console.log(modalAddedDates)
+        (0,_autoShiftHandler__WEBPACK_IMPORTED_MODULE_8__.autoShiftHandler)(shifter, '', modalAddedDates, currentOrder);
+      });
+      const shiftForw = currentOrder.querySelector('.shift__forw');
+      shiftForw.addEventListener('click', () => {
+        // console.log(modalAddedDates)
+        (0,_shiftHandler__WEBPACK_IMPORTED_MODULE_7__.shiftHandler)(shifter, 'forw', modalAddedDates, currentOrder);
+      });
+    }
     const planToday = document.querySelector('.plan-period__today');
     const planWeek = document.querySelector('.plan-period__week');
     const planMonth = document.querySelector('.plan-period__month');

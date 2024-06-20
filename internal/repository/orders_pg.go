@@ -129,7 +129,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				//log.Info().Msgf("not updated route %v", route.RoutePosition)
 				continue routesLoop
 			}
-			log.Info().Caller().Msgf("updated route %v", route.RoutePosition)
 
 			var routeID int
 			routePos := strings.Split(name, "-")[1]
@@ -154,7 +153,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					route.Planned, route.IssuedToday, route.Time, route.Up,
 					route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor,
 					routePos, route.RouteID).Scan(&routeID)
-				log.Info().Msgf("route id is %v", routeID)
 
 				if err != nil {
 					log.Err(err).Caller().Msg("Error")
@@ -431,7 +429,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", routeID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
-						o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
+						//o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
 						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 					}
 				}
@@ -748,7 +746,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", routeID)
 				for _, comment := range route.Comments {
 					if len(comment.Date) > 0 {
-						o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
+						//o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
 						_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 					}
 				}
@@ -1108,7 +1106,7 @@ func (o *OrdersPG) AddOrders(orders []*domain.Order) error {
 			_, err = o.db.Exec("DELETE FROM route_comments WHERE route_id = $1", routeID)
 			for _, comment := range route.Comments {
 				if len(comment.Date) > 0 {
-					o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
+					//o.timeReportsPG.CreateTimeData(dateReportInfo, comment)
 					_, err = o.db.Exec(routeCommentsQuery, routeID, comment.Date, comment.Value)
 				}
 			}
@@ -1342,8 +1340,9 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
       WHERE completed = true
 						 AND order_endtime >= $1
 						 AND order_endtime <= $2
+      			 %s
 		   ORDER BY order_endtime ASC;
-		`)
+		`, clientName)
 	} else if params.Planning {
 
 	} else {
