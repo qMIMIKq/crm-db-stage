@@ -5,11 +5,11 @@ type TimeInfo struct {
 	MachineStart string `json:"machine_start"`
 	MachineEnd   string `json:"machine_end"`
 	Quantity     int    `json:"quantity"`
-	DayQuantity  int    `json:"day_quantity"`
-	Issued       int    `json:"issued"`
-	Up           int    `json:"up" db:"up"`
-	Time         string `json:"time" db:"time"`
-	Adjustment   int    `json:"adjustment" db:"adjustment"`
+	//DayQuantity  int    `json:"day_quantity"`
+	Issued     int    `json:"issued"`
+	Up         int    `json:"up" db:"up"`
+	Time       string `json:"time" db:"time"`
+	Adjustment int    `json:"adjustment" db:"adjustment"`
 }
 
 type TimeReportInfoDB struct {

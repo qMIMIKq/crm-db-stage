@@ -919,7 +919,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
         })
         .then(data => {
           let comments = data.data['comments']
-          console.log(comments)
           if (comments) {
             comments = comments.map(c => `${c['date']}    ${c['value']}`)
             routeInfo['comments'] = data.data.comments
@@ -961,10 +960,8 @@ export const triggerRoutesModal = (e, page = 'main') => {
             })
           }
 
-          console.log(data)
         })
 
-      console.log(routeInfo['time_of_creation'])
       planDateInput.removeAttribute('disabled')
       // let comments = routeInfo['comments']
       if (routeInfo['last_comment']) {
@@ -989,8 +986,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
       // if (planned) {
       //   planDateInput.value = 'В планировании'
       // }
-
-      console.log(checkPlan)
 
       planObj = {
         'exclude': routeInfo['exclude_days'],
@@ -1316,8 +1311,6 @@ export const triggerRoutesModal = (e, page = 'main') => {
   issuedBtn.addEventListener('click', e => {
     issuedHandlerModal(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime)
   })
-
-  console.log(!state.adminCheck, !state.manCheck, !state.techCheck)
 
   if (!state.adminCheck && !state.manCheck && !state.techCheck) {
     planDateInput.setAttribute('disabled', true)
@@ -1803,6 +1796,8 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
         } else {
           checkDayInput = checkDayInput[0]
         }
+
+        console.log(checkDayInput)
 
         // dayInput.value = `${data.can_do[0]}/${checkDayInput}/${data.can_do[1]}`
         dayInput.value = `${data.can_do[0]}/${checkDayInput}`

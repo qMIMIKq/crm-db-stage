@@ -114,7 +114,7 @@ func NewService(repos *repository.Repository) *Services {
 		Files:         NewFilesService(repos.Files),
 		Orders:        NewOrdersService(repos.Orders),
 		Routes:        NewRoutesService(repos.Routes),
-		Time:          NewTimeService(),
+		Time:          NewTimeService(repos.TimeRepos),
 		Groups:        NewGroupsService(repos.Groups),
 		Reports:       NewReportsService(repos.Reports),
 		Plans:         NewPlansService(repos.Plans),

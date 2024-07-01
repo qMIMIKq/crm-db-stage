@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -17,6 +18,8 @@ type OrdersPG struct {
 	planningPG    *PlanningPG
 	timeReportsPG *TimeReportsPG
 }
+
+const defaultWorkTime = 43200
 
 func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 	query := fmt.Sprintf(`
@@ -46,6 +49,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 	layout := "2006-01-02"
 	loc, _ := time.LoadLocation("Europe/Moscow")
 	today := time.Now().In(loc).Format(layout)
+
+	timeRepo := NewTimeRepo()
 
 	var err error
 	for _, order := range orders {
@@ -125,6 +130,87 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 	routesLoop:
 		for name, route := range order.Routes {
+			//log.Info().Caller().Msgf("route day quant %v", route.DayQuantity)
+
+			var check bool
+			if route.RouteID != "" {
+				check = true
+				route.Quantity = order.Quantity
+
+				if _, err := o.db.Exec("UPDATE routes SET quantity = $1 WHERE route_id = $2", order.Quantity, route.RouteID); err != nil {
+					log.Err(err).Caller().Msg("error updating route quantity")
+				}
+
+				if route.Quantity != "" && route.Time != 0 {
+					quant, _ := strconv.Atoi(route.Quantity)
+					issued, _ := strconv.Atoi(route.Issued)
+
+					timeOnDetailArr := strings.Split(fmt.Sprintf("%v", route.Time), ".")
+					leftSplitRes, _ := strconv.Atoi(timeOnDetailArr[0])
+					var seconds int
+
+					log.Info().Interface("time arr", timeOnDetailArr).Msgf("route time on detail")
+					if len(timeOnDetailArr) > 1 {
+						rightSplit := strings.Split(timeOnDetailArr[1], "")
+						var rightSplitRes int
+
+						if len(rightSplit) == 1 {
+							checkInt, _ := strconv.Atoi(rightSplit[0])
+							rightSplitRes = checkInt * 10
+						} else {
+							checkInt, _ := strconv.Atoi(rightSplit[1])
+							rightSplitRes = checkInt
+						}
+
+						seconds = leftSplitRes*60 + rightSplitRes
+					} else {
+						seconds = leftSplitRes * 60
+					}
+
+					log.Info().Msgf("seconds res %v", seconds)
+
+					averageDayQuant := math.Ceil(float64(defaultWorkTime) / float64(seconds))
+					route.NeedShifts = int(math.Ceil(float64(quant) / averageDayQuant))
+
+					route.DayQuantity = fmt.Sprintf("%v", averageDayQuant)
+					if int(averageDayQuant) > quant {
+						route.DayQuantity = fmt.Sprintf("%v", quant)
+					}
+
+					if route.StartTime != "" {
+						timeInfo := domain.TimeInfo{
+							Start:        route.StartTime,
+							MachineStart: "08:00",
+							MachineEnd:   "20:00",
+							Quantity:     quant,
+							//DayQuantity:  dayQuant,
+							Issued:     issued,
+							Up:         int(route.Up),
+							Time:       fmt.Sprintf("%v", route.Time),
+							Adjustment: int(route.Adjustment),
+						}
+
+						endTime, counter, canDo := timeRepo.CalcTheoreticTime(timeInfo)
+
+						firstCanDo := fmt.Sprintf("%v", canDo[0])
+						route.DayQuantity = fmt.Sprintf("%v/%v", firstCanDo, route.DayQuantity)
+						route.NeedShifts = int(math.Ceil(counter))
+						route.TheorEnd = endTime
+					} else {
+						route.TheorEnd = ""
+					}
+
+					log.Info().Msgf("day quant %v / need shifts %v / theor end %v", route.DayQuantity, route.NeedShifts, route.TheorEnd)
+
+					if _, err := o.db.Exec("UPDATE routes SET need_shifts = $1, theor_end = $2, day_quantity = $3 WHERE route_id = $4", route.NeedShifts, route.TheorEnd, route.DayQuantity, route.RouteID); err != nil {
+						log.Err(err).Caller().Msg("error updating route new data")
+					}
+
+					//log.Info().Caller().Msgf("endTime: %v __ counter: %v __ dayQuant: %v", endTime, counter, dayQuant)
+					//log.Info().Caller().Interface("can do", canDo).Msg("can do")
+				}
+			}
+
 			if !route.IsUpdated {
 				//log.Info().Msgf("not updated route %v", route.RoutePosition)
 				continue routesLoop
@@ -132,11 +218,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 			var routeID int
 			routePos := strings.Split(name, "-")[1]
-
-			var check bool
-			if route.RouteID != "" {
-				check = true
-			}
 
 			if check {
 				var planDates []string

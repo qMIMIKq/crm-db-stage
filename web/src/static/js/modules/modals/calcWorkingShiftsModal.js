@@ -98,6 +98,8 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
       seconds += check[0] * 60
     }
 
+    console.log(seconds)
+
     // if (dayQuantityInfo.quantity && dayQuantityInfo.quantity != 0) {
     //   if (dayQuantity > dayQuantityInfo.quantity) {
     //     dayQuantityInput.value = dayQuantity.quantity
@@ -113,6 +115,7 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
 
     if (seconds) {
       const inDay = Math.ceil(defaultWorkTime / seconds)
+      console.log(inDay)
       if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
         dayQuantityInput.value = inDay
       } else {
@@ -138,11 +141,10 @@ export const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getThe
     dayQuantityInfo.time = Number(timeValue)
 
     if (dayQuantityInfo.time) {
-      console.log("theor check ", checkChange)
       getTheor()
 
       if (checkChange) {
-        addLog(user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments')
+        addLog(user.nickname, `Установил УП ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments')
       }
     }
 

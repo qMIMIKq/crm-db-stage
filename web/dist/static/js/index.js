@@ -4502,6 +4502,7 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     } else {
       seconds += check[0] * 60;
     }
+    console.log(seconds);
 
     // if (dayQuantityInfo.quantity && dayQuantityInfo.quantity != 0) {
     //   if (dayQuantity > dayQuantityInfo.quantity) {
@@ -4517,6 +4518,7 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     console.log(dayQuantityInfo.quantity);
     if (seconds) {
       const inDay = Math.ceil(defaultWorkTime / seconds);
+      console.log(inDay);
       if (dayQuantityInfo.quantity && Number(dayQuantityInfo.quantity) > inDay) {
         dayQuantityInput.value = inDay;
       } else {
@@ -4540,10 +4542,9 @@ const calcWorkingShiftsModal = (dayQuantityInput, dayQuantityInfo, getTheor) => 
     dayQuantityInfo.adjustment = Number(adjustment.value);
     dayQuantityInfo.time = Number(timeValue);
     if (dayQuantityInfo.time) {
-      console.log("theor check ", checkChange);
       getTheor();
       if (checkChange) {
-        (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП  ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
+        (0,_routesModal__WEBPACK_IMPORTED_MODULE_1__.addLog)(_table__WEBPACK_IMPORTED_MODULE_2__.user.nickname, `Установил УП ${dayQuantityInfo.up} Наладка ${dayQuantityInfo.adjustment} На деталь ${time.value.replaceAll('.', ',')}`, '#visible__comments');
       }
     }
     modal.click();
@@ -6634,7 +6635,6 @@ const triggerRoutesModal = function (e) {
         return resp.json();
       }).then(data => {
         let comments = data.data['comments'];
-        console.log(comments);
         if (comments) {
           comments = comments.map(c => `${c['date']}    ${c['value']}`);
           routeInfo['comments'] = data.data.comments;
@@ -6668,9 +6668,7 @@ const triggerRoutesModal = function (e) {
             };
           });
         }
-        console.log(data);
       });
-      console.log(routeInfo['time_of_creation']);
       planDateInput.removeAttribute('disabled');
       // let comments = routeInfo['comments']
       if (routeInfo['last_comment']) {
@@ -6694,7 +6692,6 @@ const triggerRoutesModal = function (e) {
       //   planDateInput.value = 'В планировании'
       // }
 
-      console.log(checkPlan);
       planObj = {
         'exclude': routeInfo['exclude_days'],
         'planStart': routeInfo['plan_start'],
@@ -6962,7 +6959,6 @@ const triggerRoutesModal = function (e) {
   issuedBtn.addEventListener('click', e => {
     (0,_issuedModal__WEBPACK_IMPORTED_MODULE_8__.issuedHandlerModal)(e, issued, issuedTodayStart, routePlot.value, routeUser, reportChanger, shift, startTime);
   });
-  console.log(!_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck, !_state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck, !_state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck);
   if (!_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck && !_state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck && !_state__WEBPACK_IMPORTED_MODULE_2__.state.techCheck) {
     planDateInput.setAttribute('disabled', true);
     console.log('has no rights for planning');
@@ -7416,6 +7412,7 @@ const getTheorEndTime = (routeQuantity, routeDayQuantity, issued, startTime, the
       } else {
         checkDayInput = checkDayInput[0];
       }
+      console.log(checkDayInput);
 
       // dayInput.value = `${data.can_do[0]}/${checkDayInput}/${data.can_do[1]}`
       dayInput.value = `${data.can_do[0]}/${checkDayInput}`;

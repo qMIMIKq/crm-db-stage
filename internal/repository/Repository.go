@@ -93,6 +93,11 @@ type TimeReports interface {
 	GetTimeReports(datesRange *domain.ReportTime) []domain.TimeReportPlot
 }
 
+type TimeRepos interface {
+	CalcTheoreticTime(timeInfo domain.TimeInfo) (string, float64, [2]float64)
+	CalcDynamicTime(time domain.TimeInfo) string
+}
+
 type Repository struct {
 	Plans
 	Init
@@ -107,6 +112,7 @@ type Repository struct {
 	Reports
 	Planning
 	TimeReports
+	TimeRepos
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -131,6 +137,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Planning:      PlanningPG,
 		Groups:        NewGroupsPG(db),
 		TimeReports:   TimeReportsPG,
+		TimeRepos:     NewTimeRepo(),
 	}
 
 	//return &Repository{

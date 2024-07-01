@@ -3,6 +3,7 @@ package handler
 import (
 	"crm/internal/domain"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -14,6 +15,8 @@ func (h *Handler) theoreticTime(c *gin.Context) {
 	}
 
 	date, days, canDo := h.services.Time.CalcTheoreticTime(timeInfo)
+	log.Info().Caller().Msgf("endTime: %v __ counter: %v", date, days)
+	log.Info().Caller().Interface("can do", canDo).Msg("can do")
 
 	//log.Info().Interface("info is", timeInfo).Msg("Time info")
 	c.JSON(http.StatusOK, map[string]interface{}{
