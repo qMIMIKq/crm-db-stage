@@ -2117,6 +2117,7 @@ const drawOrders = (insertPlace, position, d) => {
             </li>
             <li class='table-body_cell table__quantity'>
                 <input tabindex="-1" tabindex="-1" ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManGroupper} readonly class='table__data dblclck' type='number' name='quantity' value='${d.quantity}' tabindex='-1' autocomplete='off'>
+                <input tabindex="-1" readonly class='hidden-input' type='number' name='prev_quantity' value='${d.quantity}' tabindex='-1' autocomplete='off'>
             </li>
             <ul class="table__issueds">
                 <li class="table-body_cell table__issued">
@@ -2499,6 +2500,7 @@ const orderHTML = `
                     </li>
                     <li class="table-body_cell table-body__helper table__quantity">
                         <input  class="table__data dblclck" type="number" name="quantity" value="" tabindex="-1" autocomplete="off">
+                        <input tabindex="-1" readonly class='hidden-input' type='number' name='prev_quantity' value='' autocomplete='off'>
                     </li>
                     <li class="table-body_cell table-body__helper table__issued">
                         <input   class="table__data dblclck" tabindex="-1"
@@ -2738,6 +2740,7 @@ const drawUpdatedData = (d, data, filtered) => {
     currentOrder.querySelector('input[name="name"]').value = d.name;
     currentOrder.querySelector('input[name="material"]').value = d.material;
     currentOrder.querySelector('input[name="quantity"]').value = d.quantity;
+    currentOrder.querySelector('input[name="prev_quantity"]').value = d.quantity;
     const issued = currentOrder.querySelector('input[name="issued"]');
     issued.value = d.issued;
     if (orderCompleted && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
@@ -8142,6 +8145,7 @@ const createRes = forms => {
     const obj = {};
     obj['routes_json'] = {};
     formData.forEach((value, key) => {
+      // console.log(key, value)
       switch (key) {
         case 'files':
           obj[key] = value.split(', ');
@@ -8174,6 +8178,9 @@ const createRes = forms => {
 
     // console.log(obj)
     res.push(obj);
+    const prevQuantInput = form.querySelector("input[name='prev_quantity']");
+    prevQuantInput.value = formData.get('quantity');
+    // console.log(prevQuantInput.value)
     // console.log(res)
   });
 
@@ -8432,6 +8439,7 @@ const table = document.querySelector('.main-table');
 const shiftCounter = {};
 const drawReport = async d => {
   (0,_filters_reportFilters__WEBPACK_IMPORTED_MODULE_1__.controlReportsFiltersReset)();
+  console.log(d);
 
   // console.log(d.shift, d.current_shift)
   // console.log(d)
@@ -8512,6 +8520,12 @@ const drawReport = async d => {
   let burning = false;
   if (d.current_shift && d.need_shifts) {
     burning = Number(d.current_shift) > Number(d.need_shifts);
+  }
+  console.log(d.current_shift, d.need_shifts);
+  if (d.current_shift > d.need_shifts) {
+    percents = '-';
+  } else {
+    percents = percents.toFixed(0);
   }
   table.insertAdjacentHTML(`afterbegin`, `
     <form id="form-${d.report_id}" class='table-form table-form--old showed-order' method='POST'>
@@ -8599,7 +8613,7 @@ const drawReport = async d => {
             <input tabindex="-1" readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
           </li>
           <li class="table-body_cell table__plan--percent">
-            <input tabindex="-1" readonly type="number" class="table__data" value=${percents.toFixed(0)}>
+            <input tabindex="-1" readonly type="text" class="table__data" value=${percents}>
           </li>
         </ul>
     </form>

@@ -104,6 +104,7 @@ export const drawOrders = (insertPlace, position, d) => {
             </li>
             <li class='table-body_cell table__quantity'>
                 <input tabindex="-1" tabindex="-1" ${state['inputAdmManGroupper']} readonly class='table__data dblclck' type='number' name='quantity' value='${d.quantity}' tabindex='-1' autocomplete='off'>
+                <input tabindex="-1" readonly class='hidden-input' type='number' name='prev_quantity' value='${d.quantity}' tabindex='-1' autocomplete='off'>
             </li>
             <ul class="table__issueds">
                 <li class="table-body_cell table__issued">
@@ -522,6 +523,7 @@ export const orderHTML = `
                     </li>
                     <li class="table-body_cell table-body__helper table__quantity">
                         <input  class="table__data dblclck" type="number" name="quantity" value="" tabindex="-1" autocomplete="off">
+                        <input tabindex="-1" readonly class='hidden-input' type='number' name='prev_quantity' value='' autocomplete='off'>
                     </li>
                     <li class="table-body_cell table-body__helper table__issued">
                         <input   class="table__data dblclck" tabindex="-1"

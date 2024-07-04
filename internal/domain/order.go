@@ -9,6 +9,7 @@ type Order struct {
 	Client       string            `json:"client" db:"order_client"`
 	Name         string            `json:"name" db:"order_name"`
 	Material     string            `json:"material" db:"order_material"`
+	PrevQuantity string            `json:"prev_quantity"`
 	Quantity     string            `json:"quantity" db:"order_quantity"`
 	Issued       string            `json:"issued" db:"order_issued"`
 	M            string            `json:"m" db:"order_m"`

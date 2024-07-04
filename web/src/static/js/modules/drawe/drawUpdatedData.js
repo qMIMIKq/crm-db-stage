@@ -90,6 +90,7 @@ export const drawUpdatedData = (d, data, filtered) => {
     currentOrder.querySelector('input[name="name"]').value = d.name
     currentOrder.querySelector('input[name="material"]').value = d.material
     currentOrder.querySelector('input[name="quantity"]').value = d.quantity
+    currentOrder.querySelector('input[name="prev_quantity"]').value = d.quantity
     const issued = currentOrder.querySelector('input[name="issued"]')
     issued.value = d.issued
 

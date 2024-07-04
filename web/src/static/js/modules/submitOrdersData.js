@@ -11,6 +11,7 @@ const createRes = forms => {
 
     obj['routes_json'] = {}
     formData.forEach((value, key) => {
+      // console.log(key, value)
       switch (key) {
         case 'files':
           obj[key] = value.split(', ')
@@ -44,6 +45,9 @@ const createRes = forms => {
 
     // console.log(obj)
     res.push(obj)
+    const prevQuantInput = form.querySelector("input[name='prev_quantity']")
+    prevQuantInput.value = formData.get('quantity')
+    // console.log(prevQuantInput.value)
     // console.log(res)
   })
 
@@ -70,6 +74,8 @@ export function submitData() {
   let success = false
   const resNew = createRes(forms)
   const resUpd = createRes(formsUpd)
+
+
   if (resNew.length) {
     sendData(`${appAddr}/api/orders/add`, 'POST', JSON.stringify(resNew)).then(res => {
       if (res.ok) success = true

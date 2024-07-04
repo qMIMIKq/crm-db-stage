@@ -128,12 +128,22 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 		onlyOneFlag := false
 
+		needUpdateQuantityFlag := order.Quantity != order.PrevQuantity
+		log.Info().Caller().Msgf("quant %v / prev quant %v __ need update flag %v", order.Quantity, order.PrevQuantity, needUpdateQuantityFlag)
+
+		if _, err := o.db.Exec(`
+			UPDATE reports 
+				 SET order_number = $1, order_client = $2,order_name = $3, order_material = $4, quantity = $5 
+			 WHERE order_id = $6`, order.Number, order.Client, order.Name, order.Material, order.Quantity, order.ID); err != nil {
+			log.Err(err).Caller().Msg("error updating reports new data")
+		}
+
 	routesLoop:
 		for name, route := range order.Routes {
 			//log.Info().Caller().Msgf("route day quant %v", route.DayQuantity)
-
 			var check bool
-			if route.RouteID != "" {
+
+			if route.RouteID != "" && needUpdateQuantityFlag {
 				check = true
 				route.Quantity = order.Quantity
 
@@ -166,8 +176,6 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					} else {
 						seconds = leftSplitRes * 60
 					}
-
-					log.Info().Msgf("seconds res %v", seconds)
 
 					averageDayQuant := math.Ceil(float64(defaultWorkTime) / float64(seconds))
 					route.NeedShifts = int(math.Ceil(float64(quant) / averageDayQuant))
@@ -204,6 +212,13 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 
 					if _, err := o.db.Exec("UPDATE routes SET need_shifts = $1, theor_end = $2, day_quantity = $3 WHERE route_id = $4", route.NeedShifts, route.TheorEnd, route.DayQuantity, route.RouteID); err != nil {
 						log.Err(err).Caller().Msg("error updating route new data")
+					}
+
+					if _, err := o.db.Exec(`
+						UPDATE reports 
+							 SET need_shifts = $1, order_timestamp = $2, plan = $3 
+						 WHERE route_id = $4`, route.NeedShifts, route.TheorEnd, route.DayQuantity, route.RouteID); err != nil {
+						log.Err(err).Caller().Msg("error updating reports new data")
 					}
 
 					//log.Info().Caller().Msgf("endTime: %v __ counter: %v __ dayQuant: %v", endTime, counter, dayQuant)
@@ -1524,6 +1539,8 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 	//today := time.Now().Format("2006-01-02")
 	//check := make(chan bool)
 	for _, order := range orders {
+		order.PrevQuantity = order.Quantity
+
 		//go o.getOrderSubInfo(order, queryFiles, queryComments, queryRoutes, queryRouteComments, queryRouteIssued, &err, check)
 		//fmt.Println(<-check)
 

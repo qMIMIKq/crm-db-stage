@@ -7,6 +7,7 @@ export const table = document.querySelector('.main-table')
 export const shiftCounter = {}
 export const drawReport = async (d) => {
   controlReportsFiltersReset()
+  console.log(d)
 
   // console.log(d.shift, d.current_shift)
   // console.log(d)
@@ -93,6 +94,14 @@ export const drawReport = async (d) => {
   let burning = false
   if (d.current_shift && d.need_shifts) {
     burning = Number(d.current_shift) > Number(d.need_shifts)
+  }
+
+  console.log(d.current_shift, d.need_shifts)
+
+  if (d.current_shift > d.need_shifts) {
+    percents = '-'
+  } else {
+    percents = percents.toFixed(0)
   }
 
 
@@ -182,7 +191,7 @@ export const drawReport = async (d) => {
             <input tabindex="-1" readonly type="number" class="table__data" value=${d.issued_plan && d.issued_plan != '-1' ? d.issued_plan : ''}>
           </li>
           <li class="table-body_cell table__plan--percent">
-            <input tabindex="-1" readonly type="number" class="table__data" value=${percents.toFixed(0)}>
+            <input tabindex="-1" readonly type="text" class="table__data" value=${percents}>
           </li>
         </ul>
     </form>
