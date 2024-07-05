@@ -22,7 +22,17 @@ func (r *RoutesPG) DeleteRoute(routeID string) error {
 		 DELETE FROM routes WHERE route_id = $1
 	`)
 
+	deleteReportsQuery := fmt.Sprintf(`
+		DELETE FROM reports WHERE route_id = $1
+	`)
+
+	deletePlanningQuery := fmt.Sprintf(`
+		DELETE FROM planning WHERE route_id = $1
+	`)
+
 	_, err := r.db.Exec(deleteRouteQuery, routeID)
+	_, err = r.db.Exec(deleteReportsQuery, routeID)
+	_, err = r.db.Exec(deletePlanningQuery, routeID)
 	return err
 }
 

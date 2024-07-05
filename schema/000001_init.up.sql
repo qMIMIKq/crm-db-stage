@@ -192,7 +192,7 @@ CREATE TABLE reports
     operator        VARCHAR(255),
     issued_plan     VARCHAR(255),
     route_position  VARCHAR(255) DEFAULT '0',
-    route_id        INT,
+    route_id        INT references routes (route_id) on delete cascade on update cascade,
     order_timestamp DATE,
     need_shifts     INT          DEFAULT 0,
     shift           VARCHAR(255) DEFAULT '',

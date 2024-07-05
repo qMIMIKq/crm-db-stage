@@ -142,6 +142,11 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 		for name, route := range order.Routes {
 			//log.Info().Caller().Msgf("route day quant %v", route.DayQuantity)
 			var check bool
+			if route.RouteID != "" {
+				check = true
+			}
+
+			//log.Info().Caller().Msgf("ROUTE ID IS %v Position is %v", route.RouteID, route.RoutePosition)
 
 			if route.RouteID != "" && needUpdateQuantityFlag {
 				check = true
@@ -215,8 +220,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 
 					if _, err := o.db.Exec(`
-						UPDATE reports 
-							 SET need_shifts = $1, order_timestamp = $2, plan = $3 
+						UPDATE reports
+							 SET need_shifts = $1, order_timestamp = $2, plan = $3
 						 WHERE route_id = $4`, route.NeedShifts, route.TheorEnd, route.DayQuantity, route.RouteID); err != nil {
 						log.Err(err).Caller().Msg("error updating reports new data")
 					}
@@ -249,6 +254,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					route.Planned, route.IssuedToday, route.Time, route.Up,
 					route.Adjustment, route.NeedShifts, route.Shift, route.AlertColor,
 					routePos, route.RouteID).Scan(&routeID)
+
+				//log.Info().Msgf("NEW ID IS %v", routeID)
 
 				if err != nil {
 					log.Err(err).Caller().Msg("Error")
@@ -683,24 +690,25 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 					}
 
 					//log.Info().Interface("report", routeReports.ReportsData[reportDate]).Msg("sorted report!")
-					log.Info().Caller().Msgf("report date %v / report issued %v / report adjustment %v / report last %v", changerDate, reportIssued.Issued, reportIssued.Adjustment, shift)
+					log.Info().Caller().Msgf("report date %v / report issued %v / report adjustment %v / report last %v", reportDate, reportIssued.Issued, reportIssued.Adjustment, shift)
 
 					var checkID int
-					if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, changerDate, route.RouteID); err != nil {
+					if err = o.db.Get(&checkID, `SELECT report_id FROM reports WHERE report_date = $1 AND route_id = $2`, reportDate, route.RouteID); err != nil {
 						log.Err(err).Caller().Msg("error is")
 					}
 
+					log.Info().Msgf("id %v", route.RouteID)
 					if checkID == 0 {
 						var reportID int
 						if err = o.db.QueryRow(
-							reportQuery, changerDate, order.ID, order.Number, order.Client,
+							reportQuery, reportDate, order.ID, order.Number, order.Client,
 							order.Name, route.Quantity, issuedThisTurn, route.DayQuantity,
 							reportIssued.Operator, reportIssued.Issued, order.Material, route.Plot, today,
 							routePos, routeID, order.TimeStamp, shift, route.NeedShifts, true, reportIssued.Adjustment,
 						).Scan(&reportID); err != nil {
 							log.Err(err).Caller().Msg("error is")
 						}
-						log.Info().Caller().Msgf("new report for date %v with id %v", changerDate, route.RouteID)
+						log.Info().Caller().Msgf("new report for date %v with id %v", reportDate, reportID)
 					}
 
 					var reports []domain.Report
