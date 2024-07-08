@@ -51,7 +51,9 @@ export const tableRoutesFiltersHandler = () => {
   const deleteBtn = headerControlContent.querySelector('#header-control__btn-delete')
   const archiveBtn = headerControlContent.querySelector('#header-control__btn-archive')
 
-  copyBtn.addEventListener('click', () => orderCopyBtn.click())
+  copyBtn.addEventListener('click', () => {
+    orderCopyBtn.click()
+  })
   deleteBtn.addEventListener('click', () => orderDelBtn.click())
   archiveBtn.addEventListener('click', () => orderArchiveBtn.click())
 

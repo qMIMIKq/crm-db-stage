@@ -208,12 +208,12 @@ export const drawUpdatedData = (d, data, filtered) => {
       const routeDataHolder = route.parentNode.querySelector('.hidden__input')
       const namePos = routeDataHolder.getAttribute('name')
       const issuedHolder = currentOrder.querySelector(`[name="${namePos}-issued"]`)
-     try {
-       routeDataHolder.value = ''
-       issuedHolder.value = ''
-     } catch (e) {
+      try {
+        routeDataHolder.value = ''
+        issuedHolder.value = ''
+      } catch (e) {
 
-     }
+      }
     })
 
     // bindOrdersListeners(currentOrder)
@@ -233,7 +233,7 @@ export const drawUpdatedData = (d, data, filtered) => {
       drawHelpers(currentOrder)
     }
   } else {
-    console.log('WTF')
+    console.log('WTF', state.filtered)
     state.orders.push(d)
 
     if (state.filtered) {

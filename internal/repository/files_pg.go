@@ -97,9 +97,11 @@ func (f *FilesMwPg) RemoveFile(orderID string, fileName string) error {
 
 	var id int
 	err := f.db.Get(&id, fileCheckQuery, orderID, fullPath)
-	if id == 0 {
-		err = os.RemoveAll(fullPath)
+	if id != 0 {
+		log.Warn().Msgf("File already in use")
 	}
+
+	err = os.RemoveAll(fullPath)
 
 	_, err = f.db.Exec(fileDeleteQuery, orderID, fullPath)
 	return err

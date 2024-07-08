@@ -1,11 +1,13 @@
 import {finallyForOrders, showResult} from './submitControl';
-import {} from './state';
 import {sendData} from './sendData';
 import {appAddr} from "../../../../../appAddr";
 
 const createRes = forms => {
   const res = []
+
   forms.forEach(form => {
+    if (!form) return
+
     const formData = new FormData(form)
     const obj = {}
 
@@ -69,12 +71,22 @@ export function submitSingleOrder(id) {
 }
 
 export function submitData() {
-  const forms = document.querySelectorAll('.table-form--new')
+  let forms = document.querySelector('.table-form--new')
   const formsUpd = document.querySelectorAll('.table-form--upd')
   let success = false
-  const resNew = createRes(forms)
+  const resNew = createRes([forms])
   const resUpd = createRes(formsUpd)
 
+  forms = document.querySelectorAll('.table-form--new')
+  forms.forEach(form => {
+    form.classList.remove('table-form--new')
+    form.classList.add('table-form--old')
+  })
+
+  // forms.forEach(form => {
+  //   console.log(form)
+  // })
+  // console.log(resNew)
 
   if (resNew.length) {
     sendData(`${appAddr}/api/orders/add`, 'POST', JSON.stringify(resNew)).then(res => {

@@ -1,12 +1,5 @@
 import {orderHTML, table} from "./drawe/drawOrders";
-import {state, userInf} from "./state";
-import {drawManagers} from "./drawe/drawManagers";
-import {drawDeadlineP} from "./drawe/drawDeadlineP";
-import {bindOrdersListeners} from "./bindOrdersListeners";
-import {addTriggers} from "./addTriggers";
-import {triggerFilesModal} from "./modals/downloadFilesModal";
-import {triggerRoutesModal} from "./modals/routesModal";
-import {triggerCommentsModal} from "./modals/commentsModal";
+import {userInf} from "./state";
 import {drawSubmit} from "./submitControl";
 import {getTime} from "./getTime";
 import {submitData} from "./submitOrdersData";
