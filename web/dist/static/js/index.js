@@ -7130,6 +7130,7 @@ const triggerRoutesModal = function (e) {
     obj['need_shifts'] = Number(shifts.value);
     obj['alert_color'] = alertColor.value;
     obj['is_updated'] = true;
+    obj['day_quantity'] = modalElem.querySelector('#day_quantity').value;
     // console.log(alertColor.value)
     // obj['planned'] = !!(dbID && planned)
 
