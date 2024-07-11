@@ -52,6 +52,8 @@ export const drawUpdatedData = (d, data, filtered) => {
   }
 
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity)
+  const completedBtn = currentOrder.querySelector('.table__complete')
+  console.log(completedBtn)
 
   let alertDeadline = false
   if (d.end_time) {
@@ -96,6 +98,9 @@ export const drawUpdatedData = (d, data, filtered) => {
 
     if (orderCompleted && !state.isArchive) {
       issued.classList.add('table__issued--done')
+      if (completedBtn) {
+        completedBtn.classList.add('hidden__input')
+      }
 
     } else {
       issued.classList.remove('table__issued--done')
@@ -132,9 +137,11 @@ export const drawUpdatedData = (d, data, filtered) => {
     const routes = d["db_routes"]
 
     const completedBlock = currentOrder.querySelector('.table__issued--done')
-    if (completedBlock && !state['isArchive']) {
+
+    if (completedBlock && !state['isArchive'] && !completedBtn) {
       // completedBlock.classList.add('tr')
       // completedBlock.classList.remove('table__data--opened')
+      console.log('hello from new add?')
 
       completedBlock.insertAdjacentHTML(`afterend`, `
         <li class="table-body_cell table-body__helper hidden__input table__complete">
@@ -243,6 +250,8 @@ export const drawUpdatedData = (d, data, filtered) => {
     document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove())
     drawOrders(table, 'afterbegin', d, state.orders, state.managers)
   }
+
+  completedBtn.classList.add('hidden__input')
 
   bindOrdersListeners(currentOrder)
 }

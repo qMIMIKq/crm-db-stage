@@ -608,6 +608,10 @@ export const triggerRoutesModal = (e, page = 'main') => {
         activateNextStage('start-route__btn')
         startBtn.classList.remove('route-type__start')
         endBTn.classList.remove('route-type__finish')
+        dayQuantity.value = dayQuantity.value.includes('/') ? dayQuantity.value.split('/')[1] : dayQuantity.value
+        shifts.value = Math.ceil(routeQuantity.value / dayQuantity.value)
+        console.log(shifts)
+        theorEndInp.value = ''
         endTime.value = ''
         disableBtn('end-route__btn')
       }, '', checkPlan)

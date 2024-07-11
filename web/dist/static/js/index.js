@@ -2692,6 +2692,8 @@ const drawUpdatedData = (d, data, filtered) => {
     });
   }
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity);
+  const completedBtn = currentOrder.querySelector('.table__complete');
+  console.log(completedBtn);
   let alertDeadline = false;
   if (d.end_time) {
     let deadline = new Date(d.end_time.split('T')[0]);
@@ -2731,6 +2733,9 @@ const drawUpdatedData = (d, data, filtered) => {
     issued.value = d.issued;
     if (orderCompleted && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
       issued.classList.add('table__issued--done');
+      if (completedBtn) {
+        completedBtn.classList.add('hidden__input');
+      }
     } else {
       issued.classList.remove('table__issued--done');
       issued.classList.remove('tr');
@@ -2760,10 +2765,10 @@ const drawUpdatedData = (d, data, filtered) => {
     currentOrder.classList.add('table-form--old');
     const routes = d["db_routes"];
     const completedBlock = currentOrder.querySelector('.table__issued--done');
-    if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive) {
+    if (completedBlock && !_state__WEBPACK_IMPORTED_MODULE_1__.state.isArchive && !completedBtn) {
       // completedBlock.classList.add('tr')
       // completedBlock.classList.remove('table__data--opened')
-
+      console.log('hello from new add?');
       completedBlock.insertAdjacentHTML(`afterend`, `
         <li class="table-body_cell table-body__helper hidden__input table__complete">
             <input class="table__data table__issued--done main__button" tabindex="-1"
@@ -2857,6 +2862,7 @@ const drawUpdatedData = (d, data, filtered) => {
     document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove());
     (0,_drawOrders__WEBPACK_IMPORTED_MODULE_0__.drawOrders)(_drawOrders__WEBPACK_IMPORTED_MODULE_0__.table, 'afterbegin', d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
   }
+  completedBtn.classList.add('hidden__input');
   (0,_bindOrdersListeners__WEBPACK_IMPORTED_MODULE_11__.bindOrdersListeners)(currentOrder);
 };
 
@@ -6373,6 +6379,10 @@ const triggerRoutesModal = function (e) {
         activateNextStage('start-route__btn');
         startBtn.classList.remove('route-type__start');
         endBTn.classList.remove('route-type__finish');
+        dayQuantity.value = dayQuantity.value.includes('/') ? dayQuantity.value.split('/')[1] : dayQuantity.value;
+        shifts.value = Math.ceil(routeQuantity.value / dayQuantity.value);
+        console.log(shifts);
+        theorEndInp.value = '';
         endTime.value = '';
         disableBtn('end-route__btn');
       }, '', checkPlan);
