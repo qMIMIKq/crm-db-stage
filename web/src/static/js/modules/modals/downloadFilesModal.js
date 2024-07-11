@@ -240,6 +240,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           const drop = modal.querySelector('.modal__trigger')
 
           newData = newData.filter(data => data === fileName)
+          console.log(newData)
           filesInput.value = newData.join(', ')
 
           sendData(`${appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null)

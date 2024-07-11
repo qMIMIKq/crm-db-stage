@@ -84,6 +84,8 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 func (f *FilesMwPg) RemoveFile(orderID string, fileName string) error {
 	fullPath := DataPath + fileName
 
+	log.Info().Caller().Msgf("file name is %v", fileName)
+
 	fileDeleteQuery := fmt.Sprintf(`
 		DELETE FROM files WHERE order_id = $1 AND file_name = $2
 	`)

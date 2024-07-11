@@ -4910,6 +4910,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           const fileName = file.querySelector('.file__name').textContent;
           const drop = modal.querySelector('.modal__trigger');
           newData = newData.filter(data => data === fileName);
+          console.log(newData);
           filesInput.value = newData.join(', ');
           (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null).then(res => {
             if (res.ok) {
