@@ -17,7 +17,7 @@ export const filesModal = `
         
             <form class='order__files' method='POST' action='/api/files/save-files' enctype='multipart/form-data'>
              <div class='modal__trigger'>Укажите файлы для загрузки</div>
-             <input class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
+             <input id="download_files_input" class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
             </form>
             
             <div class='data'>
@@ -242,6 +242,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           newData = newData.filter(data => data === fileName)
           console.log(newData)
           filesInput.value = newData.join(', ')
+          document.querySelector('#download_files_input').value = ''
 
           sendData(`${appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null)
             .then(res => {

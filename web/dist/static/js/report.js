@@ -2839,7 +2839,9 @@ const drawUpdatedData = (d, data, filtered) => {
     document.querySelectorAll('.table-form--new').forEach(newOrder => newOrder.remove());
     (0,_drawOrders__WEBPACK_IMPORTED_MODULE_0__.drawOrders)(_drawOrders__WEBPACK_IMPORTED_MODULE_0__.table, 'afterbegin', d, _state__WEBPACK_IMPORTED_MODULE_1__.state.orders, _state__WEBPACK_IMPORTED_MODULE_1__.state.managers);
   }
-  completedBtn.classList.add('hidden__input');
+  if (completedBtn) {
+    completedBtn.classList.add('hidden__input');
+  }
   (0,_bindOrdersListeners__WEBPACK_IMPORTED_MODULE_11__.bindOrdersListeners)(currentOrder);
 };
 
@@ -4685,7 +4687,7 @@ const filesModal = `
         
             <form class='order__files' method='POST' action='/api/files/save-files' enctype='multipart/form-data'>
              <div class='modal__trigger'>Укажите файлы для загрузки</div>
-             <input class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
+             <input id="download_files_input" class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
             </form>
             
             <div class='data'>
@@ -4889,6 +4891,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           newData = newData.filter(data => data === fileName);
           console.log(newData);
           filesInput.value = newData.join(', ');
+          document.querySelector('#download_files_input').value = '';
           (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null).then(res => {
             if (res.ok) {
               file.remove();

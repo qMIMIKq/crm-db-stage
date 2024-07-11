@@ -251,7 +251,10 @@ export const drawUpdatedData = (d, data, filtered) => {
     drawOrders(table, 'afterbegin', d, state.orders, state.managers)
   }
 
-  completedBtn.classList.add('hidden__input')
+  if (completedBtn) {
+    completedBtn.classList.add('hidden__input')
+  }
+
 
   bindOrdersListeners(currentOrder)
 }
