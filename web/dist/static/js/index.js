@@ -3366,17 +3366,17 @@ const newAllFilter = init => {
             } else {
               planFlag = true;
             }
-            console.log(`order id ${order.id} status ${statusFlag} / alert ${alertFlag} / plan ${planFlag}}`);
+            console.log(`order id ${order.id} route ${route.route_position} plot ${route.plot} -- status ${statusFlag} / alert ${alertFlag} / plan ${planFlag}}`);
             routeFlag = statusFlag && alertFlag && planFlag && routeFilterFlag;
             if (routeFlag) {
               globalRouteFlag = true;
               break;
             }
-            console.log(`route ${globalRouteFlag}`);
           }
         }
       }
     }
+    console.log(`order ${globalRouteFlag}`);
     if (globalFilterFlag && globalRouteFlag) {
       const hiddenOrder = document.querySelector(`#form-${order.id}`);
       if (hiddenOrder !== null) {
