@@ -52,8 +52,12 @@ export const drawUpdatedData = (d, data, filtered) => {
   }
 
   const orderCompleted = d.quantity && d.issued && Number(d.issued) >= Number(d.quantity)
-  const completedBtn = currentOrder.querySelector('.table__complete')
-  console.log(completedBtn)
+  let completedBtn
+  let deleteBtn
+  if (currentOrder) {
+    completedBtn = currentOrder.querySelector('.table__complete')
+    deleteBtn = currentOrder.querySelector('#order__delete')
+  }
 
   let alertDeadline = false
   if (d.end_time) {
@@ -251,10 +255,13 @@ export const drawUpdatedData = (d, data, filtered) => {
     drawOrders(table, 'afterbegin', d, state.orders, state.managers)
   }
 
+  bindOrdersListeners(currentOrder)
+
   if (completedBtn) {
     completedBtn.classList.add('hidden__input')
   }
 
-
-  bindOrdersListeners(currentOrder)
+  if (deleteBtn) {
+    deleteBtn.classList.add('hidden__input')
+  }
 }

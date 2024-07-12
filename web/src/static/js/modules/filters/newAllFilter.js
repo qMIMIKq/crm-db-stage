@@ -1,5 +1,5 @@
 import {state} from "../state";
-import {deleteOrders, hideOrders} from "../getOrders";
+import {hideOrders} from "../getOrders";
 import {filterRoutesState} from "./filterRoutesState";
 import {drawOrders, table} from "../drawe/drawOrders";
 import {bindOrdersListeners} from "../bindOrdersListeners";
@@ -162,12 +162,14 @@ export const newAllFilter = (init) => {
               planFlag = true
             }
 
+            console.log(`order id ${order.id} status ${statusFlag} / alert ${alertFlag} / plan ${planFlag}}`)
             routeFlag = statusFlag && alertFlag && planFlag && routeFilterFlag
             if (routeFlag) {
               globalRouteFlag = true
               break
             }
 
+            console.log(`route ${globalRouteFlag}`)
           }
         }
       }

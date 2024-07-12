@@ -62,10 +62,10 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]
 
 			var url string
 			if checkType == "pdf" {
-				//url = "http://172.20.10.2:5001/pdf-convert"
+				//url = "http://192.168.0.106:5001/pdf-convert"
 				url = "http://app-converter:5000/pdf-convert"
 			} else {
-				//url = "http://172.20.10.2:5001/dxf-convert"
+				//url = "http://192.168.0.106:5001/dxf-convert"
 				url = "http://app-converter:5000/dxf-convert"
 			}
 
