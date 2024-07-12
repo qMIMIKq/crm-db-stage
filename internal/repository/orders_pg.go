@@ -1480,6 +1480,7 @@ func (o *OrdersPG) GetOrders(params domain.GetOrder) ([]*domain.Order, error) {
 		SELECT *
 		 FROM routes
 		WHERE order_id = $1
+		ORDER BY route_position
 	`)
 	//
 	//	queryRouteComments := fmt.Sprintf(`
