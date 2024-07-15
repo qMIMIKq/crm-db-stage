@@ -488,6 +488,8 @@ export const triggerRoutesModal = (e, page = 'main') => {
     info = true
   }
 
+  console.log(routeInfo)
+
   const routeQuantity = modalElem.querySelector('#quantity')
   const routeDayQuantity = modalElem.querySelector('#day_quantity')
   if (!(manStatus || adminStatus)) {

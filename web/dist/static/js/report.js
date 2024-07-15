@@ -6265,6 +6265,7 @@ const triggerRoutesModal = function (e) {
     console.log(currentOrder);
     info = true;
   }
+  console.log(routeInfo);
   const routeQuantity = modalElem.querySelector('#quantity');
   const routeDayQuantity = modalElem.querySelector('#day_quantity');
   if (!(manStatus || adminStatus)) {
