@@ -74,7 +74,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "appAddr": () => (/* binding */ appAddr)
 /* harmony export */ });
-const appAddr = 'http://192.168.0.106:8182';
+const appAddr = 'http://172.20.10.2:8182';
 
 /***/ }),
 
@@ -2031,7 +2031,7 @@ const drawOrders = (insertPlace, position, d) => {
   // console.log(d)
 
   // console.log('can remove ', d.can_remove)
-  (0,_filters_tableFilters__WEBPACK_IMPORTED_MODULE_0__.controlFiltersReset)();
+  // controlFiltersReset()
   let uniqueFileNames = [];
   if (d.files !== null && d.files !== undefined) {
     d.files.forEach(file => {
@@ -2089,7 +2089,7 @@ const drawOrders = (insertPlace, position, d) => {
                 ${_state__WEBPACK_IMPORTED_MODULE_2__.state.inputAdmManGroupper}
                 id='number' class='table__data dblclck' name='number' readonly type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
             </li>
-            <li class='table-body_cell table-body__helper table__sample'>
+            <li class='table-body_cell hidden-input table-body__helper table__sample'>
                 <input tabindex="-1" tabindex="-1" class='table__data   table__data--ro' name='sample' type='text' value='' readonly tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
@@ -2217,7 +2217,7 @@ const drawOrders = (insertPlace, position, d) => {
                     </li>
                 </ul>
             </li>
-            <li class="table-body_cell table-body__helper table__p">
+            <li class="table-body_cell hidden-input table-body__helper table__p">
                 <select tabindex="-1" tabindex="-1" ${_state__WEBPACK_IMPORTED_MODULE_2__.state.adminCheck || _state__WEBPACK_IMPORTED_MODULE_2__.state.manCheck ? "" : 'style="pointer-events : none"'} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                     <option selected value=""></option>
                 </select>
@@ -3376,7 +3376,9 @@ const newAllFilter = init => {
         }
       }
     }
-    console.log(`order ${globalRouteFlag}`);
+
+    // console.log(`order ${globalRouteFlag}`)
+
     if (globalFilterFlag && globalRouteFlag) {
       const hiddenOrder = document.querySelector(`#form-${order.id}`);
       if (hiddenOrder !== null) {
@@ -3496,7 +3498,8 @@ const filterListener = e => {
   setChosenFilter(e);
 };
 const controlFiltersReset = () => {
-  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered) {
+  console.log(_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered, !!Object.keys(_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters).length, _state__WEBPACK_IMPORTED_MODULE_1__.state.routesAlertFilter, _state__WEBPACK_IMPORTED_MODULE_1__.state.routesPlannedFilter);
+  if (_state__WEBPACK_IMPORTED_MODULE_1__.state.filtered || !!Object.entries(_state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters).length || _state__WEBPACK_IMPORTED_MODULE_1__.state.routesAlertFilter || _state__WEBPACK_IMPORTED_MODULE_1__.state.routesPlannedFilter) {
     const nav = document.querySelector('.main-header__nav');
     const spinner = document.querySelector('.spinner-loader');
     const resetBtn = nav.querySelector('.header-button__reset');
@@ -3508,6 +3511,21 @@ const controlFiltersReset = () => {
         _state__WEBPACK_IMPORTED_MODULE_1__.state.filtered = false;
         _state__WEBPACK_IMPORTED_MODULE_1__.state.searched = false;
         _state__WEBPACK_IMPORTED_MODULE_1__.state.tableFilters = {};
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.routesFilters = {};
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.routesAlertFilter = false;
+        _state__WEBPACK_IMPORTED_MODULE_1__.state.routesPlannedFilter = false;
+        const inPlanBtn = document.querySelector(".header-routes__planned");
+        const routeStatus = document.querySelector('.route-status__btn--default');
+        const routeWarning = document.querySelector('.route-warning__btn--default');
+        routeStatus.click();
+        routeWarning.click();
+        if (inPlanBtn.classList.contains('route__filter--chosen')) {
+          inPlanBtn.click();
+        }
+        console.log(inPlanBtn);
+        console.log(routeStatus);
+        console.log(routeWarning);
+
         // document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))
 
         tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {

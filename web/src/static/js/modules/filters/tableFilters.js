@@ -81,7 +81,9 @@ const filterListener = (e) => {
 }
 
 export const controlFiltersReset = () => {
-  if (state['filtered']) {
+  console.log(state.filtered, !!Object.keys(state.routesFilters).length, state.routesAlertFilter, state.routesPlannedFilter)
+
+  if (state['filtered'] || !!Object.entries(state['routesFilters']).length || state.routesAlertFilter || state.routesPlannedFilter) {
     const nav = document.querySelector('.main-header__nav')
     const spinner = document.querySelector('.spinner-loader')
     const resetBtn = nav.querySelector('.header-button__reset')
@@ -94,6 +96,25 @@ export const controlFiltersReset = () => {
         state['filtered'] = false
         state['searched'] = false
         state['tableFilters'] = {}
+        state['routesFilters'] = {}
+        state.routesAlertFilter = false
+        state.routesPlannedFilter = false
+
+        const inPlanBtn = document.querySelector(".header-routes__planned")
+        const routeStatus = document.querySelector('.route-status__btn--default')
+        const routeWarning = document.querySelector('.route-warning__btn--default')
+
+        routeStatus.click()
+        routeWarning.click()
+        if (inPlanBtn.classList.contains('route__filter--chosen')) {
+          inPlanBtn.click()
+        }
+        console.log(inPlanBtn)
+
+        console.log(routeStatus)
+        console.log(routeWarning)
+
+
         // document.querySelectorAll('.route__filter--chosen').forEach(filt => filt.classList.remove('route__filter--chosen'))
 
         tableFiltersWrapper.querySelectorAll(".table__cell label").forEach(cell => {
@@ -105,6 +126,8 @@ export const controlFiltersReset = () => {
     }
   } else {
     const resetBtn = document.querySelector('.header-button__reset')
+
+
     if (resetBtn !== null) {
       resetBtn.remove()
     }

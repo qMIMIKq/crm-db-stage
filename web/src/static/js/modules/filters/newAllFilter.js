@@ -173,7 +173,7 @@ export const newAllFilter = (init) => {
       }
     }
 
-    console.log(`order ${globalRouteFlag}`)
+    // console.log(`order ${globalRouteFlag}`)
 
     if (globalFilterFlag && globalRouteFlag) {
       const hiddenOrder = document.querySelector(`#form-${order.id}`)

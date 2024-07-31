@@ -23,7 +23,7 @@ export const drawOrders = (insertPlace, position, d) => {
   // console.log(d)
 
   // console.log('can remove ', d.can_remove)
-  controlFiltersReset()
+  // controlFiltersReset()
   let uniqueFileNames = []
 
   if (d.files !== null && d.files !== undefined) {
@@ -90,7 +90,7 @@ export const drawOrders = (insertPlace, position, d) => {
                 ${state['inputAdmManGroupper']}
                 id='number' class='table__data dblclck' name='number' readonly type='text' value='${d.number}' tabindex='-1' autocomplete='off'>
             </li>
-            <li class='table-body_cell table-body__helper table__sample'>
+            <li class='table-body_cell hidden-input table-body__helper table__sample'>
                 <input tabindex="-1" tabindex="-1" class='table__data   table__data--ro' name='sample' type='text' value='' readonly tabindex='-1' autocomplete='off'>
             </li>
             <li  class='table-body_cell table-body__helper ${d.client ? "table-body__attr" : ""} table__client'>
@@ -218,7 +218,7 @@ export const drawOrders = (insertPlace, position, d) => {
                     </li>
                 </ul>
             </li>
-            <li class="table-body_cell table-body__helper table__p">
+            <li class="table-body_cell hidden-input table-body__helper table__p">
                 <select tabindex="-1" tabindex="-1" ${state['adminCheck'] || state['manCheck'] ? "" : 'style="pointer-events : none"'} class="main__button table__data table-p-select" name="p" tabindex="-1" autocomplete="off">
                     <option selected value=""></option>
                 </select>
