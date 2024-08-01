@@ -82,17 +82,18 @@ const filterListener = (e) => {
 
 export const controlFiltersReset = () => {
   console.log(state.filtered, !!Object.keys(state.routesFilters).length, state.routesAlertFilter, state.routesPlannedFilter)
+  console.log()
 
   if (state['filtered'] || !!Object.entries(state['routesFilters']).length || state.routesAlertFilter || state.routesPlannedFilter) {
-    const nav = document.querySelector('.main-header__nav')
-    const spinner = document.querySelector('.spinner-loader')
-    const resetBtn = nav.querySelector('.header-button__reset')
+    // const nav = document.querySelector('.main-header__nav')
+    const routesCheck = document.querySelector('.main-header__routes')
+    const resetBtn = routesCheck.querySelector('.header-button__reset')
     if (resetBtn === null) {
-      spinner.insertAdjacentHTML('beforebegin', `
+      routesCheck.insertAdjacentHTML('afterbegin', `
           <button class='main__button--click main-header__button header-button__reset' tabindex='-1'>Сбросить фильтры</button>
       `)
 
-      nav.querySelector('.header-button__reset').addEventListener('click', e => {
+      routesCheck.querySelector('.header-button__reset').addEventListener('click', e => {
         state['filtered'] = false
         state['searched'] = false
         state['tableFilters'] = {}

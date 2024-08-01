@@ -116,8 +116,8 @@ export const tableRoutesFiltersHandler = () => {
     if (value[0] !== '') {
       try {
         document.querySelector('.route__filter--chosen').classList.remove('route__filter--chosen')
-        alertStatusBtn.style.color = ''
-        alertStatusBtn.value = ''
+        // alertStatusBtn.style.color = ''
+        // alertStatusBtn.value = ''
       } catch {
       }
 
