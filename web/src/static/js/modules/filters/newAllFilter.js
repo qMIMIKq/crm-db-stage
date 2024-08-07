@@ -85,6 +85,8 @@ export const newAllFilter = (init) => {
   //   filtersBtn.style.cssText = `border: none`
   // }
 
+  console.log(tableRouteStatusFilters)
+
 
   let needRoutesFilters = false
   if ((isTopRoutesFiltered || isRouteStatusFiltered || state.routesAlertFilter || state.routesPlannedFilter)) {
@@ -141,6 +143,7 @@ export const newAllFilter = (init) => {
 
             if (isRouteStatusFiltered) {
               statusFlag = filterRoutesState(route)
+              console.log(statusFlag)
             } else {
               statusFlag = true
             }

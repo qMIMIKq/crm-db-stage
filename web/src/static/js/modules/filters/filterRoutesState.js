@@ -23,6 +23,11 @@ export const filterRoutesState = route => {
     if (!route.error_msg && route.pause_time) {
       flag = true
     }
+  } else if (state['routesFilters'].uncompleted) {
+    if (!route.end_time) {
+      flag = true
+    }
+
   } else {
     flag = true
   }
