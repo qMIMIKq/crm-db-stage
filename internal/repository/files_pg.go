@@ -120,7 +120,7 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, dataFiles *multipart.Form) ([]stri
 func (f *FilesMwPg) RemoveFile(orderID string, fileName string) error {
 	fullPath := fmt.Sprintf("%v/%v/%v", DataPath, orderID, fileName)
 
-	log.Info().Caller().Msgf("file name is %v / path is %v", fileName, fullPath)
+	log.Info().Caller().Msgf("file name is %v / path is %v / order id is %v", fileName, fullPath, orderID)
 
 	fileDeleteQuery := fmt.Sprintf(`
 		DELETE FROM files WHERE order_id = $1 AND file_name = $2
@@ -139,12 +139,25 @@ func (f *FilesMwPg) RemoveFile(orderID string, fileName string) error {
 		log.Warn().Msgf("File already in use")
 	}
 
+	_, err = f.db.Exec(fileDeleteQuery, orderID, fullPath)
+	if err != nil {
+		log.Err(err).Caller().Msg("error")
+	}
+
+	err = os.RemoveAll(fullPath)
+	if err != nil {
+		log.Err(err).Caller().Msg("error")
+	}
+
+	fullPath = fmt.Sprintf("%v/%v", DataPath, fileName)
+	log.Info().Caller().Msgf("prev path is %v", fullPath)
+
+	_, err = f.db.Exec(fileDeleteQuery, orderID, fullPath)
 	err = os.RemoveAll(fullPath)
 	if err != nil {
 		log.Err(err).Msg("error")
 	}
 
-	_, err = f.db.Exec(fileDeleteQuery, orderID, fullPath)
 	return err
 }
 

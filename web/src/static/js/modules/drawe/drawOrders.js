@@ -32,7 +32,7 @@ export const drawOrders = (insertPlace, position, d) => {
       const fileType = arrDotFile[arrDotFile.length - 1]
 
       const arrSlashFile = file.split('/')
-      arrSlashFile.splice(0, 4)
+      arrSlashFile.splice(0, 3)
       const fileName = arrSlashFile.join('')
       let fileNameWithoutType = fileName.split('.')
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')

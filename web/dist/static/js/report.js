@@ -2015,7 +2015,7 @@ const drawOrders = (insertPlace, position, d) => {
       const arrDotFile = file.split('.');
       const fileType = arrDotFile[arrDotFile.length - 1];
       const arrSlashFile = file.split('/');
-      arrSlashFile.splice(0, 4);
+      arrSlashFile.splice(0, 3);
       const fileName = arrSlashFile.join('');
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
@@ -4906,10 +4906,14 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
       const arrDotFile = file.split('.');
       const fileType = arrDotFile[arrDotFile.length - 1];
       const arrSlashFile = file.split('/');
-      arrSlashFile.splice(0, 4);
-      let fileName = arrSlashFile.join('');
+      arrSlashFile.splice(0, 3);
+      let fileName = arrSlashFile.join('/');
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
+      let visibleName;
+      if (fileName.includes('$-') && fileName.includes('-$')) {
+        visibleName = arrSlashFile.splice(0, 4).join('').slice(15);
+      }
       switch (fileType) {
         case 'pdf':
         case 'PDF':
@@ -4918,11 +4922,11 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           fileNames.push(fileNameWithoutType);
           data.insertAdjacentHTML(`beforeend`, `
             <div class='data__file'>
-              <a target='_blank' class='file__original' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>Оригинал</a>
-              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileName.toLowerCase().endsWith(".pdf") ? fileName : fileNameWithoutType + ".png"}'>
-                  <img class='file__preview' src='${DATA_SOURCE}${id}/${fileNameWithoutType}.png' alt=''>
+              <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>Оригинал</a>
+              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileName.toLowerCase().endsWith(".pdf") ? fileName : fileNameWithoutType + ".png"}'>
+                  <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.png' alt=''>
               </a>
-              <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
+              <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
                   <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                       <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                       </path>
@@ -4931,7 +4935,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
               <div class="file__remove">
                   +
               </div>
-              <p class='file__name'>${fileName.slice(14)}</p>
+              <p class='file__name'>${visibleName}</p>
               <p class='file__hashname hidden-input'>${fileName}</p>
             </div>
           `);
@@ -4941,10 +4945,10 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>
-                        <img class='file__preview' src='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' alt=>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
+                        <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' alt=>
                     </a>
-                    <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>
@@ -4953,7 +4957,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
                     <div class="file__remove">
                         +
                     </div>
-                    <p class='file__name'>${fileName.slice(14)}</p>
+                    <p class='file__name'>${visibleName}</p>
                     <p class='file__hashname hidden-input'>${fileName}</p>
               </div>
             `);
@@ -4962,10 +4966,10 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
         default:
           data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
                         <img class='file__preview' src='${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/${file}' alt=>
                     </a>
-                    <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>
@@ -4974,7 +4978,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
                     <div class="file__remove">
                         +
                     </div>
-                    <p class='file__name'>${fileName.slice(14)}</p>
+                    <p class='file__name'>${visibleName}</p>
                     <p class='file__hashname hidden-input'>${fileName}</p>
               </div>
             `);
@@ -4986,21 +4990,28 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
       if (!plan && !_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck) {
         btn.addEventListener('click', e => {
           const file = e.target.parentNode;
-          const fileText = file.querySelector('.file__hashname').textContent;
-          let fileName = `${DATA_SOURCE.replace(_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr, '.')}${id}/${fileText}`;
+          let fileText = file.querySelector('.file__hashname').textContent;
+          let fileName = `${DATA_SOURCE.replace(_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr, '.')}${fileText}`;
           const drop = modal.querySelector('.modal__trigger');
           let fileType = fileText.toLowerCase().split('.');
           fileType = fileType[fileType.length - 1];
-          if (fileType === 'pdf' || fileType === 'dxf') {
-            console.log(fileName.replace(`.${fileType}`, '.png'));
-            newData = newData.filter(data => data !== fileName && data !== fileName.replace(`.${fileType}`, '.png'));
+          fileText = fileText.split('/');
+          let checkID;
+          let urlFileName;
+          if (fileText.length > 1) {
+            console.log('big ', fileText);
+            checkID = fileText[0];
+            urlFileName = fileText[1];
           } else {
-            newData = newData.filter(data => data !== fileName);
+            console.log('small ', fileText);
+            checkID = id;
+            urlFileName = fileText[0];
           }
-          console.log(newData);
+          newData = newData.filter(data => data !== fileName && data !== fileName.replace(`.${fileType}`, '.png'));
           filesInput.value = newData.join(', ');
           document.querySelector('#download_files_input').value = '';
-          (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileText}`, 'POST', null).then(res => {
+          const reqUrl = `${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${checkID}/${urlFileName}`;
+          (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(reqUrl, 'POST', null).then(res => {
             if (res.ok) {
               file.remove();
               drop.textContent = 'Файл успешно удалён';
