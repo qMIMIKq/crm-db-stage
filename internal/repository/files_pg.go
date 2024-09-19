@@ -29,7 +29,7 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, dataFiles *multipart.Form) ([]stri
 	hash := dataFiles.Value["hash"][0]
 
 	log.Info().Interface("data", dataFiles).Msg("data is")
-	log.Info().Msgf("id is %v", id)
+	log.Info().Msgf("id is %v / hash is %v", id, hash)
 
 	for _, file := range files {
 		fileType := strings.Split(file.Filename, ".")
