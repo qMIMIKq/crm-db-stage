@@ -38,7 +38,10 @@ const deleteFiles = () => {
 }
 
 const sendFiles = (files, filesInput, old, id, parent) => {
+  if (!files.length) return
+
   const randHash = `$-${String(Math.random()).slice(0, 10)}-$`
+  console.log("sending")
 
   const formData = new FormData()
   formData.set("id", id)
@@ -109,6 +112,7 @@ export function triggerFilesModal(e) {
         // }
 
         sendFiles(files, filesInputData, old, db, orderFilesData.closest('form'))
+        e.target.value = null
       })
       filesInput.click()
     })
@@ -153,6 +157,7 @@ export function triggerFilesModal(e) {
 }
 
 export const drawFiles = (modal, files, id, filesInput, parent) => {
+  console.log(files)
   const data = modal.querySelector('.data')
   const plan = parent.classList.contains('table-form--plan')
 
@@ -164,7 +169,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
       const fileType = arrDotFile[arrDotFile.length - 1]
       const arrSlashFile = file.split('/')
       arrSlashFile.splice(0, 4)
-      const fileName = arrSlashFile.join('')
+      let fileName = arrSlashFile.join('')
       let fileNameWithoutType = fileName.split('.')
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
 
@@ -189,7 +194,8 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
               <div class="file__remove">
                   +
               </div>
-              <p class='file__name'>${fileName}</p>
+              <p class='file__name'>${fileName.slice(14)}</p>
+              <p class='file__hashname hidden-input'>${fileName}</p>
             </div>
           `)
           break
@@ -210,7 +216,8 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
                     <div class="file__remove">
                         +
                     </div>
-                    <p class='file__name'>${fileName}</p>
+                    <p class='file__name'>${fileName.slice(14)}</p>
+                    <p class='file__hashname hidden-input'>${fileName}</p>
               </div>
             `)
           }
@@ -230,27 +237,38 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
                     <div class="file__remove">
                         +
                     </div>
-                    <p class='file__name'>${fileName}</p>
+                    <p class='file__name'>${fileName.slice(14)}</p>
+                    <p class='file__hashname hidden-input'>${fileName}</p>
               </div>
             `)
       }
     })
 
     let newData = filesInput.value.split(', ')
+    console.log(newData)
 
     document.querySelectorAll(".file__remove").forEach(btn => {
       if (!plan && !state.operCheck) {
         btn.addEventListener('click', e => {
           const file = e.target.parentNode
-          const fileName = file.querySelector('.file__name').textContent
+          const fileText = file.querySelector('.file__hashname').textContent
+          let fileName = `${DATA_SOURCE.replace(appAddr, '.')}${id}/${fileText}`
           const drop = modal.querySelector('.modal__trigger')
+          let fileType = fileText.toLowerCase().split('.')
+          fileType = fileType[fileType.length - 1]
 
-          newData = newData.filter(data => data === fileName)
+          if (fileType === 'pdf' || fileType === 'dxf') {
+            console.log(fileName.replace(`.${fileType}`, '.png'))
+            newData = newData.filter(data => data !== fileName && data !== fileName.replace(`.${fileType}`, '.png'))
+          } else {
+            newData = newData.filter(data => data !== fileName)
+          }
+
           console.log(newData)
           filesInput.value = newData.join(', ')
           document.querySelector('#download_files_input').value = ''
 
-          sendData(`${appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null)
+          sendData(`${appAddr}/api/files/remove-file/${id}/${fileText}`, 'POST', null)
             .then(res => {
               if (res.ok) {
                 file.remove()

@@ -2040,7 +2040,6 @@ const drawOrders = (insertPlace, position, d) => {
       const arrSlashFile = file.split('/');
       arrSlashFile.splice(0, 4);
       const fileName = arrSlashFile.join('');
-      console.log(fileName);
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
       switch (fileType) {
@@ -4816,7 +4815,9 @@ const deleteFiles = () => {
   }
 };
 const sendFiles = (files, filesInput, old, id, parent) => {
+  if (!files.length) return;
   const randHash = `$-${String(Math.random()).slice(0, 10)}-$`;
+  console.log("sending");
   const formData = new FormData();
   formData.set("id", id);
   formData.set("hash", randHash);
@@ -4879,6 +4880,7 @@ function triggerFilesModal(e) {
         // }
 
         sendFiles(files, filesInputData, old, db, orderFilesData.closest('form'));
+        e.target.value = null;
       });
       filesInput.click();
     });
@@ -4918,6 +4920,7 @@ function triggerFilesModal(e) {
   drawFiles(modalElem, filesInputData.value, db, filesInputData, orderFilesData.closest('form'));
 }
 const drawFiles = (modal, files, id, filesInput, parent) => {
+  console.log(files);
   const data = modal.querySelector('.data');
   const plan = parent.classList.contains('table-form--plan');
   if (files.length) {
@@ -4927,7 +4930,7 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
       const fileType = arrDotFile[arrDotFile.length - 1];
       const arrSlashFile = file.split('/');
       arrSlashFile.splice(0, 4);
-      const fileName = arrSlashFile.join('');
+      let fileName = arrSlashFile.join('');
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
       switch (fileType) {
@@ -4935,7 +4938,6 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
         case 'PDF':
         case 'dxf':
         case 'DXF':
-          console.log(fileName, id);
           fileNames.push(fileNameWithoutType);
           data.insertAdjacentHTML(`beforeend`, `
             <div class='data__file'>
@@ -4952,7 +4954,8 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
               <div class="file__remove">
                   +
               </div>
-              <p class='file__name'>${fileName}</p>
+              <p class='file__name'>${fileName.slice(14)}</p>
+              <p class='file__hashname hidden-input'>${fileName}</p>
             </div>
           `);
           break;
@@ -4973,7 +4976,8 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
                     <div class="file__remove">
                         +
                     </div>
-                    <p class='file__name'>${fileName}</p>
+                    <p class='file__name'>${fileName.slice(14)}</p>
+                    <p class='file__hashname hidden-input'>${fileName}</p>
               </div>
             `);
           }
@@ -4993,23 +4997,33 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
                     <div class="file__remove">
                         +
                     </div>
-                    <p class='file__name'>${fileName}</p>
+                    <p class='file__name'>${fileName.slice(14)}</p>
+                    <p class='file__hashname hidden-input'>${fileName}</p>
               </div>
             `);
       }
     });
     let newData = filesInput.value.split(', ');
+    console.log(newData);
     document.querySelectorAll(".file__remove").forEach(btn => {
       if (!plan && !_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck) {
         btn.addEventListener('click', e => {
           const file = e.target.parentNode;
-          const fileName = file.querySelector('.file__name').textContent;
+          const fileText = file.querySelector('.file__hashname').textContent;
+          let fileName = `${DATA_SOURCE.replace(_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr, '.')}${id}/${fileText}`;
           const drop = modal.querySelector('.modal__trigger');
-          newData = newData.filter(data => data === fileName);
+          let fileType = fileText.toLowerCase().split('.');
+          fileType = fileType[fileType.length - 1];
+          if (fileType === 'pdf' || fileType === 'dxf') {
+            console.log(fileName.replace(`.${fileType}`, '.png'));
+            newData = newData.filter(data => data !== fileName && data !== fileName.replace(`.${fileType}`, '.png'));
+          } else {
+            newData = newData.filter(data => data !== fileName);
+          }
           console.log(newData);
           filesInput.value = newData.join(', ');
           document.querySelector('#download_files_input').value = '';
-          (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileName}`, 'POST', null).then(res => {
+          (0,_sendData__WEBPACK_IMPORTED_MODULE_2__.sendData)(`${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/api/files/remove-file/${id}/${fileText}`, 'POST', null).then(res => {
             if (res.ok) {
               file.remove();
               drop.textContent = 'Файл успешно удалён';

@@ -129,7 +129,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 		onlyOneFlag := false
 
 		needUpdateQuantityFlag := order.Quantity != order.PrevQuantity
-		log.Info().Caller().Msgf("quant %v / prev quant %v __ need update flag %v", order.Quantity, order.PrevQuantity, needUpdateQuantityFlag)
+		//log.Info().Caller().Msgf("quant %v / prev quant %v __ need update flag %v", order.Quantity, order.PrevQuantity, needUpdateQuantityFlag)
 
 		if _, err := o.db.Exec(`
 			UPDATE reports 

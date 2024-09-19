@@ -34,7 +34,6 @@ export const drawOrders = (insertPlace, position, d) => {
       const arrSlashFile = file.split('/')
       arrSlashFile.splice(0, 4)
       const fileName = arrSlashFile.join('')
-      console.log(fileName)
       let fileNameWithoutType = fileName.split('.')
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
 

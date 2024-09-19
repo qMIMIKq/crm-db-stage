@@ -23,13 +23,8 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, dataFiles *multipart.Form) ([]stri
 	var newFiles []string
 	files := dataFiles.File["files"]
 
-	log.Info().Interface("files", dataFiles).Msg("Save files")
-
 	id := dataFiles.Value["id"][0]
 	hash := dataFiles.Value["hash"][0]
-
-	log.Info().Interface("data", dataFiles).Msg("data is")
-	log.Info().Msgf("id is %v / hash is %v", id, hash)
 
 	for _, file := range files {
 		fileType := strings.Split(file.Filename, ".")
@@ -40,9 +35,8 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, dataFiles *multipart.Form) ([]stri
 		//log.Info().Interface("file", file).Caller().Msgf("file")
 		//log.Info().Msgf("file name %v", file.Filename)
 
-		log.Info().Msgf("file splitted is %v", checkType)
-
-		filePath := fmt.Sprintf("%v/%v/%v", DataPath, id, file.Filename)
+		//filePath := fmt.Sprintf("%v/%v/%v", DataPath, id, file.Filename)
+		filePath := fmt.Sprintf("%v/%v/%v%v", DataPath, id, hash, file.Filename)
 		log.Info().Caller().Msgf("file is %v", filePath)
 
 		//log.Info().Interface("filepath", filePath).Interface("filetype", fileType).Msg("FILES IS")
@@ -68,12 +62,10 @@ func (f *FilesMwPg) SaveFiles(c *gin.Context, dataFiles *multipart.Form) ([]stri
 		//}
 
 		newFiles = append(newFiles, filePath)
-		log.Info().Interface("files", newFiles).Msg("files is")
 
 		switch checkType {
 		case "pdf", "dxf":
 			name := filePath[:len(filePath)-3] + "png"
-			log.Info().Caller().Msgf("name is %v", name)
 			newFiles = append(newFiles, name)
 
 			file, err := os.Open(filePath)
