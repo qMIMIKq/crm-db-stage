@@ -46,7 +46,7 @@ type Plots interface {
 }
 
 type Files interface {
-	SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]string, error)
+	SaveFiles(c *gin.Context, dataFiles *multipart.Form) ([]string, error)
 	RemoveFile(orderID string, fileName string) error
 }
 

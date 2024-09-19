@@ -12,7 +12,7 @@ func (h *Handler) saveFiles(c *gin.Context) {
 		return
 	}
 
-	data, err := h.services.Files.SaveFiles(c, form.File["files"])
+	data, err := h.services.Files.SaveFiles(c, form)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err)
 		return

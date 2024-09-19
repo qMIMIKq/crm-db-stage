@@ -18,6 +18,7 @@ export const filesModal = `
             <form class='order__files' method='POST' action='/api/files/save-files' enctype='multipart/form-data'>
              <div class='modal__trigger'>Укажите файлы для загрузки</div>
              <input id="download_files_input" class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
+             <input class="hidden-input" type="text" name="order_id" id="files_order_id">
             </form>
             
             <div class='data'>
@@ -37,9 +38,13 @@ const deleteFiles = () => {
 }
 
 const sendFiles = (files, filesInput, old, id, parent) => {
+  const randHash = `$-${String(Math.random()).slice(0, 10)}-$`
+
   const formData = new FormData()
+  formData.set("id", id)
+  formData.set("hash", randHash)
+
   for (let file of files) {
-    console.log(file)
     formData.append('files', file)
   }
 
@@ -54,7 +59,6 @@ const sendFiles = (files, filesInput, old, id, parent) => {
     let newData = currentData.concat(data.data).filter(file => file !== '')
     newData = [...new Set(newData)]
     filesInput.value = newData.join(', ')
-    console.log(filesInput)
     drop.classList.add('success')
     drop.textContent = 'Файлы успешно загружены'
     deleteFiles()
@@ -94,15 +98,16 @@ export function triggerFilesModal(e) {
     }
   })
 
-  console.log(modalElem)
-
   const downloadTrigger = document.querySelector('.modal__trigger')
-
   if (!state['operCheck'] && !state['isArchive'] && !plan) {
     downloadTrigger.addEventListener('click', e => {
       const filesInput = document.querySelector('.modal__files')
       filesInput.addEventListener('change', e => {
         const files = e.target.files
+        // for (let i = 0; i < files.length; i++) {
+        //   console.log(files[i])
+        // }
+
         sendFiles(files, filesInputData, old, db, orderFilesData.closest('form'))
       })
       filesInput.click()
@@ -126,8 +131,13 @@ export function triggerFilesModal(e) {
     })
 
     downloadTrigger.addEventListener('drop', e => {
-      let dt = e.dataTransfer
-      let files = dt.files
+      const dt = e.dataTransfer
+      const files = dt.files
+
+      // for (let i = 0; i < files.length; i++) {
+      //   console.log(files[i])
+      // }
+
       sendFiles(files, filesInputData, old, db, orderFilesData.closest('form'))
     })
 
@@ -145,7 +155,6 @@ export function triggerFilesModal(e) {
 export const drawFiles = (modal, files, id, filesInput, parent) => {
   const data = modal.querySelector('.data')
   const plan = parent.classList.contains('table-form--plan')
-  console.log(plan)
 
   if (files.length) {
     const fileNames = []
@@ -154,7 +163,7 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
       const arrDotFile = file.split('.')
       const fileType = arrDotFile[arrDotFile.length - 1]
       const arrSlashFile = file.split('/')
-      arrSlashFile.splice(0, 3)
+      arrSlashFile.splice(0, 4)
       const fileName = arrSlashFile.join('')
       let fileNameWithoutType = fileName.split('.')
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.')
@@ -164,15 +173,14 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
         case 'PDF':
         case 'dxf':
         case 'DXF':
-          console.log(fileName)
           fileNames.push(fileNameWithoutType)
           data.insertAdjacentHTML(`beforeend`, `
             <div class='data__file'>
-              <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>Оригинал</a>
-              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileName.toLowerCase().endsWith(".pdf") ? fileName : fileNameWithoutType + ".png"}'>
-                  <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.png' alt=''>
+              <a target='_blank' class='file__original' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>Оригинал</a>
+              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileName.toLowerCase().endsWith(".pdf") ? fileName : fileNameWithoutType + ".png"}'>
+                  <img class='file__preview' src='${DATA_SOURCE}${id}/${fileNameWithoutType}.png' alt=''>
               </a>
-              <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
+              <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
                   <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                       <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                       </path>
@@ -187,14 +195,13 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           break
         case 'png':
         case 'PNG':
-          console.log(fileName)
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
-                        <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' alt=>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>
+                        <img class='file__preview' src='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' alt=>
                     </a>
-                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>
@@ -209,13 +216,12 @@ export const drawFiles = (modal, files, id, filesInput, parent) => {
           }
           break
         default:
-          console.log(fileName)
           data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>
                         <img class='file__preview' src='${appAddr}/${file}' alt=>
                     </a>
-                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>

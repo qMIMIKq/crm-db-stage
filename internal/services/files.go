@@ -11,8 +11,8 @@ type FilesService struct {
 	repo repository.Files
 }
 
-func (f *FilesService) SaveFiles(c *gin.Context, files []*multipart.FileHeader) ([]string, error) {
-	return f.repo.SaveFiles(c, files)
+func (f *FilesService) SaveFiles(c *gin.Context, dataFiles *multipart.Form) ([]string, error) {
+	return f.repo.SaveFiles(c, dataFiles)
 }
 
 func (f *FilesService) RemoveFile(orderID string, fileName string) error {

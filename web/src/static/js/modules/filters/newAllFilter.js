@@ -1,6 +1,6 @@
 import {state} from "../state";
 import {hideOrders} from "../getOrders";
-import {filterRoutesState} from "./filterRoutesState";
+import {filterRoutesState, filterRouteStateGlobal} from "./filterRoutesState";
 import {drawOrders, table} from "../drawe/drawOrders";
 import {bindOrdersListeners} from "../bindOrdersListeners";
 import {controlFiltersReset} from "./tableFilters";
@@ -87,6 +87,9 @@ export const newAllFilter = (init) => {
 
   console.log(tableRouteStatusFilters)
 
+  let needGlobalRoutsFilter = Object.keys(tableRouteStatusFilters).length > 1
+  console.log(needGlobalRoutsFilter)
+
 
   let needRoutesFilters = false
   if ((isTopRoutesFiltered || isRouteStatusFiltered || state.routesAlertFilter || state.routesPlannedFilter)) {
@@ -142,8 +145,12 @@ export const newAllFilter = (init) => {
             }
 
             if (isRouteStatusFiltered) {
+              if (needGlobalRoutsFilter) {
+                statusFlag = filterRouteStateGlobal(route)
+              }
+
               statusFlag = filterRoutesState(route)
-              console.log(statusFlag)
+              // console.log(statusFlag)
             } else {
               statusFlag = true
             }

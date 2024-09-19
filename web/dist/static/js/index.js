@@ -2038,8 +2038,9 @@ const drawOrders = (insertPlace, position, d) => {
       const arrDotFile = file.split('.');
       const fileType = arrDotFile[arrDotFile.length - 1];
       const arrSlashFile = file.split('/');
-      arrSlashFile.splice(0, 3);
+      arrSlashFile.splice(0, 4);
       const fileName = arrSlashFile.join('');
+      console.log(fileName);
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
       switch (fileType) {
@@ -3161,6 +3162,7 @@ const colorRoutes = (routes, parent) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "filterRouteStateGlobal": () => (/* binding */ filterRouteStateGlobal),
 /* harmony export */   "filterRoutesState": () => (/* binding */ filterRoutesState)
 /* harmony export */ });
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../state */ "./web/src/static/js/modules/state.js");
@@ -3211,6 +3213,48 @@ const filterRoutesState = route => {
   //   }
 
   return flag;
+};
+const filterRouteStateGlobal = route => {
+  let flag = false;
+  let globalFlag = false;
+  let started,
+    error,
+    competed,
+    unstarted,
+    paused,
+    uncompleted = false;
+  if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.started) {
+    started = !!(route.start_time && !route.end_time);
+  } else {
+    started = true;
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.error) {
+    error = !!route.error_msg;
+  } else {
+    error = true;
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.completed) {
+    competed = !!route.end_time;
+  } else {
+    competed = true;
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.unstarted) {
+    unstarted = !route.start_time;
+  } else {
+    unstarted = true;
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.paused) {
+    paused = !!route.pause_time;
+  } else {
+    paused = true;
+  }
+  if (_state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters.uncompleted) {
+    uncompleted = !route.end_time;
+  } else {
+    uncompleted = true;
+  }
+  globalFlag = started && competed && paused && uncompleted && unstarted && error;
+  return globalFlag;
 };
 
 /***/ }),
@@ -3306,6 +3350,8 @@ const newAllFilter = init => {
   // }
 
   console.log(tableRouteStatusFilters);
+  let needGlobalRoutsFilter = Object.keys(tableRouteStatusFilters).length > 1;
+  console.log(needGlobalRoutsFilter);
   let needRoutesFilters = false;
   if (isTopRoutesFiltered || isRouteStatusFiltered || _state__WEBPACK_IMPORTED_MODULE_0__.state.routesAlertFilter || _state__WEBPACK_IMPORTED_MODULE_0__.state.routesPlannedFilter) {
     needRoutesFilters = true;
@@ -3352,8 +3398,11 @@ const newAllFilter = init => {
               routeFilterFlag = true;
             }
             if (isRouteStatusFiltered) {
+              if (needGlobalRoutsFilter) {
+                statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRouteStateGlobal)(route);
+              }
               statusFlag = (0,_filterRoutesState__WEBPACK_IMPORTED_MODULE_2__.filterRoutesState)(route);
-              console.log(statusFlag);
+              // console.log(statusFlag)
             } else {
               statusFlag = true;
             }
@@ -3698,7 +3747,7 @@ const tableRoutesFiltersHandler = () => {
         border: 2px solid ${value[1]};
         color: ${value[1]};
       `;
-      _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters = {};
+      // state.routesFilters = {}
       _state__WEBPACK_IMPORTED_MODULE_0__.state.routesFilters[value[0]] = true;
       (0,_newAllFilter__WEBPACK_IMPORTED_MODULE_3__.newAllFilter)();
     } else {
@@ -4749,6 +4798,7 @@ const filesModal = `
             <form class='order__files' method='POST' action='/api/files/save-files' enctype='multipart/form-data'>
              <div class='modal__trigger'>Укажите файлы для загрузки</div>
              <input id="download_files_input" class='modal__files hidden__input' type='file' name='files' multiple tabindex='-1'>
+             <input class="hidden-input" type="text" name="order_id" id="files_order_id">
             </form>
             
             <div class='data'>
@@ -4766,9 +4816,11 @@ const deleteFiles = () => {
   }
 };
 const sendFiles = (files, filesInput, old, id, parent) => {
+  const randHash = `$-${String(Math.random()).slice(0, 10)}-$`;
   const formData = new FormData();
+  formData.set("id", id);
+  formData.set("hash", randHash);
   for (let file of files) {
-    console.log(file);
     formData.append('files', file);
   }
   const drop = document.querySelector('.modal__trigger');
@@ -4781,7 +4833,6 @@ const sendFiles = (files, filesInput, old, id, parent) => {
     let newData = currentData.concat(data.data).filter(file => file !== '');
     newData = [...new Set(newData)];
     filesInput.value = newData.join(', ');
-    console.log(filesInput);
     drop.classList.add('success');
     drop.textContent = 'Файлы успешно загружены';
     deleteFiles();
@@ -4817,13 +4868,16 @@ function triggerFilesModal(e) {
       (0,_submitOrdersData__WEBPACK_IMPORTED_MODULE_3__.submitData)();
     }
   });
-  console.log(modalElem);
   const downloadTrigger = document.querySelector('.modal__trigger');
   if (!_state__WEBPACK_IMPORTED_MODULE_0__.state.operCheck && !_state__WEBPACK_IMPORTED_MODULE_0__.state.isArchive && !plan) {
     downloadTrigger.addEventListener('click', e => {
       const filesInput = document.querySelector('.modal__files');
       filesInput.addEventListener('change', e => {
         const files = e.target.files;
+        // for (let i = 0; i < files.length; i++) {
+        //   console.log(files[i])
+        // }
+
         sendFiles(files, filesInputData, old, db, orderFilesData.closest('form'));
       });
       filesInput.click();
@@ -4844,8 +4898,13 @@ function triggerFilesModal(e) {
       });
     });
     downloadTrigger.addEventListener('drop', e => {
-      let dt = e.dataTransfer;
-      let files = dt.files;
+      const dt = e.dataTransfer;
+      const files = dt.files;
+
+      // for (let i = 0; i < files.length; i++) {
+      //   console.log(files[i])
+      // }
+
       sendFiles(files, filesInputData, old, db, orderFilesData.closest('form'));
     });
     modalElem.querySelector('.order__files').addEventListener('submit', e => {
@@ -4861,14 +4920,13 @@ function triggerFilesModal(e) {
 const drawFiles = (modal, files, id, filesInput, parent) => {
   const data = modal.querySelector('.data');
   const plan = parent.classList.contains('table-form--plan');
-  console.log(plan);
   if (files.length) {
     const fileNames = [];
     files.split(', ').map(file => {
       const arrDotFile = file.split('.');
       const fileType = arrDotFile[arrDotFile.length - 1];
       const arrSlashFile = file.split('/');
-      arrSlashFile.splice(0, 3);
+      arrSlashFile.splice(0, 4);
       const fileName = arrSlashFile.join('');
       let fileNameWithoutType = fileName.split('.');
       fileNameWithoutType = fileNameWithoutType.splice(0, fileNameWithoutType.length - 1).join('.');
@@ -4877,15 +4935,15 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
         case 'PDF':
         case 'dxf':
         case 'DXF':
-          console.log(fileName);
+          console.log(fileName, id);
           fileNames.push(fileNameWithoutType);
           data.insertAdjacentHTML(`beforeend`, `
             <div class='data__file'>
-              <a target='_blank' class='file__original' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>Оригинал</a>
-              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileName.toLowerCase().endsWith(".pdf") ? fileName : fileNameWithoutType + ".png"}'>
-                  <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.png' alt=''>
+              <a target='_blank' class='file__original' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>Оригинал</a>
+              <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileName.toLowerCase().endsWith(".pdf") ? fileName : fileNameWithoutType + ".png"}'>
+                  <img class='file__preview' src='${DATA_SOURCE}${id}/${fileNameWithoutType}.png' alt=''>
               </a>
-              <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
+              <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
                   <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                       <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                       </path>
@@ -4900,14 +4958,13 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           break;
         case 'png':
         case 'PNG':
-          console.log(fileName);
           if (!fileNames.includes(fileNameWithoutType)) {
             data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
-                        <img class='file__preview' src='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' alt=>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>
+                        <img class='file__preview' src='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' alt=>
                     </a>
-                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>
@@ -4922,13 +4979,12 @@ const drawFiles = (modal, files, id, filesInput, parent) => {
           }
           break;
         default:
-          console.log(fileName);
           data.insertAdjacentHTML(`beforeend`, `
               <div class='data__file'>
-                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}'>
+                    <a target='_blank' class='link__preview' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}'>
                         <img class='file__preview' src='${_appAddr__WEBPACK_IMPORTED_MODULE_4__.appAddr}/${file}' alt=>
                     </a>
-                    <a class='file__download' href='${DATA_SOURCE}${fileNameWithoutType}.${fileType}' download>
+                    <a class='file__download' href='${DATA_SOURCE}${id}/${fileNameWithoutType}.${fileType}' download>
                          <svg data-v-42a4bff7 xmlns='http://www.w3.org/2000/svg' class='download-icon' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path data-v-42a4bff7='' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'>
                             </path>

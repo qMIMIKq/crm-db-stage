@@ -127,7 +127,7 @@ export const tableRoutesFiltersHandler = () => {
         border: 2px solid ${value[1]};
         color: ${value[1]};
       `
-      state.routesFilters = {}
+      // state.routesFilters = {}
       state.routesFilters[value[0]] = true
       newAllFilter()
     } else {

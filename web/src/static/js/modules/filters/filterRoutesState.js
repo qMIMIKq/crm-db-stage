@@ -50,3 +50,50 @@ export const filterRoutesState = route => {
 
   return flag
 }
+
+export const filterRouteStateGlobal = route => {
+  let flag = false
+  let globalFlag = false
+
+  let started, error, competed, unstarted, paused, uncompleted = false
+
+  if (state['routesFilters'].started) {
+    started = !!(route.start_time && !route.end_time)
+  } else {
+    started = true
+  }
+
+  if (state['routesFilters'].error) {
+    error = !!route.error_msg
+  } else {
+    error = true
+  }
+
+  if (state['routesFilters'].completed) {
+    competed = !!route.end_time
+  } else {
+    competed = true
+  }
+
+  if (state['routesFilters'].unstarted) {
+    unstarted = !route.start_time;
+  } else {
+    unstarted = true
+  }
+
+  if (state['routesFilters'].paused) {
+    paused = !!(route.pause_time)
+  } else {
+    paused = true
+  }
+
+  if (state['routesFilters'].uncompleted) {
+    uncompleted = !route.end_time
+  } else {
+    uncompleted = true
+  }
+
+  globalFlag = started && competed && paused && uncompleted && unstarted && error
+
+  return globalFlag
+}
