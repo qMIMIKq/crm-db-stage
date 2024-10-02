@@ -115,7 +115,8 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 						 pause_time = $7, pause_value = $8, error_time = $9, error_value = $10, day_quantity = $11, 
 						 theor_end = $12, dyn_end = $13, plan_date = $14, plan_start = $15,
 						 plan_faster = $16, plan_exclude_days = $17, last_comment = $18, plan_dates = $19, 
-						 planned = $20, issued_plan = $21, time = $22, up = $23, adjustment = $24, need_shifts = $25, shift = $26, alert_color = $27, route_position = $28
+						 planned = $20, issued_plan = $21, time = $22, up = $23, adjustment = $24, 
+						 need_shifts = $25, shift = $26, alert_color = $27, route_position = $28
 		  WHERE route_id = $29
 			RETURNING route_id
 		`)
@@ -558,7 +559,7 @@ func (o *OrdersPG) UpdateOrders(orders []*domain.Order) error {
 				}
 
 				if route.StartTime != "" || route.EndTime != "" {
-					o.timeReportsPG.CreateTimeReportsPlotReport(route)
+					//o.timeReportsPG.CreateTimeReportsPlotReport(route)
 				}
 
 			} else {

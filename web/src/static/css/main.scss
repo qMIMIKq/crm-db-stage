@@ -380,15 +380,6 @@ input:disabled {
   position: relative;
 }
 
-.loupe {
-  width: 12px;
-  transition: fill .3s;
-
-  &:hover {
-    //transition: fill .3s;
-    //fill: $main_green;
-  }
-}
 
 .planned__label {
   margin-right: 7px;
@@ -576,3 +567,4 @@ input:disabled {
     background: rgba(236, 236, 236, 0.8);
   }
 }
+

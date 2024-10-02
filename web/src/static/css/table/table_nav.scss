@@ -278,10 +278,39 @@
   }
 }
 
-.nav-control__search-btn {
+.nav-control__search-btn,
+.nav-control__filter-btn {
   margin-right: 10px;
   width: 105px;
 }
+
+.nav-control__filter-btn:hover {
+  color: green;
+  .filter_ico {
+    transform: rotate(90deg);
+    fill: $main_green;
+  }
+}
+
+.loupe {
+  width: 16px;
+  transition: fill .3s;
+  //transform: translateY(1px);
+
+  &:hover {
+    //transition: fill .3s;
+    //fill: $main_green;
+  }
+}
+
+
+
+.filter_ico {
+  width: 25px;
+  height: 19px;
+  transition: fill 0.3s linear, transform .5s ease-in-out;
+}
+
 
 .header-control__btn-delete-center {
   //position: relative;

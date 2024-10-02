@@ -4,6 +4,7 @@ import {getTime} from "../getTime";
 import {newAllFilter} from "./newAllFilter";
 import {colorRoutes} from "../drawe/routesDraw";
 import {drawOrders, table} from "../drawe/drawOrders";
+import {globalRoutesFilterHandler} from "../modals/globalTableRoutesFilter";
 
 export const inArchiveBtn = document.querySelector('.header-routes__archived')
 export const archiveFrom = document.querySelector('.header-routes__planned-date__from')
@@ -57,6 +58,10 @@ export const tableRoutesFiltersHandler = () => {
   deleteBtn.addEventListener('click', () => orderDelBtn.click())
   archiveBtn.addEventListener('click', () => orderArchiveBtn.click())
 
+
+  const globalRoutesFilter = document.querySelector('.nav-control__filter-btn')
+  globalRoutesFilter.addEventListener('click', e => globalRoutesFilterHandler(e))
+
   // console.log(headerControlContent)
   headerControl.addEventListener('click', e => {
     headerControlContent.classList.add('header-control__content--active')
@@ -87,30 +92,6 @@ export const tableRoutesFiltersHandler = () => {
     headerControl.remove()
   }
 
-  // const headerFilters = document.querySelector('.header-filters')
-  // const headerFiltersContent = document.querySelector('.header-filters__content')
-  // const planDatesInput = document.querySelector('.header-routes__planned-date')
-  //
-  // const checkFilters = () => {
-  //   headerFiltersContent.classList.add('hidden-input')
-  // }
-  //
-  // planDatesInput.addEventListener('focus', () => {
-  //   console.log('hi')
-  //   headerFilters.removeEventListener('mouseleave', checkFilters)
-  // })
-  //
-  // planDatesInput.addEventListener('blur', () => {
-  //   console.log('not hi')
-  //   headerFilters.addEventListener('mouseleave', checkFilters)
-  // })
-  //
-  // headerFilters.addEventListener('mouseenter', () => {
-  //   headerFiltersContent.classList.remove('hidden-input')
-  // })
-  // headerFilters.addEventListener('mouseleave', checkFilters)
-
-  // console.log(routesStatusBtn)
   routesStatusBtn.addEventListener('change', e => {
     const value = e.target.value.split('-')
     if (value[0] !== '') {

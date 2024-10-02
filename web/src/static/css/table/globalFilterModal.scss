@@ -1,0 +1,16 @@
+@import "../var";
+
+.modal_content-block__global {
+  &-wrapper {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.global__plan {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
